@@ -6,8 +6,13 @@ import { fileURLToPath, URL } from 'node:url';
 // - PWA: standalone, portrait-primary, offline-capable (precache app shell).
 // - Save data lives in IndexedDB and is intentionally NOT routed through the
 //   service worker cache (see CLAUDE.md / docs/TECH_DESIGN.md).
+// On GitHub Pages this is a project site served under /<repo>/, so the build
+// needs an absolute base. The deploy workflow sets VITE_BASE=/chhhhhhho/.
+// Locally (dev / preview) we use './' so it works from the root.
+const base = process.env.VITE_BASE ?? './';
+
 export default defineConfig({
-  base: './',
+  base,
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
