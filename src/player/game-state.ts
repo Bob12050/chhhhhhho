@@ -1,0 +1,180 @@
+import {
+  computeDerived,
+  type BaseStats,
+  type DerivedStats,
+  type StatModifiers,
+} from '@/stats/stats';
+import { getEquipment } from '@/data/items';
+import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
+import { bus } from '@/core/event-bus';
+import { expToNext } from '@/stats/leveling';
+import type { SaveData } from '@/save/schema';
+
+/**
+ * Central runtime player model. Holds base stats / level / equipment /
+ * inventory, recomputes derived stats in one place, and emits change events.
+ * Scenes and UI read from here; nobody recomputes stats independently.
+ */
+export class GameState {
+  level = 1;
+  exp = 0;
+  statPoints = 0;
+  base: BaseStats = { STR: 5, VIT: 5, INT: 5, DEX: 5, LUK: 5 };
+
+  equipment: Record<EquipSlot, string | null> = {
+    head: null,
+    torso: null,
+    hands: null,
+    waist: null,
+    feet: null,
+    back: null,
+    main_hand: null,
+    accessory_1: null,
+    accessory_2: null,
+  };
+
+  materials: Record<string, number> = {};
+
+  flags: Record<string, boolean> = {};
+
+  hp = 1;
+  mp = 0;
+  derived: DerivedStats = computeDerived(this.base);
+
+  mapId = 'town';
+  x = 180;
+  y = 360;
+
+  /** Recompute derived stats from base + equipment, clamping HP/MP. */
+  recompute(preserveRatio = true): void {
+    const mods: StatModifiers[] = [];
+    for (const slot of EQUIP_SLOTS) {
+      const id = this.equipment[slot];
+      if (!id) continue;
+      const def = getEquipment(id);
+      if (def) mods.push({ derived: def.derived });
+    }
+    const prev = this.derived;
+    const hpRatio = prev.maxHp > 0 ? this.hp / prev.maxHp : 1;
+    const mpRatio = prev.maxMp > 0 ? this.mp / prev.maxMp : 1;
+    this.derived = computeDerived(this.base, mods);
+    if (preserveRatio) {
+      this.hp = Math.min(this.derived.maxHp, Math.max(1, Math.round(this.derived.maxHp * hpRatio)));
+      this.mp = Math.min(this.derived.maxMp, Math.round(this.derived.maxMp * mpRatio));
+    }
+    bus.emit('player:stats-recomputed', {});
+    bus.emit('player:hp-changed', { current: this.hp, max: this.derived.maxHp });
+    bus.emit('player:mp-changed', { current: this.mp, max: this.derived.maxMp });
+  }
+
+  fullHeal(): void {
+    this.hp = this.derived.maxHp;
+    this.mp = this.derived.maxMp;
+    bus.emit('player:hp-changed', { current: this.hp, max: this.derived.maxHp });
+    bus.emit('player:mp-changed', { current: this.mp, max: this.derived.maxMp });
+  }
+
+  equip(slot: EquipSlot, itemId: string | null): void {
+    this.equipment[slot] = itemId;
+    this.recompute();
+    bus.emit('equipment:changed', { slot });
+  }
+
+  addMaterial(id: string, qty: number): void {
+    this.materials[id] = (this.materials[id] ?? 0) + qty;
+    bus.emit('inventory:changed', {});
+    bus.emit('item:picked-up', { itemId: id, quantity: qty });
+  }
+
+  consumeMaterials(req: Record<string, number>): boolean {
+    for (const [id, qty] of Object.entries(req)) {
+      if ((this.materials[id] ?? 0) < qty) return false;
+    }
+    for (const [id, qty] of Object.entries(req)) {
+      this.materials[id] -= qty;
+    }
+    bus.emit('inventory:changed', {});
+    return true;
+  }
+
+  allocateStat(stat: keyof BaseStats, amount = 1): boolean {
+    if (this.statPoints < amount) return false;
+    this.statPoints -= amount;
+    this.base[stat] += amount;
+    this.recompute();
+    return true;
+  }
+
+  /** Award exp and process level-ups (grants stat points). */
+  gainExp(amount: number): void {
+    this.exp += amount;
+    let leveled = false;
+    while (this.exp >= expToNext(this.level)) {
+      this.exp -= expToNext(this.level);
+      this.level++;
+      this.statPoints += 3;
+      leveled = true;
+      bus.emit('player:level-up', { level: this.level, statPoints: this.statPoints });
+    }
+    if (leveled) {
+      this.recompute(false);
+      this.fullHeal();
+    }
+    bus.emit('player:exp-changed', {
+      current: this.exp,
+      toNext: expToNext(this.level),
+      level: this.level,
+    });
+  }
+
+  // --- Save bridge ---
+  toSave(slot: number): SaveData {
+    return {
+      version: 1,
+      slot,
+      savedAt: Date.now(),
+      mapId: this.mapId,
+      player: {
+        x: this.x,
+        y: this.y,
+        level: this.level,
+        exp: this.exp,
+        statPoints: this.statPoints,
+        base: { ...this.base },
+        hp: this.hp,
+        mp: this.mp,
+      },
+      equipment: { ...this.equipment },
+      inventory: { materials: { ...this.materials } },
+      flags: { ...this.flags },
+      settings: { sfx: true, bgm: true },
+    };
+  }
+
+  loadFrom(data: SaveData): void {
+    this.level = data.player.level;
+    this.exp = data.player.exp;
+    this.statPoints = data.player.statPoints;
+    this.base = { ...data.player.base };
+    this.mapId = data.mapId;
+    this.x = data.player.x;
+    this.y = data.player.y;
+    this.materials = { ...data.inventory.materials };
+    this.flags = { ...data.flags };
+    // Equipment: drop unknown ids defensively.
+    for (const slot of EQUIP_SLOTS) {
+      const id = data.equipment[slot] ?? null;
+      this.equipment[slot] = id && getEquipment(id) ? id : null;
+    }
+    this.recompute(false);
+    if (data.player.hp < 0) this.hp = this.derived.maxHp;
+    else this.hp = Math.min(this.derived.maxHp, data.player.hp);
+    if (data.player.mp < 0) this.mp = this.derived.maxMp;
+    else this.mp = Math.min(this.derived.maxMp, data.player.mp);
+    bus.emit('player:hp-changed', { current: this.hp, max: this.derived.maxHp });
+    bus.emit('player:mp-changed', { current: this.mp, max: this.derived.maxMp });
+  }
+}
+
+/** The single active game state (set when a save is started/loaded). */
+export const gameState = new GameState();

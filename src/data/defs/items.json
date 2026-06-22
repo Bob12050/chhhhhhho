@@ -1,0 +1,79 @@
+{
+  "materials": [
+    { "id": "slime_jelly", "name": "スライムゼリー", "sellPrice": 3, "description": "ぷるぷるの素材。" },
+    { "id": "soft_leather", "name": "やわらか革", "sellPrice": 5, "description": "軽装の素材。" },
+    { "id": "iron_ore", "name": "鉄鉱石", "sellPrice": 8, "description": "武具の素材。" }
+  ],
+  "equipment": [
+    {
+      "id": "wood_sword",
+      "name": "木の剣",
+      "slot": "main_hand",
+      "rarity": "common",
+      "visualId": "sword_wood",
+      "weaponTags": ["sword"],
+      "element": "none",
+      "levelRequirement": 1,
+      "derived": { "physAtk": 4 },
+      "sellPrice": 5,
+      "description": "練習用の木剣。"
+    },
+    {
+      "id": "iron_sword",
+      "name": "鉄の剣",
+      "slot": "main_hand",
+      "rarity": "common",
+      "visualId": "sword_iron",
+      "weaponTags": ["sword"],
+      "element": "none",
+      "levelRequirement": 2,
+      "derived": { "physAtk": 9, "accuracy": 3 },
+      "sellPrice": 18,
+      "description": "鍛えた鉄の剣。"
+    },
+    {
+      "id": "leather_cap",
+      "name": "革の帽子",
+      "slot": "head",
+      "rarity": "common",
+      "visualId": "cap_leather",
+      "levelRequirement": 1,
+      "derived": { "def": 2, "maxHp": 6 },
+      "sellPrice": 6,
+      "description": "つばの大きい革の帽子。"
+    },
+    {
+      "id": "iron_helm",
+      "name": "鉄の兜",
+      "slot": "head",
+      "rarity": "common",
+      "visualId": "helm_iron",
+      "levelRequirement": 2,
+      "derived": { "def": 5, "maxHp": 10, "evasion": -1 },
+      "sellPrice": 20,
+      "description": "角つきの鉄兜。"
+    },
+    {
+      "id": "cloth_vest",
+      "name": "布の胴着",
+      "slot": "torso",
+      "rarity": "common",
+      "visualId": "vest_cloth",
+      "levelRequirement": 1,
+      "derived": { "def": 3, "maxHp": 8 },
+      "sellPrice": 7,
+      "description": "軽い布の胴着。"
+    },
+    {
+      "id": "iron_plate",
+      "name": "鉄の胸当て",
+      "slot": "torso",
+      "rarity": "common",
+      "visualId": "plate_iron",
+      "levelRequirement": 2,
+      "derived": { "def": 8, "maxHp": 18, "moveSpeed": -4 },
+      "sellPrice": 26,
+      "description": "頑丈な鉄の胸当て。"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+import Phaser from 'phaser';
+
+/**
+ * Round touch button. Handles multi-touch correctly: it binds to the specific
+ * pointer id that pressed it, releases when that finger lifts, and cancels if
+ * the finger slides outside the button radius. Minimum 48 logical px.
+ */
+export class TouchButton {
+  private readonly circle: Phaser.GameObjects.Arc;
+  private readonly label: Phaser.GameObjects.Text;
+  private pointerId = -1;
+  private readonly cx: number;
+  private readonly cy: number;
+  private readonly radius: number;
+
+  onChange: ((down: boolean) => void) | null = null;
+
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    radius: number,
+    text: string,
+    color: number,
+    depth: number,
+  ) {
+    this.cx = x;
+    this.cy = y;
+    this.radius = Math.max(radius, 24); // 48px diameter minimum
+    this.circle = scene.add.circle(x, y, this.radius, color, 0.35).setDepth(depth);
+    this.circle.setStrokeStyle(2, 0xffffff, 0.4);
+    this.label = scene.add
+      .text(x, y, text, { fontFamily: 'system-ui, sans-serif', fontSize: '13px', color: '#ffffff' })
+      .setOrigin(0.5)
+      .setDepth(depth + 1);
+
+    this.circle.setInteractive(
+      new Phaser.Geom.Circle(this.radius, this.radius, this.radius),
+      Phaser.Geom.Circle.Contains,
+    );
+    this.circle.on('pointerdown', (p: Phaser.Input.Pointer) => this.press(p));
+    scene.input.on('pointermove', (p: Phaser.Input.Pointer) => this.move(p));
+    scene.input.on('pointerup', (p: Phaser.Input.Pointer) => this.release(p));
+    scene.input.on('pointerupoutside', (p: Phaser.Input.Pointer) => this.release(p));
+  }
+
+  setVisible(v: boolean): void {
+    this.circle.setVisible(v);
+    this.label.setVisible(v);
+    if (!v && this.pointerId !== -1) {
+      this.pointerId = -1;
+      this.onChange?.(false);
+    }
+  }
+
+  private contains(p: Phaser.Input.Pointer): boolean {
+    return Phaser.Math.Distance.Between(p.x, p.y, this.cx, this.cy) <= this.radius;
+  }
+
+  private press(p: Phaser.Input.Pointer): void {
+    if (!this.circle.visible || this.pointerId !== -1) return;
+    this.pointerId = p.id;
+    this.circle.setFillStyle(this.circle.fillColor, 0.6);
+    this.onChange?.(true);
+  }
+
+  private move(p: Phaser.Input.Pointer): void {
+    if (p.id !== this.pointerId) return;
+    // Cancel if the finger slides off the button.
+    if (!this.contains(p)) this.release(p);
+  }
+
+  private release(p: Phaser.Input.Pointer): void {
+    if (p.id !== this.pointerId) return;
+    this.pointerId = -1;
+    this.circle.setFillStyle(this.circle.fillColor, 0.35);
+    this.onChange?.(false);
+  }
+}

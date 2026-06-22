@@ -1,0 +1,292 @@
+import {
+  CHAR_FRAME_W,
+  CHAR_FRAME_H,
+  CHAR_ANCHOR_X,
+  CHAR_ANCHOR_Y,
+} from '@/config/resolution';
+import {
+  ANIMATIONS,
+  ANIM_NAMES,
+  SHEET_DIRECTIONS,
+  SHEET_WIDTH,
+  SHEET_HEIGHT,
+  MAX_FRAMES,
+  type AnimName,
+} from '@/paperdoll/pose-atlas';
+import type { Direction } from '@/config/layers';
+import { PALETTES, EQUIP_RAMPS, type ActorPalette, type Ramp } from './palette';
+
+/**
+ * Procedural placeholder pixel art. Produces sprite sheets that EXACTLY match
+ * the pose-atlas layout (64x96 frames, rows = direction x animation, cols =
+ * frames). All drawing is integer-aligned with no anti-aliasing, so the result
+ * is true pixel art. These are stand-ins; final art drops into the same slots.
+ */
+
+type PartKind = 'body' | 'head' | 'torso' | 'weapon' | 'shadow' | 'slime';
+
+function newCanvas(w: number, h: number): HTMLCanvasElement {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  return c;
+}
+
+function px(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, color: string): void {
+  ctx.fillStyle = color;
+  ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+}
+
+/** Vertical body bob for an animation frame (integer px). */
+function bob(anim: AnimName, frame: number): number {
+  switch (anim) {
+    case 'walk':
+      return frame === 1 || frame === 3 ? -1 : 0;
+    case 'idle':
+      return frame === 1 ? -1 : 0;
+    case 'cast':
+      return -1;
+    default:
+      return 0;
+  }
+}
+
+/** Forward lunge (toward facing) for attack frames. */
+function lunge(anim: AnimName, frame: number): number {
+  if (anim !== 'attack') return 0;
+  return [0, 2, 4, 1][frame] ?? 0;
+}
+
+/**
+ * Draw one frame of the BASE BODY (chibi: big head, small body) into the cell
+ * whose top-left is (ox, oy). Facing affects nothing here except limb swing;
+ * left/right share the `left` sheet (right is mirrored at render time).
+ */
+function drawBody(
+  ctx: CanvasRenderingContext2D,
+  ox: number,
+  oy: number,
+  dir: Exclude<Direction, 'right'>,
+  anim: AnimName,
+  frame: number,
+  pal: ActorPalette,
+): void {
+  const by = oy + bob(anim, frame);
+  const cx = ox + CHAR_ANCHOR_X; // horizontal center
+  const footY = oy + CHAR_ANCHOR_Y;
+
+  // Legs (two stubby legs), with walk alternation.
+  const legSwing = anim === 'walk' ? (frame % 2 === 0 ? 1 : -1) : 0;
+  px(ctx, cx - 7, footY - 8 + by, 5, 8, pal.cloth.shadow);
+  px(ctx, cx + 2, footY - 8 + by, 5, 8, pal.cloth.shadow);
+  px(ctx, cx - 7, footY - 1 + by + legSwing, 5, 2, pal.cloth.outline);
+  px(ctx, cx + 2, footY - 1 + by - legSwing, 5, 2, pal.cloth.outline);
+
+  // Torso (small body).
+  const torsoTop = footY - 22 + by;
+  px(ctx, cx - 9, torsoTop - 1, 18, 16, pal.cloth.outline);
+  px(ctx, cx - 8, torsoTop, 16, 14, pal.cloth.mid);
+  px(ctx, cx - 8, torsoTop, 16, 4, pal.cloth.light);
+  px(ctx, cx - 8, torsoTop + 10, 16, 4, pal.cloth.shadow);
+
+  // Arms.
+  const armSwing = anim === 'walk' ? (frame % 2 === 0 ? -1 : 1) : 0;
+  const lunged = lunge(anim, frame);
+  px(ctx, cx - 11, torsoTop + 2 + armSwing, 3, 9, pal.skin.shadow);
+  px(ctx, cx + 8, torsoTop + 2 - armSwing + lunged, 3, 9, pal.skin.mid);
+
+  // Head (big), with hair cap. Direction tweaks the face area.
+  const headTop = torsoTop - 22;
+  px(ctx, cx - 11, headTop - 1, 22, 22, pal.skin.outline);
+  px(ctx, cx - 10, headTop, 20, 20, pal.skin.mid);
+  px(ctx, cx - 10, headTop, 20, 6, pal.skin.light);
+  px(ctx, cx - 10, headTop + 16, 20, 4, pal.skin.shadow);
+  // Hair top.
+  px(ctx, cx - 10, headTop, 20, 6, pal.hair.mid);
+  px(ctx, cx - 10, headTop, 20, 2, pal.hair.light);
+  if (dir === 'down') {
+    // Eyes
+    px(ctx, cx - 6, headTop + 11, 3, 3, pal.skin.outline);
+    px(ctx, cx + 3, headTop + 11, 3, 3, pal.skin.outline);
+  } else if (dir === 'up') {
+    // Back of head: more hair, no face.
+    px(ctx, cx - 10, headTop, 20, 14, pal.hair.mid);
+  } else {
+    // Side: one eye toward the left edge.
+    px(ctx, cx - 7, headTop + 11, 3, 3, pal.skin.outline);
+  }
+}
+
+/** Hat / helmet sitting on top of the head. */
+function drawHead(
+  ctx: CanvasRenderingContext2D,
+  ox: number,
+  oy: number,
+  _dir: Exclude<Direction, 'right'>,
+  anim: AnimName,
+  frame: number,
+  r: Ramp,
+): void {
+  const by = oy + bob(anim, frame);
+  const cx = ox + CHAR_ANCHOR_X;
+  const footY = oy + CHAR_ANCHOR_Y;
+  const torsoTop = footY - 22 + by;
+  const headTop = torsoTop - 22;
+  // Cap band over hair, with a small brim and a pointed top for headroom test.
+  px(ctx, cx - 11, headTop - 1, 22, 7, r.outline);
+  px(ctx, cx - 10, headTop, 20, 5, r.mid);
+  px(ctx, cx - 10, headTop, 20, 2, r.light);
+  px(ctx, cx - 4, headTop - 9, 8, 9, r.outline);
+  px(ctx, cx - 3, headTop - 8, 6, 8, r.mid);
+}
+
+/** Chest armor over the torso. */
+function drawTorso(
+  ctx: CanvasRenderingContext2D,
+  ox: number,
+  oy: number,
+  _dir: Exclude<Direction, 'right'>,
+  anim: AnimName,
+  frame: number,
+  r: Ramp,
+): void {
+  const by = oy + bob(anim, frame);
+  const cx = ox + CHAR_ANCHOR_X;
+  const footY = oy + CHAR_ANCHOR_Y;
+  const torsoTop = footY - 22 + by;
+  px(ctx, cx - 9, torsoTop - 1, 18, 13, r.outline);
+  px(ctx, cx - 8, torsoTop, 16, 11, r.mid);
+  px(ctx, cx - 8, torsoTop, 16, 3, r.light);
+  px(ctx, cx - 8, torsoTop + 8, 16, 3, r.shadow);
+}
+
+/** A weapon held in the near hand, extending toward facing. */
+function drawWeapon(
+  ctx: CanvasRenderingContext2D,
+  ox: number,
+  oy: number,
+  _dir: Exclude<Direction, 'right'>,
+  anim: AnimName,
+  frame: number,
+  r: Ramp,
+): void {
+  const by = oy + bob(anim, frame);
+  const cx = ox + CHAR_ANCHOR_X;
+  const footY = oy + CHAR_ANCHOR_Y;
+  const torsoTop = footY - 22 + by;
+  const lunged = lunge(anim, frame);
+  const handX = cx + 9 + lunged;
+  const handY = torsoTop + 4;
+  // Blade pointing up-forward.
+  px(ctx, handX, handY - 16, 3, 18, r.outline);
+  px(ctx, handX + 1, handY - 15, 1, 16, r.light);
+  // Guard.
+  px(ctx, handX - 2, handY, 7, 2, r.shadow);
+  // Grip.
+  px(ctx, handX, handY + 2, 3, 4, r.outline);
+}
+
+/** Soft shadow blob at the feet. */
+function drawShadow(ctx: CanvasRenderingContext2D, ox: number, oy: number): void {
+  const cx = ox + CHAR_ANCHOR_X;
+  const footY = oy + CHAR_ANCHOR_Y;
+  px(ctx, cx - 9, footY - 1, 18, 4, 'rgba(0,0,0,0.30)');
+  px(ctx, cx - 7, footY + 2, 14, 2, 'rgba(0,0,0,0.30)');
+}
+
+/** Slime enemy frame (no paper doll, single sprite). */
+function drawSlime(
+  ctx: CanvasRenderingContext2D,
+  ox: number,
+  oy: number,
+  _dir: Exclude<Direction, 'right'>,
+  anim: AnimName,
+  frame: number,
+  pal: ActorPalette,
+): void {
+  const cx = ox + CHAR_ANCHOR_X;
+  const footY = oy + CHAR_ANCHOR_Y;
+  const squish = anim === 'walk' || anim === 'idle' ? (frame % 2 === 0 ? 0 : -2) : 0;
+  const h = 20 + squish;
+  const top = footY - h;
+  px(ctx, cx - 12, top - 1, 24, h + 1, pal.skin.outline);
+  px(ctx, cx - 11, top, 22, h, pal.skin.mid);
+  px(ctx, cx - 11, top, 22, 5, pal.skin.light);
+  px(ctx, cx - 11, footY - 5, 22, 4, pal.skin.shadow);
+  // Eyes
+  px(ctx, cx - 6, top + 7, 3, 4, pal.skin.outline);
+  px(ctx, cx + 3, top + 7, 3, 4, pal.skin.outline);
+}
+
+export interface LayerSpec {
+  readonly kind: PartKind;
+  readonly palette?: ActorPalette;
+  readonly ramp?: Ramp;
+}
+
+/**
+ * Render a full sheet (all directions x animations x frames) for one layer.
+ * Returns a canvas ready to register as a Phaser texture.
+ */
+export function renderSheet(spec: LayerSpec): HTMLCanvasElement {
+  const canvas = newCanvas(SHEET_WIDTH, SHEET_HEIGHT);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('2D context unavailable');
+  ctx.imageSmoothingEnabled = false;
+  ctx.clearRect(0, 0, SHEET_WIDTH, SHEET_HEIGHT);
+
+  let row = 0;
+  for (const dir of SHEET_DIRECTIONS) {
+    for (const animName of ANIM_NAMES) {
+      const anim = ANIMATIONS[animName];
+      for (let f = 0; f < anim.frames; f++) {
+        const ox = f * CHAR_FRAME_W;
+        const oy = row * CHAR_FRAME_H;
+        renderPart(ctx, ox, oy, dir, animName, f, spec);
+      }
+      row++;
+    }
+  }
+  return canvas;
+}
+
+function renderPart(
+  ctx: CanvasRenderingContext2D,
+  ox: number,
+  oy: number,
+  dir: Exclude<Direction, 'right'>,
+  anim: AnimName,
+  frame: number,
+  spec: LayerSpec,
+): void {
+  switch (spec.kind) {
+    case 'shadow':
+      drawShadow(ctx, ox, oy);
+      break;
+    case 'body':
+      drawBody(ctx, ox, oy, dir, anim, frame, spec.palette ?? PALETTES.player);
+      break;
+    case 'head':
+      drawHead(ctx, ox, oy, dir, anim, frame, spec.ramp ?? EQUIP_RAMPS.leatherCap);
+      break;
+    case 'torso':
+      drawTorso(ctx, ox, oy, dir, anim, frame, spec.ramp ?? EQUIP_RAMPS.clothVest);
+      break;
+    case 'weapon':
+      drawWeapon(ctx, ox, oy, dir, anim, frame, spec.ramp ?? EQUIP_RAMPS.woodSword);
+      break;
+    case 'slime':
+      drawSlime(ctx, ox, oy, dir, anim, frame, spec.palette ?? PALETTES.slime);
+      break;
+  }
+}
+
+/** Frame geometry for registering the sheet as a Phaser spritesheet. */
+export const SHEET_FRAME_CONFIG = {
+  frameWidth: CHAR_FRAME_W,
+  frameHeight: CHAR_FRAME_H,
+  // total frames declared so trailing (unused) cells in short rows are skipped
+  // by indexing logic, not by Phaser; we rely on frameIndex() for valid cells.
+} as const;
+
+export { MAX_FRAMES };
