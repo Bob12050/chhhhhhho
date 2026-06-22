@@ -1,13 +1,15 @@
 name: Deploy to GitHub Pages
 
 # Builds the PWA and publishes it to GitHub Pages so it can be tested on a
-# real phone at https://<owner>.github.io/chhhhhhho/. One-time setup: in the
-# repo, Settings -> Pages -> Source = "GitHub Actions".
+# real phone at https://<owner>.github.io/chhhhhhho/.
+#
+# Deploys only from `main` (the github-pages environment restricts deployments
+# to the default branch). Day-to-day development happens on the feature branch;
+# to publish, fast-forward main to it. workflow_dispatch allows manual runs.
 
 on:
   push:
     branches:
-      - claude/phaser-action-rpg-plan-zdgkd6
       - main
   workflow_dispatch:
 
