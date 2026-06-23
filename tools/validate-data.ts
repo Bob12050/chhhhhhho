@@ -115,13 +115,24 @@ function validateEnemies(itemIds: Set<string>, dropTableIds: Set<string>): Set<s
   return ids;
 }
 
-function validateMaps(enemyIds: Set<string>): void {
+function validateDialogue(): Set<string> {
+  const file = readJson<{ dialogues: { id: string }[] }>('src/data/defs/dialogue.json');
+  const ids = new Set<string>();
+  for (const d of file.dialogues) {
+    if (ids.has(d.id)) err(`Duplicate dialogue id: ${d.id}`);
+    ids.add(d.id);
+  }
+  return ids;
+}
+
+function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): void {
   const files = ['town', 'field', 'dungeon', 'boss_room'];
   type MapDoc = {
     id: string;
     spawns: Record<string, [number, number]>;
     portals?: { to: string; toSpawn: string }[];
     enemies?: { type: string }[];
+    npcs?: { dialogueId?: string }[];
   };
   const maps = new Map<string, MapDoc>();
   for (const f of files) {
@@ -139,6 +150,11 @@ function validateMaps(enemyIds: Set<string>): void {
         err(`Map ${m.id}: portal to unknown map "${p.to}"`);
       } else if (!(p.toSpawn in target.spawns)) {
         err(`Map ${m.id}: portal to ${p.to} uses missing spawn "${p.toSpawn}"`);
+      }
+    }
+    for (const n of m.npcs ?? []) {
+      if (n.dialogueId && !dialogueIds.has(n.dialogueId)) {
+        err(`Map ${m.id}: npc references unknown dialogue "${n.dialogueId}"`);
       }
     }
   }
@@ -258,7 +274,8 @@ function validateJobs(skillIds: Set<string>): void {
 const itemIds = collectItemIds();
 const dropTableIds = validateDrops(itemIds);
 const enemyIds = validateEnemies(itemIds, dropTableIds);
-validateMaps(enemyIds);
+const dialogueIds = validateDialogue();
+validateMaps(enemyIds, dialogueIds);
 validateRecipes(itemIds);
 const skillIds = validateSkills();
 validateJobs(skillIds);

@@ -14,6 +14,8 @@
   "npcs": [
     { "x": 180, "y": 230, "label": "装備屋", "action": "equip" },
     { "x": 270, "y": 430, "label": "鍛冶屋", "action": "craft" },
-    { "x": 90, "y": 430, "label": "ギルド", "action": "job" }
+    { "x": 90, "y": 430, "label": "ギルド", "action": "job" },
+    { "x": 120, "y": 700, "label": "むらおさ", "dialogueId": "elder_intro" },
+    { "x": 250, "y": 700, "label": "むらびと", "dialogueId": "villager_hint" }
   ]
 }

@@ -25,6 +25,7 @@ interface BuiltNpc {
   x: number;
   y: number;
   action?: string;
+  dialogueId?: string;
 }
 
 /**
@@ -117,7 +118,7 @@ export class WorldScene extends Phaser.Scene {
     );
 
     for (const e of this.map.enemies ?? []) this.spawnEnemy(e.type, e.x, e.y);
-    for (const n of this.map.npcs ?? []) this.spawnNpc(n.x, n.y, n.label, n.action);
+    for (const n of this.map.npcs ?? []) this.spawnNpc(n.x, n.y, n.label, n.action, n.dialogueId);
     this.spawnPetIfAny();
 
     // Listeners (unsubscribed on shutdown to avoid accumulation on re-entry).
@@ -215,7 +216,7 @@ export class WorldScene extends Phaser.Scene {
     if (def) this.pet = new Pet(this, this.player.x - 18, this.player.y + 8, def);
   }
 
-  private spawnNpc(x: number, y: number, label: string, action?: string): void {
+  private spawnNpc(x: number, y: number, label: string, action?: string, dialogueId?: string): void {
     const sprite = this.physics.add.staticImage(x, y, TEX.npc).setOrigin(0.5, 0.875);
     sprite.setDepth(Math.round(y));
     this.add
@@ -226,7 +227,7 @@ export class WorldScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(Math.round(y) + 1);
-    this.npcs.push({ x, y, action });
+    this.npcs.push({ x, y, action, dialogueId });
   }
 
   private onContact(enemy: Enemy): void {
@@ -517,13 +518,14 @@ export class WorldScene extends Phaser.Scene {
     if (npc.action === 'equip') this.openInventory('equipment');
     else if (npc.action === 'craft') this.openMenu('Crafting');
     else if (npc.action === 'job') this.openMenu('JobChange');
+    else if (npc.dialogueId) this.openMenu('Dialogue', { id: npc.dialogueId });
   }
 
   /** Pause the world and launch a modal overlay scene by key. */
-  private openMenu(key: string): void {
+  private openMenu(key: string, data?: object): void {
     if (this.transitioning || this.scene.isPaused() || this.scene.isActive(key)) return;
     this.scene.pause();
-    this.scene.launch(key);
+    this.scene.launch(key, data);
   }
 
   private facingFromStick(v: { x: number; y: number }): Direction | undefined {

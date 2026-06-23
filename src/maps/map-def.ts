@@ -30,8 +30,10 @@ export interface MapNpc {
   x: number;
   y: number;
   label: string;
-  /** Interaction action id (e.g. "equip"); dialogue lands in M11. */
+  /** Interaction action id (e.g. "equip"); omit for a plain talk NPC. */
   action?: string;
+  /** Dialogue shown on interact (talk NPCs). */
+  dialogueId?: string;
 }
 
 export interface MapDef {

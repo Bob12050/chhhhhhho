@@ -1,0 +1,22 @@
+{
+  "dialogues": [
+    {
+      "id": "elder_intro",
+      "speaker": "むらおさ",
+      "lines": [
+        "おお、目を覚ましたか。",
+        "この先の洞窟に わるい主が すみついておる。",
+        "そうびを ととのえ、討伐を たのむぞ。"
+      ],
+      "choices": [
+        { "text": "まかせろ", "setFlag": "accepted_quest" },
+        { "text": "こわいよ…" }
+      ]
+    },
+    {
+      "id": "villager_hint",
+      "speaker": "むらびと",
+      "lines": ["鍛冶屋でそうびが作れるよ。", "スライムの素材をあつめるといい。"]
+    }
+  ]
+}
