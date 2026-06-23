@@ -15,6 +15,7 @@ export class UIScene extends Phaser.Scene {
   private stick!: VirtualStick;
   private interactBtn!: TouchButton;
   private hpText!: Phaser.GameObjects.Text;
+  private mpText!: Phaser.GameObjects.Text;
   private updateText!: Phaser.GameObjects.Text;
 
   constructor() {
@@ -64,6 +65,18 @@ export class UIScene extends Phaser.Scene {
 
     bus.on('player:hp-changed', ({ current, max }) => {
       this.hpText.setText(`HP ${current}/${max}`);
+    });
+
+    this.mpText = this.add
+      .text(insets.left + 8, insets.top + 22, '', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '12px',
+        color: '#9cd2ff',
+      })
+      .setDepth(depth);
+
+    bus.on('player:mp-changed', ({ current, max }) => {
+      this.mpText.setText(`MP ${current}/${max}`);
     });
 
     // PWA update notice (applied later, never mid-combat).

@@ -28,6 +28,13 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
+  // Mobile twin-control scheme needs several simultaneous touches: the stick
+  // (1 finger) plus attack/skill/interact buttons. Phaser tracks only 1 touch
+  // pointer by default, so buttons silently ignored presses made while the
+  // stick finger was down. Track enough pointers for stick + two buttons.
+  input: {
+    activePointers: 4,
+  },
   // Top-down game: Arcade physics with no gravity. Required for `scene.physics`
   // to exist; without it Town/Player/Enemy physics calls throw at runtime.
   physics: {

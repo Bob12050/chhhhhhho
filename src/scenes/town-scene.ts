@@ -34,6 +34,7 @@ export class TownScene extends Phaser.Scene {
   private playerInvuln = 0;
   private skillCd = 0;
   private autoSaveTimer = 0;
+  private mpRegenTimer = 0;
   private nearNpc = false;
 
   constructor() {
@@ -86,6 +87,7 @@ export class TownScene extends Phaser.Scene {
     });
 
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
+    bus.emit('player:mp-changed', { current: gameState.mp, max: gameState.derived.maxMp });
   }
 
   private buildMap(): void {
@@ -216,8 +218,24 @@ export class TownScene extends Phaser.Scene {
     bus.emit('player:mp-changed', { current: gameState.mp, max: gameState.derived.maxMp });
     this.skillCd = 900;
     this.player.play('cast');
+    this.spawnSkillEffect(this.player.getDirection());
     // Slightly stronger, wider forward strike.
     this.time.delayedCall(120, () => this.resolveMelee(this.player.getDirection(), 1.6, 26));
+  }
+
+  /** A quick forward slash arc so the skill is visibly distinct from a swing. */
+  private spawnSkillEffect(dir: Direction): void {
+    const { ax, ay } = aheadOffset(dir, 30);
+    const fx = this.add.circle(this.player.x + ax, this.player.y - 30 + ay, 6, 0x9cd2ff, 0.85);
+    fx.setDepth(Math.round(this.player.y) + 1);
+    this.tweens.add({
+      targets: fx,
+      scale: 4,
+      alpha: 0,
+      duration: 220,
+      ease: 'Cubic.Out',
+      onComplete: () => fx.destroy(),
+    });
   }
 
   private onEnemyDeath(x: number, y: number): void {
@@ -274,6 +292,18 @@ export class TownScene extends Phaser.Scene {
       this.player.doll.container.setAlpha(1);
     }
     if (this.skillCd > 0) this.skillCd -= delta;
+
+    // Slow MP regen so the skill stays usable during a play session.
+    if (gameState.mp < gameState.derived.maxMp) {
+      this.mpRegenTimer += delta;
+      while (this.mpRegenTimer >= 700) {
+        this.mpRegenTimer -= 700;
+        gameState.mp = Math.min(gameState.derived.maxMp, gameState.mp + 1);
+        bus.emit('player:mp-changed', { current: gameState.mp, max: gameState.derived.maxMp });
+      }
+    } else {
+      this.mpRegenTimer = 0;
+    }
 
     // NPC proximity -> interact prompt.
     const near = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y) < 40;
