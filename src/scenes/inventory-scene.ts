@@ -28,6 +28,11 @@ export class InventoryScene extends Phaser.Scene {
   private content!: Phaser.GameObjects.Container;
   private goldText!: Phaser.GameObjects.Text;
   private tabButtons: { id: Tab; text: Phaser.GameObjects.Text }[] = [];
+  private scrollY = 0;
+  private maxScroll = 0;
+  private dragged = false;
+  private viewTop = 86;
+  private viewBottom = 0;
 
   constructor() {
     super('Inventory');
@@ -78,6 +83,13 @@ export class InventoryScene extends Phaser.Scene {
     });
 
     this.content = this.add.container(0, 0).setDepth(1);
+    this.viewBottom = h - 64;
+    // Clip content to the scroll viewport so rows don't overlap header/footer.
+    const maskG = this.make.graphics({}, false);
+    maskG.fillStyle(0xffffff);
+    maskG.fillRect(0, this.viewTop, w, this.viewBottom - this.viewTop);
+    this.content.setMask(maskG.createGeometryMask());
+    this.setupScroll();
 
     // Close + return-to-title.
     const close = this.add
@@ -113,12 +125,52 @@ export class InventoryScene extends Phaser.Scene {
     this.renderTab();
   }
 
+  private setupScroll(): void {
+    let startPointerY = 0;
+    let startScroll = 0;
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      startPointerY = p.y;
+      startScroll = this.scrollY;
+      this.dragged = false;
+    });
+    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      if (!p.isDown) return;
+      const d = startPointerY - p.y;
+      if (Math.abs(d) > 6) this.dragged = true;
+      this.scrollTo(startScroll + d);
+    });
+    this.input.on(
+      'wheel',
+      (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
+        this.scrollTo(this.scrollY + dy * 0.5);
+      },
+    );
+  }
+
+  private scrollTo(y: number): void {
+    this.scrollY = Phaser.Math.Clamp(y, 0, this.maxScroll);
+    this.content.y = -this.scrollY;
+  }
+
+  /** Recompute scrollable range from the laid-out rows and re-clamp. */
+  private updateScrollBounds(): void {
+    let bottom = this.viewTop;
+    for (const o of this.content.list) {
+      const go = o as unknown as { y?: number; height?: number };
+      bottom = Math.max(bottom, (go.y ?? 0) + (go.height ?? 0));
+    }
+    this.maxScroll = Math.max(0, bottom + 16 - this.viewBottom);
+    this.scrollTo(this.scrollY);
+  }
+
   private refreshGold(): void {
     this.goldText.setText(`${gameState.gold} G`);
   }
 
   private renderTab(): void {
     this.content.removeAll(true);
+    this.scrollY = 0;
+    this.content.y = 0;
     for (const tb of this.tabButtons) {
       tb.text.setBackgroundColor(tb.id === this.tab ? '#46508a' : '#2a2d44');
     }
@@ -127,6 +179,7 @@ export class InventoryScene extends Phaser.Scene {
     else if (this.tab === 'equipment') this.renderEquipment();
     else if (this.tab === 'status') this.renderStatus();
     else this.renderSkills();
+    this.updateScrollBounds();
   }
 
   private addRow(y: number, ...objs: Phaser.GameObjects.GameObject[]): void {
@@ -200,6 +253,7 @@ export class InventoryScene extends Phaser.Scene {
         .setOrigin(1, 0)
         .setInteractive({ useHandCursor: true });
       use.on('pointerup', () => {
+        if (this.dragged) return;
         gameState.useConsumable(id);
         this.renderTab();
       });
@@ -239,6 +293,7 @@ export class InventoryScene extends Phaser.Scene {
         .setOrigin(1, 0)
         .setInteractive({ useHandCursor: true });
       btn.on('pointerup', () => {
+        if (this.dragged) return;
         gameState.equip(slot, equipped ? null : id);
         this.renderTab();
       });
@@ -307,6 +362,7 @@ export class InventoryScene extends Phaser.Scene {
           .setOrigin(1, 0)
           .setInteractive({ useHandCursor: true });
         plus.on('pointerup', () => {
+          if (this.dragged) return;
           gs.allocateStat(s.key, 1);
           this.renderTab();
         });
@@ -376,6 +432,7 @@ export class InventoryScene extends Phaser.Scene {
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true });
           btn.on('pointerup', () => {
+            if (this.dragged) return;
             gs.learnSkill(def.id);
             this.renderTab();
           });

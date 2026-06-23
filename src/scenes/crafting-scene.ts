@@ -14,6 +14,11 @@ import { bus } from '@/core/event-bus';
 export class CraftingScene extends Phaser.Scene {
   private content!: Phaser.GameObjects.Container;
   private goldText!: Phaser.GameObjects.Text;
+  private scrollY = 0;
+  private maxScroll = 0;
+  private dragged = false;
+  private viewTop = 60;
+  private viewBottom = 0;
 
   constructor() {
     super('Crafting');
@@ -33,6 +38,12 @@ export class CraftingScene extends Phaser.Scene {
       .setDepth(1);
 
     this.content = this.add.container(0, 0).setDepth(1);
+    this.viewBottom = h - 60;
+    const maskG = this.make.graphics({}, false);
+    maskG.fillStyle(0xffffff);
+    maskG.fillRect(0, this.viewTop, w, this.viewBottom - this.viewTop);
+    this.content.setMask(maskG.createGeometryMask());
+    this.setupScroll();
 
     const close = this.add
       .text(w / 2, h - 40, '[ とじる ]', {
@@ -49,6 +60,33 @@ export class CraftingScene extends Phaser.Scene {
     this.render();
   }
 
+  private setupScroll(): void {
+    let startPointerY = 0;
+    let startScroll = 0;
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      startPointerY = p.y;
+      startScroll = this.scrollY;
+      this.dragged = false;
+    });
+    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      if (!p.isDown) return;
+      const d = startPointerY - p.y;
+      if (Math.abs(d) > 6) this.dragged = true;
+      this.scrollTo(startScroll + d);
+    });
+    this.input.on(
+      'wheel',
+      (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
+        this.scrollTo(this.scrollY + dy * 0.5);
+      },
+    );
+  }
+
+  private scrollTo(y: number): void {
+    this.scrollY = Phaser.Math.Clamp(y, 0, this.maxScroll);
+    this.content.y = -this.scrollY;
+  }
+
   private render(): void {
     this.content.removeAll(true);
     this.goldText.setText(`${gameState.gold} G`);
@@ -58,6 +96,8 @@ export class CraftingScene extends Phaser.Scene {
       this.renderRecipe(r, y, w);
       y += 78;
     }
+    this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
+    this.scrollTo(this.scrollY);
   }
 
   private renderRecipe(r: Recipe, y: number, w: number): void {
@@ -95,6 +135,7 @@ export class CraftingScene extends Phaser.Scene {
     if (!block) {
       btn.setInteractive({ useHandCursor: true });
       btn.on('pointerup', () => {
+        if (this.dragged) return;
         if (craft(gameState, r)) this.flash(`${itemDisplayName(r.resultItemId)} を作った！`);
         this.render();
       });
