@@ -5,6 +5,7 @@ import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
 import { DamageNumbers } from '@/combat/damage-numbers';
 import { gameState } from '@/player/game-state';
 import { getEquipment, getConsumable, getMaterial, getPetItem, itemDisplayName } from '@/data/items';
+import { rarityColor, rarityColorHex, rarityRank } from '@/data/rarity';
 import { Pet } from '@/pets/pet';
 import { getPet } from '@/pets/pet-defs';
 import { visualTexture } from '@/equipment/visuals';
@@ -362,6 +363,47 @@ export class WorldScene extends Phaser.Scene {
     drop.setData('itemId', itemId);
     drop.setData('qty', qty);
     drop.setDepth(Math.round(y));
+
+    // Rarity feedback: tint the pickup and, for rare+ drops, raise a pulsing
+    // light beam (classic loot signal). Alpha-only animation keeps it
+    // pixel-art friendly (no blur/free-scale).
+    const rank = this.itemRank(itemId);
+    drop.setTint(rarityColor(this.itemRarity(itemId)));
+    if (rank >= 1) {
+      this.tweens.add({
+        targets: drop,
+        alpha: 0.55,
+        duration: 480,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    }
+    if (rank >= 2) {
+      const color = rarityColor(this.itemRarity(itemId));
+      const h = 28 + rank * 12;
+      const beam = this.add
+        .rectangle(x, y - h / 2, rank >= 4 ? 6 : 4, h, color, 0.5)
+        .setDepth(Math.round(y) - 1)
+        .setBlendMode(Phaser.BlendModes.ADD);
+      drop.setData('beam', beam);
+      this.tweens.add({
+        targets: beam,
+        alpha: 0.15,
+        duration: 520,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    }
+  }
+
+  private itemRarity(id: string): string | undefined {
+    return getMaterial(id)?.rarity ?? getEquipment(id)?.rarity;
+  }
+
+  private itemRank(id: string): number {
+    return rarityRank(this.itemRarity(id));
   }
 
   private pickup(l: Phaser.Physics.Arcade.Image): void {
@@ -375,16 +417,17 @@ export class WorldScene extends Phaser.Scene {
       this.spawnPetIfAny();
     } else if (getEquipment(itemId)) for (let i = 0; i < qty; i++) gameState.addEquipment(itemId);
     const label = qty > 1 ? `+${itemDisplayName(itemId)}×${qty}` : `+${itemDisplayName(itemId)}`;
-    this.floatText(l.x, l.y - 18, label);
+    this.floatText(l.x, l.y - 18, label, rarityColorHex(this.itemRarity(itemId)));
+    (l.getData('beam') as Phaser.GameObjects.Rectangle | undefined)?.destroy();
     l.destroy();
   }
 
-  private floatText(x: number, y: number, msg: string): void {
+  private floatText(x: number, y: number, msg: string, color = '#ffe9a8'): void {
     const t = this.add
       .text(x, y, msg, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '11px',
-        color: '#ffe9a8',
+        color,
       })
       .setOrigin(0.5)
       .setDepth(9000);
