@@ -7,10 +7,12 @@ import {
   type EquipmentDef,
 } from '@/data/items';
 import type { EquipSlot } from '@/equipment/slots';
+import type { BaseStats } from '@/stats/stats';
+import { expToNext } from '@/stats/leveling';
 import { bus } from '@/core/event-bus';
 import { returnToTitle } from '@/core/game-flow';
 
-type Tab = 'items' | 'consumables' | 'equipment';
+type Tab = 'items' | 'consumables' | 'equipment' | 'status';
 
 const SLOT_LABEL: Record<string, string> = {
   head: '頭',
@@ -56,15 +58,16 @@ export class InventoryScene extends Phaser.Scene {
       { id: 'items', label: '素材' },
       { id: 'consumables', label: '消耗品' },
       { id: 'equipment', label: '装備' },
+      { id: 'status', label: '能力' },
     ];
     tabs.forEach((t, i) => {
       const tb = this.add
-        .text(16 + i * 86, 58, t.label, {
+        .text(12 + i * 86, 58, t.label, {
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
+          fontSize: '13px',
           color: '#fff',
           backgroundColor: '#2a2d44',
-          padding: { x: 14, y: 8 },
+          padding: { x: 12, y: 8 },
         })
         .setDepth(1)
         .setInteractive({ useHandCursor: true });
@@ -122,7 +125,8 @@ export class InventoryScene extends Phaser.Scene {
     }
     if (this.tab === 'items') this.renderItems();
     else if (this.tab === 'consumables') this.renderConsumables();
-    else this.renderEquipment();
+    else if (this.tab === 'equipment') this.renderEquipment();
+    else this.renderStatus();
   }
 
   private addRow(y: number, ...objs: Phaser.GameObjects.GameObject[]): void {
@@ -243,6 +247,75 @@ export class InventoryScene extends Phaser.Scene {
         fontFamily: 'system-ui, monospace',
         fontSize: '12px',
         color: '#cfe',
+      }),
+    );
+  }
+
+  private renderStatus(): void {
+    const w = this.scale.width;
+    const gs = gameState;
+    this.content.add(
+      this.add.text(16, 96, `Lv ${gs.level}    EXP ${gs.exp}/${expToNext(gs.level)}`, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '14px',
+        color: '#fff',
+      }),
+    );
+    this.content.add(
+      this.add.text(16, 118, `余りポイント: ${gs.statPoints}`, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        color: gs.statPoints > 0 ? '#ffe9a8' : '#9aa0b5',
+      }),
+    );
+
+    const stats: { key: keyof BaseStats; label: string }[] = [
+      { key: 'STR', label: '力 STR' },
+      { key: 'VIT', label: '体 VIT' },
+      { key: 'INT', label: '知 INT' },
+      { key: 'DEX', label: '器 DEX' },
+      { key: 'LUK', label: '運 LUK' },
+    ];
+    let y = 150;
+    for (const s of stats) {
+      this.content.add(
+        this.add.text(16, y, `${s.label}  ${gs.base[s.key]}`, {
+          fontFamily: 'system-ui, monospace',
+          fontSize: '14px',
+          color: '#fff',
+        }),
+      );
+      if (gs.statPoints > 0) {
+        const plus = this.add
+          .text(w - 16, y - 2, '[ ＋ ]', {
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '15px',
+            color: '#9fe3a0',
+          })
+          .setOrigin(1, 0)
+          .setInteractive({ useHandCursor: true });
+        plus.on('pointerup', () => {
+          gs.allocateStat(s.key, 1);
+          this.renderTab();
+        });
+        this.content.add(plus);
+      }
+      y += 30;
+    }
+
+    const d = gs.derived;
+    const lines = [
+      `最大HP ${d.maxHp}   最大MP ${d.maxMp}`,
+      `物攻 ${d.physAtk}   魔攻 ${d.magAtk}   防御 ${d.def}`,
+      `命中 ${d.accuracy}   回避 ${d.evasion}   会心 ${Math.round(d.critRate * 100)}%`,
+      `攻速 ${d.atkSpeed.toFixed(2)}   移動 ${d.moveSpeed}`,
+    ];
+    this.content.add(
+      this.add.text(16, y + 8, lines.join('\n'), {
+        fontFamily: 'system-ui, monospace',
+        fontSize: '12px',
+        color: '#cfe',
+        lineSpacing: 3,
       }),
     );
   }
