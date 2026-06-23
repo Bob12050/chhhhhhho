@@ -1,0 +1,12 @@
+{
+  "pets": [
+    {
+      "id": "slime_pet",
+      "name": "こぶんスライム",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#a8f0c0",
+      "scale": 0.7,
+      "passive": { "maxHp": 10, "def": 1 }
+    }
+  ]
+}

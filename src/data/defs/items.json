@@ -8,6 +8,9 @@
     { "id": "potion_hp", "name": "回復ポーション", "effect": { "hp": 30 }, "sellPrice": 5, "description": "HPを30回復する。" },
     { "id": "potion_mp", "name": "魔力ポーション", "effect": { "mp": 20 }, "sellPrice": 5, "description": "MPを20回復する。" }
   ],
+  "petItems": [
+    { "id": "pet_egg_slime", "name": "スライムのたまご", "petId": "slime_pet", "sellPrice": 0, "description": "割るとスライムが仲間になる。" }
+  ],
   "equipment": [
     {
       "id": "wood_sword",

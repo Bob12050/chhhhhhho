@@ -25,6 +25,8 @@ export interface SaveDataV1 {
     skillPoints: number;
     jobId: string;
     unlockedJobs: string[];
+    ownedPets: string[];
+    activePetId: string | null;
   };
   equipment: Partial<Record<string, string | null>>; // slot -> itemId
   inventory: {
@@ -59,6 +61,8 @@ export function createDefaultSave(slot: number): SaveData {
       skillPoints: 0,
       jobId: 'novice',
       unlockedJobs: ['novice'],
+      ownedPets: [],
+      activePetId: null,
     },
     equipment: { head: null, torso: null, main_hand: 'wood_sword' },
     inventory: {

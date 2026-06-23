@@ -4,7 +4,9 @@ import { Enemy } from '@/enemies/enemy';
 import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
 import { DamageNumbers } from '@/combat/damage-numbers';
 import { gameState } from '@/player/game-state';
-import { getEquipment, getConsumable, getMaterial, itemDisplayName } from '@/data/items';
+import { getEquipment, getConsumable, getMaterial, getPetItem, itemDisplayName } from '@/data/items';
+import { Pet } from '@/pets/pet';
+import { getPet } from '@/pets/pet-defs';
 import { visualTexture } from '@/equipment/visuals';
 import { TEX } from '@/assets/gen/textures';
 import { Rng } from '@/core/rng';
@@ -52,6 +54,7 @@ export class WorldScene extends Phaser.Scene {
   private transitioning = false;
   private busOff: Array<() => void> = [];
   private rng = new Rng();
+  private pet: Pet | null = null;
   private boss: Enemy | null = null;
   private bossMaxHp = 0;
   private bossBar: {
@@ -77,6 +80,7 @@ export class WorldScene extends Phaser.Scene {
     this.portalLock = 600;
     this.transitioning = false;
     this.rng = new Rng((Date.now() ^ 0x9e3779b9) >>> 0);
+    this.pet = null;
     this.boss = null;
     this.bossMaxHp = 0;
     this.bossBar = null;
@@ -114,6 +118,7 @@ export class WorldScene extends Phaser.Scene {
 
     for (const e of this.map.enemies ?? []) this.spawnEnemy(e.type, e.x, e.y);
     for (const n of this.map.npcs ?? []) this.spawnNpc(n.x, n.y, n.label, n.action);
+    this.spawnPetIfAny();
 
     // Listeners (unsubscribed on shutdown to avoid accumulation on re-entry).
     this.busOff.push(
@@ -202,6 +207,12 @@ export class WorldScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(8002);
     this.bossBar = { bg, fill, label };
+  }
+
+  private spawnPetIfAny(): void {
+    if (this.pet || !gameState.activePetId) return;
+    const def = getPet(gameState.activePetId);
+    if (def) this.pet = new Pet(this, this.player.x - 18, this.player.y + 8, def);
   }
 
   private spawnNpc(x: number, y: number, label: string, action?: string): void {
@@ -350,7 +361,10 @@ export class WorldScene extends Phaser.Scene {
     const qty = (l.getData('qty') as number | undefined) ?? 1;
     if (getMaterial(itemId)) gameState.addMaterial(itemId, qty);
     else if (getConsumable(itemId)) gameState.addConsumable(itemId, qty);
-    else if (getEquipment(itemId)) for (let i = 0; i < qty; i++) gameState.addEquipment(itemId);
+    else if (getPetItem(itemId)) {
+      gameState.obtainPetItem(itemId);
+      this.spawnPetIfAny();
+    } else if (getEquipment(itemId)) for (let i = 0; i < qty; i++) gameState.addEquipment(itemId);
     const label = qty > 1 ? `+${itemDisplayName(itemId)}×${qty}` : `+${itemDisplayName(itemId)}`;
     this.floatText(l.x, l.y - 18, label);
     l.destroy();
@@ -419,6 +433,7 @@ export class WorldScene extends Phaser.Scene {
     if (input.interact.justPressed && this.activeNpc) this.runNpc(this.activeNpc);
 
     this.player.update(delta);
+    this.pet?.update(delta, this.player.x, this.player.y);
     for (const e of this.enemies) e.update(delta, this.player.x, this.player.y);
 
     const lead = 28;

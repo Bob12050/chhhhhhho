@@ -148,13 +148,30 @@ function collectItemIds(): Set<string> {
   const file = readJson<{
     materials: { id: string }[];
     consumables: { id: string }[];
+    petItems: { id: string }[];
     equipment: { id: string }[];
   }>('src/data/defs/items.json');
   return new Set<string>([
     ...file.materials.map((m) => m.id),
     ...(file.consumables ?? []).map((c) => c.id),
+    ...(file.petItems ?? []).map((p) => p.id),
     ...file.equipment.map((e) => e.id),
   ]);
+}
+
+function validatePets(): void {
+  const petFile = readJson<{ pets: { id: string; passive?: Record<string, number> }[] }>(
+    'src/data/defs/pets.json',
+  );
+  const petIds = new Set(petFile.pets.map((p) => p.id));
+  for (const p of petFile.pets) {
+    for (const k of Object.keys(p.passive ?? {}))
+      if (!DERIVED_KEYS.has(k)) err(`Pet ${p.id}: invalid derived stat "${k}"`);
+  }
+  const items = readJson<{ petItems?: { id: string; petId: string }[] }>('src/data/defs/items.json');
+  for (const pi of items.petItems ?? []) {
+    if (!petIds.has(pi.petId)) err(`Pet item ${pi.id}: unknown petId "${pi.petId}"`);
+  }
 }
 
 validateItems();
@@ -245,6 +262,7 @@ validateMaps(enemyIds);
 validateRecipes(itemIds);
 const skillIds = validateSkills();
 validateJobs(skillIds);
+validatePets();
 
 if (errors.length > 0) {
   console.error(`Data validation FAILED with ${errors.length} error(s):`);

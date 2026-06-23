@@ -37,6 +37,9 @@ export interface GameEvents {
   // Jobs
   'job:changed': { jobId: string };
 
+  // Pets
+  'pet:changed': { petId: string | null };
+
   // Game flow (title / save-select)
   'game:new': { slot: number };
   'game:load': { slot: number };

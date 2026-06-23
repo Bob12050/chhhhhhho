@@ -7,6 +7,8 @@ import {
 import { getEquipment, getConsumable } from '@/data/items';
 import { getSkill } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
+import { getPet } from '@/pets/pet-defs';
+import { getPetItem } from '@/data/items';
 import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
 import { bus } from '@/core/event-bus';
 import { expToNext } from '@/stats/leveling';
@@ -51,6 +53,8 @@ export class GameState {
   skillPoints = 0;
   jobId = 'novice';
   unlockedJobs: string[] = ['novice'];
+  ownedPets: string[] = [];
+  activePetId: string | null = null;
   derived: DerivedStats = computeDerived(this.base);
 
   mapId = 'town';
@@ -77,6 +81,9 @@ export class GameState {
       const sk = getSkill(id);
       if (sk?.type === 'passive' && sk.derived) mods.push({ derived: sk.derived });
     }
+    // Active pet passive.
+    const pet = this.activePetId ? getPet(this.activePetId) : undefined;
+    if (pet?.passive) mods.push({ derived: pet.passive });
     const prev = this.derived;
     const hpRatio = prev.maxHp > 0 ? this.hp / prev.maxHp : 1;
     const mpRatio = prev.maxMp > 0 ? this.mp / prev.maxMp : 1;
@@ -184,6 +191,27 @@ export class GameState {
     bus.emit('inventory:changed', {});
   }
 
+  /** Obtain a pet via a pet item: add it and auto-summon if none active. */
+  obtainPetItem(petItemId: string): boolean {
+    const def = getPetItem(petItemId);
+    if (!def) return false;
+    this.addPet(def.petId);
+    return true;
+  }
+
+  addPet(petId: string): void {
+    if (!getPet(petId)) return;
+    if (!this.ownedPets.includes(petId)) this.ownedPets.push(petId);
+    if (this.activePetId === null) this.setActivePet(petId);
+    else bus.emit('pet:changed', { petId: this.activePetId });
+  }
+
+  setActivePet(petId: string | null): void {
+    this.activePetId = petId;
+    this.recompute();
+    bus.emit('pet:changed', { petId });
+  }
+
   /** Why a skill can't be learned right now (or null if it can). */
   skillLearnBlock(id: string): 'known' | 'unknown' | 'points' | 'level' | 'requires' | null {
     if (this.skills[id]) return 'known';
@@ -275,6 +303,8 @@ export class GameState {
         skillPoints: this.skillPoints,
         jobId: this.jobId,
         unlockedJobs: [...this.unlockedJobs],
+        ownedPets: [...this.ownedPets],
+        activePetId: this.activePetId,
       },
       equipment: { ...this.equipment },
       inventory: {
@@ -299,6 +329,9 @@ export class GameState {
     this.skillPoints = data.player.skillPoints ?? 0;
     this.jobId = data.player.jobId ?? 'novice';
     this.unlockedJobs = [...(data.player.unlockedJobs ?? ['novice'])];
+    this.ownedPets = (data.player.ownedPets ?? []).filter((id) => !!getPet(id));
+    this.activePetId =
+      data.player.activePetId && getPet(data.player.activePetId) ? data.player.activePetId : null;
     this.mapId = data.mapId;
     this.x = data.player.x;
     this.y = data.player.y;

@@ -25,6 +25,15 @@ export interface ConsumableDef {
   description: string;
 }
 
+export interface PetItemDef {
+  id: string;
+  name: string;
+  /** Pet granted when this item is obtained. */
+  petId: string;
+  sellPrice: number;
+  description: string;
+}
+
 export interface EquipmentDef {
   id: string;
   name: string;
@@ -43,6 +52,7 @@ export interface EquipmentDef {
 interface ItemsFile {
   materials: MaterialDef[];
   consumables: ConsumableDef[];
+  petItems: PetItemDef[];
   equipment: EquipmentDef[];
 }
 
@@ -50,10 +60,12 @@ const file = itemsJson as ItemsFile;
 
 const materials = new Map<string, MaterialDef>();
 const consumables = new Map<string, ConsumableDef>();
+const petItems = new Map<string, PetItemDef>();
 const equipment = new Map<string, EquipmentDef>();
 
 for (const m of file.materials) materials.set(m.id, m);
 for (const c of file.consumables) consumables.set(c.id, c);
+for (const p of file.petItems ?? []) petItems.set(p.id, p);
 for (const e of file.equipment) equipment.set(e.id, e);
 
 export function getMaterial(id: string): MaterialDef | undefined {
@@ -61,6 +73,9 @@ export function getMaterial(id: string): MaterialDef | undefined {
 }
 export function getConsumable(id: string): ConsumableDef | undefined {
   return consumables.get(id);
+}
+export function getPetItem(id: string): PetItemDef | undefined {
+  return petItems.get(id);
 }
 export function getEquipment(id: string): EquipmentDef | undefined {
   return equipment.get(id);
@@ -76,6 +91,10 @@ export function allConsumables(): ConsumableDef[] {
 }
 export function itemDisplayName(id: string): string {
   return (
-    materials.get(id)?.name ?? consumables.get(id)?.name ?? equipment.get(id)?.name ?? id
+    materials.get(id)?.name ??
+    consumables.get(id)?.name ??
+    petItems.get(id)?.name ??
+    equipment.get(id)?.name ??
+    id
   );
 }
