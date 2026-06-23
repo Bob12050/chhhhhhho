@@ -6,6 +6,7 @@ import {
 } from '@/stats/stats';
 import { getEquipment, getConsumable } from '@/data/items';
 import { getSkill } from '@/skills/skill-defs';
+import { getJob } from '@/jobs/job-defs';
 import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
 import { bus } from '@/core/event-bus';
 import { expToNext } from '@/stats/leveling';
@@ -48,6 +49,8 @@ export class GameState {
   skills: Record<string, number> = {};
   skillSlots: (string | null)[] = [null, null];
   skillPoints = 0;
+  jobId = 'novice';
+  unlockedJobs: string[] = ['novice'];
   derived: DerivedStats = computeDerived(this.base);
 
   mapId = 'town';
@@ -59,6 +62,10 @@ export class GameState {
   /** Recompute derived stats from base + equipment, clamping HP/MP. */
   recompute(preserveRatio = true): void {
     const mods: StatModifiers[] = [];
+    // Job modifiers (base + derived).
+    const job = getJob(this.jobId);
+    if (job?.baseStatModifiers) mods.push({ base: job.baseStatModifiers });
+    if (job?.derivedModifiers) mods.push({ derived: job.derivedModifiers });
     for (const slot of EQUIP_SLOTS) {
       const id = this.equipment[slot];
       if (!id) continue;
@@ -90,10 +97,48 @@ export class GameState {
     bus.emit('player:mp-changed', { current: this.mp, max: this.derived.maxMp });
   }
 
+  /** Whether the current job may equip this item (weapon-tag restriction). */
+  canEquip(itemId: string): boolean {
+    const def = getEquipment(itemId);
+    if (!def) return false;
+    if (def.slot === 'main_hand' && def.weaponTags && def.weaponTags.length > 0) {
+      const allowed = getJob(this.jobId)?.equippableWeaponTags ?? [];
+      return def.weaponTags.some((t) => allowed.includes(t));
+    }
+    return true;
+  }
+
   equip(slot: EquipSlot, itemId: string | null): void {
+    if (itemId && !this.canEquip(itemId)) return;
     this.equipment[slot] = itemId;
     this.recompute();
     bus.emit('equipment:changed', { slot });
+  }
+
+  /** Why the player can't change to a job right now (or null if they can). */
+  jobChangeBlock(id: string): 'current' | 'unknown' | 'level' | 'job' | 'skill' | 'flag' | null {
+    if (id === this.jobId) return 'current';
+    const def = getJob(id);
+    if (!def) return 'unknown';
+    const u = def.unlock;
+    if (u?.level && this.level < u.level) return 'level';
+    if (u?.requiresJob && this.jobId !== u.requiresJob && !this.unlockedJobs.includes(u.requiresJob))
+      return 'job';
+    if (u?.requiresSkill && !this.skills[u.requiresSkill]) return 'skill';
+    if (u?.flag && !this.flags[u.flag]) return 'flag';
+    return null;
+  }
+
+  changeJob(id: string): boolean {
+    if (this.jobChangeBlock(id) !== null) return false;
+    this.jobId = id;
+    if (!this.unlockedJobs.includes(id)) this.unlockedJobs.push(id);
+    // Unequip a weapon the new job can't use.
+    const wpn = this.equipment.main_hand;
+    if (wpn && !this.canEquip(wpn)) this.equipment.main_hand = null;
+    this.recompute();
+    bus.emit('job:changed', { jobId: id });
+    return true;
   }
 
   addGold(amount: number): void {
@@ -228,6 +273,8 @@ export class GameState {
         skills: { ...this.skills },
         skillSlots: [...this.skillSlots],
         skillPoints: this.skillPoints,
+        jobId: this.jobId,
+        unlockedJobs: [...this.unlockedJobs],
       },
       equipment: { ...this.equipment },
       inventory: {
@@ -250,6 +297,8 @@ export class GameState {
     this.skills = { ...(data.player.skills ?? {}) };
     this.skillSlots = [...(data.player.skillSlots ?? [null, null])];
     this.skillPoints = data.player.skillPoints ?? 0;
+    this.jobId = data.player.jobId ?? 'novice';
+    this.unlockedJobs = [...(data.player.unlockedJobs ?? ['novice'])];
     this.mapId = data.mapId;
     this.x = data.player.x;
     this.y = data.player.y;

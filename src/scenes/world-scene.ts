@@ -445,13 +445,15 @@ export class WorldScene extends Phaser.Scene {
 
   private runNpc(npc: BuiltNpc): void {
     if (npc.action === 'equip') this.openInventory('equipment');
-    else if (npc.action === 'craft') this.openCrafting();
+    else if (npc.action === 'craft') this.openMenu('Crafting');
+    else if (npc.action === 'job') this.openMenu('JobChange');
   }
 
-  private openCrafting(): void {
-    if (this.transitioning || this.scene.isPaused() || this.scene.isActive('Crafting')) return;
+  /** Pause the world and launch a modal overlay scene by key. */
+  private openMenu(key: string): void {
+    if (this.transitioning || this.scene.isPaused() || this.scene.isActive(key)) return;
     this.scene.pause();
-    this.scene.launch('Crafting');
+    this.scene.launch(key);
   }
 
   private facingFromStick(v: { x: number; y: number }): Direction | undefined {

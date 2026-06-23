@@ -10,6 +10,7 @@ import type { EquipSlot } from '@/equipment/slots';
 import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
 import { allSkills } from '@/skills/skill-defs';
+import { getJob } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
 import { returnToTitle } from '@/core/game-flow';
 
@@ -258,11 +259,18 @@ export class InventoryScene extends Phaser.Scene {
     const w = this.scale.width;
     const gs = gameState;
     this.content.add(
-      this.add.text(16, 96, `Lv ${gs.level}    EXP ${gs.exp}/${expToNext(gs.level)}`, {
+      this.add.text(16, 96, `Lv ${gs.level}  ${getJob(gs.jobId)?.name ?? gs.jobId}`, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '14px',
         color: '#fff',
       }),
+    );
+    this.content.add(
+      this.add.text(w - 16, 96, `EXP ${gs.exp}/${expToNext(gs.level)}`, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '12px',
+        color: '#9aa0b5',
+      }).setOrigin(1, 0),
     );
     this.content.add(
       this.add.text(16, 118, `余りポイント: ${gs.statPoints}`, {

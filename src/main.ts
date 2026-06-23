@@ -10,6 +10,7 @@ import { WorldScene } from '@/scenes/world-scene';
 import { UIScene } from '@/scenes/ui-scene';
 import { InventoryScene } from '@/scenes/inventory-scene';
 import { CraftingScene } from '@/scenes/crafting-scene';
+import { JobChangeScene } from '@/scenes/job-change-scene';
 import { installOrientationGuard } from '@/scenes/orientation-guard';
 import { installLifecycle } from '@/core/lifecycle';
 import { registerServiceWorker } from '@/core/pwa';
@@ -60,6 +61,7 @@ const config: Phaser.Types.Core.GameConfig = {
     UIScene,
     InventoryScene,
     CraftingScene,
+    JobChangeScene,
   ],
 };
 

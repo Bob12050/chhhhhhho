@@ -23,6 +23,8 @@ export interface SaveDataV1 {
     skills: Record<string, number>; // skillId -> level (1 = learned)
     skillSlots: (string | null)[]; // active skill assigned to each slot
     skillPoints: number;
+    jobId: string;
+    unlockedJobs: string[];
   };
   equipment: Partial<Record<string, string | null>>; // slot -> itemId
   inventory: {
@@ -55,6 +57,8 @@ export function createDefaultSave(slot: number): SaveData {
       skills: { slash: 1 },
       skillSlots: ['slash', null],
       skillPoints: 0,
+      jobId: 'novice',
+      unlockedJobs: ['novice'],
     },
     equipment: { head: null, torso: null, main_hand: 'wood_sword' },
     inventory: {

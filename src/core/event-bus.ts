@@ -34,6 +34,9 @@ export interface GameEvents {
   // Skills
   'skill:learned': { skillId: string };
 
+  // Jobs
+  'job:changed': { jobId: string };
+
   // Game flow (title / save-select)
   'game:new': { slot: number };
   'game:load': { slot: number };

@@ -177,7 +177,7 @@ function validateRecipes(itemIds: Set<string>): void {
   }
 }
 
-function validateSkills(): void {
+function validateSkills(): Set<string> {
   const file = readJson<{
     skills: { id: string; type: string; requires?: string[]; derived?: Record<string, number> }[];
   }>('src/data/defs/skills.json');
@@ -210,6 +210,32 @@ function validateSkills(): void {
     state.set(id, 1);
   };
   for (const s of file.skills) visit(s.id, new Set());
+  return ids;
+}
+
+function validateJobs(skillIds: Set<string>): void {
+  const file = readJson<{
+    jobs: {
+      id: string;
+      parentJobIds?: string[];
+      unlock?: { requiresJob?: string; requiresSkill?: string };
+      baseStatModifiers?: Record<string, number>;
+      derivedModifiers?: Record<string, number>;
+    }[];
+  }>('src/data/defs/jobs.json');
+  const ids = new Set(file.jobs.map((j) => j.id));
+  const BASE_KEYS = new Set(['STR', 'VIT', 'INT', 'DEX', 'LUK']);
+  for (const j of file.jobs) {
+    for (const p of j.parentJobIds ?? []) if (!ids.has(p)) err(`Job ${j.id}: unknown parent "${p}"`);
+    if (j.unlock?.requiresJob && !ids.has(j.unlock.requiresJob))
+      err(`Job ${j.id}: unlock requiresJob "${j.unlock.requiresJob}" unknown`);
+    if (j.unlock?.requiresSkill && !skillIds.has(j.unlock.requiresSkill))
+      err(`Job ${j.id}: unlock requiresSkill "${j.unlock.requiresSkill}" unknown`);
+    for (const k of Object.keys(j.baseStatModifiers ?? {}))
+      if (!BASE_KEYS.has(k)) err(`Job ${j.id}: invalid base stat "${k}"`);
+    for (const k of Object.keys(j.derivedModifiers ?? {}))
+      if (!DERIVED_KEYS.has(k)) err(`Job ${j.id}: invalid derived stat "${k}"`);
+  }
 }
 
 const itemIds = collectItemIds();
@@ -217,7 +243,8 @@ const dropTableIds = validateDrops(itemIds);
 const enemyIds = validateEnemies(itemIds, dropTableIds);
 validateMaps(enemyIds);
 validateRecipes(itemIds);
-validateSkills();
+const skillIds = validateSkills();
+validateJobs(skillIds);
 
 if (errors.length > 0) {
   console.error(`Data validation FAILED with ${errors.length} error(s):`);

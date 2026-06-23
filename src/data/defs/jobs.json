@@ -1,0 +1,25 @@
+{
+  "jobs": [
+    {
+      "id": "novice",
+      "name": "見習い",
+      "tier": 0,
+      "parentJobIds": [],
+      "description": "だれもが最初に就く職。",
+      "equippableWeaponTags": ["sword"],
+      "skillTreeId": "common"
+    },
+    {
+      "id": "warrior",
+      "name": "戦士",
+      "tier": 1,
+      "parentJobIds": ["novice"],
+      "description": "前線で戦う近接職。HPと腕力に優れる。",
+      "unlock": { "level": 3, "requiresJob": "novice" },
+      "baseStatModifiers": { "STR": 4, "VIT": 3 },
+      "derivedModifiers": { "physAtk": 2 },
+      "equippableWeaponTags": ["sword"],
+      "skillTreeId": "warrior"
+    }
+  ]
+}
