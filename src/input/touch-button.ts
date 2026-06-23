@@ -42,6 +42,20 @@ export class TouchButton {
     scene.input.on('pointermove', (p: Phaser.Input.Pointer) => this.move(p));
     scene.input.on('pointerup', (p: Phaser.Input.Pointer) => this.release(p));
     scene.input.on('pointerupoutside', (p: Phaser.Input.Pointer) => this.release(p));
+    scene.input.on('pointercancel', (p: Phaser.Input.Pointer) => this.release(p));
+    // Self-heal: release if the tracked finger's up event was ever missed, so a
+    // button can't get stuck "held".
+    scene.events.on(Phaser.Scenes.Events.UPDATE, () => {
+      if (this.pointerId === -1) return;
+      const p = scene.input.manager.pointers.find((pt) => pt.id === this.pointerId);
+      if (!p || !p.isDown) this.forceRelease();
+    });
+  }
+
+  private forceRelease(): void {
+    this.pointerId = -1;
+    this.circle.setFillStyle(this.circle.fillColor, 0.35);
+    this.onChange?.(false);
   }
 
   setVisible(v: boolean): void {

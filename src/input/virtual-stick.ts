@@ -35,6 +35,25 @@ export class VirtualStick {
     scene.input.on('pointermove', (p: Phaser.Input.Pointer) => this.onMove(p));
     scene.input.on('pointerup', (p: Phaser.Input.Pointer) => this.onUp(p));
     scene.input.on('pointerupoutside', (p: Phaser.Input.Pointer) => this.onUp(p));
+    scene.input.on('pointercancel', (p: Phaser.Input.Pointer) => this.onUp(p));
+    // Self-heal: if the tracked finger's pointerup was ever missed (multi-touch,
+    // a menu opening mid-drag, OS interruptions), the stick would stay "held"
+    // and ignore new touches — making the player unable to move. Each frame,
+    // verify the tracked pointer is still down; otherwise release.
+    scene.events.on(Phaser.Scenes.Events.UPDATE, () => this.poll(scene));
+  }
+
+  private poll(scene: Phaser.Scene): void {
+    if (this.pointerId === -1) return;
+    const p = scene.input.manager.pointers.find((pt) => pt.id === this.pointerId);
+    if (!p || !p.isDown) this.reset();
+  }
+
+  private reset(): void {
+    this.pointerId = -1;
+    this.vector.set(0, 0);
+    this.baseGfx.setVisible(false);
+    this.thumbGfx.setVisible(false);
   }
 
   private onDown(p: Phaser.Input.Pointer): void {
@@ -54,10 +73,7 @@ export class VirtualStick {
 
   private onUp(p: Phaser.Input.Pointer): void {
     if (p.id !== this.pointerId) return;
-    this.pointerId = -1;
-    this.vector.set(0, 0);
-    this.baseGfx.setVisible(false);
-    this.thumbGfx.setVisible(false);
+    this.reset();
   }
 
   private update(px: number, py: number): void {
