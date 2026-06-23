@@ -53,6 +53,11 @@ export class DebugScene extends Phaser.Scene {
     y += 40;
     this.btn(16, y, '全装備入手', () => this.grant(() => this.grantAllEquipment()));
     this.btn(160, y, 'ペット入手', () => this.grant(() => gameState.obtainPetItem('pet_egg_slime')));
+    y += 44;
+    this.btn(16, y, '通し確認チェックリスト', () => {
+      this.scene.stop();
+      this.scene.launch('Checklist');
+    });
     y += 48;
 
     this.btn(w / 2 - 44, y, '[ とじる ]', () => this.close(), 0xffd86b);

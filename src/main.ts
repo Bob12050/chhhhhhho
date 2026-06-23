@@ -13,6 +13,7 @@ import { CraftingScene } from '@/scenes/crafting-scene';
 import { JobChangeScene } from '@/scenes/job-change-scene';
 import { DialogueScene } from '@/scenes/dialogue-scene';
 import { DebugScene } from '@/scenes/debug-scene';
+import { ChecklistScene } from '@/scenes/checklist-scene';
 import { installOrientationGuard } from '@/scenes/orientation-guard';
 import { installLifecycle } from '@/core/lifecycle';
 import { registerServiceWorker } from '@/core/pwa';
@@ -66,6 +67,7 @@ const config: Phaser.Types.Core.GameConfig = {
     JobChangeScene,
     DialogueScene,
     DebugScene,
+    ChecklistScene,
   ],
 };
 

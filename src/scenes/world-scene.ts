@@ -89,6 +89,7 @@ export class WorldScene extends Phaser.Scene {
     this.bossBar = null;
 
     this.map = getMap(gameState.mapId) ?? getMap('town')!;
+    gameState.flags[`visited_${this.map.id}`] = true;
 
     this.ui = this.scene.get('UI') as UIScene;
     this.ui.showInteract(false);
@@ -328,6 +329,7 @@ export class WorldScene extends Phaser.Scene {
 
   private onEnemyDeath(x: number, y: number, def: EnemyDef): void {
     this.enemies = this.enemies.filter((e) => !e.isDead());
+    gameState.flags['killed_any'] = true;
     const killFlag = `boss_${def.id}_killed`;
     const firstKill = !!def.isBoss && !gameState.flags[killFlag];
     const table = def.dropTableId ? getDropTable(def.dropTableId) : undefined;
@@ -405,6 +407,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private persist(): Promise<void> {
+    gameState.flags['saved_any'] = true;
     return saveManager.write(gameState.toSave(gameState.slot));
   }
 

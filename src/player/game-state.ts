@@ -118,6 +118,7 @@ export class GameState {
   equip(slot: EquipSlot, itemId: string | null): void {
     if (itemId && !this.canEquip(itemId)) return;
     this.equipment[slot] = itemId;
+    if (itemId) this.flags['equipped_any'] = true;
     this.recompute();
     bus.emit('equipment:changed', { slot });
   }

@@ -24,6 +24,7 @@ export function craft(gs: GameState, r: Recipe): boolean {
   gs.addGold(-r.gold);
   gs.consumeMaterials(r.materials);
   grantResult(gs, r.resultItemId, r.resultQty);
+  gs.flags['crafted_any'] = true;
   bus.emit('craft:made', { recipeId: r.id });
   return true;
 }
