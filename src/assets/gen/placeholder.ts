@@ -71,7 +71,7 @@ function drawBody(
   frame: number,
   pal: ActorPalette,
 ): void {
-  const by = oy + bob(anim, frame);
+  const by = bob(anim, frame);
   const cx = ox + CHAR_ANCHOR_X; // horizontal center
   const footY = oy + CHAR_ANCHOR_Y;
 
@@ -127,7 +127,7 @@ function drawHead(
   frame: number,
   r: Ramp,
 ): void {
-  const by = oy + bob(anim, frame);
+  const by = bob(anim, frame);
   const cx = ox + CHAR_ANCHOR_X;
   const footY = oy + CHAR_ANCHOR_Y;
   const torsoTop = footY - 22 + by;
@@ -150,7 +150,7 @@ function drawTorso(
   frame: number,
   r: Ramp,
 ): void {
-  const by = oy + bob(anim, frame);
+  const by = bob(anim, frame);
   const cx = ox + CHAR_ANCHOR_X;
   const footY = oy + CHAR_ANCHOR_Y;
   const torsoTop = footY - 22 + by;
@@ -170,7 +170,7 @@ function drawWeapon(
   frame: number,
   r: Ramp,
 ): void {
-  const by = oy + bob(anim, frame);
+  const by = bob(anim, frame);
   const cx = ox + CHAR_ANCHOR_X;
   const footY = oy + CHAR_ANCHOR_Y;
   const torsoTop = footY - 22 + by;
