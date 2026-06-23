@@ -184,6 +184,8 @@ export class WorldScene extends Phaser.Scene {
       attackRange: def.attackRange,
       tint: def.tint ? Phaser.Display.Color.HexStringToColor(def.tint).color : undefined,
       scale: def.scale,
+      keepDistance: def.keepDistance,
+      knockbackResist: def.knockbackResist,
     });
     this.physics.add.collider(enemy.sprite, this.obstacles);
     this.physics.add.overlap(this.player.body, enemy.sprite, () => this.onContact(enemy));

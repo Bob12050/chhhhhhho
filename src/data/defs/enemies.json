@@ -23,6 +23,7 @@
       "contactDamage": 4,
       "aggroRange": 150,
       "attackRange": 16,
+      "keepDistance": 46,
       "expReward": 9,
       "goldReward": 3,
       "dropTableId": "bat_basic"
@@ -38,6 +39,7 @@
       "contactDamage": 12,
       "aggroRange": 100,
       "attackRange": 20,
+      "knockbackResist": 0.8,
       "expReward": 26,
       "goldReward": 10,
       "dropTableId": "golem_basic"
@@ -54,6 +56,7 @@
       "contactDamage": 16,
       "aggroRange": 280,
       "attackRange": 30,
+      "knockbackResist": 0.5,
       "expReward": 170,
       "goldReward": 100,
       "dropTableId": "boss_slime"

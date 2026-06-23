@@ -21,6 +21,10 @@ export interface EnemyDef {
   attackRange: number;
   expReward: number;
   goldReward?: number;
+  /** Hover distance for hit-and-run enemies. */
+  keepDistance?: number;
+  /** 0..1 knockback ignored (heavy enemies). */
+  knockbackResist?: number;
   /** Drop table id (see drops.json); rolled on death. */
   dropTableId?: string;
 }

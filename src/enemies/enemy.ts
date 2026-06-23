@@ -19,6 +19,10 @@ export interface EnemyConfig {
   /** Base tint applied to the sprite (restored after hit-flash). */
   readonly tint?: number;
   readonly scale?: number;
+  /** Hover around this distance (hit-and-run); omit for a straight chaser. */
+  readonly keepDistance?: number;
+  /** 0..1 fraction of knockback ignored (heavy enemies). */
+  readonly knockbackResist?: number;
 }
 
 export class Enemy {
@@ -74,10 +78,11 @@ export class Enemy {
     this.flashTimer = 120;
     // Phaser 4: white flash via FILL tint mode (plain setTint multiplies).
     this.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
-    // Knockback away from the source.
+    // Knockback away from the source (heavy enemies resist it).
     const ang = Math.atan2(this.y - fromY, this.x - fromX);
-    this.sprite.setVelocity(Math.cos(ang) * knockback, Math.sin(ang) * knockback);
-    this.knockback = 180;
+    const kb = knockback * (1 - (this.cfg.knockbackResist ?? 0));
+    this.sprite.setVelocity(Math.cos(ang) * kb, Math.sin(ang) * kb);
+    this.knockback = kb > 20 ? 180 : 0;
     if (this.hp <= 0) {
       this.die();
       return true;
@@ -161,6 +166,15 @@ export class Enemy {
       case 'chase':
         if (distHome > this.cfg.aggroRange * 2.2) {
           this.setState('return');
+        } else if (this.cfg.keepDistance) {
+          // Hit-and-run: hover near keepDistance, darting in to strike.
+          if (distToPlayer <= this.cfg.attackRange) {
+            this.setState('attack');
+          } else if (distToPlayer < this.cfg.keepDistance) {
+            this.moveAway(playerX, playerY, this.cfg.moveSpeed);
+          } else {
+            this.moveToward(playerX, playerY, this.cfg.moveSpeed);
+          }
         } else if (distToPlayer <= this.cfg.attackRange) {
           this.setState('attack');
         } else {
@@ -196,6 +210,15 @@ export class Enemy {
 
   private moveToward(tx: number, ty: number, speed: number): void {
     const ang = Math.atan2(ty - this.y, tx - this.x);
+    this.sprite.setVelocity(Math.cos(ang) * speed, Math.sin(ang) * speed);
+    const vx = Math.cos(ang);
+    const vy = Math.sin(ang);
+    this.dir = Math.abs(vx) > Math.abs(vy) ? (vx > 0 ? 'right' : 'left') : vy > 0 ? 'down' : 'up';
+  }
+
+  /** Move directly away from a point (hit-and-run retreat). */
+  private moveAway(tx: number, ty: number, speed: number): void {
+    const ang = Math.atan2(this.y - ty, this.x - tx);
     this.sprite.setVelocity(Math.cos(ang) * speed, Math.sin(ang) * speed);
     const vx = Math.cos(ang);
     const vy = Math.sin(ang);
