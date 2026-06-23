@@ -82,16 +82,34 @@ function readJson<T>(rel: string): T {
   return JSON.parse(readFileSync(join(root, rel), 'utf8')) as T;
 }
 
-function validateEnemies(itemIds: Set<string>): Set<string> {
-  const file = readJson<{ enemies: { id: string; drop?: { itemId: string } }[] }>(
+function validateDrops(itemIds: Set<string>): Set<string> {
+  const file = readJson<{
+    tables: { id: string; entries: { itemId: string; dropRate: number; min: number; max: number }[] }[];
+  }>('src/data/defs/drops.json');
+  const ids = new Set<string>();
+  for (const t of file.tables) {
+    if (ids.has(t.id)) err(`Duplicate drop table id: ${t.id}`);
+    ids.add(t.id);
+    for (const e of t.entries) {
+      if (!itemIds.has(e.itemId)) err(`Drop ${t.id}: item "${e.itemId}" not in items.json`);
+      if (e.dropRate < 0 || e.dropRate > 1) err(`Drop ${t.id}/${e.itemId}: dropRate out of [0,1]`);
+      if (e.min < 0 || e.max < e.min) err(`Drop ${t.id}/${e.itemId}: invalid quantity range`);
+    }
+  }
+  return ids;
+}
+
+function validateEnemies(itemIds: Set<string>, dropTableIds: Set<string>): Set<string> {
+  void itemIds;
+  const file = readJson<{ enemies: { id: string; dropTableId?: string }[] }>(
     'src/data/defs/enemies.json',
   );
   const ids = new Set<string>();
   for (const e of file.enemies) {
     if (ids.has(e.id)) err(`Duplicate enemy id: ${e.id}`);
     ids.add(e.id);
-    if (e.drop && !itemIds.has(e.drop.itemId)) {
-      err(`Enemy ${e.id}: drop item "${e.drop.itemId}" not in items.json`);
+    if (e.dropTableId && !dropTableIds.has(e.dropTableId)) {
+      err(`Enemy ${e.id}: unknown dropTableId "${e.dropTableId}"`);
     }
   }
   return ids;
@@ -142,7 +160,8 @@ function collectItemIds(): Set<string> {
 validateItems();
 validateSheetMath();
 const itemIds = collectItemIds();
-const enemyIds = validateEnemies(itemIds);
+const dropTableIds = validateDrops(itemIds);
+const enemyIds = validateEnemies(itemIds, dropTableIds);
 validateMaps(enemyIds);
 
 if (errors.length > 0) {

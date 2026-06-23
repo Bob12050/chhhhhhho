@@ -10,7 +10,7 @@
       "aggroRange": 110,
       "attackRange": 18,
       "expReward": 8,
-      "drop": { "itemId": "slime_jelly" }
+      "dropTableId": "slime_basic"
     }
   ]
 }

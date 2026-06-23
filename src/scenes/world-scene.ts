@@ -4,9 +4,11 @@ import { Enemy } from '@/enemies/enemy';
 import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
 import { DamageNumbers } from '@/combat/damage-numbers';
 import { gameState } from '@/player/game-state';
-import { getEquipment, itemDisplayName } from '@/data/items';
+import { getEquipment, getConsumable, getMaterial, itemDisplayName } from '@/data/items';
 import { visualTexture } from '@/equipment/visuals';
 import { TEX } from '@/assets/gen/textures';
+import { Rng } from '@/core/rng';
+import { getDropTable, rollDrops } from '@/loot/drop-table';
 import { input } from '@/input/input-state';
 import { bus } from '@/core/event-bus';
 import { saveManager } from '@/save/save-manager';
@@ -48,6 +50,7 @@ export class WorldScene extends Phaser.Scene {
   private portalLock = 0; // ms; blocks portal re-trigger right after arrival
   private transitioning = false;
   private busOff: Array<() => void> = [];
+  private rng = new Rng();
 
   constructor() {
     super('World');
@@ -65,6 +68,7 @@ export class WorldScene extends Phaser.Scene {
     this.mpRegenTimer = 0;
     this.portalLock = 600;
     this.transitioning = false;
+    this.rng = new Rng((Date.now() ^ 0x9e3779b9) >>> 0);
 
     this.map = getMap(gameState.mapId) ?? getMap('town')!;
 
@@ -260,21 +264,36 @@ export class WorldScene extends Phaser.Scene {
 
   private onEnemyDeath(x: number, y: number, def: EnemyDef): void {
     this.enemies = this.enemies.filter((e) => !e.isDead());
-    if (def.drop) {
-      const drop = this.loot.create(x, y, TEX.slime, 0) as Phaser.Physics.Arcade.Image;
-      drop.setScale(0.5);
-      drop.setOrigin(0.5, 0.875);
-      drop.setData('itemId', def.drop.itemId);
-      drop.setDepth(Math.round(y));
+    const table = def.dropTableId ? getDropTable(def.dropTableId) : undefined;
+    if (table) {
+      const drops = rollDrops(table, this.rng, { firstKill: false });
+      for (const d of drops) {
+        const ox = this.rng.intRange(-12, 12);
+        const oy = this.rng.intRange(-6, 10);
+        this.spawnLoot(x + ox, y + oy, d.itemId, d.qty);
+      }
     }
     gameState.gainExp(def.expReward);
+  }
+
+  private spawnLoot(x: number, y: number, itemId: string, qty: number): void {
+    const drop = this.loot.create(x, y, TEX.slime, 0) as Phaser.Physics.Arcade.Image;
+    drop.setScale(0.5);
+    drop.setOrigin(0.5, 0.875);
+    drop.setData('itemId', itemId);
+    drop.setData('qty', qty);
+    drop.setDepth(Math.round(y));
   }
 
   private pickup(l: Phaser.Physics.Arcade.Image): void {
     const itemId = l.getData('itemId') as string | undefined;
     if (!itemId) return;
-    gameState.addMaterial(itemId, 1);
-    this.floatText(l.x, l.y - 18, `+${itemDisplayName(itemId)}`);
+    const qty = (l.getData('qty') as number | undefined) ?? 1;
+    if (getMaterial(itemId)) gameState.addMaterial(itemId, qty);
+    else if (getConsumable(itemId)) gameState.addConsumable(itemId, qty);
+    else if (getEquipment(itemId)) for (let i = 0; i < qty; i++) gameState.addEquipment(itemId);
+    const label = qty > 1 ? `+${itemDisplayName(itemId)}×${qty}` : `+${itemDisplayName(itemId)}`;
+    this.floatText(l.x, l.y - 18, label);
     l.destroy();
   }
 

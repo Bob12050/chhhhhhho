@@ -15,8 +15,8 @@ export interface EnemyDef {
   aggroRange: number;
   attackRange: number;
   expReward: number;
-  /** Phase-0-style single drop; superseded by drop tables in M4. */
-  drop?: { itemId: string };
+  /** Drop table id (see drops.json); rolled on death. */
+  dropTableId?: string;
 }
 
 interface EnemiesFile {

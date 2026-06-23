@@ -34,9 +34,10 @@ DerivedStats キー: `maxHp, maxMp, physAtk, magAtk, def, magDef, accuracy, evas
 
 `material / consumable / equipment / quest / pet_item`。インベントリは素材・消耗品をスタック、装備は個別管理。`ItemDefinition` と `ItemInstance` を分離（ランダムオプションは Phase 1 では未実装）。
 
-## ドロップテーブル（Phase 1 で投入）
+## ドロップテーブル `drops.json`
 
-`{ item_id, weight | drop_rate, min_quantity, max_quantity, 条件付き, ボス初回確定 }`。抽選は seedable RNG（`core/rng.ts`）でテスト可能。
+`{ id, entries: [{ itemId, dropRate(0..1, 各エントリ独立判定), min, max, bossFirstGuaranteed? }] }`。
+敵定義の `dropTableId` から参照。抽選は seedable RNG（`core/rng.ts`）の純関数 `rollDrops(table, rng, {firstKill})` でテスト可能。`bossFirstGuaranteed` はボス初回撃破時に確定。
 
 ## 製作レシピ（Phase 1）
 
