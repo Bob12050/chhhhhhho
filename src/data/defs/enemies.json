@@ -60,6 +60,40 @@
       "expReward": 170,
       "goldReward": 100,
       "dropTableId": "boss_slime"
+    },
+    {
+      "id": "boss_treant",
+      "name": "もりの主",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#6aa84f",
+      "scale": 1.8,
+      "isBoss": true,
+      "maxHp": 140,
+      "moveSpeed": 30,
+      "contactDamage": 12,
+      "aggroRange": 240,
+      "attackRange": 28,
+      "knockbackResist": 0.5,
+      "expReward": 90,
+      "goldReward": 50,
+      "dropTableId": "boss_treant"
+    },
+    {
+      "id": "boss_stone",
+      "name": "岩の番人",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#b0a070",
+      "scale": 1.9,
+      "isBoss": true,
+      "maxHp": 200,
+      "moveSpeed": 22,
+      "contactDamage": 16,
+      "aggroRange": 240,
+      "attackRange": 28,
+      "knockbackResist": 0.85,
+      "expReward": 130,
+      "goldReward": 70,
+      "dropTableId": "boss_stone"
     }
   ]
 }

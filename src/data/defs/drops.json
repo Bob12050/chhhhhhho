@@ -30,6 +30,20 @@
         { "itemId": "iron_ore", "dropRate": 1, "min": 2, "max": 4 },
         { "itemId": "slime_jelly", "dropRate": 1, "min": 3, "max": 5 }
       ]
+    },
+    {
+      "id": "boss_treant",
+      "entries": [
+        { "itemId": "iron_helm", "dropRate": 0, "min": 1, "max": 1, "bossFirstGuaranteed": true },
+        { "itemId": "soft_leather", "dropRate": 1, "min": 2, "max": 4 }
+      ]
+    },
+    {
+      "id": "boss_stone",
+      "entries": [
+        { "itemId": "iron_plate", "dropRate": 0, "min": 1, "max": 1, "bossFirstGuaranteed": true },
+        { "itemId": "iron_ore", "dropRate": 1, "min": 2, "max": 4 }
+      ]
     }
   ]
 }

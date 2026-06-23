@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { TEX } from '@/assets/gen/textures';
+import { gameState } from '@/player/game-state';
 import type { MapDef, GroundKind, BorderKind } from '@/maps/map-def';
 
 const GROUND_TEX: Record<GroundKind, string> = {
@@ -17,6 +18,7 @@ export interface BuiltPortal {
   rect: Phaser.Geom.Rectangle;
   to: string;
   toSpawn: string;
+  requiresFlag?: string;
 }
 
 export interface BuiltMap {
@@ -53,6 +55,7 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     rect: new Phaser.Geom.Rectangle(p.rect[0], p.rect[1], p.rect[2], p.rect[3]),
     to: p.to,
     toSpawn: p.toSpawn,
+    requiresFlag: p.requiresFlag,
   }));
   // A 32px gate cell is "blocked" by a portal if its center sits within the
   // portal rect padded by half a tile, so doorways are always walkable.
@@ -100,9 +103,11 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     const [px, py, pw, ph] = p.rect;
     const cx = px + pw / 2;
     const cy = py + ph / 2;
+    const locked = !!p.requiresFlag && !gameState.flags[p.requiresFlag];
+    const gateColor = locked ? 0xcc5a5a : 0x6fd0ff;
     const gate = scene.add
-      .rectangle(cx, cy, pw, ph, 0x6fd0ff, 0.45)
-      .setStrokeStyle(2, 0xbfeaff, 0.9)
+      .rectangle(cx, cy, pw, ph, gateColor, 0.45)
+      .setStrokeStyle(2, locked ? 0xffb0b0 : 0xbfeaff, 0.9)
       .setDepth(5);
     scene.tweens.add({
       targets: gate,
@@ -134,10 +139,10 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
 
     if (p.label) {
       scene.add
-        .text(cx, exitUp ? cy + ph + 16 : cy - ph - 16, p.label, {
+        .text(cx, exitUp ? cy + ph + 16 : cy - ph - 16, locked ? `🔒 ${p.label}` : p.label, {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '10px',
-          color: '#eaf7ff',
+          color: locked ? '#ffd0d0' : '#eaf7ff',
           backgroundColor: '#00000055',
           padding: { x: 4, y: 2 },
         })

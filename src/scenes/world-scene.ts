@@ -52,6 +52,7 @@ export class WorldScene extends Phaser.Scene {
   private autoSaveTimer = 0;
   private mpRegenTimer = 0;
   private portalLock = 0; // ms; blocks portal re-trigger right after arrival
+  private portalHintCd = 0; // ms; throttles the "defeat the boss" hint
   private transitioning = false;
   private busOff: Array<() => void> = [];
   private rng = new Rng();
@@ -79,6 +80,7 @@ export class WorldScene extends Phaser.Scene {
     this.autoSaveTimer = 0;
     this.mpRegenTimer = 0;
     this.portalLock = 600;
+    this.portalHintCd = 0;
     this.transitioning = false;
     this.rng = new Rng((Date.now() ^ 0x9e3779b9) >>> 0);
     this.pet = null;
@@ -455,6 +457,7 @@ export class WorldScene extends Phaser.Scene {
       if (this.skillCd[i] > 0) this.skillCd[i] -= delta;
     }
     if (this.portalLock > 0) this.portalLock -= delta;
+    if (this.portalHintCd > 0) this.portalHintCd -= delta;
 
     if (gameState.mp < gameState.derived.maxMp) {
       this.mpRegenTimer += delta;
@@ -511,10 +514,16 @@ export class WorldScene extends Phaser.Scene {
   private checkPortals(): void {
     if (this.portalLock > 0) return;
     for (const p of this.portals) {
-      if (Phaser.Geom.Rectangle.Contains(p.rect, this.player.x, this.player.y)) {
-        this.toMap(p);
+      if (!Phaser.Geom.Rectangle.Contains(p.rect, this.player.x, this.player.y)) continue;
+      if (p.requiresFlag && !gameState.flags[p.requiresFlag]) {
+        if (this.portalHintCd <= 0) {
+          this.floatText(this.player.x, this.player.y - 44, 'ボスを倒すと進める');
+          this.portalHintCd = 1600;
+        }
         return;
       }
+      this.toMap(p);
+      return;
     }
   }
 

@@ -18,6 +18,8 @@ export interface PortalDef {
   to: string;
   toSpawn: string;
   label?: string;
+  /** If set, the portal is locked until this flag is true (boss gating). */
+  requiresFlag?: string;
 }
 
 export interface MapEnemy {

@@ -9,13 +9,13 @@
   "spawns": { "from_field": [180, 1140], "from_boss": [180, 150] },
   "portals": [
     { "rect": [148, 1216, 64, 32], "to": "field", "toSpawn": "from_dungeon", "label": "草原へ" },
-    { "rect": [148, 32, 64, 32], "to": "boss_room", "toSpawn": "from_dungeon", "label": "ボスの間へ" }
+    { "rect": [148, 32, 64, 32], "to": "boss_room", "toSpawn": "from_dungeon", "label": "ボスの間へ", "requiresFlag": "boss_stone_defeated" }
   ],
   "enemies": [
     { "type": "slime", "x": 130, "y": 980 },
     { "type": "golem", "x": 240, "y": 820 },
     { "type": "bat", "x": 110, "y": 640 },
-    { "type": "golem", "x": 180, "y": 440 }
+    { "type": "boss_stone", "x": 180, "y": 260 }
   ],
   "npcs": []
 }
