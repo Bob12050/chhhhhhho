@@ -19,6 +19,10 @@ export interface GameEvents {
   'loot:dropped': { itemId: string; x: number; y: number };
   'inventory:changed': Record<string, never>;
   'item:picked-up': { itemId: string; quantity: number };
+  'item:used': { itemId: string };
+
+  // UI requests (from HUD overlay to the world scene)
+  'ui:open-inventory': Record<string, never>;
 
   // Equipment
   'equipment:changed': { slot: string };

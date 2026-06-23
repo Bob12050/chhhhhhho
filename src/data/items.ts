@@ -16,6 +16,15 @@ export interface MaterialDef {
   description: string;
 }
 
+export interface ConsumableDef {
+  id: string;
+  name: string;
+  /** Restorative effect applied on use. */
+  effect: { hp?: number; mp?: number };
+  sellPrice: number;
+  description: string;
+}
+
 export interface EquipmentDef {
   id: string;
   name: string;
@@ -33,19 +42,25 @@ export interface EquipmentDef {
 
 interface ItemsFile {
   materials: MaterialDef[];
+  consumables: ConsumableDef[];
   equipment: EquipmentDef[];
 }
 
 const file = itemsJson as ItemsFile;
 
 const materials = new Map<string, MaterialDef>();
+const consumables = new Map<string, ConsumableDef>();
 const equipment = new Map<string, EquipmentDef>();
 
 for (const m of file.materials) materials.set(m.id, m);
+for (const c of file.consumables) consumables.set(c.id, c);
 for (const e of file.equipment) equipment.set(e.id, e);
 
 export function getMaterial(id: string): MaterialDef | undefined {
   return materials.get(id);
+}
+export function getConsumable(id: string): ConsumableDef | undefined {
+  return consumables.get(id);
 }
 export function getEquipment(id: string): EquipmentDef | undefined {
   return equipment.get(id);
@@ -56,6 +71,11 @@ export function allEquipment(): EquipmentDef[] {
 export function allMaterials(): MaterialDef[] {
   return [...materials.values()];
 }
+export function allConsumables(): ConsumableDef[] {
+  return [...consumables.values()];
+}
 export function itemDisplayName(id: string): string {
-  return materials.get(id)?.name ?? equipment.get(id)?.name ?? id;
+  return (
+    materials.get(id)?.name ?? consumables.get(id)?.name ?? equipment.get(id)?.name ?? id
+  );
 }

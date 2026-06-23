@@ -22,7 +22,11 @@ export interface SaveDataV1 {
     gold: number;
   };
   equipment: Partial<Record<string, string | null>>; // slot -> itemId
-  inventory: { materials: Record<string, number> }; // itemId -> qty
+  inventory: {
+    materials: Record<string, number>; // itemId -> qty
+    consumables: Record<string, number>; // itemId -> qty
+    equipmentOwned: string[]; // owned equipment ids (one entry per piece)
+  };
   flags: Record<string, boolean>; // e.g. boss defeated
   settings: { sfx: boolean; bgm: boolean };
 }
@@ -47,7 +51,11 @@ export function createDefaultSave(slot: number): SaveData {
       gold: 0,
     },
     equipment: { head: null, torso: null, main_hand: 'wood_sword' },
-    inventory: { materials: {} },
+    inventory: {
+      materials: {},
+      consumables: { potion_hp: 3, potion_mp: 2 },
+      equipmentOwned: ['wood_sword', 'leather_cap', 'cloth_vest'],
+    },
     flags: {},
     settings: { sfx: true, bgm: true },
   };
@@ -73,6 +81,8 @@ export function migrate(raw: unknown, slot: number): SaveData {
     equipment: { ...def.equipment, ...(data.equipment ?? {}) },
     inventory: {
       materials: { ...(data.inventory?.materials ?? {}) },
+      consumables: { ...(data.inventory?.consumables ?? {}) },
+      equipmentOwned: [...(data.inventory?.equipmentOwned ?? [])],
     },
     flags: { ...(data.flags ?? {}) },
     settings: { ...def.settings, ...(data.settings ?? {}) },

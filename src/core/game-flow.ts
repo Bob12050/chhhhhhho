@@ -24,7 +24,7 @@ export async function beginGame(
 
 /** Return from gameplay to the title screen, tearing down world + overlays. */
 export function returnToTitle(scene: Phaser.Scene): void {
-  scene.scene.stop('Equipment');
+  scene.scene.stop('Inventory');
   scene.scene.stop('UI');
   scene.scene.stop('World');
   bus.emit('game:return-to-title', {});

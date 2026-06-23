@@ -36,6 +36,7 @@ function err(msg: string): void {
 function validateItems(): void {
   const file = JSON.parse(readFileSync(join(root, 'src/data/defs/items.json'), 'utf8')) as {
     materials: { id: string }[];
+    consumables: { id: string; effect?: Record<string, number> }[];
     equipment: {
       id: string;
       slot: string;
@@ -51,8 +52,15 @@ function validateItems(): void {
     if (ids.has(id)) err(`Duplicate item id: ${id}`);
     ids.add(id);
   };
+  const EFFECT_KEYS = new Set(['hp', 'mp']);
 
   for (const m of file.materials) check(m.id, 'material');
+  for (const c of file.consumables ?? []) {
+    check(c.id, 'consumable');
+    for (const k of Object.keys(c.effect ?? {})) {
+      if (!EFFECT_KEYS.has(k)) err(`Consumable ${c.id}: invalid effect "${k}"`);
+    }
+  }
   for (const e of file.equipment) {
     check(e.id, 'equipment');
     if (!slotSet.has(e.slot)) err(`Equipment ${e.id}: invalid slot "${e.slot}"`);
@@ -119,10 +127,16 @@ function validateMaps(enemyIds: Set<string>): void {
 }
 
 function collectItemIds(): Set<string> {
-  const file = readJson<{ materials: { id: string }[]; equipment: { id: string }[] }>(
-    'src/data/defs/items.json',
-  );
-  return new Set<string>([...file.materials.map((m) => m.id), ...file.equipment.map((e) => e.id)]);
+  const file = readJson<{
+    materials: { id: string }[];
+    consumables: { id: string }[];
+    equipment: { id: string }[];
+  }>('src/data/defs/items.json');
+  return new Set<string>([
+    ...file.materials.map((m) => m.id),
+    ...(file.consumables ?? []).map((c) => c.id),
+    ...file.equipment.map((e) => e.id),
+  ]);
 }
 
 validateItems();

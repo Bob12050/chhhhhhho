@@ -4,7 +4,7 @@ import {
   type DerivedStats,
   type StatModifiers,
 } from '@/stats/stats';
-import { getEquipment } from '@/data/items';
+import { getEquipment, getConsumable } from '@/data/items';
 import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
 import { bus } from '@/core/event-bus';
 import { expToNext } from '@/stats/leveling';
@@ -34,6 +34,9 @@ export class GameState {
   };
 
   materials: Record<string, number> = {};
+  consumables: Record<string, number> = {};
+  /** Owned equipment ids (one entry per piece; equipped items are included). */
+  equipmentOwned: string[] = [];
 
   flags: Record<string, boolean> = {};
 
@@ -92,6 +95,38 @@ export class GameState {
     this.materials[id] = (this.materials[id] ?? 0) + qty;
     bus.emit('inventory:changed', {});
     bus.emit('item:picked-up', { itemId: id, quantity: qty });
+  }
+
+  addConsumable(id: string, qty: number): void {
+    this.consumables[id] = (this.consumables[id] ?? 0) + qty;
+    bus.emit('inventory:changed', {});
+  }
+
+  /** Use one consumable, applying its effect. Returns false if none/no effect. */
+  useConsumable(id: string): boolean {
+    if ((this.consumables[id] ?? 0) < 1) return false;
+    const def = getConsumable(id);
+    if (!def) return false;
+    const healHp = def.effect.hp ?? 0;
+    const healMp = def.effect.mp ?? 0;
+    // Don't waste a potion when it would do nothing.
+    if (healHp > 0 && this.hp >= this.derived.maxHp && healMp === 0) return false;
+    if (healMp > 0 && this.mp >= this.derived.maxMp && healHp === 0) return false;
+    this.consumables[id] -= 1;
+    if (this.consumables[id] <= 0) delete this.consumables[id];
+    if (healHp) this.hp = Math.min(this.derived.maxHp, this.hp + healHp);
+    if (healMp) this.mp = Math.min(this.derived.maxMp, this.mp + healMp);
+    bus.emit('player:hp-changed', { current: this.hp, max: this.derived.maxHp });
+    bus.emit('player:mp-changed', { current: this.mp, max: this.derived.maxMp });
+    bus.emit('inventory:changed', {});
+    bus.emit('item:used', { itemId: id });
+    return true;
+  }
+
+  /** Add an owned equipment piece (from crafting / drops / starter kit). */
+  addEquipment(id: string): void {
+    this.equipmentOwned.push(id);
+    bus.emit('inventory:changed', {});
   }
 
   consumeMaterials(req: Record<string, number>): boolean {
@@ -154,7 +189,11 @@ export class GameState {
         gold: this.gold,
       },
       equipment: { ...this.equipment },
-      inventory: { materials: { ...this.materials } },
+      inventory: {
+        materials: { ...this.materials },
+        consumables: { ...this.consumables },
+        equipmentOwned: [...this.equipmentOwned],
+      },
       flags: { ...this.flags },
       settings: { sfx: true, bgm: true },
     };
@@ -171,11 +210,17 @@ export class GameState {
     this.x = data.player.x;
     this.y = data.player.y;
     this.materials = { ...data.inventory.materials };
+    this.consumables = { ...(data.inventory.consumables ?? {}) };
+    // Owned equipment: keep only known ids.
+    this.equipmentOwned = (data.inventory.equipmentOwned ?? []).filter((id) => !!getEquipment(id));
     this.flags = { ...data.flags };
     // Equipment: drop unknown ids defensively.
     for (const slot of EQUIP_SLOTS) {
       const id = data.equipment[slot] ?? null;
       this.equipment[slot] = id && getEquipment(id) ? id : null;
+      // Invariant: an equipped item is always owned (covers pre-M3 saves).
+      const eq = this.equipment[slot];
+      if (eq && !this.equipmentOwned.includes(eq)) this.equipmentOwned.push(eq);
     }
     this.recompute(false);
     if (data.player.hp < 0) this.hp = this.derived.maxHp;

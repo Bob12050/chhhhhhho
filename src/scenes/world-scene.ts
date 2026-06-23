@@ -113,6 +113,7 @@ export class WorldScene extends Phaser.Scene {
         if (slot === -1) void this.save();
       }),
     );
+    this.busOff.push(bus.on('ui:open-inventory', () => this.openInventory()));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.busOff) off();
       this.busOff = [];
@@ -121,6 +122,7 @@ export class WorldScene extends Phaser.Scene {
     this.cameras.main.fadeIn(150);
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
     bus.emit('player:mp-changed', { current: gameState.mp, max: gameState.derived.maxMp });
+    bus.emit('gold:changed', { current: gameState.gold });
   }
 
   private showMapName(name: string): void {
@@ -403,7 +405,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private runNpc(npc: BuiltNpc): void {
-    if (npc.action === 'equip') this.openEquipment();
+    if (npc.action === 'equip') this.openInventory('equipment');
   }
 
   private facingFromStick(v: { x: number; y: number }): Direction | undefined {
@@ -412,9 +414,10 @@ export class WorldScene extends Phaser.Scene {
     return v.y > 0 ? 'down' : 'up';
   }
 
-  private openEquipment(): void {
+  private openInventory(tab?: 'items' | 'consumables' | 'equipment'): void {
+    if (this.transitioning || this.scene.isPaused() || this.scene.isActive('Inventory')) return;
     this.scene.pause();
-    this.scene.launch('Equipment');
+    this.scene.launch('Inventory', { tab });
   }
 }
 

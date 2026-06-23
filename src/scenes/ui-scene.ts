@@ -16,6 +16,7 @@ export class UIScene extends Phaser.Scene {
   private interactBtn!: TouchButton;
   private hpText!: Phaser.GameObjects.Text;
   private mpText!: Phaser.GameObjects.Text;
+  private goldText!: Phaser.GameObjects.Text;
   private updateText!: Phaser.GameObjects.Text;
   private busOff: Array<() => void> = [];
 
@@ -83,6 +84,23 @@ export class UIScene extends Phaser.Scene {
         this.mpText.setText(`MP ${current}/${max}`);
       }),
     );
+
+    this.goldText = this.add
+      .text(insets.left + 8, insets.top + 38, '', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '12px',
+        color: '#ffd86b',
+      })
+      .setDepth(depth);
+    this.busOff.push(
+      bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current} G`)),
+    );
+
+    // Bag button (top-right) opens the inventory/menu.
+    const bag = new TouchButton(this, w - insets.right - 24, insets.top + 26, 22, '袋', 0x6a4ea0, depth);
+    bag.onChange = (down) => {
+      if (down) bus.emit('ui:open-inventory', {});
+    };
 
     // PWA update notice (applied later, never mid-combat).
     this.updateText = this.add

@@ -11,6 +11,8 @@ describe('save round trip', () => {
     gs.equip('head', 'leather_cap');
     gs.equip('main_hand', 'iron_sword');
     gs.addMaterial('slime_jelly', 4);
+    gs.addConsumable('potion_hp', 2);
+    gs.addEquipment('iron_helm');
     gs.addGold(150);
     gs.flags['boss_first_kill'] = true;
     gs.x = 123;
@@ -24,6 +26,10 @@ describe('save round trip', () => {
     expect(loaded.equipment.head).toBe('leather_cap');
     expect(loaded.equipment.main_hand).toBe('iron_sword');
     expect(loaded.materials.slime_jelly).toBe(4);
+    expect(loaded.consumables.potion_hp).toBe(2);
+    expect(loaded.equipmentOwned).toContain('iron_helm');
+    // Equipped items must be owned after load (invariant).
+    expect(loaded.equipmentOwned).toContain('iron_sword');
     expect(loaded.gold).toBe(150);
     expect(loaded.flags.boss_first_kill).toBe(true);
     expect(loaded.x).toBe(123);
