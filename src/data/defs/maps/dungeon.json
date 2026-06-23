@@ -8,8 +8,8 @@
   "obstacles": [[110, 360], [250, 360], [180, 620], [90, 880], [270, 880]],
   "spawns": { "from_field": [180, 1140], "from_boss": [180, 150] },
   "portals": [
-    { "rect": [148, 1252, 64, 28], "to": "field", "toSpawn": "from_dungeon", "label": "草原へ" },
-    { "rect": [148, 0, 64, 28], "to": "boss_room", "toSpawn": "from_dungeon", "label": "ボスの間へ" }
+    { "rect": [148, 1216, 64, 32], "to": "field", "toSpawn": "from_dungeon", "label": "草原へ" },
+    { "rect": [148, 32, 64, 32], "to": "boss_room", "toSpawn": "from_dungeon", "label": "ボスの間へ" }
   ],
   "enemies": [
     { "type": "slime", "x": 130, "y": 980 },

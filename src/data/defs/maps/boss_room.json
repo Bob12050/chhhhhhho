@@ -7,7 +7,7 @@
   "obstacles": [],
   "spawns": { "from_dungeon": [180, 520] },
   "portals": [
-    { "rect": [148, 572, 64, 28], "to": "dungeon", "toSpawn": "from_boss", "label": "洞窟へ" }
+    { "rect": [148, 536, 64, 32], "to": "dungeon", "toSpawn": "from_boss", "label": "洞窟へ" }
   ],
   "enemies": [],
   "npcs": []

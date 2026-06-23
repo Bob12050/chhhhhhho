@@ -8,8 +8,8 @@
   "obstacles": [[80, 300], [300, 360], [70, 720], [300, 760], [120, 1000], [260, 980]],
   "spawns": { "from_town": [180, 1140], "from_dungeon": [180, 150] },
   "portals": [
-    { "rect": [148, 1252, 64, 28], "to": "town", "toSpawn": "from_field", "label": "町へ" },
-    { "rect": [148, 0, 64, 28], "to": "dungeon", "toSpawn": "from_field", "label": "どうくつへ" }
+    { "rect": [148, 1216, 64, 32], "to": "town", "toSpawn": "from_field", "label": "町へ" },
+    { "rect": [148, 32, 64, 32], "to": "dungeon", "toSpawn": "from_field", "label": "どうくつへ" }
   ],
   "enemies": [
     { "type": "slime", "x": 180, "y": 900 },
