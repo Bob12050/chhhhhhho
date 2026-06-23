@@ -3,7 +3,7 @@ import { Player } from '@/player/player';
 import { Enemy } from '@/enemies/enemy';
 import { DamageNumbers } from '@/combat/damage-numbers';
 import { gameState } from '@/player/game-state';
-import { getEquipment } from '@/data/items';
+import { getEquipment, itemDisplayName } from '@/data/items';
 import { visualTexture } from '@/equipment/visuals';
 import { TEX } from '@/assets/gen/textures';
 import { input } from '@/input/input-state';
@@ -254,7 +254,28 @@ export class TownScene extends Phaser.Scene {
     const itemId = l.getData('itemId') as string | undefined;
     if (!itemId) return;
     gameState.addMaterial(itemId, 1);
+    this.floatText(l.x, l.y - 18, `+${itemDisplayName(itemId)}`);
     l.destroy();
+  }
+
+  /** Small floating label that rises and fades (pickup / status feedback). */
+  private floatText(x: number, y: number, msg: string): void {
+    const t = this.add
+      .text(x, y, msg, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '11px',
+        color: '#ffe9a8',
+      })
+      .setOrigin(0.5)
+      .setDepth(9000);
+    this.tweens.add({
+      targets: t,
+      y: y - 22,
+      alpha: 0,
+      duration: 700,
+      ease: 'Cubic.Out',
+      onComplete: () => t.destroy(),
+    });
   }
 
   private save(): Promise<void> {
