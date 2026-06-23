@@ -1,4 +1,4 @@
-import { idbGet, idbSet } from './idb';
+import { idbGet, idbSet, idbDelete } from './idb';
 import { createDefaultSave, migrate, type SaveData, SAVE_VERSION } from './schema';
 import { bus } from '@/core/event-bus';
 
@@ -60,6 +60,20 @@ export class SaveManager {
     const data = createDefaultSave(slot);
     await this.write(data);
     return data;
+  }
+
+  /** Delete a slot's save and its backup. */
+  async delete(slot: number): Promise<void> {
+    await this.withLock(slot, async () => {
+      await idbDelete(mainKey(slot));
+      await idbDelete(backupKey(slot));
+    });
+    bus.emit('save:written', { slot });
+  }
+
+  /** Wipe all slots (full data reset). */
+  async deleteAll(): Promise<void> {
+    for (let i = 0; i < SLOT_COUNT; i++) await this.delete(i);
   }
 
   async summaries(): Promise<SlotSummary[]> {

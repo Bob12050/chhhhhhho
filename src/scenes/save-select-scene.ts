@@ -32,7 +32,8 @@ export class SaveSelectScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setName('loading');
 
-    this.makeButton(w / 2, this.scale.height - 44, '◀ もどる', () => this.scene.start('Title'));
+    this.makeButton(w / 2 - 70, this.scale.height - 44, '◀ もどる', () => this.scene.start('Title'));
+    this.makeResetAllButton(w / 2 + 70, this.scale.height - 44);
 
     void this.populate();
   }
@@ -69,7 +70,8 @@ export class SaveSelectScene extends Phaser.Scene {
           lineSpacing: 2,
         })
         .setOrigin(0, 0);
-      this.makeButton(w - 78, y + 26, 'つづき', () => void beginGame(this, slot, 'load'));
+      this.makeButton(w - 78, y + 8, 'つづき', () => void beginGame(this, slot, 'load'));
+      this.makeDeleteButton(slot, w - 78, y + 44);
     } else {
       this.add
         .text(28, y + 26, '（空き）', {
@@ -80,6 +82,61 @@ export class SaveSelectScene extends Phaser.Scene {
         .setOrigin(0, 0);
       this.makeButton(w - 96, y + 26, '＋ はじめる', () => void beginGame(this, slot, 'new'));
     }
+  }
+
+  /** Delete button with a two-tap confirm to avoid accidental wipes. */
+  private makeDeleteButton(slot: number, x: number, y: number): void {
+    let armed = false;
+    const t = this.add
+      .text(x, y, '削除', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        color: '#e58a8a',
+        backgroundColor: '#2a2d44',
+        padding: { x: 12, y: 6 },
+      })
+      .setOrigin(0.5)
+      .setDepth(1)
+      .setInteractive({ useHandCursor: true });
+    t.on('pointerup', () => {
+      if (!armed) {
+        armed = true;
+        t.setText('本当に？').setColor('#ff6666');
+        this.time.delayedCall(2000, () => {
+          armed = false;
+          if (t.active) t.setText('削除').setColor('#e58a8a');
+        });
+        return;
+      }
+      void saveManager.delete(slot).then(() => this.scene.restart());
+    });
+  }
+
+  /** Wipe every slot (two-tap confirm). */
+  private makeResetAllButton(x: number, y: number): void {
+    let armed = false;
+    const t = this.add
+      .text(x, y, '全初期化', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        color: '#e58a8a',
+        backgroundColor: '#2a2d44',
+        padding: { x: 12, y: 8 },
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+    t.on('pointerup', () => {
+      if (!armed) {
+        armed = true;
+        t.setText('全部消す？').setColor('#ff6666');
+        this.time.delayedCall(2500, () => {
+          armed = false;
+          if (t.active) t.setText('全初期化').setColor('#e58a8a');
+        });
+        return;
+      }
+      void saveManager.deleteAll().then(() => this.scene.restart());
+    });
   }
 
   private makeButton(x: number, y: number, label: string, onTap: () => void): void {
