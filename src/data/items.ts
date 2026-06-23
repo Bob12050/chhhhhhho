@@ -12,6 +12,8 @@ export type ItemType = 'material' | 'consumable' | 'equipment' | 'quest' | 'pet_
 export interface MaterialDef {
   id: string;
   name: string;
+  /** Presentation tier (color/label). Optional; defaults to common. */
+  rarity?: string;
   sellPrice: number;
   description: string;
 }

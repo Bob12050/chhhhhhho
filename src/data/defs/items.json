@@ -4,8 +4,8 @@
     { "id": "soft_leather", "name": "やわらか革", "sellPrice": 5, "description": "軽装の素材。" },
     { "id": "iron_ore", "name": "鉄鉱石", "sellPrice": 8, "description": "武具の素材。洞窟で採れる。" },
     { "id": "herb", "name": "やくそう", "sellPrice": 4, "description": "草原に生える薬草。回復薬の素材。" },
-    { "id": "mana_stone", "name": "魔石", "sellPrice": 12, "description": "洞窟で採れる魔力を帯びた石。" },
-    { "id": "king_jelly", "name": "王のゼリー", "sellPrice": 30, "description": "キングスライムの希少な素材。" }
+    { "id": "mana_stone", "name": "魔石", "rarity": "uncommon", "sellPrice": 12, "description": "洞窟で採れる魔力を帯びた石。" },
+    { "id": "king_jelly", "name": "王のゼリー", "rarity": "rare", "sellPrice": 30, "description": "キングスライムの希少な素材。" }
   ],
   "consumables": [
     { "id": "potion_hp", "name": "回復ポーション", "effect": { "hp": 30 }, "sellPrice": 5, "description": "HPを30回復する。" },

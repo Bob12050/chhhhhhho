@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { EQUIP_SLOTS } from '../src/equipment/slots';
 import { VISUAL_ID_SET } from '../src/data/visual-ids';
+import { RARITY_SET } from '../src/data/rarity';
 import { SHEET_ROWS, MAX_FRAMES, SHEET_WIDTH, SHEET_HEIGHT } from '../src/paperdoll/pose-atlas';
 import { CHAR_FRAME_W, CHAR_FRAME_H } from '../src/config/resolution';
 
@@ -35,12 +36,13 @@ function err(msg: string): void {
 
 function validateItems(): void {
   const file = JSON.parse(readFileSync(join(root, 'src/data/defs/items.json'), 'utf8')) as {
-    materials: { id: string }[];
+    materials: { id: string; rarity?: string }[];
     consumables: { id: string; effect?: Record<string, number> }[];
     equipment: {
       id: string;
       slot: string;
       visualId: string;
+      rarity?: string;
       derived?: Record<string, number>;
       sellPrice?: number;
     }[];
@@ -54,7 +56,11 @@ function validateItems(): void {
   };
   const EFFECT_KEYS = new Set(['hp', 'mp']);
 
-  for (const m of file.materials) check(m.id, 'material');
+  for (const m of file.materials) {
+    check(m.id, 'material');
+    if (m.rarity != null && !RARITY_SET.has(m.rarity))
+      err(`Material ${m.id}: invalid rarity "${m.rarity}"`);
+  }
   for (const c of file.consumables ?? []) {
     check(c.id, 'consumable');
     for (const k of Object.keys(c.effect ?? {})) {
@@ -65,6 +71,8 @@ function validateItems(): void {
     check(e.id, 'equipment');
     if (!slotSet.has(e.slot)) err(`Equipment ${e.id}: invalid slot "${e.slot}"`);
     if (!VISUAL_ID_SET.has(e.visualId)) err(`Equipment ${e.id}: unknown visualId "${e.visualId}"`);
+    if (e.rarity != null && !RARITY_SET.has(e.rarity))
+      err(`Equipment ${e.id}: invalid rarity "${e.rarity}"`);
     for (const k of Object.keys(e.derived ?? {})) {
       if (!DERIVED_KEYS.has(k)) err(`Equipment ${e.id}: invalid derived stat "${k}"`);
     }

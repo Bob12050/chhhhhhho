@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
-import { itemDisplayName } from '@/data/items';
+import { getEquipment, getMaterial, itemDisplayName } from '@/data/items';
+import { rarityColorHex } from '@/data/rarity';
 import { allRecipes, type Recipe } from '@/crafting/recipes';
 import { craft, craftBlock } from '@/crafting/crafting';
 import { bus } from '@/core/event-bus';
@@ -61,11 +62,13 @@ export class CraftingScene extends Phaser.Scene {
 
   private renderRecipe(r: Recipe, y: number, w: number): void {
     const block = craftBlock(gameState, r);
+    const resultRarity =
+      getEquipment(r.resultItemId)?.rarity ?? getMaterial(r.resultItemId)?.rarity;
     this.content.add(
       this.add.text(16, y, `${itemDisplayName(r.resultItemId)} ×${r.resultQty}`, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '15px',
-        color: '#fff',
+        color: rarityColorHex(resultRarity),
       }),
     );
 

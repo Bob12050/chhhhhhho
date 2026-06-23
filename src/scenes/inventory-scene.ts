@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
-import { getEquipment, getConsumable, itemDisplayName } from '@/data/items';
+import { getEquipment, getConsumable, getMaterial, itemDisplayName } from '@/data/items';
+import { rarityColorHex } from '@/data/rarity';
 import type { EquipSlot } from '@/equipment/slots';
 import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
@@ -153,7 +154,7 @@ export class InventoryScene extends Phaser.Scene {
         this.add.text(16, y, itemDisplayName(id), {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '14px',
-          color: '#fff',
+          color: rarityColorHex(getMaterial(id)?.rarity),
         }),
         this.add
           .text(this.scale.width - 16, y, `×${qty}`, {
@@ -226,7 +227,7 @@ export class InventoryScene extends Phaser.Scene {
         this.add.text(16, y, `${SLOT_LABEL[slot] ?? slot}: ${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '14px',
-          color: equipped ? '#9fe3a0' : '#fff',
+          color: equipped ? '#9fe3a0' : rarityColorHex(def.rarity),
         }),
       );
       const btn = this.add
