@@ -135,6 +135,8 @@ export class WorldScene extends Phaser.Scene {
       }),
     );
     this.busOff.push(bus.on('ui:open-inventory', () => this.openInventory()));
+    this.busOff.push(bus.on('ui:open-debug', () => this.openMenu('Debug')));
+    this.busOff.push(bus.on('debug:warp', () => this.transitionRestart(true)));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.busOff) off();
       this.busOff = [];

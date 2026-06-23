@@ -28,6 +28,7 @@ export function returnToTitle(scene: Phaser.Scene): void {
   scene.scene.stop('Crafting');
   scene.scene.stop('JobChange');
   scene.scene.stop('Dialogue');
+  scene.scene.stop('Debug');
   scene.scene.stop('UI');
   scene.scene.stop('World');
   bus.emit('game:return-to-title', {});

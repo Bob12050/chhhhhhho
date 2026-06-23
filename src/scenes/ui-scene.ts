@@ -4,6 +4,7 @@ import { VirtualStick } from '@/input/virtual-stick';
 import { TouchButton } from '@/input/touch-button';
 import { readInsets } from '@/core/safe-area';
 import { bus } from '@/core/event-bus';
+import { isDebugEnabled } from '@/core/debug';
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
@@ -104,6 +105,13 @@ export class UIScene extends Phaser.Scene {
     bag.onChange = (down) => {
       if (down) bus.emit('ui:open-inventory', {});
     };
+
+    if (isDebugEnabled()) {
+      const dbg = new TouchButton(this, w - insets.right - 72, insets.top + 26, 20, 'DBG', 0x884444, depth);
+      dbg.onChange = (down) => {
+        if (down) bus.emit('ui:open-debug', {});
+      };
+    }
 
     // PWA update notice (applied later, never mid-combat).
     this.updateText = this.add

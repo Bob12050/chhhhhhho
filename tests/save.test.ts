@@ -62,6 +62,21 @@ describe('save migration / defensive load', () => {
     expect(m.player.level).toBe(1);
   });
 
+  it('a bare save migrates to all Phase 1 fields and loads', () => {
+    const m = migrate({ player: { level: 1 } }, 0);
+    // Every Phase 1 collection must be present (not undefined).
+    expect(m.player.skills).toBeDefined();
+    expect(m.player.skillSlots).toBeDefined();
+    expect(m.player.jobId).toBe('novice');
+    expect(m.player.unlockedJobs).toContain('novice');
+    expect(m.inventory.consumables).toBeDefined();
+    expect(m.inventory.equipmentOwned).toBeDefined();
+    expect(m.player.ownedPets).toBeDefined();
+    const gs = new GameState();
+    expect(() => gs.loadFrom(m)).not.toThrow();
+    expect(gs.skills.slash).toBe(1); // pre-skill saves still wield the basic skill
+  });
+
   it('fills the default gold for pre-gold saves', () => {
     const m = migrate({ player: { level: 3 } }, 0);
     expect(m.player.gold).toBe(createDefaultSave(0).player.gold);
