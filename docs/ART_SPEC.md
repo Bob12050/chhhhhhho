@@ -2,6 +2,10 @@
 
 ドット絵の一貫性を最優先する。数値は `src/config/resolution.ts` と `src/paperdoll/pose-atlas.ts` が唯一の真実で、勝手に変更しない。
 
+## 最終アートの差し込み（パイプライン）
+
+最終ドット絵は `public/assets/` に PNG を置くだけで反映される（**コード無改修**）。各テクスチャキーとファイルパスの対応は `src/assets/manifest.ts`、置き場と一覧は `public/assets/README.md`。Boot が manifest を先読みし、**存在するファイルは本物・無いものは生成プレースホルダー**を使う。レアリティで画像は変えず `visualId`（visual_family）で共有する。
+
 ## 解像度・スケーリング
 
 - 論理幅: **360 固定**（横方向に拡張しない）。
