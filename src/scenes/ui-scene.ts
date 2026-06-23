@@ -17,6 +17,7 @@ export class UIScene extends Phaser.Scene {
   private hpText!: Phaser.GameObjects.Text;
   private mpText!: Phaser.GameObjects.Text;
   private updateText!: Phaser.GameObjects.Text;
+  private busOff: Array<() => void> = [];
 
   constructor() {
     super('UI');
@@ -63,9 +64,11 @@ export class UIScene extends Phaser.Scene {
       })
       .setDepth(depth);
 
-    bus.on('player:hp-changed', ({ current, max }) => {
-      this.hpText.setText(`HP ${current}/${max}`);
-    });
+    this.busOff.push(
+      bus.on('player:hp-changed', ({ current, max }) => {
+        this.hpText.setText(`HP ${current}/${max}`);
+      }),
+    );
 
     this.mpText = this.add
       .text(insets.left + 8, insets.top + 22, '', {
@@ -75,9 +78,11 @@ export class UIScene extends Phaser.Scene {
       })
       .setDepth(depth);
 
-    bus.on('player:mp-changed', ({ current, max }) => {
-      this.mpText.setText(`MP ${current}/${max}`);
-    });
+    this.busOff.push(
+      bus.on('player:mp-changed', ({ current, max }) => {
+        this.mpText.setText(`MP ${current}/${max}`);
+      }),
+    );
 
     // PWA update notice (applied later, never mid-combat).
     this.updateText = this.add
@@ -89,9 +94,14 @@ export class UIScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setDepth(depth)
       .setVisible(false);
-    bus.on('pwa:update-available', () => this.updateText.setVisible(true));
+    this.busOff.push(bus.on('pwa:update-available', () => this.updateText.setVisible(true)));
 
     this.installKeyboardDev();
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      for (const off of this.busOff) off();
+      this.busOff = [];
+    });
   }
 
   /** Allow the town scene to toggle the interact prompt. */
@@ -110,7 +120,7 @@ export class UIScene extends Phaser.Scene {
       string,
       Phaser.Input.Keyboard.Key
     >;
-    this.events.on('update', () => {
+    const onUpdate = (): void => {
       let x = 0;
       let y = 0;
       if (keys.A.isDown || keys.LEFT.isDown) x -= 1;
@@ -125,6 +135,8 @@ export class UIScene extends Phaser.Scene {
       input.setButton('attack', keys.J.isDown);
       input.setButton('skill1', keys.K.isDown);
       input.setButton('interact', keys.E.isDown);
-    });
+    };
+    this.events.on('update', onUpdate);
+    this.busOff.push(() => this.events.off('update', onUpdate));
   }
 }

@@ -11,6 +11,7 @@ describe('save round trip', () => {
     gs.equip('head', 'leather_cap');
     gs.equip('main_hand', 'iron_sword');
     gs.addMaterial('slime_jelly', 4);
+    gs.addGold(150);
     gs.flags['boss_first_kill'] = true;
     gs.x = 123;
     gs.y = 456;
@@ -23,6 +24,7 @@ describe('save round trip', () => {
     expect(loaded.equipment.head).toBe('leather_cap');
     expect(loaded.equipment.main_hand).toBe('iron_sword');
     expect(loaded.materials.slime_jelly).toBe(4);
+    expect(loaded.gold).toBe(150);
     expect(loaded.flags.boss_first_kill).toBe(true);
     expect(loaded.x).toBe(123);
     expect(loaded.derived.physAtk).toBe(gs.derived.physAtk);
@@ -48,5 +50,13 @@ describe('save migration / defensive load', () => {
   it('non-object input returns a usable default', () => {
     const m = migrate('garbage', 0);
     expect(m.player.level).toBe(1);
+  });
+
+  it('defaults gold to 0 for pre-gold saves', () => {
+    const m = migrate({ player: { level: 3 } }, 0);
+    expect(m.player.gold).toBe(0);
+    const gs = new GameState();
+    gs.loadFrom(m);
+    expect(gs.gold).toBe(0);
   });
 });

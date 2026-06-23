@@ -36,12 +36,22 @@ export class TownScene extends Phaser.Scene {
   private autoSaveTimer = 0;
   private mpRegenTimer = 0;
   private nearNpc = false;
+  private busOff: Array<() => void> = [];
 
   constructor() {
     super('Town');
   }
 
   create(): void {
+    // Reset per-session state: Phaser reuses the scene instance across
+    // start/stop, so field initializers do NOT re-run on re-entry.
+    this.enemies = [];
+    this.playerInvuln = 0;
+    this.skillCd = 0;
+    this.autoSaveTimer = 0;
+    this.mpRegenTimer = 0;
+    this.nearNpc = false;
+
     this.ui = this.scene.get('UI') as UIScene;
 
     this.physics.world.setBounds(0, 0, MAP_W, MAP_H);
@@ -75,15 +85,26 @@ export class TownScene extends Phaser.Scene {
     );
 
     // Re-apply visuals when equipment changes (from the equipment screen).
-    bus.on('equipment:changed', () => {
-      this.applyEquipmentVisuals();
-      this.player.setMoveSpeed(gameState.derived.moveSpeed);
-    });
+    this.busOff.push(
+      bus.on('equipment:changed', () => {
+        this.applyEquipmentVisuals();
+        this.player.setMoveSpeed(gameState.derived.moveSpeed);
+      }),
+    );
 
     // Auto-save triggers.
-    bus.on('app:visibility-hidden', () => void this.save());
-    bus.on('save:written', ({ slot }) => {
-      if (slot === -1) void this.save(); // equipment screen close hint
+    this.busOff.push(bus.on('app:visibility-hidden', () => void this.save()));
+    this.busOff.push(
+      bus.on('save:written', ({ slot }) => {
+        if (slot === -1) void this.save(); // equipment screen close hint
+      }),
+    );
+
+    // Unsubscribe when this scene shuts down so listeners don't accumulate
+    // across title-return / re-entry.
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      for (const off of this.busOff) off();
+      this.busOff = [];
     });
 
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });

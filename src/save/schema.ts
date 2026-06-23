@@ -19,6 +19,7 @@ export interface SaveDataV1 {
     base: { STR: number; VIT: number; INT: number; DEX: number; LUK: number };
     hp: number;
     mp: number;
+    gold: number;
   };
   equipment: Partial<Record<string, string | null>>; // slot -> itemId
   inventory: { materials: Record<string, number> }; // itemId -> qty
@@ -43,6 +44,7 @@ export function createDefaultSave(slot: number): SaveData {
       base: { STR: 5, VIT: 5, INT: 5, DEX: 5, LUK: 5 },
       hp: -1, // -1 = full on load
       mp: -1,
+      gold: 0,
     },
     equipment: { head: null, torso: null, main_hand: 'wood_sword' },
     inventory: { materials: {} },

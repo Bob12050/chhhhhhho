@@ -3,6 +3,7 @@ import { gameState } from '@/player/game-state';
 import { allEquipment, getEquipment } from '@/data/items';
 import { type EquipSlot } from '@/equipment/slots';
 import { bus } from '@/core/event-bus';
+import { returnToTitle } from '@/core/game-flow';
 
 /**
  * Phase 0 equipment screen. Lets the player cycle equippable items per visible
@@ -59,7 +60,23 @@ export class EquipmentScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-ESC', () => this.close());
     this.input.keyboard?.on('keydown-E', () => this.close());
 
-    bus.on('equipment:changed', () => this.refreshStats());
+    // Return to title (autosave keeps progress; this is the only menu for now).
+    const toTitle = this.add
+      .text(w - 16, h - 48, 'タイトルへ', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '12px',
+        color: '#9aa0b5',
+      })
+      .setOrigin(1, 0.5)
+      .setDepth(1)
+      .setInteractive({ useHandCursor: true });
+    toTitle.on('pointerup', () => {
+      bus.emit('save:written', { slot: -1 }); // ask Town to persist current state
+      this.time.delayedCall(60, () => returnToTitle(this));
+    });
+
+    const off = bus.on('equipment:changed', () => this.refreshStats());
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, off);
   }
 
   private buildSlotRow(slot: EquipSlot, y: number, w: number): void {

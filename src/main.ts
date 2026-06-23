@@ -4,6 +4,8 @@ import {
   computeLogicalHeight,
 } from '@/config/resolution';
 import { BootScene } from '@/scenes/boot-scene';
+import { TitleScene } from '@/scenes/title-scene';
+import { SaveSelectScene } from '@/scenes/save-select-scene';
 import { TownScene } from '@/scenes/town-scene';
 import { UIScene } from '@/scenes/ui-scene';
 import { EquipmentScene } from '@/scenes/equipment-scene';
@@ -49,7 +51,7 @@ const config: Phaser.Types.Core.GameConfig = {
     pixelArt: true,
     roundPixels: true,
   },
-  scene: [BootScene, TownScene, UIScene, EquipmentScene],
+  scene: [BootScene, TitleScene, SaveSelectScene, TownScene, UIScene, EquipmentScene],
 };
 
 const game = new Phaser.Game(config);

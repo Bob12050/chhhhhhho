@@ -39,6 +39,7 @@ export class GameState {
 
   hp = 1;
   mp = 0;
+  gold = 0;
   derived: DerivedStats = computeDerived(this.base);
 
   mapId = 'town';
@@ -78,6 +79,11 @@ export class GameState {
     this.equipment[slot] = itemId;
     this.recompute();
     bus.emit('equipment:changed', { slot });
+  }
+
+  addGold(amount: number): void {
+    this.gold = Math.max(0, this.gold + amount);
+    bus.emit('gold:changed', { current: this.gold });
   }
 
   addMaterial(id: string, qty: number): void {
@@ -143,6 +149,7 @@ export class GameState {
         base: { ...this.base },
         hp: this.hp,
         mp: this.mp,
+        gold: this.gold,
       },
       equipment: { ...this.equipment },
       inventory: { materials: { ...this.materials } },
@@ -156,6 +163,7 @@ export class GameState {
     this.exp = data.player.exp;
     this.statPoints = data.player.statPoints;
     this.base = { ...data.player.base };
+    this.gold = data.player.gold ?? 0;
     this.mapId = data.mapId;
     this.x = data.player.x;
     this.y = data.player.y;

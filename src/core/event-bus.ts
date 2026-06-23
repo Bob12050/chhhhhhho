@@ -23,6 +23,14 @@ export interface GameEvents {
   // Equipment
   'equipment:changed': { slot: string };
 
+  // Economy
+  'gold:changed': { current: number };
+
+  // Game flow (title / save-select)
+  'game:new': { slot: number };
+  'game:load': { slot: number };
+  'game:return-to-title': Record<string, never>;
+
   // Save
   'save:written': { slot: number };
   'save:loaded': { slot: number };
