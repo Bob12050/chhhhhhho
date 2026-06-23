@@ -43,10 +43,15 @@ export function ensureGeneratedTextures(scene: Phaser.Scene): void {
   for (const [key, spec] of Object.entries(SPECS)) {
     if (scene.textures.exists(key)) continue;
     const canvas = renderSheet(spec);
-    const canvasKey = `${key}.__canvas`;
-    const canvasTex = scene.textures.addCanvas(canvasKey, canvas, true);
-    if (!canvasTex) throw new Error(`Failed to create canvas texture for ${key}`);
-    scene.textures.addSpriteSheet(key, canvasTex, {
+    // Register the canvas under `key` (cached), then slice it into the
+    // pose-atlas frame grid. Two Phaser gotchas force this exact shape:
+    //   1. addCanvas must NOT skip the cache (skipCache=true creates the
+    //      texture but never stores it under the key -> lookups miss).
+    //   2. addSpriteSheet(key, texture) reuses the *texture's* own key, so the
+    //      canvas has to already be cached under the final `key`.
+    const tex = scene.textures.addCanvas(key, canvas);
+    if (!tex) throw new Error(`Failed to create canvas texture for ${key}`);
+    scene.textures.addSpriteSheet(key, tex, {
       frameWidth: CHAR_FRAME_W,
       frameHeight: CHAR_FRAME_H,
     });
@@ -65,7 +70,7 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     if (!ctx) return;
     ctx.imageSmoothingEnabled = false;
     draw(ctx);
-    scene.textures.addCanvas(key, c, true);
+    scene.textures.addCanvas(key, c);
   };
 
   make(TEX.tileGrass, (ctx) => {
