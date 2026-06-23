@@ -274,6 +274,10 @@ export class WorldScene extends Phaser.Scene {
         this.spawnLoot(x + ox, y + oy, d.itemId, d.qty);
       }
     }
+    if (def.goldReward) {
+      gameState.addGold(def.goldReward);
+      this.floatText(x + 14, y - 24, `+${def.goldReward}G`);
+    }
     gameState.gainExp(def.expReward);
   }
 
@@ -426,6 +430,13 @@ export class WorldScene extends Phaser.Scene {
 
   private runNpc(npc: BuiltNpc): void {
     if (npc.action === 'equip') this.openInventory('equipment');
+    else if (npc.action === 'craft') this.openCrafting();
+  }
+
+  private openCrafting(): void {
+    if (this.transitioning || this.scene.isPaused() || this.scene.isActive('Crafting')) return;
+    this.scene.pause();
+    this.scene.launch('Crafting');
   }
 
   private facingFromStick(v: { x: number; y: number }): Direction | undefined {

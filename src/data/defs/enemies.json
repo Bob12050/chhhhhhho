@@ -10,6 +10,7 @@
       "aggroRange": 110,
       "attackRange": 18,
       "expReward": 8,
+      "goldReward": 2,
       "dropTableId": "slime_basic"
     }
   ]

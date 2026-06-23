@@ -15,6 +15,7 @@ export interface EnemyDef {
   aggroRange: number;
   attackRange: number;
   expReward: number;
+  goldReward?: number;
   /** Drop table id (see drops.json); rolled on death. */
   dropTableId?: string;
 }

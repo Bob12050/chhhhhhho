@@ -159,10 +159,29 @@ function collectItemIds(): Set<string> {
 
 validateItems();
 validateSheetMath();
+function validateRecipes(itemIds: Set<string>): void {
+  const file = readJson<{
+    recipes: { id: string; resultItemId: string; resultQty: number; materials: Record<string, number>; gold: number }[];
+  }>('src/data/defs/recipes.json');
+  const ids = new Set<string>();
+  for (const r of file.recipes) {
+    if (ids.has(r.id)) err(`Duplicate recipe id: ${r.id}`);
+    ids.add(r.id);
+    if (!itemIds.has(r.resultItemId)) err(`Recipe ${r.id}: unknown result "${r.resultItemId}"`);
+    if (r.resultQty < 1) err(`Recipe ${r.id}: resultQty < 1`);
+    if (r.gold < 0) err(`Recipe ${r.id}: negative gold`);
+    for (const [id, qty] of Object.entries(r.materials)) {
+      if (!itemIds.has(id)) err(`Recipe ${r.id}: unknown material "${id}"`);
+      if (qty < 1) err(`Recipe ${r.id}: material "${id}" qty < 1`);
+    }
+  }
+}
+
 const itemIds = collectItemIds();
 const dropTableIds = validateDrops(itemIds);
 const enemyIds = validateEnemies(itemIds, dropTableIds);
 validateMaps(enemyIds);
+validateRecipes(itemIds);
 
 if (errors.length > 0) {
   console.error(`Data validation FAILED with ${errors.length} error(s):`);

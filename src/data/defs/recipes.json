@@ -1,0 +1,10 @@
+{
+  "recipes": [
+    { "id": "craft_potion_hp", "resultItemId": "potion_hp", "resultQty": 1, "materials": { "slime_jelly": 2 }, "gold": 3, "station": "workbench" },
+    { "id": "craft_potion_mp", "resultItemId": "potion_mp", "resultQty": 1, "materials": { "slime_jelly": 3 }, "gold": 6, "station": "workbench" },
+    { "id": "craft_leather_cap", "resultItemId": "leather_cap", "resultQty": 1, "materials": { "soft_leather": 3 }, "gold": 10, "station": "forge" },
+    { "id": "craft_cloth_vest", "resultItemId": "cloth_vest", "resultQty": 1, "materials": { "soft_leather": 4 }, "gold": 12, "station": "forge" },
+    { "id": "craft_iron_helm", "resultItemId": "iron_helm", "resultQty": 1, "materials": { "iron_ore": 4 }, "gold": 20, "station": "forge" },
+    { "id": "craft_iron_sword", "resultItemId": "iron_sword", "resultQty": 1, "materials": { "iron_ore": 3, "soft_leather": 2 }, "gold": 25, "station": "forge" }
+  ]
+}

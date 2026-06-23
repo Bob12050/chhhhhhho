@@ -27,8 +27,9 @@ export interface GameEvents {
   // Equipment
   'equipment:changed': { slot: string };
 
-  // Economy
+  // Economy / crafting
   'gold:changed': { current: number };
+  'craft:made': { recipeId: string };
 
   // Game flow (title / save-select)
   'game:new': { slot: number };

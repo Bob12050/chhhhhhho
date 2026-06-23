@@ -48,7 +48,7 @@ export function createDefaultSave(slot: number): SaveData {
       base: { STR: 5, VIT: 5, INT: 5, DEX: 5, LUK: 5 },
       hp: -1, // -1 = full on load
       mp: -1,
-      gold: 0,
+      gold: 30,
     },
     equipment: { head: null, torso: null, main_hand: 'wood_sword' },
     inventory: {

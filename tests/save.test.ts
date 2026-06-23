@@ -58,11 +58,11 @@ describe('save migration / defensive load', () => {
     expect(m.player.level).toBe(1);
   });
 
-  it('defaults gold to 0 for pre-gold saves', () => {
+  it('fills the default gold for pre-gold saves', () => {
     const m = migrate({ player: { level: 3 } }, 0);
-    expect(m.player.gold).toBe(0);
+    expect(m.player.gold).toBe(createDefaultSave(0).player.gold);
     const gs = new GameState();
     gs.loadFrom(m);
-    expect(gs.gold).toBe(0);
+    expect(gs.gold).toBe(createDefaultSave(0).player.gold);
   });
 });
