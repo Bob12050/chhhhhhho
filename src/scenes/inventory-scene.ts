@@ -1,11 +1,6 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
-import {
-  getEquipment,
-  getConsumable,
-  itemDisplayName,
-  type EquipmentDef,
-} from '@/data/items';
+import { getEquipment, getConsumable, itemDisplayName } from '@/data/items';
 import type { EquipSlot } from '@/equipment/slots';
 import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
@@ -213,17 +208,22 @@ export class InventoryScene extends Phaser.Scene {
   }
 
   private renderEquipment(): void {
-    const owned = gameState.equipmentOwned
-      .map((id) => getEquipment(id))
-      .filter((d): d is EquipmentDef => !!d);
+    // Group identical owned pieces into one row with a count (no random
+    // options yet, so duplicates are fungible).
+    const counts = new Map<string, number>();
+    for (const id of gameState.equipmentOwned) {
+      if (getEquipment(id)) counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
     const w = this.scale.width;
     let y = 100;
-    if (owned.length === 0) this.emptyNote();
-    for (const def of owned) {
+    if (counts.size === 0) this.emptyNote();
+    for (const [id, count] of counts) {
+      const def = getEquipment(id)!;
       const slot = def.slot as EquipSlot;
-      const equipped = gameState.equipment[slot] === def.id;
+      const equipped = gameState.equipment[slot] === id;
+      const qty = count > 1 ? ` ×${count}` : '';
       this.content.add(
-        this.add.text(16, y, `${SLOT_LABEL[slot] ?? slot}: ${def.name}`, {
+        this.add.text(16, y, `${SLOT_LABEL[slot] ?? slot}: ${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '14px',
           color: equipped ? '#9fe3a0' : '#fff',
@@ -238,7 +238,7 @@ export class InventoryScene extends Phaser.Scene {
         .setOrigin(1, 0)
         .setInteractive({ useHandCursor: true });
       btn.on('pointerup', () => {
-        gameState.equip(slot, equipped ? null : def.id);
+        gameState.equip(slot, equipped ? null : id);
         this.renderTab();
       });
       this.content.add(btn);
