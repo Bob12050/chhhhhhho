@@ -5,7 +5,10 @@
     { "id": "iron_ore", "name": "鉄鉱石", "sellPrice": 8, "description": "武具の素材。洞窟で採れる。" },
     { "id": "herb", "name": "やくそう", "sellPrice": 4, "description": "草原に生える薬草。回復薬の素材。" },
     { "id": "mana_stone", "name": "魔石", "rarity": "uncommon", "sellPrice": 12, "description": "洞窟で採れる魔力を帯びた石。" },
-    { "id": "king_jelly", "name": "王のゼリー", "rarity": "rare", "sellPrice": 30, "description": "キングスライムの希少な素材。" }
+    { "id": "king_jelly", "name": "王のゼリー", "rarity": "rare", "sellPrice": 30, "description": "キングスライムの希少な素材。" },
+    { "id": "golem_core", "name": "ゴーレムの核", "rarity": "epic", "sellPrice": 60, "description": "稀にゴーレムの中心から得られる硬質の核。特別な武具の素材。" },
+    { "id": "shadow_wing", "name": "影の翼膜", "rarity": "epic", "sellPrice": 55, "description": "稀にコウモリから剥がれる闇を帯びた翼膜。" },
+    { "id": "star_fragment", "name": "星のかけら", "rarity": "legendary", "sellPrice": 200, "description": "ごく稀に強敵が落とす超希少な結晶。伝説の装備に使う。" }
   ],
   "consumables": [
     { "id": "potion_hp", "name": "回復ポーション", "effect": { "hp": 30 }, "sellPrice": 5, "description": "HPを30回復する。" },
@@ -99,6 +102,41 @@
       "derived": { "physAtk": 16, "critRate": 0.05 },
       "sellPrice": 120,
       "description": "ボスを討伐した者の証。"
+    },
+    {
+      "id": "radiant_blade",
+      "name": "光輝の剣",
+      "slot": "main_hand",
+      "rarity": "epic",
+      "visualId": "sword_iron",
+      "weaponTags": ["sword"],
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": { "physAtk": 24, "accuracy": 4, "critRate": 0.08 },
+      "sellPrice": 280,
+      "description": "ゴーレムの核を鍛え込んだ煌めく剣。レア素材から作られる。"
+    },
+    {
+      "id": "aegis_plate",
+      "name": "要塞の鎧",
+      "slot": "torso",
+      "rarity": "epic",
+      "visualId": "plate_iron",
+      "levelRequirement": 3,
+      "derived": { "def": 14, "maxHp": 30, "moveSpeed": -5 },
+      "sellPrice": 300,
+      "description": "ゴーレムの核を芯にした難攻不落の鎧。"
+    },
+    {
+      "id": "starlight_crown",
+      "name": "星冠",
+      "slot": "head",
+      "rarity": "legendary",
+      "visualId": "helm_iron",
+      "levelRequirement": 4,
+      "derived": { "def": 8, "maxHp": 20, "magAtk": 6, "critRate": 0.04 },
+      "sellPrice": 500,
+      "description": "星のかけらを戴く伝説の冠。超希少素材を集めた者だけが作れる。"
     }
   ]
 }

@@ -14,14 +14,17 @@
       "id": "bat_basic",
       "entries": [
         { "itemId": "soft_leather", "dropRate": 0.5, "min": 1, "max": 1 },
-        { "itemId": "herb", "dropRate": 0.25, "min": 1, "max": 1 }
+        { "itemId": "herb", "dropRate": 0.25, "min": 1, "max": 1 },
+        { "itemId": "shadow_wing", "dropRate": 0.04, "min": 1, "max": 1 }
       ]
     },
     {
       "id": "golem_basic",
       "entries": [
         { "itemId": "iron_ore", "dropRate": 0.8, "min": 1, "max": 2 },
-        { "itemId": "mana_stone", "dropRate": 0.4, "min": 1, "max": 1 }
+        { "itemId": "mana_stone", "dropRate": 0.4, "min": 1, "max": 1 },
+        { "itemId": "golem_core", "dropRate": 0.04, "min": 1, "max": 1 },
+        { "itemId": "star_fragment", "dropRate": 0.01, "min": 1, "max": 1 }
       ]
     },
     {
@@ -29,7 +32,8 @@
       "entries": [
         { "itemId": "kings_blade", "dropRate": 0, "min": 1, "max": 1, "bossFirstGuaranteed": true },
         { "itemId": "king_jelly", "dropRate": 1, "min": 1, "max": 2 },
-        { "itemId": "slime_jelly", "dropRate": 1, "min": 3, "max": 5 }
+        { "itemId": "slime_jelly", "dropRate": 1, "min": 3, "max": 5 },
+        { "itemId": "star_fragment", "dropRate": 0.02, "min": 1, "max": 1 }
       ]
     },
     {
@@ -37,7 +41,8 @@
       "entries": [
         { "itemId": "iron_helm", "dropRate": 0, "min": 1, "max": 1, "bossFirstGuaranteed": true },
         { "itemId": "herb", "dropRate": 1, "min": 2, "max": 3 },
-        { "itemId": "soft_leather", "dropRate": 1, "min": 2, "max": 4 }
+        { "itemId": "soft_leather", "dropRate": 1, "min": 2, "max": 4 },
+        { "itemId": "shadow_wing", "dropRate": 0.3, "min": 1, "max": 1 }
       ]
     },
     {
@@ -45,7 +50,9 @@
       "entries": [
         { "itemId": "iron_plate", "dropRate": 0, "min": 1, "max": 1, "bossFirstGuaranteed": true },
         { "itemId": "mana_stone", "dropRate": 1, "min": 2, "max": 3 },
-        { "itemId": "iron_ore", "dropRate": 1, "min": 2, "max": 4 }
+        { "itemId": "iron_ore", "dropRate": 1, "min": 2, "max": 4 },
+        { "itemId": "golem_core", "dropRate": 0.5, "min": 1, "max": 1 },
+        { "itemId": "star_fragment", "dropRate": 0.03, "min": 1, "max": 1 }
       ]
     }
   ]

@@ -82,7 +82,18 @@ export class DebugScene extends Phaser.Scene {
   }
 
   private grantMaterials(): void {
-    for (const id of ['slime_jelly', 'soft_leather', 'iron_ore']) gameState.addMaterial(id, 5);
+    const ids = [
+      'slime_jelly',
+      'soft_leather',
+      'iron_ore',
+      'herb',
+      'mana_stone',
+      'king_jelly',
+      'golem_core',
+      'shadow_wing',
+      'star_fragment',
+    ];
+    for (const id of ids) gameState.addMaterial(id, 5);
   }
 
   private grantAllEquipment(): void {
