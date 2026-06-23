@@ -94,18 +94,52 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     place(x, y, map.border === 'walls' ? TEX.wall : TEX.obstacle);
   }
 
-  // Portal gate markers + labels.
+  // Portal gate markers: pulsing gate + a direction arrow + label, so they
+  // read clearly as "walk here to travel".
   for (const p of map.portals ?? []) {
     const [px, py, pw, ph] = p.rect;
     const cx = px + pw / 2;
     const cy = py + ph / 2;
-    scene.add.rectangle(cx, cy, pw, ph, 0x6fd0ff, 0.4).setStrokeStyle(2, 0xbfeaff, 0.8).setDepth(5);
+    const gate = scene.add
+      .rectangle(cx, cy, pw, ph, 0x6fd0ff, 0.45)
+      .setStrokeStyle(2, 0xbfeaff, 0.9)
+      .setDepth(5);
+    scene.tweens.add({
+      targets: gate,
+      alpha: 0.85,
+      duration: 700,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+
+    // Arrow points off the nearer edge (top exit -> up, bottom exit -> down).
+    const exitUp = cy < h / 2;
+    const arrow = scene.add
+      .text(cx, exitUp ? cy + ph : cy - ph, exitUp ? '▲' : '▼', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '16px',
+        color: '#bfeaff',
+      })
+      .setOrigin(0.5)
+      .setDepth(6);
+    scene.tweens.add({
+      targets: arrow,
+      y: arrow.y + (exitUp ? -6 : 6),
+      duration: 600,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+
     if (p.label) {
       scene.add
-        .text(cx, cy, p.label, {
+        .text(cx, exitUp ? cy + ph + 16 : cy - ph - 16, p.label, {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '10px',
           color: '#eaf7ff',
+          backgroundColor: '#00000055',
+          padding: { x: 4, y: 2 },
         })
         .setOrigin(0.5)
         .setDepth(6);
