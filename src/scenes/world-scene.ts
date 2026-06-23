@@ -208,8 +208,9 @@ export class WorldScene extends Phaser.Scene {
 
   /** Melee/skill hit resolution in front of the player. */
   private resolveMelee(dir: Direction, mult: number, knockback: number): void {
-    const reach = 34;
-    const half = 26;
+    // Slightly forward, generous radius so adjacent enemies connect reliably.
+    const reach = 30;
+    const half = 34;
     const { ax, ay } = aheadOffset(dir, reach);
     const hx = this.player.x + ax;
     const hy = this.player.y + ay;
