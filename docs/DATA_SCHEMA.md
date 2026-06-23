@@ -34,6 +34,24 @@ DerivedStats キー: `maxHp, maxMp, physAtk, magAtk, def, magDef, accuracy, evas
 
 `material / consumable / equipment / quest / pet_item`。インベントリは素材・消耗品をスタック、装備は個別管理。`ItemDefinition` と `ItemInstance` を分離（ランダムオプションは Phase 1 では未実装）。
 
+## ハクスラ（ランダム品・レアリティ）設計 — Phase 2
+
+ジャンルの中核となる戦利品の深み。**性能はランダム、見た目は visual_family で共有**（`GAME_DESIGN.md` 層5/9）。
+
+- **レアリティ**: `common / magic / rare / epic / legendary`。レアリティで付与オプション数が決まる（例: common 0 / magic 1〜2 / rare 3 / epic 4 / legendary 4+特殊）。色で表示。
+- **アフィックス（オプション）プール** `affixes.json`: `{ id, name, stat(派生キー), min, max, slots?[](付与可能スロット), tierWeight? }`。例: `+N 物理攻撃` / `+N 最大HP` / `+N% 会心`。`stat` は `DerivedStats` のキー（検証）。
+- **ItemInstance**: `{ uid, defId, rarity, affixes: [{stat, value}] }`。実効値 = `定義.derived` ＋ アフィックス合算。`computeDerived` に各装備インスタンスの合算を渡す。
+- **ドロップ生成**: 装備ドロップ時に①レアリティ抽選（LUK=マジックファインドで上振れ）②スロット対応プールからアフィックス抽選（seedable RNG, テスト可能）。
+- **保存**: `equipmentOwned` を `ItemInstance[]`（uid付き）へ。`equipment[slot]` は uid 参照。`migrate` で既存の id 配列を common インスタンスへ変換。
+- **UI**: レアリティ色・接頭/接尾名・ロール値表示、装備中との比較（増減）、不要品の売却/分解。
+- **製作との関係**: 製作は基本 common を産出（将来、確定オプション枠や強化を追加可能）。
+- **見た目**: レアリティで画像は変えない（`visualId`/visual_family を維持）。光沢や枠色などの差別化は演出で。
+
+### 投入を分けるサブステップ（リスク低減）
+1. **インスタンス化リファクタ**（見た目の変化なし）: 所持装備を id 配列→ItemInstance 化、uid 参照、`computeDerived` をインスタンス対応に、migrate 追加。
+2. **レアリティ＋アフィックス**: プールデータ＋ドロップ時ロール、インベントリ表示。
+3. **マジックファインド/比較/分解**: LUK 連動、比較UI、売却・分解で素材還元。
+
 ## ドロップテーブル `drops.json`
 
 `{ id, entries: [{ itemId, dropRate(0..1, 各エントリ独立判定), min, max, bossFirstGuaranteed? }] }`。
