@@ -34,9 +34,21 @@ DerivedStats キー: `maxHp, maxMp, physAtk, magAtk, def, magDef, accuracy, evas
 
 `material / consumable / equipment / quest / pet_item`。インベントリは素材・消耗品をスタック、装備は個別管理。`ItemDefinition` と `ItemInstance` を分離（ランダムオプションは Phase 1 では未実装）。
 
-## ハクスラ（ランダム品・レアリティ）設計 — Phase 2
+## レア素材クラフト（Phase 2）
 
-ジャンルの中核となる戦利品の深み。**性能はランダム、見た目は visual_family で共有**（`GAME_DESIGN.md` 層5/9）。
+本作の核は「**素材を集めて作る**」。ハクスラ的な“当たり”の興奮は、完成装備の直ドロップではなく **超絶レア泥素材** で表現する。完成装備を入手する正規ルートは常にクラフト。
+
+- **素材レアリティ**: `material` 定義に任意の `rarity`（`common / uncommon / rare / epic / legendary`）を追加。未指定は `common`。色・枠で表示し、ドロップ演出を差別化。
+- **超絶レア泥素材**: 通常敵/ボスから**極低確率**（例 0.5〜2%、ボス確定枠とは別）でドロップする `legendary` 素材。これ自体は装備ではない。
+- **レア素材レシピ**: それらを一定数集めると作れる**特別装備**（`rare`/`epic`）を `recipes.json` に追加。完成装備のランダム性能は持たない（性能は固定、希少性は“素材集め”側にある）。
+- **完成装備の直ドロップは増やさない**: 通常敵は素材＋ゴールド中心。ボス初回確定の1個（`bossFirstGuaranteed`）のみ既存どおり許容。
+- **見た目**: レア装備もレアリティで画像を変えない（`visualId`/visual_family 維持）。枠色・光沢など演出で差別化。
+
+> 真のランダム泥ハクスラ（ItemInstance＋アフィックス＋マジックファインド）は **クリア後コンテンツ**（下記）。Phase 2 では“素材レアリティ＋レア素材クラフト”に留め、世界観の核を保つ。
+
+## ハクスラ（ランダム品・レアリティ）設計 — クリア後（エンドゲーム）
+
+ジャンルの中核となる戦利品の深み。**性能はランダム、見た目は visual_family で共有**（`GAME_DESIGN.md` 層5/9）。本編クリア後に解放するエンドゲーム周回向けで、本編中はレア素材クラフト（上記）が主役。
 
 - **レアリティ**: `common / magic / rare / epic / legendary`。レアリティで付与オプション数が決まる（例: common 0 / magic 1〜2 / rare 3 / epic 4 / legendary 4+特殊）。色で表示。
 - **アフィックス（オプション）プール** `affixes.json`: `{ id, name, stat(派生キー), min, max, slots?[](付与可能スロット), tierWeight? }`。例: `+N 物理攻撃` / `+N 最大HP` / `+N% 会心`。`stat` は `DerivedStats` のキー（検証）。
