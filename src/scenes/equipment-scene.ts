@@ -141,8 +141,8 @@ export class EquipmentScene extends Phaser.Scene {
 
   private close(): void {
     this.scene.stop();
-    this.scene.resume('Town');
-    bus.emit('save:written', { slot: -1 }); // hint; town listens & saves
+    this.scene.resume('World');
+    bus.emit('save:written', { slot: -1 }); // hint; world listens & saves
   }
 }
 

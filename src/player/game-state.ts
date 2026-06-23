@@ -45,6 +45,8 @@ export class GameState {
   mapId = 'town';
   x = 180;
   y = 360;
+  /** Active save slot (so autosave writes back to the loaded slot). */
+  slot = 0;
 
   /** Recompute derived stats from base + equipment, clamping HP/MP. */
   recompute(preserveRatio = true): void {
@@ -159,6 +161,7 @@ export class GameState {
   }
 
   loadFrom(data: SaveData): void {
+    this.slot = data.slot;
     this.level = data.player.level;
     this.exp = data.player.exp;
     this.statPoints = data.player.statPoints;

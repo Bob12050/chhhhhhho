@@ -70,8 +70,66 @@ function validateSheetMath(): void {
   if (SHEET_ROWS <= 0 || MAX_FRAMES <= 0) err('Invalid sheet row/frame count');
 }
 
+function readJson<T>(rel: string): T {
+  return JSON.parse(readFileSync(join(root, rel), 'utf8')) as T;
+}
+
+function validateEnemies(itemIds: Set<string>): Set<string> {
+  const file = readJson<{ enemies: { id: string; drop?: { itemId: string } }[] }>(
+    'src/data/defs/enemies.json',
+  );
+  const ids = new Set<string>();
+  for (const e of file.enemies) {
+    if (ids.has(e.id)) err(`Duplicate enemy id: ${e.id}`);
+    ids.add(e.id);
+    if (e.drop && !itemIds.has(e.drop.itemId)) {
+      err(`Enemy ${e.id}: drop item "${e.drop.itemId}" not in items.json`);
+    }
+  }
+  return ids;
+}
+
+function validateMaps(enemyIds: Set<string>): void {
+  const files = ['town', 'field', 'dungeon', 'boss_room'];
+  type MapDoc = {
+    id: string;
+    spawns: Record<string, [number, number]>;
+    portals?: { to: string; toSpawn: string }[];
+    enemies?: { type: string }[];
+  };
+  const maps = new Map<string, MapDoc>();
+  for (const f of files) {
+    const m = readJson<MapDoc>(`src/data/defs/maps/${f}.json`);
+    if (maps.has(m.id)) err(`Duplicate map id: ${m.id}`);
+    maps.set(m.id, m);
+  }
+  for (const m of maps.values()) {
+    for (const e of m.enemies ?? []) {
+      if (!enemyIds.has(e.type)) err(`Map ${m.id}: unknown enemy type "${e.type}"`);
+    }
+    for (const p of m.portals ?? []) {
+      const target = maps.get(p.to);
+      if (!target) {
+        err(`Map ${m.id}: portal to unknown map "${p.to}"`);
+      } else if (!(p.toSpawn in target.spawns)) {
+        err(`Map ${m.id}: portal to ${p.to} uses missing spawn "${p.toSpawn}"`);
+      }
+    }
+  }
+}
+
+function collectItemIds(): Set<string> {
+  const file = readJson<{ materials: { id: string }[]; equipment: { id: string }[] }>(
+    'src/data/defs/items.json',
+  );
+  return new Set<string>([...file.materials.map((m) => m.id), ...file.equipment.map((e) => e.id)]);
+}
+
 validateItems();
 validateSheetMath();
+const itemIds = collectItemIds();
+const enemyIds = validateEnemies(itemIds);
+validateMaps(enemyIds);
 
 if (errors.length > 0) {
   console.error(`Data validation FAILED with ${errors.length} error(s):`);

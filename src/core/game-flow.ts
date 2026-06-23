@@ -19,14 +19,14 @@ export async function beginGame(
   gameState.loadFrom(data);
   bus.emit(mode === 'new' ? 'game:new' : 'game:load', { slot });
   scene.scene.launch('UI');
-  scene.scene.start('Town');
+  scene.scene.start('World');
 }
 
 /** Return from gameplay to the title screen, tearing down world + overlays. */
 export function returnToTitle(scene: Phaser.Scene): void {
   scene.scene.stop('Equipment');
   scene.scene.stop('UI');
-  scene.scene.stop('Town');
+  scene.scene.stop('World');
   bus.emit('game:return-to-title', {});
   scene.scene.start('Title');
 }

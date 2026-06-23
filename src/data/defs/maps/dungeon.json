@@ -1,0 +1,20 @@
+{
+  "id": "dungeon",
+  "name": "うすぐらい洞窟",
+  "size": { "w": 360, "h": 1280 },
+  "ground": "stone",
+  "path": { "axis": "v", "thickness": 96 },
+  "border": "walls",
+  "obstacles": [[110, 360], [250, 360], [180, 620], [90, 880], [270, 880]],
+  "spawns": { "from_field": [180, 1140], "from_boss": [180, 150] },
+  "portals": [
+    { "rect": [148, 1252, 64, 28], "to": "field", "toSpawn": "from_dungeon", "label": "草原へ" },
+    { "rect": [148, 0, 64, 28], "to": "boss_room", "toSpawn": "from_dungeon", "label": "ボスの間へ" }
+  ],
+  "enemies": [
+    { "type": "slime", "x": 130, "y": 980 },
+    { "type": "slime", "x": 240, "y": 820 },
+    { "type": "slime", "x": 180, "y": 520 }
+  ],
+  "npcs": []
+}

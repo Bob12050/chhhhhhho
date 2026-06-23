@@ -1,0 +1,16 @@
+{
+  "enemies": [
+    {
+      "id": "slime",
+      "name": "スライム",
+      "textureKey": "gen.enemy.slime",
+      "maxHp": 14,
+      "moveSpeed": 42,
+      "contactDamage": 4,
+      "aggroRange": 110,
+      "attackRange": 18,
+      "expReward": 8,
+      "drop": { "itemId": "slime_jelly" }
+    }
+  ]
+}

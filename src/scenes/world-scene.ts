@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { Player } from '@/player/player';
 import { Enemy } from '@/enemies/enemy';
+import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
 import { DamageNumbers } from '@/combat/damage-numbers';
 import { gameState } from '@/player/game-state';
 import { getEquipment, itemDisplayName } from '@/data/items';
@@ -9,150 +10,132 @@ import { TEX } from '@/assets/gen/textures';
 import { input } from '@/input/input-state';
 import { bus } from '@/core/event-bus';
 import { saveManager } from '@/save/save-manager';
+import { getMap, spawnPoint, type MapDef } from '@/maps/map-def';
+import { buildMap, type BuiltPortal } from '@/maps/map-builder';
 import type { UIScene } from '@/scenes/ui-scene';
 import type { Direction } from '@/config/layers';
 import type { EquipSlot } from '@/equipment/slots';
 
-const MAP_W = 360;
-const MAP_H = 960;
-const SAVE_SLOT = 0;
+interface BuiltNpc {
+  x: number;
+  y: number;
+  action?: string;
+}
 
 /**
- * Phase 0 town/test map. Vertical (portrait) layout: spawn at the bottom, NPC
- * and goal near the top. Integrates movement, attack, one skill, a slime, loot,
- * pickups, contact damage, and auto-save.
+ * Generic world scene: renders whichever map `gameState.mapId` points at,
+ * spawns its enemies/NPCs, and handles movement, combat, one skill, loot,
+ * portals (map transitions), interaction, and auto-save. Map content is fully
+ * data-driven (`src/data/defs/maps/*.json`).
  */
-export class TownScene extends Phaser.Scene {
+export class WorldScene extends Phaser.Scene {
   private player!: Player;
   private enemies: Enemy[] = [];
   private obstacles!: Phaser.Physics.Arcade.StaticGroup;
   private loot!: Phaser.Physics.Arcade.Group;
   private dmg!: DamageNumbers;
-  private npc!: Phaser.Physics.Arcade.Image;
   private ui!: UIScene;
+
+  private map!: MapDef;
+  private portals: BuiltPortal[] = [];
+  private npcs: BuiltNpc[] = [];
+  private activeNpc: BuiltNpc | null = null;
 
   private playerInvuln = 0;
   private skillCd = 0;
   private autoSaveTimer = 0;
   private mpRegenTimer = 0;
-  private nearNpc = false;
+  private portalLock = 0; // ms; blocks portal re-trigger right after arrival
+  private transitioning = false;
   private busOff: Array<() => void> = [];
 
   constructor() {
-    super('Town');
+    super('World');
   }
 
   create(): void {
-    // Reset per-session state: Phaser reuses the scene instance across
-    // start/stop, so field initializers do NOT re-run on re-entry.
+    // Reset per-session state (Phaser reuses the scene instance on restart).
     this.enemies = [];
+    this.portals = [];
+    this.npcs = [];
+    this.activeNpc = null;
     this.playerInvuln = 0;
     this.skillCd = 0;
     this.autoSaveTimer = 0;
     this.mpRegenTimer = 0;
-    this.nearNpc = false;
+    this.portalLock = 600;
+    this.transitioning = false;
+
+    this.map = getMap(gameState.mapId) ?? getMap('town')!;
 
     this.ui = this.scene.get('UI') as UIScene;
+    this.ui.showInteract(false);
 
-    this.physics.world.setBounds(0, 0, MAP_W, MAP_H);
-    this.cameras.main.setBounds(0, 0, MAP_W, MAP_H);
+    this.physics.world.setBounds(0, 0, this.map.size.w, this.map.size.h);
+    this.cameras.main.setBounds(0, 0, this.map.size.w, this.map.size.h);
     this.cameras.main.roundPixels = true;
 
-    this.buildMap();
+    const built = buildMap(this, this.map);
+    this.obstacles = built.obstacles;
+    this.portals = built.portals;
+
+    // Map title flash.
+    this.showMapName(this.map.name);
 
     // Player.
     this.player = new Player(this, gameState.x, gameState.y);
     this.applyEquipmentVisuals();
     this.player.setMoveSpeed(gameState.derived.moveSpeed);
     this.player.onAttackHit = (dir) => this.resolveMelee(dir, 1.0, 18);
-
-    // Camera follow with look-ahead.
     this.cameras.main.startFollow(this.player.body, true, 0.15, 0.15);
-
-    // Collisions.
     this.physics.add.collider(this.player.body, this.obstacles);
 
-    // Enemies.
+    // Combat / loot.
     this.dmg = new DamageNumbers(this);
-    this.spawnSlime(180, 520);
-    this.spawnSlime(120, 420);
-    this.spawnSlime(250, 360);
-
-    // Loot pickups.
     this.loot = this.physics.add.group();
     this.physics.add.overlap(this.player.body, this.loot, (_p, l) =>
       this.pickup(l as Phaser.Physics.Arcade.Image),
     );
 
-    // Re-apply visuals when equipment changes (from the equipment screen).
+    for (const e of this.map.enemies ?? []) this.spawnEnemy(e.type, e.x, e.y);
+    for (const n of this.map.npcs ?? []) this.spawnNpc(n.x, n.y, n.label, n.action);
+
+    // Listeners (unsubscribed on shutdown to avoid accumulation on re-entry).
     this.busOff.push(
       bus.on('equipment:changed', () => {
         this.applyEquipmentVisuals();
         this.player.setMoveSpeed(gameState.derived.moveSpeed);
       }),
     );
-
-    // Auto-save triggers.
     this.busOff.push(bus.on('app:visibility-hidden', () => void this.save()));
     this.busOff.push(
       bus.on('save:written', ({ slot }) => {
-        if (slot === -1) void this.save(); // equipment screen close hint
+        if (slot === -1) void this.save();
       }),
     );
-
-    // Unsubscribe when this scene shuts down so listeners don't accumulate
-    // across title-return / re-entry.
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.busOff) off();
       this.busOff = [];
     });
 
+    this.cameras.main.fadeIn(150);
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
     bus.emit('player:mp-changed', { current: gameState.mp, max: gameState.derived.maxMp });
   }
 
-  private buildMap(): void {
-    // Ground.
-    this.add.tileSprite(0, 0, MAP_W, MAP_H, TEX.tileGrass).setOrigin(0).setDepth(-1000);
-    // Vertical path up the middle.
-    this.add
-      .tileSprite(MAP_W / 2 - 32, 0, 64, MAP_H, TEX.tilePath)
-      .setOrigin(0)
-      .setDepth(-999);
-
-    this.obstacles = this.physics.add.staticGroup();
-    // Border of trees (leave the path open at top/bottom).
-    const place = (x: number, y: number): void => {
-      const o = this.obstacles.create(x, y, TEX.obstacle) as Phaser.Physics.Arcade.Image;
-      o.setDepth(Math.round(y));
-      o.refreshBody();
-    };
-    for (let y = 16; y < MAP_H; y += 32) {
-      place(16, y);
-      place(MAP_W - 16, y);
-    }
-    // A few scattered trees off the path.
-    for (const [x, y] of [
-      [70, 250],
-      [290, 280],
-      [80, 600],
-      [300, 640],
-      [110, 760],
-    ] as const) {
-      place(x, y);
-    }
-
-    // NPC near the top-center (clear of finger zone, easy to reach).
-    this.npc = this.physics.add.staticImage(MAP_W / 2, 150, TEX.npc).setOrigin(0.5, 0.875);
-    this.npc.setDepth(150);
-    this.add
-      .text(MAP_W / 2, 92, '装備屋', {
+  private showMapName(name: string): void {
+    const t = this.add
+      .text(this.scale.width / 2, 70, name, {
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '11px',
-        color: '#ffe',
+        fontSize: '16px',
+        color: '#ffffff',
+        backgroundColor: '#00000066',
+        padding: { x: 10, y: 4 },
       })
       .setOrigin(0.5)
-      .setDepth(151);
+      .setScrollFactor(0)
+      .setDepth(8000);
+    this.tweens.add({ targets: t, alpha: 0, delay: 1100, duration: 500, onComplete: () => t.destroy() });
   }
 
   private applyEquipmentVisuals(): void {
@@ -164,19 +147,35 @@ export class TownScene extends Phaser.Scene {
     }
   }
 
-  private spawnSlime(x: number, y: number): void {
+  private spawnEnemy(type: string, x: number, y: number): void {
+    const def = getEnemyDef(type);
+    if (!def) return;
     const enemy = new Enemy(this, x, y, {
-      textureKey: TEX.slime,
-      maxHp: 14,
-      moveSpeed: 42,
-      contactDamage: 4,
-      aggroRange: 110,
-      attackRange: 18,
+      textureKey: def.textureKey,
+      maxHp: def.maxHp,
+      moveSpeed: def.moveSpeed,
+      contactDamage: def.contactDamage,
+      aggroRange: def.aggroRange,
+      attackRange: def.attackRange,
     });
     this.physics.add.collider(enemy.sprite, this.obstacles);
     this.physics.add.overlap(this.player.body, enemy.sprite, () => this.onContact(enemy));
-    enemy.onDeath = (dx, dy) => this.onEnemyDeath(dx, dy);
+    enemy.onDeath = (dx, dy) => this.onEnemyDeath(dx, dy, def);
     this.enemies.push(enemy);
+  }
+
+  private spawnNpc(x: number, y: number, label: string, action?: string): void {
+    const sprite = this.physics.add.staticImage(x, y, TEX.npc).setOrigin(0.5, 0.875);
+    sprite.setDepth(Math.round(y));
+    this.add
+      .text(x, y - 58, label, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '11px',
+        color: '#ffe',
+      })
+      .setOrigin(0.5)
+      .setDepth(Math.round(y) + 1);
+    this.npcs.push({ x, y, action });
   }
 
   private onContact(enemy: Enemy): void {
@@ -186,17 +185,19 @@ export class TownScene extends Phaser.Scene {
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
     this.dmg.show(this.player.x, this.player.y - 40, enemy.cfg.contactDamage, false);
     this.cameras.main.shake(120, 0.006);
-    // Knockback player away from enemy.
     const ang = Math.atan2(this.player.y - enemy.y, this.player.x - enemy.x);
     this.player.body.setVelocity(Math.cos(ang) * 160, Math.sin(ang) * 160);
     if (gameState.hp <= 0) this.onPlayerDown();
   }
 
   private onPlayerDown(): void {
-    // Phase 0: respawn at town spawn, full heal.
     gameState.fullHeal();
-    this.player.body.setPosition(180, 820);
-    void this.save();
+    const town = getMap('town');
+    const sp = town ? spawnPoint(town, 'default') : { x: 180, y: 820 };
+    gameState.mapId = 'town';
+    gameState.x = sp.x;
+    gameState.y = sp.y;
+    this.transitionRestart(true);
   }
 
   /** Melee/skill hit resolution in front of the player. */
@@ -213,17 +214,15 @@ export class TownScene extends Phaser.Scene {
         const base = gameState.derived.physAtk;
         const crit = Math.random() < gameState.derived.critRate;
         const amount = Math.max(1, Math.round(base * mult * (crit ? 1.6 : 1)));
-        const killed = e.takeDamage(amount, this.player.x, this.player.y, knockback);
+        e.takeDamage(amount, this.player.x, this.player.y, knockback);
         this.dmg.show(e.x, e.y - 42, amount, crit);
         bus.emit('combat:damage-dealt', { x: e.x, y: e.y, amount, crit });
         hitStop = true;
-        void killed;
       }
     }
     if (hitStop) this.hitStop(60);
   }
 
-  /** Brief global hit-stop for impact feel. */
   private hitStop(ms: number): void {
     this.physics.world.isPaused = true;
     this.time.delayedCall(ms, () => {
@@ -240,11 +239,9 @@ export class TownScene extends Phaser.Scene {
     this.skillCd = 900;
     this.player.play('cast');
     this.spawnSkillEffect(this.player.getDirection());
-    // Slightly stronger, wider forward strike.
     this.time.delayedCall(120, () => this.resolveMelee(this.player.getDirection(), 1.6, 26));
   }
 
-  /** A quick forward slash arc so the skill is visibly distinct from a swing. */
   private spawnSkillEffect(dir: Direction): void {
     const { ax, ay } = aheadOffset(dir, 30);
     const fx = this.add.circle(this.player.x + ax, this.player.y - 30 + ay, 6, 0x9cd2ff, 0.85);
@@ -259,16 +256,16 @@ export class TownScene extends Phaser.Scene {
     });
   }
 
-  private onEnemyDeath(x: number, y: number): void {
+  private onEnemyDeath(x: number, y: number, def: EnemyDef): void {
     this.enemies = this.enemies.filter((e) => !e.isDead());
-    // Drop one material (Phase 0: slime jelly).
-    const drop = this.loot.create(x, y, TEX.obstacle) as Phaser.Physics.Arcade.Image;
-    drop.setTexture(TEX.slime, 0);
-    drop.setScale(0.5);
-    drop.setOrigin(0.5, 0.875);
-    drop.setData('itemId', 'slime_jelly');
-    drop.setDepth(Math.round(y));
-    gameState.gainExp(8);
+    if (def.drop) {
+      const drop = this.loot.create(x, y, TEX.slime, 0) as Phaser.Physics.Arcade.Image;
+      drop.setScale(0.5);
+      drop.setOrigin(0.5, 0.875);
+      drop.setData('itemId', def.drop.itemId);
+      drop.setDepth(Math.round(y));
+    }
+    gameState.gainExp(def.expReward);
   }
 
   private pickup(l: Phaser.Physics.Arcade.Image): void {
@@ -279,7 +276,6 @@ export class TownScene extends Phaser.Scene {
     l.destroy();
   }
 
-  /** Small floating label that rises, holds, then fades (pickup feedback). */
   private floatText(x: number, y: number, msg: string): void {
     const t = this.add
       .text(x, y, msg, {
@@ -289,9 +285,7 @@ export class TownScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(9000);
-    // Quick rise...
     this.tweens.add({ targets: t, y: y - 16, duration: 260, ease: 'Cubic.Out' });
-    // ...then a readable hold before fading out.
     this.tweens.add({
       targets: t,
       alpha: 0,
@@ -301,17 +295,39 @@ export class TownScene extends Phaser.Scene {
     });
   }
 
+  /** Write current player position into the state, then persist the slot. */
   private save(): Promise<void> {
     gameState.x = this.player.x;
     gameState.y = this.player.y;
-    gameState.mapId = 'town';
-    return saveManager.write(gameState.toSave(SAVE_SLOT));
+    gameState.mapId = this.map.id;
+    return this.persist();
+  }
+
+  private persist(): Promise<void> {
+    return saveManager.write(gameState.toSave(gameState.slot));
+  }
+
+  /** Travel through a portal: persist target, then fade + rebuild the scene. */
+  private toMap(p: BuiltPortal): void {
+    const target = getMap(p.to);
+    const sp = target ? spawnPoint(target, p.toSpawn) : { x: 180, y: 180 };
+    gameState.mapId = p.to;
+    gameState.x = sp.x;
+    gameState.y = sp.y;
+    this.transitionRestart(true);
+  }
+
+  private transitionRestart(saveFirst: boolean): void {
+    if (this.transitioning) return;
+    this.transitioning = true;
+    if (saveFirst) void this.persist();
+    this.cameras.main.fadeOut(150);
+    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.restart());
   }
 
   update(_time: number, delta: number): void {
-    if (this.scene.isPaused()) return;
+    if (this.scene.isPaused() || this.transitioning) return;
 
-    // Movement from stick (touch) / keyboard (dev), routed via UIScene.
     const v = this.ui.getStickVector();
     this.player.setMovement(v.x, v.y);
 
@@ -319,12 +335,11 @@ export class TownScene extends Phaser.Scene {
       this.player.attack(this.facingFromStick(v));
     }
     if (input.skill1.justPressed) this.useSkill1();
-    if (input.interact.justPressed && this.nearNpc) this.openEquipment();
+    if (input.interact.justPressed && this.activeNpc) this.runNpc(this.activeNpc);
 
     this.player.update(delta);
     for (const e of this.enemies) e.update(delta, this.player.x, this.player.y);
 
-    // Camera look-ahead toward movement.
     const lead = 28;
     this.cameras.main.setFollowOffset(-v.x * lead, -v.y * lead);
 
@@ -336,8 +351,8 @@ export class TownScene extends Phaser.Scene {
       this.player.doll.container.setAlpha(1);
     }
     if (this.skillCd > 0) this.skillCd -= delta;
+    if (this.portalLock > 0) this.portalLock -= delta;
 
-    // Slow MP regen so the skill stays usable during a play session.
     if (gameState.mp < gameState.derived.maxMp) {
       this.mpRegenTimer += delta;
       while (this.mpRegenTimer >= 700) {
@@ -349,14 +364,9 @@ export class TownScene extends Phaser.Scene {
       this.mpRegenTimer = 0;
     }
 
-    // NPC proximity -> interact prompt.
-    const near = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y) < 40;
-    if (near !== this.nearNpc) {
-      this.nearNpc = near;
-      this.ui.showInteract(near);
-    }
+    this.updateNpcProximity();
+    this.checkPortals();
 
-    // Periodic auto-save (every 30s).
     this.autoSaveTimer += delta;
     if (this.autoSaveTimer >= 30000) {
       this.autoSaveTimer = 0;
@@ -364,6 +374,36 @@ export class TownScene extends Phaser.Scene {
     }
 
     input.endFrame();
+  }
+
+  private updateNpcProximity(): void {
+    let nearest: BuiltNpc | null = null;
+    let best = 40;
+    for (const n of this.npcs) {
+      const d = Phaser.Math.Distance.Between(this.player.x, this.player.y, n.x, n.y);
+      if (d < best) {
+        best = d;
+        nearest = n;
+      }
+    }
+    if (nearest !== this.activeNpc) {
+      this.activeNpc = nearest;
+      this.ui.showInteract(nearest !== null);
+    }
+  }
+
+  private checkPortals(): void {
+    if (this.portalLock > 0) return;
+    for (const p of this.portals) {
+      if (Phaser.Geom.Rectangle.Contains(p.rect, this.player.x, this.player.y)) {
+        this.toMap(p);
+        return;
+      }
+    }
+  }
+
+  private runNpc(npc: BuiltNpc): void {
+    if (npc.action === 'equip') this.openEquipment();
   }
 
   private facingFromStick(v: { x: number; y: number }): Direction | undefined {

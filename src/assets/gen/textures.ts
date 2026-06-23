@@ -19,7 +19,10 @@ export const TEX = {
   slime: 'gen.enemy.slime',
   tileGrass: 'gen.tile.grass',
   tilePath: 'gen.tile.path',
+  tileStone: 'gen.tile.stone',
+  tileFloor: 'gen.tile.floor',
   obstacle: 'gen.obstacle',
+  wall: 'gen.wall',
   npc: 'gen.npc',
 } as const;
 
@@ -98,6 +101,42 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     ctx.fillStyle = '#564a30';
     ctx.fillRect(0, 0, 32, 1);
   });
+
+  make(TEX.tileStone, (ctx) => {
+    ctx.fillStyle = '#3b3f4a';
+    ctx.fillRect(0, 0, 32, 32);
+    ctx.fillStyle = '#4a4f5c';
+    for (let i = 0; i < 16; i++) {
+      const x = (i * 9 + 2) % 32;
+      const y = (i * 7 + 4) % 32;
+      ctx.fillRect(x, y, 3, 3);
+    }
+    ctx.fillStyle = '#2c2f38';
+    ctx.fillRect(0, 0, 32, 1);
+    ctx.fillRect(0, 0, 1, 32);
+  });
+
+  make(TEX.tileFloor, (ctx) => {
+    ctx.fillStyle = '#241f33';
+    ctx.fillRect(0, 0, 32, 32);
+    ctx.fillStyle = '#2e2742';
+    ctx.fillRect(1, 1, 30, 30);
+    ctx.fillStyle = '#3a3157';
+    ctx.fillRect(2, 2, 14, 14);
+    ctx.fillRect(17, 17, 13, 13);
+  });
+
+  make(
+    TEX.wall,
+    (ctx) => {
+      ctx.fillStyle = '#1c1e26';
+      ctx.fillRect(0, 0, 32, 32);
+      ctx.fillStyle = '#333a47';
+      ctx.fillRect(2, 2, 28, 28);
+      ctx.fillStyle = '#454d60';
+      ctx.fillRect(3, 3, 26, 6);
+    },
+  );
 
   make(TEX.obstacle, (ctx) => {
     // A small bushy tree-like block.

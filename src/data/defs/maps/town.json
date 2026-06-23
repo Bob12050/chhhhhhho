@@ -1,0 +1,15 @@
+{
+  "id": "town",
+  "name": "はじまりの町",
+  "size": { "w": 360, "h": 960 },
+  "ground": "grass",
+  "path": { "axis": "v", "thickness": 64 },
+  "border": "trees",
+  "obstacles": [[70, 320], [290, 340], [80, 640], [300, 680]],
+  "spawns": { "default": [180, 820], "from_field": [180, 150] },
+  "portals": [
+    { "rect": [148, 0, 64, 28], "to": "field", "toSpawn": "from_town", "label": "そうげんへ" }
+  ],
+  "enemies": [],
+  "npcs": [{ "x": 180, "y": 230, "label": "装備屋", "action": "equip" }]
+}

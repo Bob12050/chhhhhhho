@@ -6,7 +6,7 @@ import {
 import { BootScene } from '@/scenes/boot-scene';
 import { TitleScene } from '@/scenes/title-scene';
 import { SaveSelectScene } from '@/scenes/save-select-scene';
-import { TownScene } from '@/scenes/town-scene';
+import { WorldScene } from '@/scenes/world-scene';
 import { UIScene } from '@/scenes/ui-scene';
 import { EquipmentScene } from '@/scenes/equipment-scene';
 import { installOrientationGuard } from '@/scenes/orientation-guard';
@@ -51,7 +51,7 @@ const config: Phaser.Types.Core.GameConfig = {
     pixelArt: true,
     roundPixels: true,
   },
-  scene: [BootScene, TitleScene, SaveSelectScene, TownScene, UIScene, EquipmentScene],
+  scene: [BootScene, TitleScene, SaveSelectScene, WorldScene, UIScene, EquipmentScene],
 };
 
 const game = new Phaser.Game(config);
