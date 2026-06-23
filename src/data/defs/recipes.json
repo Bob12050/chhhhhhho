@@ -1,10 +1,12 @@
 {
   "recipes": [
-    { "id": "craft_potion_hp", "resultItemId": "potion_hp", "resultQty": 1, "materials": { "slime_jelly": 2 }, "gold": 3, "station": "workbench" },
-    { "id": "craft_potion_mp", "resultItemId": "potion_mp", "resultQty": 1, "materials": { "slime_jelly": 3 }, "gold": 6, "station": "workbench" },
+    { "id": "craft_potion_hp", "resultItemId": "potion_hp", "resultQty": 1, "materials": { "herb": 1, "slime_jelly": 1 }, "gold": 3, "station": "workbench" },
+    { "id": "craft_potion_mp", "resultItemId": "potion_mp", "resultQty": 1, "materials": { "slime_jelly": 2, "mana_stone": 1 }, "gold": 6, "station": "workbench" },
+    { "id": "craft_potion_hp_l", "resultItemId": "potion_hp_l", "resultQty": 1, "materials": { "herb": 2, "slime_jelly": 3 }, "gold": 12, "station": "workbench" },
     { "id": "craft_leather_cap", "resultItemId": "leather_cap", "resultQty": 1, "materials": { "soft_leather": 3 }, "gold": 10, "station": "forge" },
-    { "id": "craft_cloth_vest", "resultItemId": "cloth_vest", "resultQty": 1, "materials": { "soft_leather": 4 }, "gold": 12, "station": "forge" },
-    { "id": "craft_iron_helm", "resultItemId": "iron_helm", "resultQty": 1, "materials": { "iron_ore": 4 }, "gold": 20, "station": "forge" },
-    { "id": "craft_iron_sword", "resultItemId": "iron_sword", "resultQty": 1, "materials": { "iron_ore": 3, "soft_leather": 2 }, "gold": 25, "station": "forge" }
+    { "id": "craft_cloth_vest", "resultItemId": "cloth_vest", "resultQty": 1, "materials": { "soft_leather": 4, "herb": 2 }, "gold": 12, "station": "forge" },
+    { "id": "craft_iron_helm", "resultItemId": "iron_helm", "resultQty": 1, "materials": { "iron_ore": 4, "mana_stone": 1 }, "gold": 20, "station": "forge" },
+    { "id": "craft_iron_sword", "resultItemId": "iron_sword", "resultQty": 1, "materials": { "iron_ore": 3, "soft_leather": 2, "mana_stone": 1 }, "gold": 25, "station": "forge" },
+    { "id": "craft_elixir", "resultItemId": "elixir", "resultQty": 1, "materials": { "king_jelly": 1, "slime_jelly": 5, "herb": 3, "mana_stone": 2 }, "gold": 40, "station": "workbench" }
   ]
 }

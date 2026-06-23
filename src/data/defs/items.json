@@ -1,12 +1,17 @@
 {
   "materials": [
-    { "id": "slime_jelly", "name": "スライムゼリー", "sellPrice": 3, "description": "ぷるぷるの素材。" },
+    { "id": "slime_jelly", "name": "スライムゼリー", "sellPrice": 3, "description": "ぷるぷるの素材。草原のスライムから。" },
     { "id": "soft_leather", "name": "やわらか革", "sellPrice": 5, "description": "軽装の素材。" },
-    { "id": "iron_ore", "name": "鉄鉱石", "sellPrice": 8, "description": "武具の素材。" }
+    { "id": "iron_ore", "name": "鉄鉱石", "sellPrice": 8, "description": "武具の素材。洞窟で採れる。" },
+    { "id": "herb", "name": "やくそう", "sellPrice": 4, "description": "草原に生える薬草。回復薬の素材。" },
+    { "id": "mana_stone", "name": "魔石", "sellPrice": 12, "description": "洞窟で採れる魔力を帯びた石。" },
+    { "id": "king_jelly", "name": "王のゼリー", "sellPrice": 30, "description": "キングスライムの希少な素材。" }
   ],
   "consumables": [
     { "id": "potion_hp", "name": "回復ポーション", "effect": { "hp": 30 }, "sellPrice": 5, "description": "HPを30回復する。" },
-    { "id": "potion_mp", "name": "魔力ポーション", "effect": { "mp": 20 }, "sellPrice": 5, "description": "MPを20回復する。" }
+    { "id": "potion_mp", "name": "魔力ポーション", "effect": { "mp": 20 }, "sellPrice": 5, "description": "MPを20回復する。" },
+    { "id": "potion_hp_l", "name": "大回復ポーション", "effect": { "hp": 80 }, "sellPrice": 15, "description": "HPを80回復する。" },
+    { "id": "elixir", "name": "エリクサー", "effect": { "hp": 9999, "mp": 9999 }, "sellPrice": 80, "description": "HPとMPを全回復する。" }
   ],
   "petItems": [
     { "id": "pet_egg_slime", "name": "スライムのたまご", "petId": "slime_pet", "sellPrice": 0, "description": "割るとスライムが仲間になる。" }
