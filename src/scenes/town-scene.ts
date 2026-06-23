@@ -258,7 +258,7 @@ export class TownScene extends Phaser.Scene {
     l.destroy();
   }
 
-  /** Small floating label that rises and fades (pickup / status feedback). */
+  /** Small floating label that rises, holds, then fades (pickup feedback). */
   private floatText(x: number, y: number, msg: string): void {
     const t = this.add
       .text(x, y, msg, {
@@ -268,12 +268,14 @@ export class TownScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(9000);
+    // Quick rise...
+    this.tweens.add({ targets: t, y: y - 16, duration: 260, ease: 'Cubic.Out' });
+    // ...then a readable hold before fading out.
     this.tweens.add({
       targets: t,
-      y: y - 22,
       alpha: 0,
-      duration: 700,
-      ease: 'Cubic.Out',
+      delay: 750,
+      duration: 450,
       onComplete: () => t.destroy(),
     });
   }
