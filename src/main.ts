@@ -28,6 +28,15 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
+  // Top-down game: Arcade physics with no gravity. Required for `scene.physics`
+  // to exist; without it Town/Player/Enemy physics calls throw at runtime.
+  physics: {
+    default: 'arcade',
+    arcade: {
+      gravity: { x: 0, y: 0 },
+      debug: false,
+    },
+  },
   render: {
     antialias: false,
     pixelArt: true,
