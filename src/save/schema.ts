@@ -20,6 +20,9 @@ export interface SaveDataV1 {
     hp: number;
     mp: number;
     gold: number;
+    skills: Record<string, number>; // skillId -> level (1 = learned)
+    skillSlots: (string | null)[]; // active skill assigned to each slot
+    skillPoints: number;
   };
   equipment: Partial<Record<string, string | null>>; // slot -> itemId
   inventory: {
@@ -49,6 +52,9 @@ export function createDefaultSave(slot: number): SaveData {
       hp: -1, // -1 = full on load
       mp: -1,
       gold: 30,
+      skills: { slash: 1 },
+      skillSlots: ['slash', null],
+      skillPoints: 0,
     },
     equipment: { head: null, torso: null, main_hand: 'wood_sword' },
     inventory: {

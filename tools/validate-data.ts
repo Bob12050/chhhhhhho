@@ -177,11 +177,47 @@ function validateRecipes(itemIds: Set<string>): void {
   }
 }
 
+function validateSkills(): void {
+  const file = readJson<{
+    skills: { id: string; type: string; requires?: string[]; derived?: Record<string, number> }[];
+  }>('src/data/defs/skills.json');
+  const ids = new Set<string>();
+  for (const s of file.skills) {
+    if (ids.has(s.id)) err(`Duplicate skill id: ${s.id}`);
+    ids.add(s.id);
+    if (s.type !== 'active' && s.type !== 'passive') err(`Skill ${s.id}: bad type "${s.type}"`);
+    for (const k of Object.keys(s.derived ?? {})) {
+      if (!DERIVED_KEYS.has(k)) err(`Skill ${s.id}: invalid derived stat "${k}"`);
+    }
+  }
+  // Prereq existence + acyclic.
+  const byId = new Map(file.skills.map((s) => [s.id, s]));
+  for (const s of file.skills) {
+    for (const r of s.requires ?? []) {
+      if (!byId.has(r)) err(`Skill ${s.id}: unknown prerequisite "${r}"`);
+    }
+  }
+  const state = new Map<string, number>(); // 0=visiting,1=done
+  const visit = (id: string, stack: Set<string>): void => {
+    if (state.get(id) === 1) return;
+    if (stack.has(id)) {
+      err(`Skill prerequisite cycle at "${id}"`);
+      return;
+    }
+    stack.add(id);
+    for (const r of byId.get(id)?.requires ?? []) if (byId.has(r)) visit(r, stack);
+    stack.delete(id);
+    state.set(id, 1);
+  };
+  for (const s of file.skills) visit(s.id, new Set());
+}
+
 const itemIds = collectItemIds();
 const dropTableIds = validateDrops(itemIds);
 const enemyIds = validateEnemies(itemIds, dropTableIds);
 validateMaps(enemyIds);
 validateRecipes(itemIds);
+validateSkills();
 
 if (errors.length > 0) {
   console.error(`Data validation FAILED with ${errors.length} error(s):`);

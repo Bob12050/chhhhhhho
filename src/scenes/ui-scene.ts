@@ -51,6 +51,9 @@ export class UIScene extends Phaser.Scene {
     const skillBtn = new TouchButton(this, baseX - 76, baseY + 6, 28, 'S1', 0x4466cc, depth);
     skillBtn.onChange = (d) => input.setButton('skill1', d);
 
+    const skill2Btn = new TouchButton(this, baseX - 60, baseY - 58, 26, 'S2', 0x5a4abf, depth);
+    skill2Btn.onChange = (d) => input.setButton('skill2', d);
+
     // Interact button appears only when something is interactable (top area).
     this.interactBtn = new TouchButton(this, w / 2, h - bottomPad - 110, 28, '調', 0x44aa66, depth);
     this.interactBtn.onChange = (d) => input.setButton('interact', d);
@@ -134,7 +137,7 @@ export class UIScene extends Phaser.Scene {
   private installKeyboardDev(): void {
     const kb = this.input.keyboard;
     if (!kb) return;
-    const keys = kb.addKeys('W,A,S,D,J,K,E,UP,DOWN,LEFT,RIGHT') as Record<
+    const keys = kb.addKeys('W,A,S,D,J,K,L,E,UP,DOWN,LEFT,RIGHT') as Record<
       string,
       Phaser.Input.Keyboard.Key
     >;
@@ -152,6 +155,7 @@ export class UIScene extends Phaser.Scene {
       }
       input.setButton('attack', keys.J.isDown);
       input.setButton('skill1', keys.K.isDown);
+      input.setButton('skill2', keys.L.isDown);
       input.setButton('interact', keys.E.isDown);
     };
     this.events.on('update', onUpdate);

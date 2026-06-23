@@ -9,6 +9,7 @@ import { visualTexture } from '@/equipment/visuals';
 import { TEX } from '@/assets/gen/textures';
 import { Rng } from '@/core/rng';
 import { getDropTable, rollDrops } from '@/loot/drop-table';
+import { getSkill } from '@/skills/skill-defs';
 import { input } from '@/input/input-state';
 import { bus } from '@/core/event-bus';
 import { saveManager } from '@/save/save-manager';
@@ -44,7 +45,7 @@ export class WorldScene extends Phaser.Scene {
   private activeNpc: BuiltNpc | null = null;
 
   private playerInvuln = 0;
-  private skillCd = 0;
+  private skillCd: number[] = [0, 0];
   private autoSaveTimer = 0;
   private mpRegenTimer = 0;
   private portalLock = 0; // ms; blocks portal re-trigger right after arrival
@@ -63,7 +64,7 @@ export class WorldScene extends Phaser.Scene {
     this.npcs = [];
     this.activeNpc = null;
     this.playerInvuln = 0;
-    this.skillCd = 0;
+    this.skillCd = [0, 0];
     this.autoSaveTimer = 0;
     this.mpRegenTimer = 0;
     this.portalLock = 600;
@@ -207,10 +208,13 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Melee/skill hit resolution in front of the player. */
-  private resolveMelee(dir: Direction, mult: number, knockback: number): void {
-    // Slightly forward, generous radius so adjacent enemies connect reliably.
-    const reach = 30;
-    const half = 34;
+  private resolveMelee(
+    dir: Direction,
+    mult: number,
+    knockback: number,
+    reach = 30,
+    half = 34,
+  ): void {
     const { ax, ay } = aheadOffset(dir, reach);
     const hx = this.player.x + ax;
     const hy = this.player.y + ay;
@@ -237,16 +241,24 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
-  private useSkill1(): void {
-    if (this.skillCd > 0) return;
-    const cost = 5;
+  /** Use the active skill assigned to a slot (data-driven). */
+  private useSkill(slot: number): void {
+    if (this.skillCd[slot] > 0) return;
+    const id = gameState.skillSlots[slot];
+    if (!id) return;
+    const def = getSkill(id);
+    if (!def || def.type !== 'active') return;
+    const cost = def.mpCost ?? 0;
     if (gameState.mp < cost) return;
     gameState.mp -= cost;
     bus.emit('player:mp-changed', { current: gameState.mp, max: gameState.derived.maxMp });
-    this.skillCd = 900;
+    this.skillCd[slot] = def.cooldown ?? 800;
     this.player.play('cast');
-    this.spawnSkillEffect(this.player.getDirection());
-    this.time.delayedCall(120, () => this.resolveMelee(this.player.getDirection(), 1.6, 26));
+    const dir = this.player.getDirection();
+    this.spawnSkillEffect(dir);
+    this.time.delayedCall(120, () =>
+      this.resolveMelee(dir, def.powerMult ?? 1.5, def.knockback ?? 26, def.reach ?? 30, def.radius ?? 34),
+    );
   }
 
   private spawnSkillEffect(dir: Direction): void {
@@ -360,7 +372,8 @@ export class WorldScene extends Phaser.Scene {
     if (input.attack.justPressed || (input.attack.down && !this.player.isAttacking())) {
       this.player.attack(this.facingFromStick(v));
     }
-    if (input.skill1.justPressed) this.useSkill1();
+    if (input.skill1.justPressed) this.useSkill(0);
+    if (input.skill2.justPressed) this.useSkill(1);
     if (input.interact.justPressed && this.activeNpc) this.runNpc(this.activeNpc);
 
     this.player.update(delta);
@@ -376,7 +389,9 @@ export class WorldScene extends Phaser.Scene {
     } else {
       this.player.doll.container.setAlpha(1);
     }
-    if (this.skillCd > 0) this.skillCd -= delta;
+    for (let i = 0; i < this.skillCd.length; i++) {
+      if (this.skillCd[i] > 0) this.skillCd[i] -= delta;
+    }
     if (this.portalLock > 0) this.portalLock -= delta;
 
     if (gameState.mp < gameState.derived.maxMp) {

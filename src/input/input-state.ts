@@ -14,9 +14,10 @@ export class InputState {
 
   attack: ButtonState = { down: false, justPressed: false };
   skill1: ButtonState = { down: false, justPressed: false };
+  skill2: ButtonState = { down: false, justPressed: false };
   interact: ButtonState = { down: false, justPressed: false };
 
-  setButton(name: 'attack' | 'skill1' | 'interact', down: boolean): void {
+  setButton(name: 'attack' | 'skill1' | 'skill2' | 'interact', down: boolean): void {
     const b = this[name];
     if (down && !b.down) b.justPressed = true;
     b.down = down;
@@ -26,6 +27,7 @@ export class InputState {
   endFrame(): void {
     this.attack.justPressed = false;
     this.skill1.justPressed = false;
+    this.skill2.justPressed = false;
     this.interact.justPressed = false;
   }
 }

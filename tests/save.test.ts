@@ -14,6 +14,9 @@ describe('save round trip', () => {
     gs.addConsumable('potion_hp', 2);
     gs.addEquipment('iron_helm');
     gs.addGold(150);
+    gs.level = 2;
+    gs.skillPoints = 1;
+    gs.learnSkill('toughness');
     gs.flags['boss_first_kill'] = true;
     gs.x = 123;
     gs.y = 456;
@@ -31,6 +34,7 @@ describe('save round trip', () => {
     // Equipped items must be owned after load (invariant).
     expect(loaded.equipmentOwned).toContain('iron_sword');
     expect(loaded.gold).toBe(150);
+    expect(loaded.skills.toughness).toBe(1);
     expect(loaded.flags.boss_first_kill).toBe(true);
     expect(loaded.x).toBe(123);
     expect(loaded.derived.physAtk).toBe(gs.derived.physAtk);

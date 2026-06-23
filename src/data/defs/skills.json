@@ -1,0 +1,39 @@
+{
+  "skills": [
+    {
+      "id": "slash",
+      "name": "斬撃",
+      "type": "active",
+      "description": "前方を強めに斬る。",
+      "mpCost": 5,
+      "cooldown": 900,
+      "powerMult": 1.6,
+      "reach": 30,
+      "radius": 36,
+      "knockback": 26,
+      "requiredLevel": 1
+    },
+    {
+      "id": "power_strike",
+      "name": "強打",
+      "type": "active",
+      "description": "重い一撃で大きくノックバックする。",
+      "mpCost": 10,
+      "cooldown": 1600,
+      "powerMult": 2.6,
+      "reach": 32,
+      "radius": 34,
+      "knockback": 46,
+      "requiredLevel": 3,
+      "requires": ["slash"]
+    },
+    {
+      "id": "toughness",
+      "name": "頑強",
+      "type": "passive",
+      "description": "最大HPと防御が上がる。",
+      "derived": { "maxHp": 20, "def": 3 },
+      "requiredLevel": 2
+    }
+  ]
+}

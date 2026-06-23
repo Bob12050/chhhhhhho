@@ -5,6 +5,7 @@ import {
   type StatModifiers,
 } from '@/stats/stats';
 import { getEquipment, getConsumable } from '@/data/items';
+import { getSkill } from '@/skills/skill-defs';
 import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
 import { bus } from '@/core/event-bus';
 import { expToNext } from '@/stats/leveling';
@@ -43,6 +44,10 @@ export class GameState {
   hp = 1;
   mp = 0;
   gold = 0;
+  /** Learned skills (id -> level) and the two active skill slots. */
+  skills: Record<string, number> = {};
+  skillSlots: (string | null)[] = [null, null];
+  skillPoints = 0;
   derived: DerivedStats = computeDerived(this.base);
 
   mapId = 'town';
@@ -59,6 +64,11 @@ export class GameState {
       if (!id) continue;
       const def = getEquipment(id);
       if (def) mods.push({ derived: def.derived });
+    }
+    // Passive skills contribute derived modifiers too.
+    for (const id of Object.keys(this.skills)) {
+      const sk = getSkill(id);
+      if (sk?.type === 'passive' && sk.derived) mods.push({ derived: sk.derived });
     }
     const prev = this.derived;
     const hpRatio = prev.maxHp > 0 ? this.hp / prev.maxHp : 1;
@@ -129,6 +139,33 @@ export class GameState {
     bus.emit('inventory:changed', {});
   }
 
+  /** Why a skill can't be learned right now (or null if it can). */
+  skillLearnBlock(id: string): 'known' | 'unknown' | 'points' | 'level' | 'requires' | null {
+    if (this.skills[id]) return 'known';
+    const def = getSkill(id);
+    if (!def) return 'unknown';
+    if (this.skillPoints < 1) return 'points';
+    if (this.level < (def.requiredLevel ?? 1)) return 'level';
+    for (const req of def.requires ?? []) if (!this.skills[req]) return 'requires';
+    return null;
+  }
+
+  /** Learn a skill (spends one skill point). Returns false if not allowed. */
+  learnSkill(id: string): boolean {
+    if (this.skillLearnBlock(id) !== null) return false;
+    const def = getSkill(id)!;
+    this.skillPoints -= 1;
+    this.skills[id] = 1;
+    if (def.type === 'active') {
+      const slot = this.skillSlots.indexOf(null);
+      if (slot >= 0) this.skillSlots[slot] = id;
+    } else {
+      this.recompute();
+    }
+    bus.emit('skill:learned', { skillId: id });
+    return true;
+  }
+
   consumeMaterials(req: Record<string, number>): boolean {
     for (const [id, qty] of Object.entries(req)) {
       if ((this.materials[id] ?? 0) < qty) return false;
@@ -156,6 +193,7 @@ export class GameState {
       this.exp -= expToNext(this.level);
       this.level++;
       this.statPoints += 3;
+      this.skillPoints += 1;
       leveled = true;
       bus.emit('player:level-up', { level: this.level, statPoints: this.statPoints });
     }
@@ -187,6 +225,9 @@ export class GameState {
         hp: this.hp,
         mp: this.mp,
         gold: this.gold,
+        skills: { ...this.skills },
+        skillSlots: [...this.skillSlots],
+        skillPoints: this.skillPoints,
       },
       equipment: { ...this.equipment },
       inventory: {
@@ -206,6 +247,9 @@ export class GameState {
     this.statPoints = data.player.statPoints;
     this.base = { ...data.player.base };
     this.gold = data.player.gold ?? 0;
+    this.skills = { ...(data.player.skills ?? {}) };
+    this.skillSlots = [...(data.player.skillSlots ?? [null, null])];
+    this.skillPoints = data.player.skillPoints ?? 0;
     this.mapId = data.mapId;
     this.x = data.player.x;
     this.y = data.player.y;

@@ -9,10 +9,11 @@ import {
 import type { EquipSlot } from '@/equipment/slots';
 import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
+import { allSkills } from '@/skills/skill-defs';
 import { bus } from '@/core/event-bus';
 import { returnToTitle } from '@/core/game-flow';
 
-type Tab = 'items' | 'consumables' | 'equipment' | 'status';
+type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
 
 const SLOT_LABEL: Record<string, string> = {
   head: '頭',
@@ -56,18 +57,19 @@ export class InventoryScene extends Phaser.Scene {
     // Tabs.
     const tabs: { id: Tab; label: string }[] = [
       { id: 'items', label: '素材' },
-      { id: 'consumables', label: '消耗品' },
+      { id: 'consumables', label: '消耗' },
       { id: 'equipment', label: '装備' },
       { id: 'status', label: '能力' },
+      { id: 'skill', label: '技' },
     ];
     tabs.forEach((t, i) => {
       const tb = this.add
-        .text(12 + i * 86, 58, t.label, {
+        .text(10 + i * 70, 58, t.label, {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '13px',
           color: '#fff',
           backgroundColor: '#2a2d44',
-          padding: { x: 12, y: 8 },
+          padding: { x: 10, y: 8 },
         })
         .setDepth(1)
         .setInteractive({ useHandCursor: true });
@@ -126,7 +128,8 @@ export class InventoryScene extends Phaser.Scene {
     if (this.tab === 'items') this.renderItems();
     else if (this.tab === 'consumables') this.renderConsumables();
     else if (this.tab === 'equipment') this.renderEquipment();
-    else this.renderStatus();
+    else if (this.tab === 'status') this.renderStatus();
+    else this.renderSkills();
   }
 
   private addRow(y: number, ...objs: Phaser.GameObjects.GameObject[]): void {
@@ -318,6 +321,78 @@ export class InventoryScene extends Phaser.Scene {
         lineSpacing: 3,
       }),
     );
+  }
+
+  private renderSkills(): void {
+    const w = this.scale.width;
+    const gs = gameState;
+    this.content.add(
+      this.add.text(16, 96, `スキルポイント: ${gs.skillPoints}`, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        color: gs.skillPoints > 0 ? '#ffe9a8' : '#9aa0b5',
+      }),
+    );
+
+    let y = 124;
+    for (const def of allSkills()) {
+      const learned = !!gs.skills[def.id];
+      const kind = def.type === 'active' ? 'A' : 'P';
+      const slot = gs.skillSlots.indexOf(def.id);
+      const tag = learned ? (slot >= 0 ? `習得(S${slot + 1})` : '習得') : '';
+      this.content.add(
+        this.add.text(16, y, `[${kind}] ${def.name}  ${tag}`, {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '14px',
+          color: learned ? '#9fe3a0' : '#fff',
+        }),
+      );
+      this.content.add(
+        this.add.text(16, y + 18, def.description, {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '11px',
+          color: '#9aa0b5',
+        }),
+      );
+
+      if (!learned) {
+        const block = gs.skillLearnBlock(def.id);
+        if (block === null) {
+          const btn = this.add
+            .text(w - 16, y + 4, '[ 覚える ]', {
+              fontFamily: 'system-ui, sans-serif',
+              fontSize: '13px',
+              color: '#9fd0ff',
+            })
+            .setOrigin(1, 0)
+            .setInteractive({ useHandCursor: true });
+          btn.on('pointerup', () => {
+            gs.learnSkill(def.id);
+            this.renderTab();
+          });
+          this.content.add(btn);
+        } else {
+          const note =
+            block === 'level'
+              ? `Lv${def.requiredLevel}必要`
+              : block === 'requires'
+                ? '前提技が必要'
+                : block === 'points'
+                  ? 'ポイント不足'
+                  : '';
+          this.content.add(
+            this.add
+              .text(w - 16, y + 4, note, {
+                fontFamily: 'system-ui, sans-serif',
+                fontSize: '11px',
+                color: '#7e8499',
+              })
+              .setOrigin(1, 0),
+          );
+        }
+      }
+      y += 50;
+    }
   }
 
   private close(): void {

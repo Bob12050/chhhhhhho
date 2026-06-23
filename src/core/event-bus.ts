@@ -31,6 +31,9 @@ export interface GameEvents {
   'gold:changed': { current: number };
   'craft:made': { recipeId: string };
 
+  // Skills
+  'skill:learned': { skillId: string };
+
   // Game flow (title / save-select)
   'game:new': { slot: number };
   'game:load': { slot: number };
