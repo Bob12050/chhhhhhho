@@ -78,6 +78,19 @@
       "derived": { "def": 8, "maxHp": 18, "moveSpeed": -4 },
       "sellPrice": 26,
       "description": "頑丈な鉄の胸当て。"
+    },
+    {
+      "id": "kings_blade",
+      "name": "王者の剣",
+      "slot": "main_hand",
+      "rarity": "rare",
+      "visualId": "sword_iron",
+      "weaponTags": ["sword"],
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": { "physAtk": 16, "critRate": 0.05 },
+      "sellPrice": 120,
+      "description": "ボスを討伐した者の証。"
     }
   ]
 }

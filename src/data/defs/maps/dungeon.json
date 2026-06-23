@@ -13,8 +13,9 @@
   ],
   "enemies": [
     { "type": "slime", "x": 130, "y": 980 },
-    { "type": "slime", "x": 240, "y": 820 },
-    { "type": "slime", "x": 180, "y": 520 }
+    { "type": "golem", "x": 240, "y": 820 },
+    { "type": "bat", "x": 110, "y": 640 },
+    { "type": "golem", "x": 180, "y": 440 }
   ],
   "npcs": []
 }

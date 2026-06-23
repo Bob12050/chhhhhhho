@@ -12,6 +12,51 @@
       "expReward": 8,
       "goldReward": 2,
       "dropTableId": "slime_basic"
+    },
+    {
+      "id": "bat",
+      "name": "こうもり",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#88aaff",
+      "maxHp": 10,
+      "moveSpeed": 74,
+      "contactDamage": 3,
+      "aggroRange": 140,
+      "attackRange": 16,
+      "expReward": 7,
+      "goldReward": 3,
+      "dropTableId": "bat_basic"
+    },
+    {
+      "id": "golem",
+      "name": "ゴーレム",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#9a9a9a",
+      "scale": 1.3,
+      "maxHp": 40,
+      "moveSpeed": 24,
+      "contactDamage": 8,
+      "aggroRange": 95,
+      "attackRange": 20,
+      "expReward": 18,
+      "goldReward": 7,
+      "dropTableId": "golem_basic"
+    },
+    {
+      "id": "boss_slime",
+      "name": "キングスライム",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#ff7799",
+      "scale": 2.0,
+      "isBoss": true,
+      "maxHp": 180,
+      "moveSpeed": 38,
+      "contactDamage": 12,
+      "aggroRange": 260,
+      "attackRange": 30,
+      "expReward": 120,
+      "goldReward": 80,
+      "dropTableId": "boss_slime"
     }
   ]
 }

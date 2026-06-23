@@ -14,8 +14,9 @@
   "enemies": [
     { "type": "slime", "x": 180, "y": 900 },
     { "type": "slime", "x": 110, "y": 600 },
-    { "type": "slime", "x": 250, "y": 520 },
-    { "type": "slime", "x": 180, "y": 360 }
+    { "type": "bat", "x": 250, "y": 520 },
+    { "type": "slime", "x": 180, "y": 360 },
+    { "type": "bat", "x": 90, "y": 820 }
   ],
   "npcs": []
 }

@@ -16,6 +16,9 @@ export interface EnemyConfig {
   readonly contactDamage: number;
   readonly aggroRange: number;
   readonly attackRange: number;
+  /** Base tint applied to the sprite (restored after hit-flash). */
+  readonly tint?: number;
+  readonly scale?: number;
 }
 
 export class Enemy {
@@ -50,6 +53,8 @@ export class Enemy {
     this.sprite.setSize(20, 12);
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setData('enemy', this);
+    if (cfg.scale) this.sprite.setScale(cfg.scale);
+    if (cfg.tint !== undefined) this.sprite.setTint(cfg.tint);
   }
 
   get x(): number {
@@ -100,6 +105,12 @@ export class Enemy {
     });
   }
 
+  /** Reset to the base tint (clears the white hit-flash / FILL mode). */
+  private restoreTint(): void {
+    this.sprite.clearTint();
+    if (this.cfg.tint !== undefined) this.sprite.setTint(this.cfg.tint);
+  }
+
   private setState(s: EnemyState): void {
     if (this.state === s) return;
     this.state = s;
@@ -113,7 +124,7 @@ export class Enemy {
 
     if (this.flashTimer > 0) {
       this.flashTimer -= dtMs;
-      if (this.flashTimer <= 0) this.sprite.clearTint();
+      if (this.flashTimer <= 0) this.restoreTint();
     }
 
     if (this.knockback > 0) {

@@ -7,6 +7,28 @@
         { "itemId": "soft_leather", "dropRate": 0.15, "min": 1, "max": 1 },
         { "itemId": "potion_hp", "dropRate": 0.05, "min": 1, "max": 1 }
       ]
+    },
+    {
+      "id": "bat_basic",
+      "entries": [
+        { "itemId": "soft_leather", "dropRate": 0.5, "min": 1, "max": 1 },
+        { "itemId": "slime_jelly", "dropRate": 0.25, "min": 1, "max": 1 }
+      ]
+    },
+    {
+      "id": "golem_basic",
+      "entries": [
+        { "itemId": "iron_ore", "dropRate": 0.8, "min": 1, "max": 2 },
+        { "itemId": "soft_leather", "dropRate": 0.2, "min": 1, "max": 1 }
+      ]
+    },
+    {
+      "id": "boss_slime",
+      "entries": [
+        { "itemId": "kings_blade", "dropRate": 0, "min": 1, "max": 1, "bossFirstGuaranteed": true },
+        { "itemId": "iron_ore", "dropRate": 1, "min": 2, "max": 4 },
+        { "itemId": "slime_jelly", "dropRate": 1, "min": 3, "max": 5 }
+      ]
     }
   ]
 }

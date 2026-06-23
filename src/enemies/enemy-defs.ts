@@ -9,6 +9,11 @@ export interface EnemyDef {
   id: string;
   name: string;
   textureKey: string;
+  /** Optional placeholder tint (e.g. "#88aaff") to distinguish reused sprites. */
+  tint?: string;
+  /** Display scale (boss / large enemies). */
+  scale?: number;
+  isBoss?: boolean;
   maxHp: number;
   moveSpeed: number;
   contactDamage: number;

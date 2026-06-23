@@ -9,6 +9,6 @@
   "portals": [
     { "rect": [148, 536, 64, 32], "to": "dungeon", "toSpawn": "from_boss", "label": "洞窟へ" }
   ],
-  "enemies": [],
+  "enemies": [{ "type": "boss_slime", "x": 180, "y": 240 }],
   "npcs": []
 }

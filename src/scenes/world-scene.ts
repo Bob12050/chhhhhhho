@@ -52,6 +52,13 @@ export class WorldScene extends Phaser.Scene {
   private transitioning = false;
   private busOff: Array<() => void> = [];
   private rng = new Rng();
+  private boss: Enemy | null = null;
+  private bossMaxHp = 0;
+  private bossBar: {
+    bg: Phaser.GameObjects.Rectangle;
+    fill: Phaser.GameObjects.Rectangle;
+    label: Phaser.GameObjects.Text;
+  } | null = null;
 
   constructor() {
     super('World');
@@ -70,6 +77,9 @@ export class WorldScene extends Phaser.Scene {
     this.portalLock = 600;
     this.transitioning = false;
     this.rng = new Rng((Date.now() ^ 0x9e3779b9) >>> 0);
+    this.boss = null;
+    this.bossMaxHp = 0;
+    this.bossBar = null;
 
     this.map = getMap(gameState.mapId) ?? getMap('town')!;
 
@@ -164,11 +174,34 @@ export class WorldScene extends Phaser.Scene {
       contactDamage: def.contactDamage,
       aggroRange: def.aggroRange,
       attackRange: def.attackRange,
+      tint: def.tint ? Phaser.Display.Color.HexStringToColor(def.tint).color : undefined,
+      scale: def.scale,
     });
     this.physics.add.collider(enemy.sprite, this.obstacles);
     this.physics.add.overlap(this.player.body, enemy.sprite, () => this.onContact(enemy));
     enemy.onDeath = (dx, dy) => this.onEnemyDeath(dx, dy, def);
     this.enemies.push(enemy);
+    if (def.isBoss) {
+      this.boss = enemy;
+      this.bossMaxHp = def.maxHp;
+      this.buildBossBar(def.name);
+    }
+  }
+
+  private buildBossBar(name: string): void {
+    const w = this.scale.width;
+    const bg = this.add.rectangle(w / 2, 30, w - 40, 14, 0x000000, 0.55).setScrollFactor(0).setDepth(8000);
+    const fill = this.add
+      .rectangle(20, 30, w - 44, 9, 0xcc3a4a)
+      .setOrigin(0, 0.5)
+      .setScrollFactor(0)
+      .setDepth(8001);
+    const label = this.add
+      .text(w / 2, 30, name, { fontFamily: 'system-ui, sans-serif', fontSize: '10px', color: '#fff' })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(8002);
+    this.bossBar = { bg, fill, label };
   }
 
   private spawnNpc(x: number, y: number, label: string, action?: string): void {
@@ -277,9 +310,11 @@ export class WorldScene extends Phaser.Scene {
 
   private onEnemyDeath(x: number, y: number, def: EnemyDef): void {
     this.enemies = this.enemies.filter((e) => !e.isDead());
+    const killFlag = `boss_${def.id}_killed`;
+    const firstKill = !!def.isBoss && !gameState.flags[killFlag];
     const table = def.dropTableId ? getDropTable(def.dropTableId) : undefined;
     if (table) {
-      const drops = rollDrops(table, this.rng, { firstKill: false });
+      const drops = rollDrops(table, this.rng, { firstKill });
       for (const d of drops) {
         const ox = this.rng.intRange(-12, 12);
         const oy = this.rng.intRange(-6, 10);
@@ -291,6 +326,13 @@ export class WorldScene extends Phaser.Scene {
       this.floatText(x + 14, y - 24, `+${def.goldReward}G`);
     }
     gameState.gainExp(def.expReward);
+    if (def.isBoss) {
+      gameState.flags[killFlag] = true;
+      gameState.flags[`${def.id}_defeated`] = true;
+      this.boss = null;
+      this.floatText(x, y - 46, `${def.name} を倒した！`);
+      void this.save();
+    }
   }
 
   private spawnLoot(x: number, y: number, itemId: string, qty: number): void {
@@ -405,6 +447,7 @@ export class WorldScene extends Phaser.Scene {
       this.mpRegenTimer = 0;
     }
 
+    this.updateBossBar();
     this.updateNpcProximity();
     this.checkPortals();
 
@@ -415,6 +458,18 @@ export class WorldScene extends Phaser.Scene {
     }
 
     input.endFrame();
+  }
+
+  private updateBossBar(): void {
+    if (!this.bossBar) return;
+    if (this.boss && !this.boss.isDead() && this.bossMaxHp > 0) {
+      this.bossBar.fill.scaleX = Phaser.Math.Clamp(this.boss.hp / this.bossMaxHp, 0, 1);
+    } else {
+      this.bossBar.bg.destroy();
+      this.bossBar.fill.destroy();
+      this.bossBar.label.destroy();
+      this.bossBar = null;
+    }
   }
 
   private updateNpcProximity(): void {
