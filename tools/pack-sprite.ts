@@ -81,7 +81,7 @@ function resizeNearest(f: Cropped, nw: number, nh: number): Cropped {
 
 /** Squash & stretch: wider + shorter (a classic idle "bounce" low pose). */
 function squash(f: Cropped): Cropped {
-  return resizeNearest(f, Math.round(f.w * 1.12), Math.round(f.h * 0.85));
+  return resizeNearest(f, Math.round(f.w * 1.2), Math.round(f.h * 0.74));
 }
 
 const frames = framePaths.map(cropOpaque);
