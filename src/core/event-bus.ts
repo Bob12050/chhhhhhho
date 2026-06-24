@@ -24,7 +24,9 @@ export interface GameEvents {
   // UI requests (from HUD overlay to the world scene)
   'ui:open-inventory': Record<string, never>;
   'ui:open-debug': Record<string, never>;
+  'ui:open-map': Record<string, never>;
   'debug:warp': Record<string, never>;
+  'map:travel': Record<string, never>;
 
   // Equipment
   'equipment:changed': { slot: string };

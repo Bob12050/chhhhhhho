@@ -1,21 +1,98 @@
 {
   "id": "dungeon",
   "name": "うすぐらい洞窟",
-  "size": { "w": 360, "h": 1280 },
+  "travel": {
+    "order": 2,
+    "note": "ゴーレム。レア素材"
+  },
+  "size": {
+    "w": 360,
+    "h": 1280
+  },
   "ground": "stone",
-  "path": { "axis": "v", "thickness": 96 },
+  "path": {
+    "axis": "v",
+    "thickness": 96
+  },
   "border": "walls",
-  "obstacles": [[110, 360], [250, 360], [180, 620], [90, 880], [270, 880]],
-  "spawns": { "from_field": [180, 1140], "from_boss": [180, 150] },
+  "obstacles": [
+    [
+      110,
+      360
+    ],
+    [
+      250,
+      360
+    ],
+    [
+      180,
+      620
+    ],
+    [
+      90,
+      880
+    ],
+    [
+      270,
+      880
+    ]
+  ],
+  "spawns": {
+    "from_field": [
+      180,
+      1140
+    ],
+    "from_boss": [
+      180,
+      150
+    ]
+  },
   "portals": [
-    { "rect": [148, 1216, 64, 32], "to": "field", "toSpawn": "from_dungeon", "label": "草原へ" },
-    { "rect": [148, 32, 64, 32], "to": "boss_room", "toSpawn": "from_dungeon", "label": "ボスの間へ", "requiresFlag": "boss_stone_defeated" }
+    {
+      "rect": [
+        148,
+        1216,
+        64,
+        32
+      ],
+      "to": "field",
+      "toSpawn": "from_dungeon",
+      "label": "草原へ"
+    },
+    {
+      "rect": [
+        148,
+        32,
+        64,
+        32
+      ],
+      "to": "boss_room",
+      "toSpawn": "from_dungeon",
+      "label": "ボスの間へ",
+      "requiresFlag": "boss_stone_defeated"
+    }
   ],
   "enemies": [
-    { "type": "slime", "x": 130, "y": 980 },
-    { "type": "golem", "x": 240, "y": 820 },
-    { "type": "bat", "x": 110, "y": 640 },
-    { "type": "boss_stone", "x": 180, "y": 260 }
+    {
+      "type": "slime",
+      "x": 130,
+      "y": 980
+    },
+    {
+      "type": "golem",
+      "x": 240,
+      "y": 820
+    },
+    {
+      "type": "bat",
+      "x": 110,
+      "y": 640
+    },
+    {
+      "type": "boss_stone",
+      "x": 180,
+      "y": 260
+    }
   ],
   "npcs": []
 }

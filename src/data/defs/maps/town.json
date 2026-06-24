@@ -1,6 +1,7 @@
 {
   "id": "town",
   "name": "はじまりの町",
+  "travel": { "order": 0, "note": "拠点。装備・鍛冶・ギルド" },
   "size": { "w": 360, "h": 960 },
   "ground": "grass",
   "path": { "axis": "v", "thickness": 64 },

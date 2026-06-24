@@ -1,14 +1,42 @@
 {
   "id": "boss_room",
   "name": "ボスの間",
-  "size": { "w": 360, "h": 600 },
+  "travel": {
+    "order": 3,
+    "note": "ボス戦"
+  },
+  "size": {
+    "w": 360,
+    "h": 600
+  },
   "ground": "floor",
   "border": "walls",
   "obstacles": [],
-  "spawns": { "from_dungeon": [180, 520] },
+  "spawns": {
+    "from_dungeon": [
+      180,
+      520
+    ]
+  },
   "portals": [
-    { "rect": [148, 536, 64, 32], "to": "dungeon", "toSpawn": "from_boss", "label": "洞窟へ" }
+    {
+      "rect": [
+        148,
+        536,
+        64,
+        32
+      ],
+      "to": "dungeon",
+      "toSpawn": "from_boss",
+      "label": "洞窟へ"
+    }
   ],
-  "enemies": [{ "type": "boss_slime", "x": 180, "y": 240 }],
+  "enemies": [
+    {
+      "type": "boss_slime",
+      "x": 180,
+      "y": 240
+    }
+  ],
   "npcs": []
 }

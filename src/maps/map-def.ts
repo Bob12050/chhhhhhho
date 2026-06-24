@@ -50,6 +50,17 @@ export interface MapDef {
   portals?: PortalDef[];
   enemies?: MapEnemy[];
   npcs?: MapNpc[];
+  /** Fast-travel listing. Maps without this still travel (order last). */
+  travel?: {
+    /** Sort order in the travel list (ascending). */
+    order?: number;
+    /** Hide from the travel list (e.g. cutscene-only rooms). */
+    hidden?: boolean;
+    /** If set, locked in the list until this flag is true. */
+    unlockFlag?: string;
+    /** Short blurb shown under the name. */
+    note?: string;
+  };
 }
 
 const maps = new Map<string, MapDef>();
@@ -63,6 +74,16 @@ export function getMap(id: string): MapDef | undefined {
 
 export function allMaps(): MapDef[] {
   return [...maps.values()];
+}
+
+/** Maps shown in the fast-travel list, sorted by travel.order then name. */
+export function travelMaps(): MapDef[] {
+  return [...maps.values()]
+    .filter((m) => !m.travel?.hidden)
+    .sort(
+      (a, b) =>
+        (a.travel?.order ?? 999) - (b.travel?.order ?? 999) || a.name.localeCompare(b.name),
+    );
 }
 
 /** Resolve a spawn point, falling back to `default` then map center. */

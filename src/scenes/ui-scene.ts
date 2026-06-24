@@ -106,6 +106,12 @@ export class UIScene extends Phaser.Scene {
       if (down) bus.emit('ui:open-inventory', {});
     };
 
+    // Map button (below the bag) opens the fast-travel list.
+    const mapBtn = new TouchButton(this, w - insets.right - 24, insets.top + 74, 22, '地', 0x4e7aa0, depth);
+    mapBtn.onChange = (down) => {
+      if (down) bus.emit('ui:open-map', {});
+    };
+
     if (isDebugEnabled()) {
       const dbg = new TouchButton(this, w - insets.right - 72, insets.top + 26, 20, 'DBG', 0x884444, depth);
       dbg.onChange = (down) => {

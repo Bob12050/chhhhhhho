@@ -141,12 +141,20 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): void {
     portals?: { to: string; toSpawn: string }[];
     enemies?: { type: string }[];
     npcs?: { dialogueId?: string }[];
+    travel?: { order?: number; hidden?: boolean; unlockFlag?: string; note?: string };
   };
   const maps = new Map<string, MapDoc>();
+  const travelOrders = new Map<number, string>();
   for (const f of files) {
     const m = readJson<MapDoc>(`src/data/defs/maps/${f}.json`);
     if (maps.has(m.id)) err(`Duplicate map id: ${m.id}`);
     maps.set(m.id, m);
+    const order = m.travel?.order;
+    if (order != null && !m.travel?.hidden) {
+      const dup = travelOrders.get(order);
+      if (dup) err(`Map ${m.id}: travel.order ${order} duplicates ${dup}`);
+      else travelOrders.set(order, m.id);
+    }
   }
   for (const m of maps.values()) {
     for (const e of m.enemies ?? []) {

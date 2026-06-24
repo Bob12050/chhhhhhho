@@ -1,22 +1,107 @@
 {
   "id": "field",
   "name": "みどりの草原",
-  "size": { "w": 360, "h": 1280 },
+  "travel": {
+    "order": 1,
+    "note": "通常敵。素材集め"
+  },
+  "size": {
+    "w": 360,
+    "h": 1280
+  },
   "ground": "grass",
-  "path": { "axis": "v", "thickness": 48 },
+  "path": {
+    "axis": "v",
+    "thickness": 48
+  },
   "border": "trees",
-  "obstacles": [[80, 300], [300, 360], [70, 720], [300, 760], [120, 1000], [260, 980]],
-  "spawns": { "from_town": [180, 1140], "from_dungeon": [180, 150] },
+  "obstacles": [
+    [
+      80,
+      300
+    ],
+    [
+      300,
+      360
+    ],
+    [
+      70,
+      720
+    ],
+    [
+      300,
+      760
+    ],
+    [
+      120,
+      1000
+    ],
+    [
+      260,
+      980
+    ]
+  ],
+  "spawns": {
+    "from_town": [
+      180,
+      1140
+    ],
+    "from_dungeon": [
+      180,
+      150
+    ]
+  },
   "portals": [
-    { "rect": [148, 1216, 64, 32], "to": "town", "toSpawn": "from_field", "label": "町へ" },
-    { "rect": [148, 32, 64, 32], "to": "dungeon", "toSpawn": "from_field", "label": "どうくつへ", "requiresFlag": "boss_treant_defeated" }
+    {
+      "rect": [
+        148,
+        1216,
+        64,
+        32
+      ],
+      "to": "town",
+      "toSpawn": "from_field",
+      "label": "町へ"
+    },
+    {
+      "rect": [
+        148,
+        32,
+        64,
+        32
+      ],
+      "to": "dungeon",
+      "toSpawn": "from_field",
+      "label": "どうくつへ",
+      "requiresFlag": "boss_treant_defeated"
+    }
   ],
   "enemies": [
-    { "type": "slime", "x": 180, "y": 900 },
-    { "type": "slime", "x": 110, "y": 600 },
-    { "type": "bat", "x": 250, "y": 520 },
-    { "type": "bat", "x": 90, "y": 820 },
-    { "type": "boss_treant", "x": 180, "y": 260 }
+    {
+      "type": "slime",
+      "x": 180,
+      "y": 900
+    },
+    {
+      "type": "slime",
+      "x": 110,
+      "y": 600
+    },
+    {
+      "type": "bat",
+      "x": 250,
+      "y": 520
+    },
+    {
+      "type": "bat",
+      "x": 90,
+      "y": 820
+    },
+    {
+      "type": "boss_treant",
+      "x": 180,
+      "y": 260
+    }
   ],
   "npcs": []
 }

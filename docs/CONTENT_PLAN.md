@@ -74,8 +74,11 @@
 - 進化/合成/性格は Phase 2 以降のデータ構造に従う
 
 ### マップ（`defs/maps/*.json`）
-- 新規ファイルは `tools/validate-data.ts` の `files` 配列にも追加する（現在 `town/field/dungeon/boss_room` 固定）
-- `portals.to/toSpawn`、`enemies.type`、`npcs.dialogueId` は実在参照（検証あり）
+- 新規ファイルは `tools/validate-data.ts` の `files` 配列と `src/maps/map-def.ts` の import 群に追加する（現在 `town/field/dungeon/boss_room`）
+- **移動は一覧から（ファストトラベル）。新マップはポータル不要**で、`travel` を付ければHUDの「地」ボタンの一覧に並ぶ：
+  `"travel": { "order": <昇順>, "note": "一覧の補足", "unlockFlag": "<任意>", "hidden": false }`
+  - `order` は一覧内で重複不可（検証あり）。`unlockFlag` 未指定＝最初から開放。`hidden:true` で一覧非表示
+- `portals` は任意（歩いて繋ぎたい場合のみ）。`portals.to/toSpawn`、`enemies.type`、`npcs.dialogueId` は実在参照（検証あり）
 
 ### 会話（`dialogue.json`）
 - `npcs.dialogueId` から参照。マップNPCとセットで増やす

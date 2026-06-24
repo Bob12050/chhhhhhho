@@ -30,6 +30,7 @@ export function returnToTitle(scene: Phaser.Scene): void {
   scene.scene.stop('Dialogue');
   scene.scene.stop('Debug');
   scene.scene.stop('Checklist');
+  scene.scene.stop('MapSelect');
   scene.scene.stop('UI');
   scene.scene.stop('World');
   bus.emit('game:return-to-title', {});
