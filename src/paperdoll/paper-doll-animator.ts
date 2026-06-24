@@ -33,6 +33,7 @@ export class PaperDollAnimator {
   private elapsed = 0; // ms into current frame
   private playing = true;
   private onComplete: (() => void) | null = null;
+  private flashTimer = 0;
 
   // Normalized origin so the actor's (x, y) is the feet anchor and flipX mirrors
   // around the horizontal center (anchor x == frame center == 32).
@@ -110,8 +111,25 @@ export class PaperDollAnimator {
     this.container.setDepth(depth);
   }
 
+  /**
+   * White hit-flash across every layer (Phaser 4: FILL tint mode; plain
+   * setTint would multiply). Cleared automatically by update() after `ms`.
+   */
+  flashWhite(ms: number): void {
+    this.flashTimer = ms;
+    for (const sprite of this.layers.values()) {
+      sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+    }
+  }
+
   /** Advance the single clock and push the frame to all layers. */
   update(dtMs: number): void {
+    if (this.flashTimer > 0) {
+      this.flashTimer -= dtMs;
+      if (this.flashTimer <= 0) {
+        for (const sprite of this.layers.values()) sprite.clearTint();
+      }
+    }
     const def = ANIMATIONS[this.anim];
     if (this.playing) {
       this.elapsed += dtMs;

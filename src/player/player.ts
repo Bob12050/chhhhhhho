@@ -131,6 +131,25 @@ export class Player {
     this.doll.play(anim);
   }
 
+  /** Took a hit: white flash (the invuln blink is driven by the scene). */
+  hurt(): void {
+    this.doll.flashWhite(140);
+  }
+
+  /** Defeated: stop, play the death pose, flash, and fade the doll out. */
+  die(): void {
+    this.attacking = false;
+    this.body.setVelocity(0, 0);
+    this.doll.play('death', { force: true });
+    this.doll.flashWhite(120);
+    this.scene.tweens.add({
+      targets: this.doll.container,
+      alpha: 0,
+      duration: 450,
+      delay: 150,
+    });
+  }
+
   update(dtMs: number): void {
     this.doll.setPosition(this.body.x, this.body.y);
     this.doll.setDepth(Math.round(this.body.y));

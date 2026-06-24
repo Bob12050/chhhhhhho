@@ -49,6 +49,7 @@ export class WorldScene extends Phaser.Scene {
   private activeNpc: BuiltNpc | null = null;
 
   private playerInvuln = 0;
+  private playerDead = false;
   private skillCd: number[] = [0, 0];
   private autoSaveTimer = 0;
   private mpRegenTimer = 0;
@@ -77,6 +78,7 @@ export class WorldScene extends Phaser.Scene {
     this.npcs = [];
     this.activeNpc = null;
     this.playerInvuln = 0;
+    this.playerDead = false;
     this.skillCd = [0, 0];
     this.autoSaveTimer = 0;
     this.mpRegenTimer = 0;
@@ -242,11 +244,12 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private onContact(enemy: Enemy): void {
-    if (enemy.isDead() || this.playerInvuln > 0) return;
+    if (enemy.isDead() || this.playerInvuln > 0 || this.playerDead) return;
     this.playerInvuln = 700;
     gameState.hp = Math.max(0, gameState.hp - enemy.cfg.contactDamage);
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
     this.dmg.show(this.player.x, this.player.y - 40, enemy.cfg.contactDamage, false);
+    this.player.hurt();
     this.cameras.main.shake(120, 0.006);
     const ang = Math.atan2(this.player.y - enemy.y, this.player.x - enemy.x);
     this.player.body.setVelocity(Math.cos(ang) * 160, Math.sin(ang) * 160);
@@ -254,13 +257,21 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private onPlayerDown(): void {
-    gameState.fullHeal();
-    const town = getMap('town');
-    const sp = town ? spawnPoint(town, 'default') : { x: 180, y: 820 };
-    gameState.mapId = 'town';
-    gameState.x = sp.x;
-    gameState.y = sp.y;
-    this.transitionRestart(true);
+    if (this.playerDead) return;
+    this.playerDead = true;
+    this.playerInvuln = 999999;
+    this.player.die();
+    this.cameras.main.shake(200, 0.008);
+    // Let the death flash/fade read before respawning in town.
+    this.time.delayedCall(700, () => {
+      gameState.fullHeal();
+      const town = getMap('town');
+      const sp = town ? spawnPoint(town, 'default') : { x: 180, y: 820 };
+      gameState.mapId = 'town';
+      gameState.x = sp.x;
+      gameState.y = sp.y;
+      this.transitionRestart(true);
+    });
   }
 
   /** Melee/skill hit resolution in front of the player. */
@@ -477,6 +488,12 @@ export class WorldScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     if (this.scene.isPaused() || this.transitioning) return;
+
+    // While defeated, just let the death animation/fade play out.
+    if (this.playerDead) {
+      this.player.update(delta);
+      return;
+    }
 
     const v = this.ui.getStickVector();
     this.player.setMovement(v.x, v.y);
