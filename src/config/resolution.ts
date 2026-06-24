@@ -16,19 +16,19 @@ export const LOGICAL_HEIGHT_DEFAULT = 720;
 export const TILE_SIZE = 32;
 
 /**
- * Character frame size. NOTE: extended to 64x96 (vs a square 64) to give
- * head-room for tall hats/helmets without resizing the body. The drawn body
- * is still ~52px tall (≈2 tiles); the extra 32px is upward padding.
+ * Character frame size. 96x96 square frames for chunky chibi-style sprites
+ * (bigger, more detailed than the original 64x96). The drawn body sits at the
+ * foot anchor; extra space above gives head-room for tall hats/helmets.
  */
-export const CHAR_FRAME_W = 64;
+export const CHAR_FRAME_W = 96;
 export const CHAR_FRAME_H = 96;
 
 /**
- * Foot anchor inside the 64x96 frame. x is centered; y sits where the feet
- * touch the ground. (32, 84): 84px from the top to the feet, 12px below for
- * shadow/ground contact, ~40px of headroom above the head.
+ * Foot anchor inside the 96x96 frame. x is centered; y sits where the feet
+ * touch the ground. (48, 84): centered horizontally, feet 84px from the top
+ * with 12px below for shadow/ground contact.
  */
-export const CHAR_ANCHOR_X = 32;
+export const CHAR_ANCHOR_X = 48;
 export const CHAR_ANCHOR_Y = 84;
 
 /** Compute the logical height for a given device aspect ratio (h/w). */

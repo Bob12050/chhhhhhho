@@ -3,6 +3,7 @@ import { PaperDollAnimator } from '@/paperdoll/paper-doll-animator';
 import type { Direction, DrawGroup } from '@/config/layers';
 import type { AnimName } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
+import { CHAR_FRAME_W } from '@/config/resolution';
 import type { EquipSlot } from '@/equipment/slots';
 
 /**
@@ -34,14 +35,14 @@ export class Player {
     this.scene = scene;
 
     // Invisible collider; the visible character is the paper-doll container.
-    // The body texture is a 64x96 frame with origin (0.5, 0.5), so center the
-    // 20x16 collision box on the actor position (offset = frameHalf - boxHalf).
-    // A previous (0,0) offset parked the box in the frame's top-left corner,
-    // which (via world bounds) kept the player from reaching edge portals.
+    // The body texture is a CHAR_FRAME_W x CHAR_FRAME_H frame with origin
+    // (0.5, 0.5), so center the 20x16 collision box horizontally on the actor
+    // (offset = frameHalf - boxHalf). A previous (0,0) offset parked the box in
+    // the frame's top-left corner, which kept the player from reaching portals.
     this.body = scene.physics.add.image(x, y, TEX.playerBody);
     this.body.setVisible(false);
     this.body.setSize(20, 16);
-    this.body.setOffset(22, 40);
+    this.body.setOffset((CHAR_FRAME_W - 20) / 2, 40);
     this.body.setCollideWorldBounds(true);
 
     this.doll = new PaperDollAnimator(scene, x, y);

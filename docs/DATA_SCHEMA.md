@@ -83,7 +83,7 @@ DerivedStats キー: `maxHp, maxMp, physAtk, magAtk, def, magDef, accuracy, evas
 
 ## ポーズアトラス
 
-`pose-atlas.ts` 参照。シート寸法は frame 寸法（64×96）× 行数（方向×アニメ）で決まり、検証される。
+`pose-atlas.ts` 参照。シート寸法は frame 寸法（96×96）× 行数（方向×アニメ）で決まり、検証される。
 
 ## セーブ `SaveDataV1`（`src/save/schema.ts`）
 

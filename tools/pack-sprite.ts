@@ -1,7 +1,8 @@
 /**
  * Pack one or more single-sprite frames into a pose-atlas sheet
- * (256x1728, 64x96 cells, 18 rows). Each frame's opaque bounding box is
- * detected, then bottom-centered on the foot anchor (32,84) of every cell, so
+ * (96x96 cells, 4 cols x 18 rows; dims from resolution/pose-atlas). Each
+ * frame's opaque bounding box is
+ * detected, then bottom-centered on the foot anchor (48,84) of every cell, so
  * a simple creature (slime, etc.) fills all directions/animations. Multiple
  * frames cycle across columns (e.g. normal + squashed = a bounce).
  *

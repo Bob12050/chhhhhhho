@@ -18,7 +18,7 @@ import { PALETTES, EQUIP_RAMPS, type ActorPalette, type Ramp } from './palette';
 
 /**
  * Procedural placeholder pixel art. Produces sprite sheets that EXACTLY match
- * the pose-atlas layout (64x96 frames, rows = direction x animation, cols =
+ * the pose-atlas layout (96x96 frames, rows = direction x animation, cols =
  * frames). All drawing is integer-aligned with no anti-aliasing, so the result
  * is true pixel art. These are stand-ins; final art drops into the same slots.
  */

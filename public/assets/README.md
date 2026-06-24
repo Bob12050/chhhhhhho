@@ -8,26 +8,26 @@
 
 ```
 assets/
-  char/player_body.png      # 64x96 フレームのポーズアトラス
+  char/player_body.png      # 96x96 フレームのポーズアトラス
   equip/cap_leather.png     # 同上（装備レイヤー）
   equip/helm_iron.png
   equip/vest_cloth.png
   equip/plate_iron.png
   equip/sword_wood.png
   equip/sword_iron.png
-  enemy/slime.png           # 64x96 ポーズアトラス
+  enemy/slime.png           # 96x96 ポーズアトラス
   tiles/grass.png           # 32x32
   tiles/path.png            # 32x32
   tiles/stone.png           # 32x32
   tiles/floor.png           # 32x32
   env/obstacle.png          # 32x32
   env/wall.png              # 32x32
-  env/npc.png               # 64x96（単一画像）
+  env/npc.png               # 96x96（単一画像）
 ```
 
 ## ポーズアトラス規格（char/equip/enemy）
 
-- 1フレーム **64×96**、足元基準点 **(32,84)**。
+- 1フレーム **96×96**、足元基準点 **(48,84)**。
 - 行 = 方向(down,up,left) × アニメ(idle,walk,attack,cast,hurt,death)、列 = フレーム。
 - `right` は `left` の水平反転（描画時に自動）。
 - Nearest 前提のドット絵（アンチエイリアスなし）。

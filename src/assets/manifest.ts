@@ -9,7 +9,7 @@ import { CHAR_FRAME_W, CHAR_FRAME_H } from '@/config/resolution';
  * ensureGeneratedTextures, which only fills missing keys).
  *
  * Character/equipment/enemy sheets MUST follow the pose-atlas layout
- * (64x96 frames, rows = direction x animation; see docs/ART_SPEC.md).
+ * (96x96 frames, rows = direction x animation; see docs/ART_SPEC.md).
  */
 export interface AssetEntry {
   key: string;

@@ -1,6 +1,7 @@
 /**
- * Pack a single sprite into one 64x96 character frame (foot-anchored at
- * 32,84). For static single-image assets like the NPC. Auto-crops the opaque
+ * Pack a single sprite into one character frame (96x96, foot-anchored at
+ * 48,84; dims from resolution). For static single-image assets like the NPC.
+ * Auto-crops the opaque
  * bbox and bottom-centers it; if taller/wider than the frame it is scaled down
  * (nearest) to fit.
  *
