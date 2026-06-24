@@ -23,6 +23,8 @@ export interface EnemyConfig {
   readonly keepDistance?: number;
   /** 0..1 fraction of knockback ignored (heavy enemies). */
   readonly knockbackResist?: number;
+  /** Animation speed multiplier (1 = normal, <1 = slower). */
+  readonly animSpeed?: number;
 }
 
 export class Enemy {
@@ -233,7 +235,7 @@ export class Enemy {
     }
     const def = ANIMATIONS[anim];
     this.frameElapsed += dtMs;
-    const dur = 1000 / def.fps;
+    const dur = 1000 / (def.fps * (this.cfg.animSpeed ?? 1));
     while (this.frameElapsed >= dur) {
       this.frameElapsed -= dur;
       this.frame = (this.frame + 1) % def.frames;

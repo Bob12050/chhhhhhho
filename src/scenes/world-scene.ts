@@ -192,6 +192,7 @@ export class WorldScene extends Phaser.Scene {
       scale: def.scale,
       keepDistance: def.keepDistance,
       knockbackResist: def.knockbackResist,
+      animSpeed: def.animSpeed,
     });
     this.physics.add.collider(enemy.sprite, this.obstacles);
     this.physics.add.overlap(this.player.body, enemy.sprite, () => this.onContact(enemy));

@@ -25,6 +25,8 @@ export interface EnemyDef {
   keepDistance?: number;
   /** 0..1 knockback ignored (heavy enemies). */
   knockbackResist?: number;
+  /** Animation playback speed multiplier (1 = normal, <1 = slower). */
+  animSpeed?: number;
   /** Drop table id (see drops.json); rolled on death. */
   dropTableId?: string;
 }

@@ -11,7 +11,8 @@
       "attackRange": 18,
       "expReward": 10,
       "goldReward": 3,
-      "dropTableId": "slime_basic"
+      "dropTableId": "slime_basic",
+      "animSpeed": 0.5
     },
     {
       "id": "bat",
