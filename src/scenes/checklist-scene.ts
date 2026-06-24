@@ -36,7 +36,7 @@ export class ChecklistScene extends Phaser.Scene {
       { label: 'ペット同行', done: () => g.activePetId !== null },
       { label: 'ダンジョン到達', done: () => !!f['visited_dungeon'] },
       { label: 'ボス撃破', done: () => bossDefeated },
-      { label: '転職', done: () => g.jobId !== 'novice' },
+      { label: '転職', done: () => g.jobId !== 'adventurer' },
       { label: 'セーブ実行', done: () => !!f['saved_any'] },
     ];
 

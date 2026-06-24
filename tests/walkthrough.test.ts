@@ -46,9 +46,10 @@ describe('Phase 1 walkthrough (headless)', () => {
     // Defeat boss (flag) -> enables job change requirement chain.
     gs.flags['boss_treant_defeated'] = true;
 
-    // Change job.
-    expect(gs.changeJob('warrior')).toBe(true);
-    expect(gs.jobId).toBe('warrior');
+    // Change job: adventurer must reach Lv20 for a 1次職.
+    while (gs.level < 20) gs.gainExp(100000);
+    expect(gs.changeJob('fighter')).toBe(true);
+    expect(gs.jobId).toBe('fighter');
 
     // Save -> reload.
     const reloaded = new GameState();
@@ -61,7 +62,7 @@ describe('Phase 1 walkthrough (headless)', () => {
     expect(reloaded.consumables['potion_hp_l']).toBe(gs.consumables['potion_hp_l']);
     expect(reloaded.equipment.torso).toBe('cloth_vest');
     expect(reloaded.activePetId).toBe('slime_pet');
-    expect(reloaded.jobId).toBe('warrior');
+    expect(reloaded.jobId).toBe('fighter');
     expect(reloaded.flags['boss_treant_defeated']).toBe(true);
     expect(reloaded.derived.physAtk).toBe(gs.derived.physAtk);
   });

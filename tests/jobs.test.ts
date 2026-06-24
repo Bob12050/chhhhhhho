@@ -2,24 +2,24 @@ import { describe, it, expect } from 'vitest';
 import { GameState } from '@/player/game-state';
 
 describe('jobs / job change', () => {
-  it('starts as novice and gates the tier-1 change by level', () => {
+  it('starts as adventurer and gates the 1次職 change by job level', () => {
     const gs = new GameState();
     gs.recompute(false);
-    expect(gs.jobId).toBe('novice');
-    expect(gs.jobChangeBlock('warrior')).toBe('level');
-    gs.level = 3;
-    expect(gs.jobChangeBlock('warrior')).toBeNull();
+    expect(gs.jobId).toBe('adventurer');
+    expect(gs.jobChangeBlock('fighter')).toBe('level');
+    gs.level = 20; // adventurer reaches Lv20
+    expect(gs.jobChangeBlock('fighter')).toBeNull();
   });
 
   it('changing job applies base + derived modifiers', () => {
     const gs = new GameState();
-    gs.level = 3;
+    gs.level = 20;
     gs.recompute(false);
     const str0 = gs.base.STR;
     const atk0 = gs.derived.physAtk;
-    expect(gs.changeJob('warrior')).toBe(true);
-    expect(gs.jobId).toBe('warrior');
-    expect(gs.unlockedJobs).toContain('warrior');
+    expect(gs.changeJob('fighter')).toBe(true);
+    expect(gs.jobId).toBe('fighter');
+    expect(gs.unlockedJobs).toContain('fighter');
     // STR +4 raises physAtk (2 per STR) plus the flat +2 derived modifier.
     expect(gs.derived.physAtk).toBeGreaterThan(atk0);
     // Base STR itself is unchanged; the modifier is applied in computeDerived.
@@ -28,16 +28,46 @@ describe('jobs / job change', () => {
 
   it('cannot change to the current job', () => {
     const gs = new GameState();
-    expect(gs.changeJob('novice')).toBe(false);
+    expect(gs.changeJob('adventurer')).toBe(false);
+  });
+
+  it('gates a 2次職 on multiple job levels (multi-job system)', () => {
+    const gs = new GameState();
+    gs.level = 20;
+    // Samurai needs Fighter 50 AND Thief 30.
+    expect(gs.jobChangeBlock('samurai')).toBe('level');
+    gs.jobLevels.fighter = 50;
+    expect(gs.jobChangeBlock('samurai')).toBe('level'); // thief still short
+    gs.jobLevels.thief = 30;
+    expect(gs.jobChangeBlock('samurai')).toBeNull();
+  });
+
+  it('gates a 4次職 on the (TBD) high-difficulty quest', () => {
+    const gs = new GameState();
+    gs.jobLevels.sword_kaiser = 80;
+    expect(gs.jobChangeBlock('aramikagura')).toBe('quest');
+    gs.flags['quest_tier4_trial'] = true;
+    expect(gs.jobChangeBlock('aramikagura')).toBeNull();
+  });
+
+  it('retains per-job levels when switching jobs', () => {
+    const gs = new GameState();
+    gs.level = 20;
+    gs.changeJob('fighter');
+    gs.level = 35; // grind fighter to 35
+    gs.jobLevels.fighter = 35;
+    gs.changeJob('adventurer'); // back to adventurer (level 20 retained)
+    expect(gs.level).toBe(20);
+    expect(gs.jobLevelOf('fighter')).toBe(35);
   });
 
   it('persists job through save round-trip', () => {
     const gs = new GameState();
-    gs.level = 3;
-    gs.changeJob('warrior');
+    gs.level = 20;
+    gs.changeJob('fighter');
     const loaded = new GameState();
     loaded.loadFrom(JSON.parse(JSON.stringify(gs.toSave(0))));
-    expect(loaded.jobId).toBe('warrior');
+    expect(loaded.jobId).toBe('fighter');
     expect(loaded.derived.physAtk).toBe(gs.derived.physAtk);
   });
 });

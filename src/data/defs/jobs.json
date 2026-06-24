@@ -1,25 +1,281 @@
 {
   "jobs": [
     {
-      "id": "novice",
-      "name": "見習い",
+      "id": "adventurer",
+      "name": "冒険者",
       "tier": 0,
       "parentJobIds": [],
-      "description": "だれもが最初に就く職。",
-      "equippableWeaponTags": ["sword"],
+      "description": "まだ何の職にも就いていない初期状態。Lv20で1次職へ転職できる。",
+      "unlockConditions": [],
+      "baseStatModifiers": { "STR": 1, "VIT": 1, "INT": 1, "DEX": 1, "LUK": 1 },
+      "equippableWeaponTags": ["sword", "dagger"],
       "skillTreeId": "common"
     },
+
     {
-      "id": "warrior",
-      "name": "戦士",
+      "id": "fighter",
+      "name": "ファイター",
       "tier": 1,
-      "parentJobIds": ["novice"],
-      "description": "前線で戦う近接職。HPと腕力に優れる。",
-      "unlock": { "level": 3, "requiresJob": "novice" },
+      "parentJobIds": ["adventurer"],
+      "description": "前線で戦う近接職。腕力と体力に優れる。",
+      "unlockConditions": [{ "type": "jobLevel", "jobId": "adventurer", "level": 20 }],
       "baseStatModifiers": { "STR": 4, "VIT": 3 },
       "derivedModifiers": { "physAtk": 2 },
-      "equippableWeaponTags": ["sword"],
-      "skillTreeId": "warrior"
+      "equippableWeaponTags": ["sword", "axe", "spear"],
+      "skillTreeId": "fighter"
+    },
+    {
+      "id": "mage",
+      "name": "メイジ",
+      "tier": 1,
+      "parentJobIds": ["adventurer"],
+      "description": "魔法で攻める後衛職。知力が高い。",
+      "unlockConditions": [{ "type": "jobLevel", "jobId": "adventurer", "level": 20 }],
+      "baseStatModifiers": { "INT": 5, "DEX": 1 },
+      "equippableWeaponTags": ["staff", "wand"],
+      "skillTreeId": "mage"
+    },
+    {
+      "id": "priest",
+      "name": "プリースト",
+      "tier": 1,
+      "parentJobIds": ["adventurer"],
+      "description": "回復と補助に長ける支援職。",
+      "unlockConditions": [{ "type": "jobLevel", "jobId": "adventurer", "level": 20 }],
+      "baseStatModifiers": { "INT": 3, "VIT": 2 },
+      "equippableWeaponTags": ["mace", "staff"],
+      "skillTreeId": "priest"
+    },
+    {
+      "id": "thief",
+      "name": "シーフ",
+      "tier": 1,
+      "parentJobIds": ["adventurer"],
+      "description": "素早さと器用さで立ち回る職。",
+      "unlockConditions": [{ "type": "jobLevel", "jobId": "adventurer", "level": 20 }],
+      "baseStatModifiers": { "DEX": 4, "LUK": 2 },
+      "equippableWeaponTags": ["dagger", "sword"],
+      "skillTreeId": "thief"
+    },
+    {
+      "id": "pet_raiser",
+      "name": "ペットライザー",
+      "tier": 1,
+      "parentJobIds": ["adventurer"],
+      "description": "ペットを使役して戦う職。",
+      "unlockConditions": [{ "type": "jobLevel", "jobId": "adventurer", "level": 20 }],
+      "baseStatModifiers": { "LUK": 3, "INT": 2 },
+      "equippableWeaponTags": ["whip", "wand"],
+      "skillTreeId": "pet_raiser"
+    },
+
+    {
+      "id": "samurai",
+      "name": "サムライ",
+      "tier": 2,
+      "parentJobIds": ["fighter", "thief"],
+      "description": "剣技を極めた近接2次職。",
+      "unlockConditions": [
+        { "type": "jobLevel", "jobId": "fighter", "level": 50 },
+        { "type": "jobLevel", "jobId": "thief", "level": 30 }
+      ],
+      "baseStatModifiers": { "STR": 6, "DEX": 3, "VIT": 3 },
+      "derivedModifiers": { "physAtk": 3 },
+      "equippableWeaponTags": ["katana", "sword"],
+      "skillTreeId": "samurai"
+    },
+    {
+      "id": "sorcerer",
+      "name": "ソーサラー",
+      "tier": 2,
+      "parentJobIds": ["mage", "priest"],
+      "description": "高位魔法を操る2次職。",
+      "unlockConditions": [
+        { "type": "jobLevel", "jobId": "mage", "level": 50 },
+        { "type": "jobLevel", "jobId": "priest", "level": 30 }
+      ],
+      "baseStatModifiers": { "INT": 8, "DEX": 2 },
+      "derivedModifiers": { "magAtk": 3 },
+      "equippableWeaponTags": ["staff", "wand"],
+      "skillTreeId": "sorcerer"
+    },
+    {
+      "id": "holy_knight",
+      "name": "ホーリーナイト",
+      "tier": 2,
+      "parentJobIds": ["priest", "fighter"],
+      "description": "聖なる力で守る重装支援職。",
+      "unlockConditions": [
+        { "type": "jobLevel", "jobId": "priest", "level": 50 },
+        { "type": "jobLevel", "jobId": "fighter", "level": 30 }
+      ],
+      "baseStatModifiers": { "VIT": 6, "INT": 4, "STR": 2 },
+      "derivedModifiers": { "def": 2 },
+      "equippableWeaponTags": ["mace", "sword", "shield"],
+      "skillTreeId": "holy_knight"
+    },
+    {
+      "id": "ninja",
+      "name": "ニンジャ",
+      "tier": 2,
+      "parentJobIds": ["thief", "mage"],
+      "description": "忍術と速攻を併せ持つ2次職。",
+      "unlockConditions": [
+        { "type": "jobLevel", "jobId": "thief", "level": 50 },
+        { "type": "jobLevel", "jobId": "mage", "level": 30 }
+      ],
+      "baseStatModifiers": { "DEX": 7, "LUK": 3, "INT": 2 },
+      "equippableWeaponTags": ["dagger", "shuriken"],
+      "skillTreeId": "ninja"
+    },
+    {
+      "id": "ranger",
+      "name": "レンジャー",
+      "tier": 2,
+      "parentJobIds": ["pet_raiser", "thief"],
+      "description": "ペットと連携する遠隔・狩人職。",
+      "unlockConditions": [
+        { "type": "jobLevel", "jobId": "pet_raiser", "level": 40 },
+        { "type": "jobLevel", "jobId": "thief", "level": 20 }
+      ],
+      "baseStatModifiers": { "DEX": 5, "LUK": 4, "INT": 2 },
+      "equippableWeaponTags": ["bow", "whip"],
+      "skillTreeId": "ranger"
+    },
+
+    {
+      "id": "sword_kaiser",
+      "name": "ソードカイザー",
+      "tier": 3,
+      "parentJobIds": ["samurai"],
+      "description": "剣の頂に立つ3次職。",
+      "unlockConditions": [{ "type": "jobLevel", "jobId": "samurai", "level": 70 }],
+      "baseStatModifiers": { "STR": 9, "DEX": 5, "VIT": 4 },
+      "derivedModifiers": { "physAtk": 5 },
+      "equippableWeaponTags": ["katana", "sword"],
+      "skillTreeId": "sword_kaiser"
+    },
+    {
+      "id": "grand_magia",
+      "name": "グランマギアー",
+      "tier": 3,
+      "parentJobIds": ["sorcerer"],
+      "description": "魔法の極致を体現する3次職。",
+      "unlockConditions": [{ "type": "jobLevel", "jobId": "sorcerer", "level": 70 }],
+      "baseStatModifiers": { "INT": 12, "DEX": 3 },
+      "derivedModifiers": { "magAtk": 5 },
+      "equippableWeaponTags": ["staff", "wand"],
+      "skillTreeId": "grand_magia"
+    },
+    {
+      "id": "shield_saber",
+      "name": "シルドセイバー",
+      "tier": 3,
+      "parentJobIds": ["holy_knight"],
+      "description": "盾と聖剣の守護3次職。",
+      "unlockConditions": [{ "type": "jobLevel", "jobId": "holy_knight", "level": 70 }],
+      "baseStatModifiers": { "VIT": 9, "INT": 5, "STR": 4 },
+      "derivedModifiers": { "def": 4 },
+      "equippableWeaponTags": ["sword", "mace", "shield"],
+      "skillTreeId": "shield_saber"
+    },
+    {
+      "id": "avengista",
+      "name": "アベンジスタ",
+      "tier": 3,
+      "parentJobIds": ["ninja"],
+      "description": "影と刃を究めた3次職。",
+      "unlockConditions": [{ "type": "jobLevel", "jobId": "ninja", "level": 70 }],
+      "baseStatModifiers": { "DEX": 10, "LUK": 5, "INT": 3 },
+      "derivedModifiers": { "physAtk": 4 },
+      "equippableWeaponTags": ["dagger", "shuriken"],
+      "skillTreeId": "avengista"
+    },
+    {
+      "id": "dual_star",
+      "name": "デュアルスター",
+      "tier": 3,
+      "parentJobIds": ["ranger"],
+      "description": "ペットと一心同体の狩人3次職。",
+      "unlockConditions": [{ "type": "jobLevel", "jobId": "ranger", "level": 70 }],
+      "baseStatModifiers": { "DEX": 7, "LUK": 7, "INT": 3 },
+      "equippableWeaponTags": ["bow", "whip"],
+      "skillTreeId": "dual_star"
+    },
+
+    {
+      "id": "aramikagura",
+      "name": "アラミカグラ",
+      "tier": 4,
+      "parentJobIds": ["sword_kaiser"],
+      "description": "剣の系譜が至る最終職。高難度クエスト踏破が条件。",
+      "unlockConditions": [
+        { "type": "jobLevel", "jobId": "sword_kaiser", "level": 80 },
+        { "type": "quest", "questId": "tier4_trial" }
+      ],
+      "baseStatModifiers": { "STR": 14, "DEX": 7, "VIT": 6 },
+      "derivedModifiers": { "physAtk": 8 },
+      "equippableWeaponTags": ["katana", "sword"],
+      "skillTreeId": "aramikagura"
+    },
+    {
+      "id": "alvride",
+      "name": "アルヴライド",
+      "tier": 4,
+      "parentJobIds": ["grand_magia"],
+      "description": "魔法の系譜が至る最終職。高難度クエスト踏破が条件。",
+      "unlockConditions": [
+        { "type": "jobLevel", "jobId": "grand_magia", "level": 80 },
+        { "type": "quest", "questId": "tier4_trial" }
+      ],
+      "baseStatModifiers": { "INT": 18, "DEX": 5 },
+      "derivedModifiers": { "magAtk": 8 },
+      "equippableWeaponTags": ["staff", "wand"],
+      "skillTreeId": "alvride"
+    },
+    {
+      "id": "nirvadio",
+      "name": "ニルバディオ",
+      "tier": 4,
+      "parentJobIds": ["shield_saber"],
+      "description": "守護の系譜が至る最終職。高難度クエスト踏破が条件。",
+      "unlockConditions": [
+        { "type": "jobLevel", "jobId": "shield_saber", "level": 80 },
+        { "type": "quest", "questId": "tier4_trial" }
+      ],
+      "baseStatModifiers": { "VIT": 14, "INT": 7, "STR": 6 },
+      "derivedModifiers": { "def": 7 },
+      "equippableWeaponTags": ["sword", "mace", "shield"],
+      "skillTreeId": "nirvadio"
+    },
+    {
+      "id": "noxtia",
+      "name": "ノクスティア",
+      "tier": 4,
+      "parentJobIds": ["avengista"],
+      "description": "影の系譜が至る最終職。高難度クエスト踏破が条件。",
+      "unlockConditions": [
+        { "type": "jobLevel", "jobId": "avengista", "level": 80 },
+        { "type": "quest", "questId": "tier4_trial" }
+      ],
+      "baseStatModifiers": { "DEX": 15, "LUK": 8, "INT": 5 },
+      "derivedModifiers": { "physAtk": 7 },
+      "equippableWeaponTags": ["dagger", "shuriken"],
+      "skillTreeId": "noxtia"
+    },
+    {
+      "id": "oltarie",
+      "name": "オルタリエ",
+      "tier": 4,
+      "parentJobIds": ["dual_star"],
+      "description": "狩人の系譜が至る最終職。高難度クエスト踏破が条件。",
+      "unlockConditions": [
+        { "type": "jobLevel", "jobId": "dual_star", "level": 80 },
+        { "type": "quest", "questId": "tier4_trial" }
+      ],
+      "baseStatModifiers": { "DEX": 11, "LUK": 11, "INT": 5 },
+      "equippableWeaponTags": ["bow", "whip"],
+      "skillTreeId": "oltarie"
     }
   ]
 }

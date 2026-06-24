@@ -267,19 +267,34 @@ function validateJobs(skillIds: Set<string>): void {
     jobs: {
       id: string;
       parentJobIds?: string[];
-      unlock?: { requiresJob?: string; requiresSkill?: string };
+      unlockConditions?: Record<string, unknown>[];
       baseStatModifiers?: Record<string, number>;
       derivedModifiers?: Record<string, number>;
     }[];
   }>('src/data/defs/jobs.json');
   const ids = new Set(file.jobs.map((j) => j.id));
   const BASE_KEYS = new Set(['STR', 'VIT', 'INT', 'DEX', 'LUK']);
+  const COND_TYPES = new Set(['jobLevel', 'charLevel', 'skill', 'flag', 'quest']);
   for (const j of file.jobs) {
     for (const p of j.parentJobIds ?? []) if (!ids.has(p)) err(`Job ${j.id}: unknown parent "${p}"`);
-    if (j.unlock?.requiresJob && !ids.has(j.unlock.requiresJob))
-      err(`Job ${j.id}: unlock requiresJob "${j.unlock.requiresJob}" unknown`);
-    if (j.unlock?.requiresSkill && !skillIds.has(j.unlock.requiresSkill))
-      err(`Job ${j.id}: unlock requiresSkill "${j.unlock.requiresSkill}" unknown`);
+    if (!Array.isArray(j.unlockConditions))
+      err(`Job ${j.id}: missing unlockConditions array`);
+    for (const c of j.unlockConditions ?? []) {
+      const type = c.type as string;
+      if (!COND_TYPES.has(type)) {
+        err(`Job ${j.id}: invalid unlock condition type "${type}"`);
+        continue;
+      }
+      if (type === 'jobLevel') {
+        if (!ids.has(c.jobId as string)) err(`Job ${j.id}: unlock jobLevel jobId "${c.jobId}" unknown`);
+        if (typeof c.level !== 'number') err(`Job ${j.id}: jobLevel condition needs numeric level`);
+      }
+      if (type === 'charLevel' && typeof c.level !== 'number')
+        err(`Job ${j.id}: charLevel condition needs numeric level`);
+      if (type === 'skill' && !skillIds.has(c.skillId as string))
+        err(`Job ${j.id}: unlock skill "${c.skillId}" unknown`);
+      // 'flag' and 'quest' reference runtime/TBD state; not cross-validated here.
+    }
     for (const k of Object.keys(j.baseStatModifiers ?? {}))
       if (!BASE_KEYS.has(k)) err(`Job ${j.id}: invalid base stat "${k}"`);
     for (const k of Object.keys(j.derivedModifiers ?? {}))

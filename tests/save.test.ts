@@ -67,8 +67,8 @@ describe('save migration / defensive load', () => {
     // Every Phase 1 collection must be present (not undefined).
     expect(m.player.skills).toBeDefined();
     expect(m.player.skillSlots).toBeDefined();
-    expect(m.player.jobId).toBe('novice');
-    expect(m.player.unlockedJobs).toContain('novice');
+    expect(m.player.jobId).toBe('adventurer');
+    expect(m.player.unlockedJobs).toContain('adventurer');
     expect(m.inventory.consumables).toBeDefined();
     expect(m.inventory.equipmentOwned).toBeDefined();
     expect(m.player.ownedPets).toBeDefined();

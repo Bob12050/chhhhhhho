@@ -73,9 +73,20 @@ DerivedStats キー: `maxHp, maxMp, physAtk, magAtk, def, magDef, accuracy, evas
 
 `{ recipe_id, result_item_id, result_quantity, required_materials, required_gold, required_station, unlock_conditions }`。
 
-## 職業（Phase 1）
+## 職業（マルチジョブ制 / データ構造は先行・内容は段階的）
 
-`{ id, display_name, tier(0-4), parent_job_ids[], description, unlock_conditions[], stat_growth, base_stat_modifiers, equippable_weapon_tags[], skill_tree_id, icon_path }`。転職条件は `{type: level|job|quest|boss|material|skill, ...}` の配列。
+実ファイルは `src/data/defs/jobs.json`。1職 = `{ id, name, tier(0-4), parentJobIds[], description, unlockConditions[], baseStatModifiers?, derivedModifiers?, equippableWeaponTags[], skillTreeId? }`。
+
+**マルチジョブ制**: 各職業が独立したレベルを持ち、転職で切り替えながら複数職を育てる。各職のレベルはセーブの `player.jobLevels` / `player.jobExp`（jobId→数値）に保持。アクティブ職のレベル/経験値は `player.level` / `player.exp` をミラーする（`GameState.changeJob` で入れ替え、`gainExp` で同期）。
+
+**転職条件 `unlockConditions[]`**（全条件 AND）。各要素は判別共用体:
+- `{ type: "jobLevel", jobId, level }` … 指定職が `level` 以上（例: サムライ = fighter 50 かつ thief 30）
+- `{ type: "charLevel", level }` … アクティブ職レベルが `level` 以上
+- `{ type: "skill", skillId }` … スキル習得済み
+- `{ type: "flag", flag }` … セーブフラグ成立
+- `{ type: "quest", questId }` … クエスト踏破（4次職の高難度クエストは内容未定。暫定で `flags["quest_<id>"]` で代用）
+
+**ツリー**: tier0 冒険者 → 1次職(ファイター/メイジ/プリースト/シーフ/ペットライザー, 冒険者Lv20) → 2次職(サムライ/ソーサラー/ホーリーナイト/ニンジャ/レンジャー) → 3次職(ソードカイザー/グランマギアー/シルドセイバー/アベンジスタ/デュアルスター, 各2次職Lv70) → 4次職(アラミカグラ/アルヴライド/ニルバディオ/ノクスティア/オルタリエ, 各3次職Lv80＋高難度クエスト)。`baseStatModifiers`/`derivedModifiers`/`equippableWeaponTags` は暫定値で、バランス調整は後フェーズ。
 
 ## スキル（Phase 1）
 

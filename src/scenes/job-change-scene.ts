@@ -92,16 +92,7 @@ export class JobChangeScene extends Phaser.Scene {
         });
         this.content.add(btn);
       } else {
-        const note =
-          block === 'level'
-            ? `Lv${job.unlock?.level}必要`
-            : block === 'job'
-              ? '前提の職業が必要'
-              : block === 'skill'
-                ? '前提スキルが必要'
-                : block === 'flag'
-                  ? '条件未達'
-                  : '';
+        const note = job.unlockConditions.length > 0 ? `要: ${this.conditionsText(job)}` : '条件未達';
         this.content.add(
           this.add
             .text(w - 16, y + 6, note, {
@@ -114,6 +105,26 @@ export class JobChangeScene extends Phaser.Scene {
       }
     }
     this.content.add(this.add.rectangle(w / 2, y + 62, w - 32, 1, 0x333a5a).setOrigin(0.5));
+  }
+
+  /** Human-readable transfer requirements built from data-driven conditions. */
+  private conditionsText(job: JobDef): string {
+    return job.unlockConditions
+      .map((c) => {
+        switch (c.type) {
+          case 'jobLevel':
+            return `${getJob(c.jobId)?.name ?? c.jobId} Lv${c.level}`;
+          case 'charLevel':
+            return `Lv${c.level}`;
+          case 'skill':
+            return `スキル「${c.skillId}」`;
+          case 'flag':
+            return '特定条件';
+          case 'quest':
+            return '高難度クエスト踏破';
+        }
+      })
+      .join('・');
   }
 
   private close(): void {

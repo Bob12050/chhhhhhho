@@ -51,8 +51,15 @@ export class GameState {
   skills: Record<string, number> = {};
   skillSlots: (string | null)[] = [null, null];
   skillPoints = 0;
-  jobId = 'novice';
-  unlockedJobs: string[] = ['novice'];
+  jobId = 'adventurer';
+  unlockedJobs: string[] = ['adventurer'];
+  /**
+   * Per-job levels/exp (multi-job system). The active job's level/exp mirror
+   * `this.level`/`this.exp`; inactive jobs retain their own progress here so a
+   * player can build up several jobs to meet 2次職以降の転職条件.
+   */
+  jobLevels: Record<string, number> = { adventurer: 1 };
+  jobExp: Record<string, number> = { adventurer: 0 };
   ownedPets: string[] = [];
   activePetId: string | null = null;
   derived: DerivedStats = computeDerived(this.base);
@@ -123,23 +130,50 @@ export class GameState {
     bus.emit('equipment:changed', { slot });
   }
 
+  /** The level of a given job (active job mirrors `this.level`). */
+  jobLevelOf(id: string): number {
+    if (id === this.jobId) return this.level;
+    return this.jobLevels[id] ?? 0;
+  }
+
   /** Why the player can't change to a job right now (or null if they can). */
-  jobChangeBlock(id: string): 'current' | 'unknown' | 'level' | 'job' | 'skill' | 'flag' | null {
+  jobChangeBlock(
+    id: string,
+  ): 'current' | 'unknown' | 'level' | 'skill' | 'flag' | 'quest' | null {
     if (id === this.jobId) return 'current';
     const def = getJob(id);
     if (!def) return 'unknown';
-    const u = def.unlock;
-    if (u?.level && this.level < u.level) return 'level';
-    if (u?.requiresJob && this.jobId !== u.requiresJob && !this.unlockedJobs.includes(u.requiresJob))
-      return 'job';
-    if (u?.requiresSkill && !this.skills[u.requiresSkill]) return 'skill';
-    if (u?.flag && !this.flags[u.flag]) return 'flag';
+    for (const c of def.unlockConditions) {
+      switch (c.type) {
+        case 'jobLevel':
+          if (this.jobLevelOf(c.jobId) < c.level) return 'level';
+          break;
+        case 'charLevel':
+          if (this.level < c.level) return 'level';
+          break;
+        case 'skill':
+          if (!this.skills[c.skillId]) return 'skill';
+          break;
+        case 'flag':
+          if (!this.flags[c.flag]) return 'flag';
+          break;
+        case 'quest':
+          // Quest content is TBD; until quests exist a cleared flag stands in.
+          if (!this.flags[`quest_${c.questId}`]) return 'quest';
+          break;
+      }
+    }
     return null;
   }
 
   changeJob(id: string): boolean {
     if (this.jobChangeBlock(id) !== null) return false;
+    // Stash the outgoing job's progress, then swap in the new job's progress.
+    this.jobLevels[this.jobId] = this.level;
+    this.jobExp[this.jobId] = this.exp;
     this.jobId = id;
+    this.level = this.jobLevels[id] ?? 1;
+    this.exp = this.jobExp[id] ?? 0;
     if (!this.unlockedJobs.includes(id)) this.unlockedJobs.push(id);
     // Unequip a weapon the new job can't use.
     const wpn = this.equipment.main_hand;
@@ -275,6 +309,9 @@ export class GameState {
       this.recompute(false);
       this.fullHeal();
     }
+    // Keep the active job's stored progress in sync (multi-job system).
+    this.jobLevels[this.jobId] = this.level;
+    this.jobExp[this.jobId] = this.exp;
     bus.emit('player:exp-changed', {
       current: this.exp,
       toNext: expToNext(this.level),
@@ -304,6 +341,8 @@ export class GameState {
         skillPoints: this.skillPoints,
         jobId: this.jobId,
         unlockedJobs: [...this.unlockedJobs],
+        jobLevels: { ...this.jobLevels, [this.jobId]: this.level },
+        jobExp: { ...this.jobExp, [this.jobId]: this.exp },
         ownedPets: [...this.ownedPets],
         activePetId: this.activePetId,
       },
@@ -328,8 +367,10 @@ export class GameState {
     this.skills = { ...(data.player.skills ?? {}) };
     this.skillSlots = [...(data.player.skillSlots ?? [null, null])];
     this.skillPoints = data.player.skillPoints ?? 0;
-    this.jobId = data.player.jobId ?? 'novice';
-    this.unlockedJobs = [...(data.player.unlockedJobs ?? ['novice'])];
+    this.jobId = data.player.jobId ?? 'adventurer';
+    this.unlockedJobs = [...(data.player.unlockedJobs ?? ['adventurer'])];
+    this.jobLevels = { ...(data.player.jobLevels ?? { [this.jobId]: this.level }) };
+    this.jobExp = { ...(data.player.jobExp ?? { [this.jobId]: this.exp }) };
     this.ownedPets = (data.player.ownedPets ?? []).filter((id) => !!getPet(id));
     this.activePetId =
       data.player.activePetId && getPet(data.player.activePetId) ? data.player.activePetId : null;

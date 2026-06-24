@@ -25,6 +25,8 @@ export interface SaveDataV1 {
     skillPoints: number;
     jobId: string;
     unlockedJobs: string[];
+    jobLevels: Record<string, number>; // jobId -> level (multi-job system)
+    jobExp: Record<string, number>; // jobId -> exp toward next level
     ownedPets: string[];
     activePetId: string | null;
   };
@@ -59,8 +61,10 @@ export function createDefaultSave(slot: number): SaveData {
       skills: { slash: 1 },
       skillSlots: ['slash', null],
       skillPoints: 0,
-      jobId: 'novice',
-      unlockedJobs: ['novice'],
+      jobId: 'adventurer',
+      unlockedJobs: ['adventurer'],
+      jobLevels: { adventurer: 1 },
+      jobExp: { adventurer: 0 },
       ownedPets: [],
       activePetId: null,
     },
@@ -101,5 +105,18 @@ export function migrate(raw: unknown, slot: number): SaveData {
     flags: { ...(data.flags ?? {}) },
     settings: { ...def.settings, ...(data.settings ?? {}) },
   };
+
+  // Remap legacy placeholder job ids (pre-canonical tree) to canonical ones.
+  const LEGACY_JOBS: Record<string, string> = { novice: 'adventurer', warrior: 'fighter' };
+  merged.player.jobId = LEGACY_JOBS[merged.player.jobId] ?? merged.player.jobId;
+  merged.player.unlockedJobs = merged.player.unlockedJobs.map((j) => LEGACY_JOBS[j] ?? j);
+  if (!merged.player.unlockedJobs.includes('adventurer'))
+    merged.player.unlockedJobs.unshift('adventurer');
+
+  // Seed per-job levels/exp from the active job when an older save lacks them.
+  if (!data.player?.jobLevels)
+    merged.player.jobLevels = { [merged.player.jobId]: merged.player.level };
+  if (!data.player?.jobExp) merged.player.jobExp = { [merged.player.jobId]: merged.player.exp };
+
   return merged;
 }
