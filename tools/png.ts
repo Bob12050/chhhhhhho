@@ -3,7 +3,7 @@
  * (uses node:zlib). Used by the art tooling (template generation + asset
  * checking) — NOT shipped in the game bundle.
  */
-import { deflateSync } from 'node:zlib';
+import { deflateSync, inflateSync } from 'node:zlib';
 
 const SIG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
@@ -93,6 +93,70 @@ export function readPngSize(buf: Buffer): { width: number; height: number } | nu
   if (buf.length < 24 || !buf.subarray(0, 8).equals(SIG)) return null;
   if (buf.toString('ascii', 12, 16) !== 'IHDR') return null;
   return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+}
+
+function paeth(a: number, b: number, c: number): number {
+  const p = a + b - c;
+  const pa = Math.abs(p - a);
+  const pb = Math.abs(p - b);
+  const pc = Math.abs(p - c);
+  return pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
+}
+
+/** Decode an 8-bit RGBA / RGB PNG to a flat RGBA pixel buffer. */
+export function decodePng(buf: Buffer): { width: number; height: number; px: Uint8Array } {
+  if (!buf.subarray(0, 8).equals(SIG)) throw new Error('not a PNG');
+  let off = 8;
+  let width = 0;
+  let height = 0;
+  let colorType = 6;
+  const idat: Buffer[] = [];
+  while (off < buf.length) {
+    const len = buf.readUInt32BE(off);
+    const type = buf.toString('ascii', off + 4, off + 8);
+    const data = buf.subarray(off + 8, off + 8 + len);
+    if (type === 'IHDR') {
+      width = data.readUInt32BE(0);
+      height = data.readUInt32BE(4);
+      colorType = data[9];
+    } else if (type === 'IDAT') {
+      idat.push(data);
+    } else if (type === 'IEND') {
+      break;
+    }
+    off += 12 + len;
+  }
+  const channels = colorType === 2 ? 3 : 4; // 2=RGB, 6=RGBA
+  const raw = inflateSync(Buffer.concat(idat));
+  const stride = width * channels;
+  const recon = new Uint8Array(height * stride);
+  let pos = 0;
+  for (let y = 0; y < height; y++) {
+    const ft = raw[pos++];
+    for (let x = 0; x < stride; x++) {
+      const v = raw[pos++];
+      const a = x >= channels ? recon[y * stride + x - channels] : 0;
+      const b = y > 0 ? recon[(y - 1) * stride + x] : 0;
+      const c = x >= channels && y > 0 ? recon[(y - 1) * stride + x - channels] : 0;
+      let r: number;
+      if (ft === 0) r = v;
+      else if (ft === 1) r = v + a;
+      else if (ft === 2) r = v + b;
+      else if (ft === 3) r = v + ((a + b) >> 1);
+      else r = v + paeth(a, b, c);
+      recon[y * stride + x] = r & 255;
+    }
+  }
+  // Normalize to RGBA.
+  if (channels === 4) return { width, height, px: recon };
+  const rgba = new Uint8Array(width * height * 4);
+  for (let i = 0; i < width * height; i++) {
+    rgba[i * 4] = recon[i * 3];
+    rgba[i * 4 + 1] = recon[i * 3 + 1];
+    rgba[i * 4 + 2] = recon[i * 3 + 2];
+    rgba[i * 4 + 3] = 255;
+  }
+  return { width, height, px: rgba };
 }
 
 /** Tiny 3x5 digit font (for row indices on templates). */
