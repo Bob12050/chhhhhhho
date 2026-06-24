@@ -84,24 +84,10 @@ function squash(f: Cropped): Cropped {
   return resizeNearest(f, Math.round(f.w * 1.2), Math.round(f.h * 0.74));
 }
 
-/**
- * Hop pose: slightly stretched (taller/narrower) and lifted off the ground by
- * adding transparent rows at the bottom — bottom-anchoring then makes it appear
- * airborne. Alternating with the resting frame reads as a clear up/down hop.
- */
-function hop(f: Cropped, liftPx: number): Cropped {
-  const s = resizeNearest(f, Math.round(f.w * 0.94), Math.round(f.h * 1.06));
-  const h = s.h + liftPx;
-  const px = new Uint8Array(s.w * h * 4);
-  px.set(s.px, 0); // content at top; bottom `liftPx` rows stay transparent
-  return { w: s.w, h, px };
-}
-void squash;
-
 const frames = framePaths.map(cropOpaque);
 // With --bounce and a single frame, synthesize a squashed 2nd frame so the
 // idle alternates normal <-> squashed (puru-puru) without extra art.
-if (bounce && frames.length === 1) frames.push(hop(frames[0], 9));
+if (bounce && frames.length === 1) frames.push(squash(frames[0]));
 console.log(`frames: ${frames.map((f) => `${f.w}x${f.h}`).join(', ')}${bounce ? ' (bounce)' : ''}`);
 
 // Warn if a frame is too big for the cell (we don't scale — pixel art).
