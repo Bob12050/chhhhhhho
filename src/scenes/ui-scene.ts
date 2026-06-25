@@ -19,6 +19,8 @@ export class UIScene extends Phaser.Scene {
   private interactBtn!: TouchButton;
   private hpText!: Phaser.GameObjects.Text;
   private mpText!: Phaser.GameObjects.Text;
+  private hpBar!: Phaser.GameObjects.Rectangle;
+  private mpBar!: Phaser.GameObjects.Rectangle;
   private goldText!: Phaser.GameObjects.Text;
   private jobText!: Phaser.GameObjects.Text;
   private updateText!: Phaser.GameObjects.Text;
@@ -63,37 +65,47 @@ export class UIScene extends Phaser.Scene {
     this.interactBtn.onChange = (d) => input.setButton('interact', d);
     this.interactBtn.setVisible(false);
 
-    // HUD (top, clear of the notch).
+    // HUD (top, clear of the notch). HP/MP shown as bars with text on top.
+    const hudX = insets.left + 8;
+    const BAR_W = 116;
+    const BAR_H = 15;
+    const makeBar = (y: number, color: number): Phaser.GameObjects.Rectangle => {
+      this.add.rectangle(hudX, y, BAR_W, BAR_H, 0x000000, 0.45).setOrigin(0, 0).setDepth(depth);
+      return this.add.rectangle(hudX, y, BAR_W, BAR_H, color, 0.85).setOrigin(0, 0).setDepth(depth);
+    };
+
+    this.hpBar = makeBar(insets.top + 5, 0xcc3344);
     this.hpText = this.add
-      .text(insets.left + 8, insets.top + 6, '', {
+      .text(hudX + 5, insets.top + 6, '', {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '12px',
         color: '#ffffff',
       })
-      .setDepth(depth);
-
+      .setDepth(depth + 1);
     this.busOff.push(
       bus.on('player:hp-changed', ({ current, max }) => {
         this.hpText.setText(`HP ${current}/${max}`);
+        this.hpBar.scaleX = max > 0 ? Phaser.Math.Clamp(current / max, 0, 1) : 0;
       }),
     );
 
+    this.mpBar = makeBar(insets.top + 23, 0x3a6bd6);
     this.mpText = this.add
-      .text(insets.left + 8, insets.top + 22, '', {
+      .text(hudX + 5, insets.top + 24, '', {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '12px',
-        color: '#9cd2ff',
+        color: '#dbe8ff',
       })
-      .setDepth(depth);
-
+      .setDepth(depth + 1);
     this.busOff.push(
       bus.on('player:mp-changed', ({ current, max }) => {
         this.mpText.setText(`MP ${current}/${max}`);
+        this.mpBar.scaleX = max > 0 ? Phaser.Math.Clamp(current / max, 0, 1) : 0;
       }),
     );
 
     this.goldText = this.add
-      .text(insets.left + 8, insets.top + 38, '', {
+      .text(insets.left + 8, insets.top + 44, '', {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '12px',
         color: '#ffd86b',
@@ -105,7 +117,7 @@ export class UIScene extends Phaser.Scene {
 
     // Current job + active-job level (multi-job system).
     this.jobText = this.add
-      .text(insets.left + 8, insets.top + 54, '', {
+      .text(insets.left + 8, insets.top + 60, '', {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '12px',
         color: '#c8b6ff',
