@@ -23,6 +23,7 @@ export class UIScene extends Phaser.Scene {
   private hpBar!: Phaser.GameObjects.Rectangle;
   private mpBar!: Phaser.GameObjects.Rectangle;
   private expBar!: Phaser.GameObjects.Rectangle;
+  private expText!: Phaser.GameObjects.Text;
   private goldText!: Phaser.GameObjects.Text;
   private jobText!: Phaser.GameObjects.Text;
   private updateText!: Phaser.GameObjects.Text;
@@ -146,9 +147,25 @@ export class UIScene extends Phaser.Scene {
     this.busOff.push(bus.on('job:changed', refreshJob));
     this.busOff.push(bus.on('player:level-up', refreshJob));
 
-    // Gold under the level box.
+    // EXP as a labelled bar under the level box (value = current/toNext),
+    // kept in sync with exp gains and level-ups.
+    const expY = insets.top + 64;
+    this.expBar = makeBar(expY, 0xf5c542);
+    barLabel(expY, 'EXP');
+    this.expText = barValue(expY);
+    const setExp = (cur: number, toNext: number): void => {
+      this.expText.setText(`${cur}/${toNext}`);
+      this.expBar.scaleX = toNext > 0 ? Phaser.Math.Clamp(cur / toNext, 0, 1) : 0;
+    };
+    setExp(gameState.exp, expToNext(gameState.level));
+    this.busOff.push(bus.on('player:exp-changed', ({ current, toNext }) => setExp(current, toNext)));
+    this.busOff.push(
+      bus.on('player:level-up', () => setExp(gameState.exp, expToNext(gameState.level))),
+    );
+
+    // Gold under the EXP bar.
     this.goldText = this.add
-      .text(insets.left + 8, insets.top + 66, '', {
+      .text(insets.left + 8, insets.top + 86, '', {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '12px',
         color: '#ffd86b',
@@ -157,22 +174,6 @@ export class UIScene extends Phaser.Scene {
     this.busOff.push(
       bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current} G`)),
     );
-
-    // Thin EXP progress line across the top of the screen.
-    const expW = w - insets.left - insets.right;
-    this.add
-      .rectangle(insets.left, insets.top, expW, 3, 0x000000, 0.4)
-      .setOrigin(0, 0)
-      .setDepth(depth);
-    this.expBar = this.add
-      .rectangle(insets.left, insets.top, expW, 3, 0xffd86b, 0.95)
-      .setOrigin(0, 0)
-      .setDepth(depth);
-    const setExp = (cur: number, toNext: number): void => {
-      this.expBar.scaleX = toNext > 0 ? Phaser.Math.Clamp(cur / toNext, 0, 1) : 0;
-    };
-    setExp(gameState.exp, expToNext(gameState.level));
-    this.busOff.push(bus.on('player:exp-changed', ({ current, toNext }) => setExp(current, toNext)));
 
     // Bag button (top-right) opens the inventory/menu.
     const bag = new TouchButton(this, w - insets.right - 24, insets.top + 26, 22, '袋', 0x6a4ea0, depth);
