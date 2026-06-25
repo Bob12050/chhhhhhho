@@ -255,6 +255,7 @@ export class WorldScene extends Phaser.Scene {
     this.dmg.show(this.player.x, this.player.y - 40, enemy.cfg.contactDamage, false);
     this.player.hurt();
     this.cameras.main.shake(120, 0.006);
+    this.flashScreen(0xff2a2a, 0.32, 180);
     const ang = Math.atan2(this.player.y - enemy.y, this.player.x - enemy.x);
     this.player.body.setVelocity(Math.cos(ang) * 160, Math.sin(ang) * 160);
     if (gameState.hp <= 0) this.onPlayerDown();
@@ -347,6 +348,54 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
+  /** Full-screen colour flash (camera-locked). Used for player hurt feedback. */
+  private flashScreen(color: number, alpha: number, duration: number): void {
+    const cam = this.cameras.main;
+    const f = this.add
+      .rectangle(0, 0, cam.width, cam.height, color, alpha)
+      .setOrigin(0, 0)
+      .setScrollFactor(0)
+      .setDepth(9500);
+    this.tweens.add({
+      targets: f,
+      alpha: 0,
+      duration,
+      ease: 'Quad.easeOut',
+      onComplete: () => f.destroy(),
+    });
+  }
+
+  /** Burst of small shards when an enemy dies (撃破の手応え). */
+  private spawnDeathBurst(x: number, y: number, color: number): void {
+    const cx = Math.round(x);
+    const cy = Math.round(y) - 18;
+    // Expanding ring.
+    const ring = this.add.circle(cx, cy, 6, color, 0.7).setDepth(9000);
+    this.tweens.add({
+      targets: ring,
+      scale: 3.4,
+      alpha: 0,
+      duration: 260,
+      ease: 'Cubic.Out',
+      onComplete: () => ring.destroy(),
+    });
+    // A few shards flung outward (pooled-free, count kept tiny per perf budget).
+    for (let i = 0; i < 6; i++) {
+      const ang = (Math.PI * 2 * i) / 6 + (Math.random() - 0.5) * 0.5;
+      const dist = 16 + Math.random() * 12;
+      const shard = this.add.rectangle(cx, cy, 3, 3, color, 1).setDepth(9001);
+      this.tweens.add({
+        targets: shard,
+        x: cx + Math.round(Math.cos(ang) * dist),
+        y: cy + Math.round(Math.sin(ang) * dist),
+        alpha: 0,
+        duration: 280,
+        ease: 'Quad.easeOut',
+        onComplete: () => shard.destroy(),
+      });
+    }
+  }
+
   private hitStop(ms: number): void {
     this.physics.world.isPaused = true;
     this.time.delayedCall(ms, () => {
@@ -391,6 +440,10 @@ export class WorldScene extends Phaser.Scene {
 
   private onEnemyDeath(x: number, y: number, def: EnemyDef): void {
     this.enemies = this.enemies.filter((e) => !e.isDead());
+    const burstColor = def.tint
+      ? Phaser.Display.Color.HexStringToColor(def.tint).color
+      : 0xffffff;
+    this.spawnDeathBurst(x, y, burstColor);
     gameState.flags['killed_any'] = true;
     const killFlag = `boss_${def.id}_killed`;
     const firstKill = !!def.isBoss && !gameState.flags[killFlag];
