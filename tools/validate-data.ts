@@ -228,13 +228,21 @@ function validateRecipes(itemIds: Set<string>): void {
 
 function validateSkills(): Set<string> {
   const file = readJson<{
-    skills: { id: string; type: string; requires?: string[]; derived?: Record<string, number> }[];
+    skills: {
+      id: string;
+      type: string;
+      requires?: string[];
+      derived?: Record<string, number>;
+      fx?: string;
+    }[];
   }>('src/data/defs/skills.json');
+  const FX_STYLES = new Set(['slash', 'impact', 'magic']);
   const ids = new Set<string>();
   for (const s of file.skills) {
     if (ids.has(s.id)) err(`Duplicate skill id: ${s.id}`);
     ids.add(s.id);
     if (s.type !== 'active' && s.type !== 'passive') err(`Skill ${s.id}: bad type "${s.type}"`);
+    if (s.fx !== undefined && !FX_STYLES.has(s.fx)) err(`Skill ${s.id}: unknown fx "${s.fx}"`);
     for (const k of Object.keys(s.derived ?? {})) {
       if (!DERIVED_KEYS.has(k)) err(`Skill ${s.id}: invalid derived stat "${k}"`);
     }

@@ -27,6 +27,8 @@ export class UIScene extends Phaser.Scene {
   private goldText!: Phaser.GameObjects.Text;
   private jobText!: Phaser.GameObjects.Text;
   private updateText!: Phaser.GameObjects.Text;
+  private lowHpVignette!: Phaser.GameObjects.Graphics;
+  private lowHpTween: Phaser.Tweens.Tween | null = null;
   private busOff: Array<() => void> = [];
 
   constructor() {
@@ -133,6 +135,17 @@ export class UIScene extends Phaser.Scene {
         .setOrigin(1, 0)
         .setDepth(depth + 1);
 
+    // Low-HP danger vignette: red glow hugging the screen edges, pulsing while
+    // HP is critical. Drawn as nested fading border bands (pixel-art friendly,
+    // no blur). Sits just under the HUD/controls.
+    this.lowHpVignette = this.add.graphics().setDepth(depth - 1).setScrollFactor(0).setVisible(false);
+    const bands = 9;
+    for (let i = 0; i < bands; i++) {
+      const a = 0.22 * (1 - i / bands);
+      this.lowHpVignette.lineStyle(2, 0xff2030, a);
+      this.lowHpVignette.strokeRect(i, i, w - i * 2, h - i * 2);
+    }
+
     this.hpBar = makeBar(insets.top + 4, 0xef8a3c);
     barLabel(insets.top + 4, 'HP');
     this.hpText = barValue(insets.top + 4);
@@ -140,6 +153,7 @@ export class UIScene extends Phaser.Scene {
       bus.on('player:hp-changed', ({ current, max }) => {
         this.hpText.setText(`${current}/${max}`);
         this.hpBar.scaleX = max > 0 ? Phaser.Math.Clamp(current / max, 0, 1) : 0;
+        this.updateLowHpVignette(max > 0 ? current / max : 0);
       }),
     );
 
@@ -241,6 +255,29 @@ export class UIScene extends Phaser.Scene {
       for (const off of this.busOff) off();
       this.busOff = [];
     });
+  }
+
+  /** Show/pulse the danger vignette when HP is critical (≤ 30%). */
+  private updateLowHpVignette(ratio: number): void {
+    const critical = ratio > 0 && ratio <= 0.3;
+    if (critical) {
+      if (!this.lowHpVignette.visible) {
+        this.lowHpVignette.setVisible(true);
+        this.lowHpVignette.setAlpha(0.5);
+        this.lowHpTween = this.tweens.add({
+          targets: this.lowHpVignette,
+          alpha: 1,
+          duration: 520,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.InOut',
+        });
+      }
+    } else if (this.lowHpVignette.visible) {
+      this.lowHpTween?.stop();
+      this.lowHpTween = null;
+      this.lowHpVignette.setVisible(false);
+    }
   }
 
   /** Allow the town scene to toggle the interact prompt. */

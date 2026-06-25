@@ -21,6 +21,8 @@ export interface SkillDef {
   reach?: number;
   radius?: number;
   knockback?: number;
+  /** Visual style for the cast effect ('slash' | 'impact' | 'magic'). */
+  fx?: string;
   // Passive
   derived?: Partial<DerivedStats>;
   // Learning gates

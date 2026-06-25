@@ -11,6 +11,7 @@
       "reach": 30,
       "radius": 36,
       "knockback": 26,
+      "fx": "slash",
       "requiredLevel": 1
     },
     {
@@ -24,6 +25,7 @@
       "reach": 32,
       "radius": 34,
       "knockback": 46,
+      "fx": "impact",
       "requiredLevel": 3,
       "requires": ["slash"]
     },

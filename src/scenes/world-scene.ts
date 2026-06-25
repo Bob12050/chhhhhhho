@@ -418,15 +418,82 @@ export class WorldScene extends Phaser.Scene {
     bus.emit('skill:cooldown', { slot, duration: this.skillCd[slot] });
     this.player.play('cast');
     const dir = this.player.getDirection();
-    this.spawnSkillEffect(dir);
+    this.spawnSkillEffect(dir, def.fx ?? 'magic');
     this.time.delayedCall(120, () =>
       this.resolveMelee(dir, def.powerMult ?? 1.5, def.knockback ?? 26, def.reach ?? 30, def.radius ?? 34),
     );
   }
 
-  private spawnSkillEffect(dir: Direction): void {
+  /** Cast effect, styled per skill (data-driven `fx`: slash | impact | magic). */
+  private spawnSkillEffect(dir: Direction, style: string): void {
+    if (style === 'slash') this.fxSkillSlash(dir);
+    else if (style === 'impact') this.fxSkillImpact(dir);
+    else this.fxSkillMagic(dir);
+  }
+
+  /** 斬撃: a big bright crescent sweeping across the strike arc. */
+  private fxSkillSlash(dir: Direction): void {
+    const { ax, ay } = aheadOffset(dir, 1);
+    const ang = Math.atan2(ay, ax);
+    const cx = Math.round(this.player.x + ax * 14);
+    const cy = Math.round(this.player.y - 24 + ay * 14);
+    const g = this.add.graphics().setDepth(Math.round(this.player.y) + 2);
+    g.lineStyle(5, 0xbfefff, 0.95);
+    g.beginPath();
+    g.arc(cx, cy, 26, ang - 1.2, ang + 1.2, false);
+    g.strokePath();
+    g.lineStyle(2, 0xffffff, 1);
+    g.beginPath();
+    g.arc(cx, cy, 26, ang - 1.2, ang + 1.2, false);
+    g.strokePath();
+    this.tweens.add({
+      targets: g,
+      alpha: 0,
+      scaleX: 1.25,
+      scaleY: 1.25,
+      duration: 200,
+      ease: 'Quad.easeOut',
+      onComplete: () => g.destroy(),
+    });
+  }
+
+  /** 強打: a heavy ground shockwave ring plus extra shake (weighty hit). */
+  private fxSkillImpact(dir: Direction): void {
+    const { ax, ay } = aheadOffset(dir, 22);
+    const cx = Math.round(this.player.x + ax);
+    const cy = Math.round(this.player.y - 6 + ay);
+    const ring = this.add.circle(cx, cy, 8, 0xffd27a, 0).setDepth(Math.round(this.player.y) + 2);
+    ring.setStrokeStyle(4, 0xffb24a, 0.95);
+    this.tweens.add({
+      targets: ring,
+      scale: 4.5,
+      alpha: 0,
+      duration: 300,
+      ease: 'Cubic.Out',
+      onComplete: () => ring.destroy(),
+    });
+    const flash = this.add.circle(cx, cy, 14, 0xfff2c0, 0.9).setDepth(Math.round(this.player.y) + 3);
+    this.tweens.add({
+      targets: flash,
+      scale: 0.2,
+      alpha: 0,
+      duration: 180,
+      ease: 'Quad.easeOut',
+      onComplete: () => flash.destroy(),
+    });
+    this.cameras.main.shake(120, 0.006);
+  }
+
+  /** Default magic burst (expanding blue orb). */
+  private fxSkillMagic(dir: Direction): void {
     const { ax, ay } = aheadOffset(dir, 30);
-    const fx = this.add.circle(this.player.x + ax, this.player.y - 30 + ay, 6, 0x9cd2ff, 0.85);
+    const fx = this.add.circle(
+      Math.round(this.player.x + ax),
+      Math.round(this.player.y - 30 + ay),
+      6,
+      0x9cd2ff,
+      0.85,
+    );
     fx.setDepth(Math.round(this.player.y) + 1);
     this.tweens.add({
       targets: fx,
