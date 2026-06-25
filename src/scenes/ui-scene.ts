@@ -63,6 +63,35 @@ export class UIScene extends Phaser.Scene {
     const skill2Btn = new TouchButton(this, baseX - 60, baseY - 58, 26, 'S2', 0x5a4abf, depth);
     skill2Btn.onChange = (d) => input.setButton('skill2', d);
 
+    // Cooldown sweep overlays for the two skill buttons (slot 0 = S1, 1 = S2).
+    const cdGeom = [
+      { x: baseX - 76, y: baseY + 6, r: 28 },
+      { x: baseX - 60, y: baseY - 58, r: 26 },
+    ];
+    const cdGfx = cdGeom.map(() => this.add.graphics().setDepth(depth + 1));
+    this.busOff.push(
+      bus.on('skill:cooldown', ({ slot, duration }) => {
+        const g = cdGfx[slot];
+        const geom = cdGeom[slot];
+        if (!g || !geom || duration <= 0) return;
+        this.tweens.killTweensOf(g);
+        const prog = { t: 1 };
+        this.tweens.add({
+          targets: prog,
+          t: 0,
+          duration,
+          ease: 'Linear',
+          onUpdate: () => {
+            g.clear();
+            g.fillStyle(0x000000, 0.5);
+            g.slice(geom.x, geom.y, geom.r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * prog.t, false);
+            g.fillPath();
+          },
+          onComplete: () => g.clear(),
+        });
+      }),
+    );
+
     // Interact button appears only when something is interactable (top area).
     this.interactBtn = new TouchButton(this, w / 2, h - bottomPad - 110, 28, '調', 0x44aa66, depth);
     this.interactBtn.onChange = (d) => input.setButton('interact', d);

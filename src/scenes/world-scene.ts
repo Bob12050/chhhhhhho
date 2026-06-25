@@ -321,6 +321,7 @@ export class WorldScene extends Phaser.Scene {
     gameState.mp -= cost;
     bus.emit('player:mp-changed', { current: gameState.mp, max: gameState.derived.maxMp });
     this.skillCd[slot] = def.cooldown ?? 800;
+    bus.emit('skill:cooldown', { slot, duration: this.skillCd[slot] });
     this.player.play('cast');
     const dir = this.player.getDirection();
     this.spawnSkillEffect(dir);

@@ -37,6 +37,8 @@ export interface GameEvents {
 
   // Skills
   'skill:learned': { skillId: string };
+  /** A skill in `slot` (0/1) went on cooldown for `duration` ms. */
+  'skill:cooldown': { slot: number; duration: number };
 
   // Jobs
   'job:changed': { jobId: string };
