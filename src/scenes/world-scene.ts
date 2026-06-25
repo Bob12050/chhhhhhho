@@ -372,9 +372,25 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private spawnLoot(x: number, y: number, itemId: string, qty: number): void {
-    const drop = this.loot.create(x, y, TEX.slime, 0) as Phaser.Physics.Arcade.Image;
-    drop.setScale(0.5);
-    drop.setOrigin(0.5, 0.875);
+    // Generic loot pickup icon (a small gem) — NOT the slime sprite, which made
+    // drops look like half-size slimes. Generated once, tinted per rarity.
+    if (!this.textures.exists('loot_gem')) {
+      const pts = [
+        new Phaser.Math.Vector2(7, 0),
+        new Phaser.Math.Vector2(14, 7),
+        new Phaser.Math.Vector2(7, 14),
+        new Phaser.Math.Vector2(0, 7),
+      ];
+      const g = this.make.graphics({ x: 0, y: 0 }, false);
+      g.fillStyle(0xffffff, 1);
+      g.fillPoints(pts, true);
+      g.lineStyle(2, 0x000000, 0.5);
+      g.strokePoints(pts, true, true);
+      g.generateTexture('loot_gem', 14, 14);
+      g.destroy();
+    }
+    const drop = this.loot.create(x, y, 'loot_gem') as Phaser.Physics.Arcade.Image;
+    drop.setOrigin(0.5, 0.5);
     drop.setData('itemId', itemId);
     drop.setData('qty', qty);
     drop.setDepth(Math.round(y));
