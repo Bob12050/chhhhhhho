@@ -7,6 +7,7 @@ import { bus } from '@/core/event-bus';
 import { isDebugEnabled } from '@/core/debug';
 import { gameState } from '@/player/game-state';
 import { getJob } from '@/jobs/job-defs';
+import { expToNext } from '@/stats/leveling';
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
@@ -21,6 +22,7 @@ export class UIScene extends Phaser.Scene {
   private mpText!: Phaser.GameObjects.Text;
   private hpBar!: Phaser.GameObjects.Rectangle;
   private mpBar!: Phaser.GameObjects.Rectangle;
+  private expBar!: Phaser.GameObjects.Rectangle;
   private goldText!: Phaser.GameObjects.Text;
   private jobText!: Phaser.GameObjects.Text;
   private updateText!: Phaser.GameObjects.Text;
@@ -130,6 +132,22 @@ export class UIScene extends Phaser.Scene {
     refreshJob();
     this.busOff.push(bus.on('job:changed', refreshJob));
     this.busOff.push(bus.on('player:level-up', refreshJob));
+
+    // Thin EXP progress line across the top of the screen.
+    const expW = w - insets.left - insets.right;
+    this.add
+      .rectangle(insets.left, insets.top, expW, 3, 0x000000, 0.4)
+      .setOrigin(0, 0)
+      .setDepth(depth);
+    this.expBar = this.add
+      .rectangle(insets.left, insets.top, expW, 3, 0xffd86b, 0.95)
+      .setOrigin(0, 0)
+      .setDepth(depth);
+    const setExp = (cur: number, toNext: number): void => {
+      this.expBar.scaleX = toNext > 0 ? Phaser.Math.Clamp(cur / toNext, 0, 1) : 0;
+    };
+    setExp(gameState.exp, expToNext(gameState.level));
+    this.busOff.push(bus.on('player:exp-changed', ({ current, toNext }) => setExp(current, toNext)));
 
     // Bag button (top-right) opens the inventory/menu.
     const bag = new TouchButton(this, w - insets.right - 24, insets.top + 26, 22, '袋', 0x6a4ea0, depth);
