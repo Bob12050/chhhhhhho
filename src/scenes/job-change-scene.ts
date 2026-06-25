@@ -44,7 +44,7 @@ export class JobChangeScene extends Phaser.Scene {
     const w = this.scale.width;
     const cur = getJob(gameState.jobId);
     this.content.add(
-      this.add.text(16, 60, `現在の職業: ${cur?.name ?? gameState.jobId}`, {
+      this.add.text(16, 60, `現在の職業: ${cur?.name ?? gameState.jobId} (Lv${gameState.level})`, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '13px',
         color: '#9fd0ff',
@@ -52,10 +52,27 @@ export class JobChangeScene extends Phaser.Scene {
     );
 
     let y = 96;
-    for (const job of allJobs()) {
+    for (const job of this.relevantJobs()) {
       this.renderJob(job, y, w);
       y += 76;
     }
+  }
+
+  /**
+   * Only jobs worth showing: the current job, already-unlocked jobs, and the
+   * immediate next step (a job whose parent is unlocked). Avoids dumping the
+   * whole 21-job tree on a phone screen. Ordered by tier.
+   */
+  private relevantJobs(): JobDef[] {
+    const unlocked = new Set(gameState.unlockedJobs);
+    return allJobs()
+      .filter(
+        (j) =>
+          j.id === gameState.jobId ||
+          unlocked.has(j.id) ||
+          j.parentJobIds.some((p) => unlocked.has(p)),
+      )
+      .sort((a, b) => a.tier - b.tier);
   }
 
   private renderJob(job: JobDef, y: number, w: number): void {
@@ -112,10 +129,12 @@ export class JobChangeScene extends Phaser.Scene {
     return job.unlockConditions
       .map((c) => {
         switch (c.type) {
-          case 'jobLevel':
-            return `${getJob(c.jobId)?.name ?? c.jobId} Lv${c.level}`;
+          case 'jobLevel': {
+            const have = gameState.jobLevelOf(c.jobId);
+            return `${getJob(c.jobId)?.name ?? c.jobId} Lv${have}/${c.level}`;
+          }
           case 'charLevel':
-            return `Lv${c.level}`;
+            return `Lv${gameState.level}/${c.level}`;
           case 'skill':
             return `スキル「${c.skillId}」`;
           case 'flag':
