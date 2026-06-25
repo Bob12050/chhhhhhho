@@ -123,8 +123,32 @@ export class UIScene extends Phaser.Scene {
       }),
     );
 
+    // Level + job in a matching framed box, directly under the MP bar.
+    const lvY = insets.top + 44;
+    this.add
+      .rectangle(hudX, lvY, BAR_W, BAR_H, 0x10121c, 0.7)
+      .setOrigin(0, 0)
+      .setDepth(depth)
+      .setStrokeStyle(1, 0xffffff, 0.25);
+    this.jobText = this.add
+      .text(hudX + 5, lvY + 2, '', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '11px',
+        color: '#ffe9a8',
+        fontStyle: 'bold',
+      })
+      .setDepth(depth + 1);
+    const refreshJob = (): void => {
+      const name = getJob(gameState.jobId)?.name ?? gameState.jobId;
+      this.jobText.setText(`Lv ${gameState.level}  ${name}`);
+    };
+    refreshJob();
+    this.busOff.push(bus.on('job:changed', refreshJob));
+    this.busOff.push(bus.on('player:level-up', refreshJob));
+
+    // Gold under the level box.
     this.goldText = this.add
-      .text(insets.left + 8, insets.top + 44, '', {
+      .text(insets.left + 8, insets.top + 66, '', {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '12px',
         color: '#ffd86b',
@@ -133,22 +157,6 @@ export class UIScene extends Phaser.Scene {
     this.busOff.push(
       bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current} G`)),
     );
-
-    // Current job + active-job level (multi-job system).
-    this.jobText = this.add
-      .text(insets.left + 8, insets.top + 60, '', {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '12px',
-        color: '#c8b6ff',
-      })
-      .setDepth(depth);
-    const refreshJob = (): void => {
-      const name = getJob(gameState.jobId)?.name ?? gameState.jobId;
-      this.jobText.setText(`${name} Lv${gameState.level}`);
-    };
-    refreshJob();
-    this.busOff.push(bus.on('job:changed', refreshJob));
-    this.busOff.push(bus.on('player:level-up', refreshJob));
 
     // Thin EXP progress line across the top of the screen.
     const expW = w - insets.left - insets.right;
