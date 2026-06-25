@@ -22,6 +22,20 @@ export class JobChangeScene extends Phaser.Scene {
       .text(16, 24, '転職', { fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#fff' })
       .setDepth(1);
 
+    const treeBtn = this.add
+      .text(w - 16, 26, '[ ツリーを見る ]', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        color: '#c8b6ff',
+      })
+      .setOrigin(1, 0)
+      .setDepth(1)
+      .setInteractive({ useHandCursor: true });
+    treeBtn.on('pointerup', () => {
+      this.scene.pause();
+      this.scene.launch('JobTree');
+    });
+
     this.content = this.add.container(0, 0).setDepth(1);
 
     const close = this.add
