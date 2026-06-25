@@ -28,7 +28,11 @@ export interface EnemyConfig {
 }
 
 export class Enemy {
+  /** Physics body (invisible); collisions/position source of truth. */
   readonly sprite: Phaser.Physics.Arcade.Image;
+  /** Visible sprite, pixel-snapped to integers (rule 3) to avoid sub-pixel
+   *  rendering that clips flipped frames in half on some mobile GPUs. */
+  readonly visual: Phaser.GameObjects.Sprite;
   state: EnemyState = 'idle';
   hp: number;
   readonly cfg: EnemyConfig;
@@ -54,13 +58,18 @@ export class Enemy {
     this.hp = cfg.maxHp;
     this.homeX = x;
     this.homeY = y;
-    this.sprite = scene.physics.add.image(x, y, cfg.textureKey, frameIndex('down', 'idle', 0));
+    const frame0 = frameIndex('down', 'idle', 0);
+    this.sprite = scene.physics.add.image(x, y, cfg.textureKey, frame0);
     this.sprite.setOrigin(0.5, 0.875);
     this.sprite.setSize(20, 12);
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setData('enemy', this);
-    if (cfg.scale) this.sprite.setScale(cfg.scale);
-    if (cfg.tint !== undefined) this.sprite.setTint(cfg.tint);
+    this.sprite.setVisible(false); // body is invisible; `visual` is what's drawn
+
+    this.visual = scene.add.sprite(x, y, cfg.textureKey, frame0);
+    this.visual.setOrigin(0.5, 0.875);
+    if (cfg.scale) this.visual.setScale(cfg.scale);
+    if (cfg.tint !== undefined) this.visual.setTint(cfg.tint);
   }
 
   get x(): number {
@@ -79,7 +88,7 @@ export class Enemy {
     this.hp -= amount;
     this.flashTimer = 120;
     // Phaser 4: white flash via FILL tint mode (plain setTint multiplies).
-    this.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+    this.visual.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
     // Knockback away from the source (heavy enemies resist it).
     const ang = Math.atan2(this.y - fromY, this.x - fromX);
     const kb = knockback * (1 - (this.cfg.knockbackResist ?? 0));
@@ -97,16 +106,17 @@ export class Enemy {
     this.dead = true;
     this.setState('dead');
     this.sprite.setVelocity(0, 0);
-    this.sprite.clearTint();
+    this.visual.clearTint();
     const dx = this.x;
     const dy = this.y;
     // Brief death fade then notify.
     this.scene.tweens.add({
-      targets: this.sprite,
+      targets: this.visual,
       alpha: 0,
       duration: 250,
       onComplete: () => {
         this.onDeath?.(dx, dy);
+        this.visual.destroy();
         this.sprite.destroy();
       },
     });
@@ -114,8 +124,8 @@ export class Enemy {
 
   /** Reset to the base tint (clears the white hit-flash / FILL mode). */
   private restoreTint(): void {
-    this.sprite.clearTint();
-    if (this.cfg.tint !== undefined) this.sprite.setTint(this.cfg.tint);
+    this.visual.clearTint();
+    if (this.cfg.tint !== undefined) this.visual.setTint(this.cfg.tint);
   }
 
   private setState(s: EnemyState): void {
@@ -240,8 +250,11 @@ export class Enemy {
       this.frameElapsed -= dur;
       this.frame = (this.frame + 1) % def.frames;
     }
-    this.sprite.setFrame(frameIndex(this.dir, anim, this.frame));
-    this.sprite.setFlipX(this.dir === 'right');
-    this.sprite.setDepth(Math.round(this.y));
+    // Draw via the pixel-snapped visual (rule 3: integer coords), not the
+    // fractional physics body — sub-pixel + flipX clipped frames on device.
+    this.visual.setFrame(frameIndex(this.dir, anim, this.frame));
+    this.visual.setFlipX(this.dir === 'right');
+    this.visual.setPosition(Math.round(this.sprite.x), Math.round(this.sprite.y));
+    this.visual.setDepth(Math.round(this.sprite.y));
   }
 }
