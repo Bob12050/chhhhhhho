@@ -5,6 +5,8 @@ import { TouchButton } from '@/input/touch-button';
 import { readInsets } from '@/core/safe-area';
 import { bus } from '@/core/event-bus';
 import { isDebugEnabled } from '@/core/debug';
+import { gameState } from '@/player/game-state';
+import { getJob } from '@/jobs/job-defs';
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
@@ -18,6 +20,7 @@ export class UIScene extends Phaser.Scene {
   private hpText!: Phaser.GameObjects.Text;
   private mpText!: Phaser.GameObjects.Text;
   private goldText!: Phaser.GameObjects.Text;
+  private jobText!: Phaser.GameObjects.Text;
   private updateText!: Phaser.GameObjects.Text;
   private busOff: Array<() => void> = [];
 
@@ -99,6 +102,22 @@ export class UIScene extends Phaser.Scene {
     this.busOff.push(
       bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current} G`)),
     );
+
+    // Current job + active-job level (multi-job system).
+    this.jobText = this.add
+      .text(insets.left + 8, insets.top + 54, '', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '12px',
+        color: '#c8b6ff',
+      })
+      .setDepth(depth);
+    const refreshJob = (): void => {
+      const name = getJob(gameState.jobId)?.name ?? gameState.jobId;
+      this.jobText.setText(`${name} Lv${gameState.level}`);
+    };
+    refreshJob();
+    this.busOff.push(bus.on('job:changed', refreshJob));
+    this.busOff.push(bus.on('player:level-up', refreshJob));
 
     // Bag button (top-right) opens the inventory/menu.
     const bag = new TouchButton(this, w - insets.right - 24, insets.top + 26, 22, '袋', 0x6a4ea0, depth);
