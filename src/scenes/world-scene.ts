@@ -144,6 +144,7 @@ export class WorldScene extends Phaser.Scene {
     this.busOff.push(bus.on('ui:open-debug', () => this.openMenu('Debug')));
     this.busOff.push(bus.on('ui:open-map', () => this.openMenu('MapSelect')));
     this.busOff.push(bus.on('debug:warp', () => this.transitionRestart(true)));
+    this.busOff.push(bus.on('player:level-up', ({ level }) => this.onLevelUp(level)));
     this.busOff.push(bus.on('map:travel', () => this.transitionRestart(true)));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.busOff) off();
@@ -434,6 +435,40 @@ export class WorldScene extends Phaser.Scene {
     this.floatText(l.x, l.y - 18, label, rarityColorHex(this.itemRarity(itemId)));
     (l.getData('beam') as Phaser.GameObjects.Rectangle | undefined)?.destroy();
     l.destroy();
+  }
+
+  /** Celebratory feedback when the active job levels up (from kills). */
+  private onLevelUp(level: number): void {
+    const x = this.player.x;
+    const y = this.player.y - 52;
+    const t = this.add
+      .text(x, y, `Lv UP! ${level}`, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '16px',
+        color: '#ffe06b',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(9001);
+    this.tweens.add({ targets: t, y: y - 26, duration: 700, ease: 'Cubic.Out' });
+    this.tweens.add({
+      targets: t,
+      alpha: 0,
+      delay: 700,
+      duration: 500,
+      onComplete: () => t.destroy(),
+    });
+    const ring = this.add
+      .circle(this.player.x, this.player.y - 18, 8, 0xffe06b, 0)
+      .setStrokeStyle(2, 0xffe06b, 0.9)
+      .setDepth(9000);
+    this.tweens.add({
+      targets: ring,
+      scale: 3,
+      alpha: 0,
+      duration: 500,
+      onComplete: () => ring.destroy(),
+    });
   }
 
   private floatText(x: number, y: number, msg: string, color = '#ffe9a8'): void {
