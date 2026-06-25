@@ -276,28 +276,42 @@ export class InventoryScene extends Phaser.Scene {
       const def = getEquipment(id)!;
       const slot = def.slot as EquipSlot;
       const equipped = gameState.equipment[slot] === id;
+      const canEq = equipped || gameState.canEquip(id);
       const qty = count > 1 ? ` ×${count}` : '';
       this.content.add(
         this.add.text(16, y, `${SLOT_LABEL[slot] ?? slot}: ${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '14px',
-          color: equipped ? '#9fe3a0' : rarityColorHex(def.rarity),
+          color: equipped ? '#9fe3a0' : canEq ? rarityColorHex(def.rarity) : '#666a78',
         }),
       );
-      const btn = this.add
-        .text(w - 16, y, equipped ? '[ はずす ]' : '[ そうび ]', {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '13px',
-          color: '#9fd0ff',
-        })
-        .setOrigin(1, 0)
-        .setInteractive({ useHandCursor: true });
-      btn.on('pointerup', () => {
-        if (this.dragged) return;
-        gameState.equip(slot, equipped ? null : id);
-        this.renderTab();
-      });
-      this.content.add(btn);
+      if (canEq) {
+        const btn = this.add
+          .text(w - 16, y, equipped ? '[ はずす ]' : '[ そうび ]', {
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '13px',
+            color: '#9fd0ff',
+          })
+          .setOrigin(1, 0)
+          .setInteractive({ useHandCursor: true });
+        btn.on('pointerup', () => {
+          if (this.dragged) return;
+          gameState.equip(slot, equipped ? null : id);
+          this.renderTab();
+        });
+        this.content.add(btn);
+      } else {
+        // The current job can't wield this weapon (weapon-tag restriction).
+        this.content.add(
+          this.add
+            .text(w - 16, y, '職業不可', {
+              fontFamily: 'system-ui, sans-serif',
+              fontSize: '12px',
+              color: '#a86a6a',
+            })
+            .setOrigin(1, 0),
+        );
+      }
       y += 34;
     }
 
