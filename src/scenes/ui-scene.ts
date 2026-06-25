@@ -67,41 +67,58 @@ export class UIScene extends Phaser.Scene {
     this.interactBtn.onChange = (d) => input.setButton('interact', d);
     this.interactBtn.setVisible(false);
 
-    // HUD (top, clear of the notch). HP/MP shown as bars with text on top.
+    // HUD (top, clear of the notch). HP/MP as labelled, framed bars with the
+    // value right-aligned inside (a common RPG layout, our own styling).
     const hudX = insets.left + 8;
-    const BAR_W = 116;
-    const BAR_H = 15;
+    const BAR_W = 152;
+    const BAR_H = 16;
     const makeBar = (y: number, color: number): Phaser.GameObjects.Rectangle => {
-      this.add.rectangle(hudX, y, BAR_W, BAR_H, 0x000000, 0.45).setOrigin(0, 0).setDepth(depth);
-      return this.add.rectangle(hudX, y, BAR_W, BAR_H, color, 0.85).setOrigin(0, 0).setDepth(depth);
+      this.add
+        .rectangle(hudX, y, BAR_W, BAR_H, 0x10121c, 0.7)
+        .setOrigin(0, 0)
+        .setDepth(depth)
+        .setStrokeStyle(1, 0xffffff, 0.25);
+      return this.add
+        .rectangle(hudX + 1, y + 1, BAR_W - 2, BAR_H - 2, color, 1)
+        .setOrigin(0, 0)
+        .setDepth(depth);
     };
+    const barLabel = (y: number, t: string): void => {
+      this.add
+        .text(hudX + 5, y + 2, t, {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '11px',
+          color: '#ffffff',
+          fontStyle: 'bold',
+        })
+        .setDepth(depth + 1);
+    };
+    const barValue = (y: number): Phaser.GameObjects.Text =>
+      this.add
+        .text(hudX + BAR_W - 5, y + 2, '', {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '12px',
+          color: '#ffffff',
+        })
+        .setOrigin(1, 0)
+        .setDepth(depth + 1);
 
-    this.hpBar = makeBar(insets.top + 5, 0xcc3344);
-    this.hpText = this.add
-      .text(hudX + 5, insets.top + 6, '', {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '12px',
-        color: '#ffffff',
-      })
-      .setDepth(depth + 1);
+    this.hpBar = makeBar(insets.top + 4, 0xef8a3c);
+    barLabel(insets.top + 4, 'HP');
+    this.hpText = barValue(insets.top + 4);
     this.busOff.push(
       bus.on('player:hp-changed', ({ current, max }) => {
-        this.hpText.setText(`HP ${current}/${max}`);
+        this.hpText.setText(`${current}/${max}`);
         this.hpBar.scaleX = max > 0 ? Phaser.Math.Clamp(current / max, 0, 1) : 0;
       }),
     );
 
-    this.mpBar = makeBar(insets.top + 23, 0x3a6bd6);
-    this.mpText = this.add
-      .text(hudX + 5, insets.top + 24, '', {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '12px',
-        color: '#dbe8ff',
-      })
-      .setDepth(depth + 1);
+    this.mpBar = makeBar(insets.top + 24, 0x3aa0e0);
+    barLabel(insets.top + 24, 'MP');
+    this.mpText = barValue(insets.top + 24);
     this.busOff.push(
       bus.on('player:mp-changed', ({ current, max }) => {
-        this.mpText.setText(`MP ${current}/${max}`);
+        this.mpText.setText(`${current}/${max}`);
         this.mpBar.scaleX = max > 0 ? Phaser.Math.Clamp(current / max, 0, 1) : 0;
       }),
     );
