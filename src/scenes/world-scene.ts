@@ -112,7 +112,10 @@ export class WorldScene extends Phaser.Scene {
     this.player = new Player(this, gameState.x, gameState.y);
     this.applyEquipmentVisuals();
     this.player.setMoveSpeed(gameState.derived.moveSpeed);
-    this.player.onAttackHit = (dir) => this.resolveMelee(dir, 1.0, 18);
+    this.player.onAttackHit = (dir) => {
+      this.spawnSlash(dir);
+      this.resolveMelee(dir, 1.0, 18);
+    };
     this.cameras.main.startFollow(this.player.body, true, 0.15, 0.15);
     this.physics.add.collider(this.player.body, this.obstacles);
 
@@ -287,6 +290,7 @@ export class WorldScene extends Phaser.Scene {
     const hx = this.player.x + ax;
     const hy = this.player.y + ay;
     let hitStop = false;
+    let anyCrit = false;
     for (const e of this.enemies) {
       if (e.isDead()) continue;
       if (Phaser.Math.Distance.Between(hx, hy, e.x, e.y) <= half) {
@@ -295,11 +299,52 @@ export class WorldScene extends Phaser.Scene {
         const amount = Math.max(1, Math.round(base * mult * (crit ? 1.6 : 1)));
         e.takeDamage(amount, this.player.x, this.player.y, knockback);
         this.dmg.show(e.x, e.y - 42, amount, crit);
+        this.spawnHitSpark(e.x, e.y - 22, crit);
         bus.emit('combat:damage-dealt', { x: e.x, y: e.y, amount, crit });
         hitStop = true;
+        anyCrit = anyCrit || crit;
       }
     }
-    if (hitStop) this.hitStop(60);
+    if (hitStop) {
+      this.hitStop(60);
+      this.cameras.main.shake(anyCrit ? 90 : 60, anyCrit ? 0.005 : 0.0028);
+    }
+  }
+
+  /** Quick crescent slash in the attack direction (basic-attack juice). */
+  private spawnSlash(dir: Direction): void {
+    const { ax, ay } = aheadOffset(dir, 1);
+    const ang = Math.atan2(ay, ax);
+    const cx = this.player.x + ax * 12;
+    const cy = this.player.y - 24 + ay * 12;
+    const g = this.add.graphics().setDepth(Math.round(this.player.y) + 2);
+    g.lineStyle(3, 0xffffff, 0.9);
+    g.beginPath();
+    g.arc(cx, cy, 18, ang - 1.0, ang + 1.0, false);
+    g.strokePath();
+    this.tweens.add({
+      targets: g,
+      alpha: 0,
+      duration: 160,
+      ease: 'Quad.easeOut',
+      onComplete: () => g.destroy(),
+    });
+  }
+
+  /** Small impact burst where a hit lands. */
+  private spawnHitSpark(x: number, y: number, crit: boolean): void {
+    const color = crit ? 0xffd24a : 0xffffff;
+    const spark = this.add
+      .circle(Math.round(x), Math.round(y), crit ? 5 : 3, color, 0.95)
+      .setDepth(9000);
+    this.tweens.add({
+      targets: spark,
+      scale: crit ? 3 : 2.2,
+      alpha: 0,
+      duration: crit ? 260 : 200,
+      ease: 'Cubic.Out',
+      onComplete: () => spark.destroy(),
+    });
   }
 
   private hitStop(ms: number): void {
