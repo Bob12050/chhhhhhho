@@ -35,6 +35,12 @@ export const PALETTES = {
     hair: ramp('#0e3a1e', '#1d6e38', '#2fa455', '#5fd47f'),
     cloth: ramp('#0e3a1e', '#1d6e38', '#2fa455', '#5fd47f'),
   } as ActorPalette,
+  // Neutral light-grey ramp for tinted mob shapes (per-enemy tint recolors it).
+  mob: {
+    skin: ramp('#2c2c34', '#6f6f7c', '#aeaeb8', '#e2e2ea'),
+    hair: ramp('#2c2c34', '#6f6f7c', '#aeaeb8', '#e2e2ea'),
+    cloth: ramp('#2c2c34', '#6f6f7c', '#aeaeb8', '#e2e2ea'),
+  } as ActorPalette,
 } as const;
 
 // Equipment ramps (single ramp each; tinted variants come later via palette swap)

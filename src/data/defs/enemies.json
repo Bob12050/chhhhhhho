@@ -17,7 +17,7 @@
     {
       "id": "bat",
       "name": "こうもり",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.bat",
       "tint": "#88aaff",
       "maxHp": 18,
       "moveSpeed": 84,
@@ -32,7 +32,7 @@
     {
       "id": "golem",
       "name": "ゴーレム",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.golem",
       "tint": "#9a9a9a",
       "scale": 1.3,
       "maxHp": 70,
@@ -65,7 +65,7 @@
     {
       "id": "boss_treant",
       "name": "もりの主",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.treant",
       "tint": "#6aa84f",
       "scale": 1.8,
       "isBoss": true,
@@ -82,7 +82,7 @@
     {
       "id": "boss_stone",
       "name": "岩の番人",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.golem",
       "tint": "#b0a070",
       "scale": 1.9,
       "isBoss": true,
@@ -99,7 +99,7 @@
     {
       "id": "green_wolf",
       "name": "みどり狼",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.wolf",
       "tint": "#6db06a",
       "scale": 1.1,
       "maxHp": 40,
@@ -114,7 +114,7 @@
     {
       "id": "cap_shroom",
       "name": "ぼうし茸",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.mushroom",
       "tint": "#b07ad0",
       "scale": 1.0,
       "maxHp": 52,
@@ -130,7 +130,7 @@
     {
       "id": "rock_lizard",
       "name": "岩トカゲ",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.lizard",
       "tint": "#b08850",
       "scale": 1.2,
       "maxHp": 64,
@@ -146,7 +146,7 @@
     {
       "id": "cave_bat",
       "name": "洞窟コウモリ",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.bat",
       "tint": "#7a6a9a",
       "scale": 0.9,
       "maxHp": 48,
@@ -162,7 +162,7 @@
     {
       "id": "flame_hound",
       "name": "火炎獣",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.wolf",
       "tint": "#d85a2a",
       "scale": 1.3,
       "maxHp": 120,
@@ -177,7 +177,7 @@
     {
       "id": "frost_wisp",
       "name": "氷霊",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.wisp",
       "tint": "#7ad0e0",
       "scale": 1.0,
       "maxHp": 100,
@@ -193,7 +193,7 @@
     {
       "id": "shadow_knight",
       "name": "影の騎士",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.knight",
       "tint": "#4a4a66",
       "scale": 1.4,
       "maxHp": 150,
@@ -209,7 +209,7 @@
     {
       "id": "boss_dragon",
       "name": "竜王ヴァルガ",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.dragon",
       "tint": "#c0392b",
       "scale": 2.2,
       "isBoss": true,

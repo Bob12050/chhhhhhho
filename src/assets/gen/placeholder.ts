@@ -23,7 +23,22 @@ import { PALETTES, EQUIP_RAMPS, type ActorPalette, type Ramp } from './palette';
  * is true pixel art. These are stand-ins; final art drops into the same slots.
  */
 
-type PartKind = 'body' | 'head' | 'torso' | 'weapon' | 'shadow' | 'slime';
+type PartKind =
+  | 'body'
+  | 'head'
+  | 'torso'
+  | 'weapon'
+  | 'shadow'
+  | 'slime'
+  | 'bat'
+  | 'wolf'
+  | 'mushroom'
+  | 'golem'
+  | 'lizard'
+  | 'wisp'
+  | 'knight'
+  | 'treant'
+  | 'dragon';
 
 function newCanvas(w: number, h: number): HTMLCanvasElement {
   const c = document.createElement('canvas');
@@ -218,6 +233,97 @@ function drawSlime(
   px(ctx, cx + 3, top + 7, 3, 4, pal.skin.outline);
 }
 
+/* ----- Enemy archetype shapes (single-sprite, tinted at runtime) ----- */
+
+function drawBat(c: CanvasRenderingContext2D, ox: number, oy: number, anim: AnimName, f: number, p: ActorPalette): void {
+  const R = p.skin; const cx = ox + CHAR_ANCHOR_X; const fy = oy + CHAR_ANCHOR_Y;
+  const flap = (anim === 'walk' || anim === 'idle' || anim === 'cast') ? (f % 2 ? 3 : 0) : 1;
+  const cy = fy - 16;
+  px(c, cx - 17, cy - 2 - flap, 9, 7, R.shadow); px(c, cx + 8, cy - 2 - flap, 9, 7, R.shadow);
+  px(c, cx - 15, cy - 1 - flap, 6, 4, R.mid); px(c, cx + 9, cy - 1 - flap, 6, 4, R.mid);
+  px(c, cx - 6, cy - 6, 12, 14, R.outline); px(c, cx - 5, cy - 5, 10, 12, R.mid); px(c, cx - 5, cy - 5, 10, 4, R.light);
+  px(c, cx - 5, cy - 9, 2, 3, R.outline); px(c, cx + 3, cy - 9, 2, 3, R.outline);
+  px(c, cx - 3, cy - 1, 2, 2, R.outline); px(c, cx + 1, cy - 1, 2, 2, R.outline);
+}
+
+function drawWolf(c: CanvasRenderingContext2D, ox: number, oy: number, anim: AnimName, f: number, p: ActorPalette): void {
+  const R = p.skin; const cx = ox + CHAR_ANCHOR_X; const fy = oy + CHAR_ANCHOR_Y;
+  const s = anim === 'walk' ? (f % 2 ? 1 : -1) : 0; const bt = fy - 16;
+  px(c, cx - 12, bt, 22, 10, R.outline); px(c, cx - 11, bt + 1, 20, 8, R.mid); px(c, cx - 11, bt + 1, 20, 3, R.light);
+  px(c, cx - 10, fy - 7, 3, 7, R.shadow); px(c, cx + 7, fy - 7, 3, 7, R.shadow);
+  px(c, cx - 6, fy - 7 + s, 3, 7, R.shadow); px(c, cx + 3, fy - 7 - s, 3, 7, R.shadow);
+  px(c, cx - 17, bt - 4, 8, 9, R.outline); px(c, cx - 16, bt - 3, 6, 7, R.mid);
+  px(c, cx - 15, bt - 7, 2, 3, R.outline); px(c, cx - 11, bt - 7, 2, 3, R.outline);
+  px(c, cx - 13, bt - 1, 2, 2, R.light);
+  px(c, cx + 9, bt - 2, 5, 3, R.mid);
+}
+
+function drawMushroom(c: CanvasRenderingContext2D, ox: number, oy: number, anim: AnimName, f: number, p: ActorPalette): void {
+  const R = p.skin; const cx = ox + CHAR_ANCHOR_X; const fy = oy + CHAR_ANCHOR_Y;
+  const sq = (anim === 'idle' || anim === 'walk') ? (f % 2 ? -1 : 0) : 0; const capY = fy - 24 - sq;
+  px(c, cx - 13, capY + 6, 26, 6, R.outline); px(c, cx - 11, capY + 2, 22, 6, R.mid); px(c, cx - 8, capY, 16, 4, R.light);
+  px(c, cx - 13, capY + 10, 26, 2, R.shadow);
+  px(c, cx - 7, capY + 3, 3, 3, R.light); px(c, cx + 4, capY + 4, 3, 3, R.light);
+  px(c, cx - 5, capY + 12, 10, 11, R.outline); px(c, cx - 4, capY + 12, 8, 10, R.mid);
+  px(c, cx - 4, capY + 15, 2, 3, R.outline); px(c, cx + 2, capY + 15, 2, 3, R.outline);
+}
+
+function drawGolem(c: CanvasRenderingContext2D, ox: number, oy: number, anim: AnimName, f: number, p: ActorPalette): void {
+  const R = p.skin; const cx = ox + CHAR_ANCHOR_X; const fy = oy + CHAR_ANCHOR_Y; const by = bob(anim, f); const top = fy - 28 + by;
+  px(c, cx - 11, top + 8, 22, 18, R.outline); px(c, cx - 10, top + 9, 20, 16, R.mid); px(c, cx - 10, top + 9, 20, 5, R.light); px(c, cx - 10, top + 20, 20, 5, R.shadow);
+  px(c, cx - 8, top, 16, 10, R.outline); px(c, cx - 7, top + 1, 14, 8, R.mid);
+  px(c, cx - 4, top + 4, 3, 2, R.light); px(c, cx + 2, top + 4, 3, 2, R.light);
+  px(c, cx - 14, top + 10, 4, 12, R.outline); px(c, cx + 10, top + 10, 4, 12, R.outline);
+  px(c, cx - 8, fy - 6, 6, 6, R.shadow); px(c, cx + 2, fy - 6, 6, 6, R.shadow);
+}
+
+function drawLizard(c: CanvasRenderingContext2D, ox: number, oy: number, anim: AnimName, f: number, p: ActorPalette): void {
+  const R = p.skin; const cx = ox + CHAR_ANCHOR_X; const fy = oy + CHAR_ANCHOR_Y; const s = anim === 'walk' ? (f % 2 ? 1 : -1) : 0; const bt = fy - 12;
+  px(c, cx + 8, bt + 2, 12, 4, R.shadow); px(c, cx + 16, bt + 3, 6, 2, R.mid);
+  px(c, cx - 12, bt, 20, 8, R.outline); px(c, cx - 11, bt + 1, 18, 6, R.mid); px(c, cx - 11, bt + 1, 18, 2, R.light);
+  px(c, cx - 17, bt, 7, 7, R.outline); px(c, cx - 16, bt + 1, 5, 5, R.mid); px(c, cx - 14, bt + 1, 2, 2, R.light);
+  px(c, cx - 9, fy - 5 + s, 3, 5, R.shadow); px(c, cx + 4, fy - 5 - s, 3, 5, R.shadow);
+  px(c, cx - 6, bt - 2, 2, 2, R.shadow); px(c, cx - 1, bt - 2, 2, 2, R.shadow); px(c, cx + 4, bt - 2, 2, 2, R.shadow);
+}
+
+function drawWisp(c: CanvasRenderingContext2D, ox: number, oy: number, _anim: AnimName, f: number, p: ActorPalette): void {
+  const R = p.skin; const cx = ox + CHAR_ANCHOR_X; const fy = oy + CHAR_ANCHOR_Y; const hov = f % 2 ? -2 : 0; const cy = fy - 20 + hov;
+  px(c, cx - 8, cy - 8, 16, 16, R.outline); px(c, cx - 7, cy - 7, 14, 14, R.mid); px(c, cx - 7, cy - 7, 14, 5, R.light);
+  px(c, cx - 3, cy - 4, 5, 5, R.light);
+  px(c, cx - 11, cy, 2, 2, R.light); px(c, cx + 9, cy - 3, 2, 2, R.light);
+  px(c, cx - 5, fy - 4, 10, 2, R.shadow);
+}
+
+function drawKnight(c: CanvasRenderingContext2D, ox: number, oy: number, anim: AnimName, f: number, p: ActorPalette): void {
+  const R = p.skin; const cx = ox + CHAR_ANCHOR_X; const fy = oy + CHAR_ANCHOR_Y; const by = bob(anim, f); const lg = lunge(anim, f);
+  const torsoTop = fy - 22 + by;
+  px(c, cx - 7, fy - 8, 5, 8, R.shadow); px(c, cx + 2, fy - 8, 5, 8, R.shadow);
+  px(c, cx - 9, torsoTop - 1, 18, 16, R.outline); px(c, cx - 8, torsoTop, 16, 14, R.mid); px(c, cx - 8, torsoTop, 16, 4, R.light); px(c, cx - 8, torsoTop + 10, 16, 4, R.shadow);
+  const headTop = torsoTop - 16;
+  px(c, cx - 7, headTop, 14, 14, R.outline); px(c, cx - 6, headTop + 1, 12, 12, R.mid); px(c, cx - 6, headTop + 5, 12, 3, R.shadow);
+  px(c, cx + 9 + lg, torsoTop - 12, 3, 20, R.light); px(c, cx + 8 + lg, torsoTop + 6, 5, 2, R.shadow);
+}
+
+function drawTreant(c: CanvasRenderingContext2D, ox: number, oy: number, _anim: AnimName, f: number, p: ActorPalette): void {
+  const R = p.skin; const cx = ox + CHAR_ANCHOR_X; const fy = oy + CHAR_ANCHOR_Y; const sw = f % 2 ? -1 : 0; const trunkTop = fy - 22;
+  px(c, cx - 7, trunkTop, 14, 22, R.outline); px(c, cx - 6, trunkTop, 12, 21, R.mid); px(c, cx - 6, trunkTop, 4, 21, R.light);
+  const cy = trunkTop - 12 + sw;
+  px(c, cx - 16, cy, 32, 16, R.outline); px(c, cx - 15, cy + 1, 30, 14, R.mid); px(c, cx - 15, cy + 1, 30, 5, R.light); px(c, cx - 15, cy + 11, 30, 4, R.shadow);
+  px(c, cx - 4, trunkTop + 6, 3, 3, R.outline); px(c, cx + 2, trunkTop + 6, 3, 3, R.outline);
+  px(c, cx - 18, cy + 8, 5, 3, R.shadow); px(c, cx + 13, cy + 8, 5, 3, R.shadow);
+}
+
+function drawDragon(c: CanvasRenderingContext2D, ox: number, oy: number, _anim: AnimName, f: number, p: ActorPalette): void {
+  const R = p.skin; const cx = ox + CHAR_ANCHOR_X; const fy = oy + CHAR_ANCHOR_Y; const fl = f % 2 ? 2 : 0; const bt = fy - 22;
+  px(c, cx - 22, bt - 6 - fl, 12, 14, R.shadow); px(c, cx + 10, bt - 6 - fl, 12, 14, R.shadow);
+  px(c, cx - 20, bt - 4 - fl, 9, 10, R.mid); px(c, cx + 11, bt - 4 - fl, 9, 10, R.mid);
+  px(c, cx - 10, bt, 20, 20, R.outline); px(c, cx - 9, bt + 1, 18, 18, R.mid); px(c, cx - 9, bt + 1, 18, 6, R.light); px(c, cx - 9, bt + 14, 18, 5, R.shadow);
+  px(c, cx - 16, bt - 8, 7, 10, R.outline); px(c, cx - 15, bt - 7, 5, 8, R.mid);
+  px(c, cx - 18, bt - 10, 6, 5, R.outline); px(c, cx - 17, bt - 9, 4, 3, R.mid); px(c, cx - 16, bt - 8, 2, 2, R.light);
+  px(c, cx + 9, bt + 12, 12, 4, R.mid); px(c, cx + 18, bt + 13, 6, 2, R.shadow);
+  px(c, cx - 7, fy - 6, 5, 6, R.shadow); px(c, cx + 2, fy - 6, 5, 6, R.shadow);
+}
+
 export interface LayerSpec {
   readonly kind: PartKind;
   readonly palette?: ActorPalette;
@@ -277,6 +383,33 @@ function renderPart(
       break;
     case 'slime':
       drawSlime(ctx, ox, oy, dir, anim, frame, spec.palette ?? PALETTES.slime);
+      break;
+    case 'bat':
+      drawBat(ctx, ox, oy, anim, frame, spec.palette ?? PALETTES.mob);
+      break;
+    case 'wolf':
+      drawWolf(ctx, ox, oy, anim, frame, spec.palette ?? PALETTES.mob);
+      break;
+    case 'mushroom':
+      drawMushroom(ctx, ox, oy, anim, frame, spec.palette ?? PALETTES.mob);
+      break;
+    case 'golem':
+      drawGolem(ctx, ox, oy, anim, frame, spec.palette ?? PALETTES.mob);
+      break;
+    case 'lizard':
+      drawLizard(ctx, ox, oy, anim, frame, spec.palette ?? PALETTES.mob);
+      break;
+    case 'wisp':
+      drawWisp(ctx, ox, oy, anim, frame, spec.palette ?? PALETTES.mob);
+      break;
+    case 'knight':
+      drawKnight(ctx, ox, oy, anim, frame, spec.palette ?? PALETTES.mob);
+      break;
+    case 'treant':
+      drawTreant(ctx, ox, oy, anim, frame, spec.palette ?? PALETTES.mob);
+      break;
+    case 'dragon':
+      drawDragon(ctx, ox, oy, anim, frame, spec.palette ?? PALETTES.mob);
       break;
   }
 }
