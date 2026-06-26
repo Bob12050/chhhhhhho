@@ -11,17 +11,28 @@ import { bus } from '@/core/event-bus';
  * material/gold cost and a make button enabled only when affordable. The world
  * is paused while open; closing hints an autosave.
  */
+type CraftTab = 'weapon' | 'armor' | 'tool';
+
 export class CraftingScene extends Phaser.Scene {
   private content!: Phaser.GameObjects.Container;
   private goldText!: Phaser.GameObjects.Text;
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
-  private viewTop = 60;
+  private viewTop = 88;
   private viewBottom = 0;
+  private tab: CraftTab = 'weapon';
+  private tabButtons: { id: CraftTab; text: Phaser.GameObjects.Text }[] = [];
 
   constructor() {
     super('Crafting');
+  }
+
+  /** Category of a recipe's result (weapon / armor / tool). */
+  private recipeCategory(r: Recipe): CraftTab {
+    const eq = getEquipment(r.resultItemId);
+    if (!eq) return 'tool';
+    return eq.slot === 'main_hand' ? 'weapon' : 'armor';
   }
 
   create(): void {
@@ -36,6 +47,33 @@ export class CraftingScene extends Phaser.Scene {
       .text(w - 16, 26, '', { fontFamily: 'system-ui, sans-serif', fontSize: '14px', color: '#ffd86b' })
       .setOrigin(1, 0)
       .setDepth(1);
+
+    // Tabs: weapons / armour / tools.
+    this.tabButtons = [];
+    const tabs: { id: CraftTab; label: string }[] = [
+      { id: 'weapon', label: '武器' },
+      { id: 'armor', label: '防具' },
+      { id: 'tool', label: 'どうぐ' },
+    ];
+    tabs.forEach((t, i) => {
+      const tb = this.add
+        .text(12 + i * 78, 54, t.label, {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '13px',
+          color: '#fff',
+          backgroundColor: '#2a2d44',
+          padding: { x: 12, y: 8 },
+        })
+        .setDepth(1)
+        .setInteractive({ useHandCursor: true });
+      tb.on('pointerup', () => {
+        if (this.dragged) return;
+        this.tab = t.id;
+        this.scrollY = 0;
+        this.render();
+      });
+      this.tabButtons.push({ id: t.id, text: tb });
+    });
 
     this.content = this.add.container(0, 0).setDepth(1);
     this.viewBottom = h - 60;
@@ -90,9 +128,23 @@ export class CraftingScene extends Phaser.Scene {
   private render(): void {
     this.content.removeAll(true);
     this.goldText.setText(`${gameState.gold} G`);
+    for (const tb of this.tabButtons) {
+      tb.text.setBackgroundColor(tb.id === this.tab ? '#46508a' : '#2a2d44');
+    }
     const w = this.scale.width;
-    let y = 70;
-    for (const r of allRecipes()) {
+    let y = this.viewTop + 8;
+    const list = allRecipes().filter((r) => this.recipeCategory(r) === this.tab);
+    if (list.length === 0) {
+      this.content.add(
+        this.add.text(16, y, '作れるものがありません。', {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '13px',
+          color: '#9aa0b4',
+        }),
+      );
+      y += 28;
+    }
+    for (const r of list) {
       this.renderRecipe(r, y, w);
       y += 78;
     }
