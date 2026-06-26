@@ -20,12 +20,27 @@ export type UnlockCondition =
   /** A quest must be cleared. Quest content is TBD (high-difficulty trial). */
   | { type: 'quest'; questId: string };
 
+/**
+ * Class family (系統). Drives armour/accessory class restrictions. The starter
+ * job (adventurer) has no family and may only wear unrestricted (共通) gear.
+ */
+export type ClassFamily = 'warrior' | 'mage' | 'cleric' | 'thief' | 'tamer';
+export const CLASS_FAMILIES: readonly ClassFamily[] = [
+  'warrior',
+  'mage',
+  'cleric',
+  'thief',
+  'tamer',
+];
+
 export interface JobDef {
   id: string;
   name: string;
   tier: number;
   parentJobIds: string[];
   description: string;
+  /** Class family for armour/accessory restrictions (omitted for adventurer). */
+  family?: ClassFamily;
   /** All conditions must be satisfied to change into this job (AND). */
   unlockConditions: UnlockCondition[];
   baseStatModifiers?: Partial<BaseStats>;

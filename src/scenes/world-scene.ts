@@ -564,9 +564,11 @@ export class WorldScene extends Phaser.Scene {
     // Rarity feedback: tint the pickup and, for rare+ drops, raise a pulsing
     // light beam (classic loot signal). Alpha-only animation keeps it
     // pixel-art friendly (no blur/free-scale).
+    // Thresholds on the R1〜R10 scale: pulse for アンコモン+ (R3), beam for
+    // レア+ (R5), thicker beam for レジェンド+ (R8).
     const rank = this.itemRank(itemId);
     drop.setTint(rarityColor(this.itemRarity(itemId)));
-    if (rank >= 1) {
+    if (rank >= 3) {
       this.tweens.add({
         targets: drop,
         alpha: 0.55,
@@ -576,11 +578,11 @@ export class WorldScene extends Phaser.Scene {
         ease: 'Sine.InOut',
       });
     }
-    if (rank >= 2) {
+    if (rank >= 5) {
       const color = rarityColor(this.itemRarity(itemId));
-      const h = 28 + rank * 12;
+      const h = 28 + Math.max(0, rank - 5) * 10;
       const beam = this.add
-        .rectangle(x, y - h / 2, rank >= 4 ? 6 : 4, h, color, 0.5)
+        .rectangle(x, y - h / 2, rank >= 8 ? 6 : 4, h, color, 0.5)
         .setDepth(Math.round(y) - 1)
         .setBlendMode(Phaser.BlendModes.ADD);
       drop.setData('beam', beam);
@@ -595,7 +597,7 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
-  private itemRarity(id: string): string | undefined {
+  private itemRarity(id: string): number | undefined {
     return getMaterial(id)?.rarity ?? getEquipment(id)?.rarity;
   }
 

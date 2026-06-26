@@ -13,16 +13,19 @@ import { rarityRank } from '@/data/rarity';
 describe('rare-material crafting', () => {
   const SPECIALS = ['craft_radiant_blade', 'craft_aegis_plate', 'craft_starlight_crown'];
 
+  // Epic band starts at R7 on the R1〜R10 scale.
+  const EPIC = 7;
+
   it('special recipes require an epic+ material and yield rare+ gear', () => {
     for (const rid of SPECIALS) {
       const r = getRecipe(rid)!;
       expect(r).toBeTruthy();
       const usesRareMat = Object.keys(r.materials).some(
-        (m) => rarityRank(getMaterial(m)?.rarity) >= rarityRank('epic'),
+        (m) => rarityRank(getMaterial(m)?.rarity) >= EPIC,
       );
       expect(usesRareMat, `${rid} should need an epic+ material`).toBe(true);
       const result = getEquipment(r.resultItemId)!;
-      expect(rarityRank(result.rarity)).toBeGreaterThanOrEqual(rarityRank('epic'));
+      expect(rarityRank(result.rarity)).toBeGreaterThanOrEqual(EPIC);
     }
   });
 

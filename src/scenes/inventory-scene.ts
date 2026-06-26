@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { getEquipment, getConsumable, getMaterial, itemDisplayName } from '@/data/items';
-import { rarityColorHex } from '@/data/rarity';
+import { rarityColorHex, rarityLabel } from '@/data/rarity';
 import type { EquipSlot } from '@/equipment/slots';
 import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
@@ -283,6 +283,14 @@ export class InventoryScene extends Phaser.Scene {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '14px',
           color: equipped ? '#9fe3a0' : canEq ? rarityColorHex(def.rarity) : '#666a78',
+        }),
+      );
+      // Rarity label (R-number + band name), coloured by rank.
+      this.content.add(
+        this.add.text(16, y + 17, rarityLabel(def.rarity), {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '11px',
+          color: rarityColorHex(def.rarity),
         }),
       );
       if (canEq) {

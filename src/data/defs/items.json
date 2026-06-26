@@ -1,35 +1,128 @@
 {
   "materials": [
-    { "id": "slime_jelly", "name": "スライムゼリー", "sellPrice": 3, "description": "ぷるぷるの素材。草原のスライムから。" },
-    { "id": "soft_leather", "name": "やわらか革", "sellPrice": 5, "description": "軽装の素材。" },
-    { "id": "iron_ore", "name": "鉄鉱石", "sellPrice": 8, "description": "武具の素材。洞窟で採れる。" },
-    { "id": "herb", "name": "やくそう", "sellPrice": 4, "description": "草原に生える薬草。回復薬の素材。" },
-    { "id": "mana_stone", "name": "魔石", "rarity": "uncommon", "sellPrice": 12, "description": "洞窟で採れる魔力を帯びた石。" },
-    { "id": "king_jelly", "name": "王のゼリー", "rarity": "rare", "sellPrice": 30, "description": "キングスライムの希少な素材。" },
-    { "id": "golem_core", "name": "ゴーレムの核", "rarity": "epic", "sellPrice": 60, "description": "稀にゴーレムの中心から得られる硬質の核。特別な武具の素材。" },
-    { "id": "shadow_wing", "name": "影の翼膜", "rarity": "epic", "sellPrice": 55, "description": "稀にコウモリから剥がれる闇を帯びた翼膜。" },
-    { "id": "star_fragment", "name": "星のかけら", "rarity": "legendary", "sellPrice": 200, "description": "ごく稀に強敵が落とす超希少な結晶。伝説の装備に使う。" }
+    {
+      "id": "slime_jelly",
+      "name": "スライムゼリー",
+      "sellPrice": 3,
+      "description": "ぷるぷるの素材。草原のスライムから。"
+    },
+    {
+      "id": "soft_leather",
+      "name": "やわらか革",
+      "sellPrice": 5,
+      "description": "軽装の素材。"
+    },
+    {
+      "id": "iron_ore",
+      "name": "鉄鉱石",
+      "sellPrice": 8,
+      "description": "武具の素材。洞窟で採れる。"
+    },
+    {
+      "id": "herb",
+      "name": "やくそう",
+      "sellPrice": 4,
+      "description": "草原に生える薬草。回復薬の素材。"
+    },
+    {
+      "id": "mana_stone",
+      "name": "魔石",
+      "rarity": 3,
+      "sellPrice": 12,
+      "description": "洞窟で採れる魔力を帯びた石。"
+    },
+    {
+      "id": "king_jelly",
+      "name": "王のゼリー",
+      "rarity": 5,
+      "sellPrice": 30,
+      "description": "キングスライムの希少な素材。"
+    },
+    {
+      "id": "golem_core",
+      "name": "ゴーレムの核",
+      "rarity": 7,
+      "sellPrice": 60,
+      "description": "稀にゴーレムの中心から得られる硬質の核。特別な武具の素材。"
+    },
+    {
+      "id": "shadow_wing",
+      "name": "影の翼膜",
+      "rarity": 7,
+      "sellPrice": 55,
+      "description": "稀にコウモリから剥がれる闇を帯びた翼膜。"
+    },
+    {
+      "id": "star_fragment",
+      "name": "星のかけら",
+      "rarity": 8,
+      "sellPrice": 200,
+      "description": "ごく稀に強敵が落とす超希少な結晶。伝説の装備に使う。"
+    }
   ],
   "consumables": [
-    { "id": "potion_hp", "name": "回復ポーション", "effect": { "hp": 30 }, "sellPrice": 5, "description": "HPを30回復する。" },
-    { "id": "potion_mp", "name": "魔力ポーション", "effect": { "mp": 20 }, "sellPrice": 5, "description": "MPを20回復する。" },
-    { "id": "potion_hp_l", "name": "大回復ポーション", "effect": { "hp": 80 }, "sellPrice": 15, "description": "HPを80回復する。" },
-    { "id": "elixir", "name": "エリクサー", "effect": { "hp": 9999, "mp": 9999 }, "sellPrice": 80, "description": "HPとMPを全回復する。" }
+    {
+      "id": "potion_hp",
+      "name": "回復ポーション",
+      "effect": {
+        "hp": 30
+      },
+      "sellPrice": 5,
+      "description": "HPを30回復する。"
+    },
+    {
+      "id": "potion_mp",
+      "name": "魔力ポーション",
+      "effect": {
+        "mp": 20
+      },
+      "sellPrice": 5,
+      "description": "MPを20回復する。"
+    },
+    {
+      "id": "potion_hp_l",
+      "name": "大回復ポーション",
+      "effect": {
+        "hp": 80
+      },
+      "sellPrice": 15,
+      "description": "HPを80回復する。"
+    },
+    {
+      "id": "elixir",
+      "name": "エリクサー",
+      "effect": {
+        "hp": 9999,
+        "mp": 9999
+      },
+      "sellPrice": 80,
+      "description": "HPとMPを全回復する。"
+    }
   ],
   "petItems": [
-    { "id": "pet_egg_slime", "name": "スライムのたまご", "petId": "slime_pet", "sellPrice": 0, "description": "割るとスライムが仲間になる。" }
+    {
+      "id": "pet_egg_slime",
+      "name": "スライムのたまご",
+      "petId": "slime_pet",
+      "sellPrice": 0,
+      "description": "割るとスライムが仲間になる。"
+    }
   ],
   "equipment": [
     {
       "id": "wood_sword",
       "name": "木の剣",
       "slot": "main_hand",
-      "rarity": "common",
+      "rarity": 1,
       "visualId": "sword_wood",
-      "weaponTags": ["sword"],
+      "weaponTags": [
+        "sword"
+      ],
       "element": "none",
       "levelRequirement": 1,
-      "derived": { "physAtk": 4 },
+      "derived": {
+        "physAtk": 4
+      },
       "sellPrice": 5,
       "description": "練習用の木剣。"
     },
@@ -37,12 +130,17 @@
       "id": "iron_sword",
       "name": "鉄の剣",
       "slot": "main_hand",
-      "rarity": "common",
+      "rarity": 1,
       "visualId": "sword_iron",
-      "weaponTags": ["sword"],
+      "weaponTags": [
+        "sword"
+      ],
       "element": "none",
       "levelRequirement": 2,
-      "derived": { "physAtk": 9, "accuracy": 3 },
+      "derived": {
+        "physAtk": 9,
+        "accuracy": 3
+      },
       "sellPrice": 18,
       "description": "鍛えた鉄の剣。"
     },
@@ -50,10 +148,13 @@
       "id": "leather_cap",
       "name": "革の帽子",
       "slot": "head",
-      "rarity": "common",
+      "rarity": 1,
       "visualId": "cap_leather",
       "levelRequirement": 1,
-      "derived": { "def": 2, "maxHp": 6 },
+      "derived": {
+        "def": 2,
+        "maxHp": 6
+      },
       "sellPrice": 6,
       "description": "つばの大きい革の帽子。"
     },
@@ -61,10 +162,14 @@
       "id": "iron_helm",
       "name": "鉄の兜",
       "slot": "head",
-      "rarity": "common",
+      "rarity": 1,
       "visualId": "helm_iron",
       "levelRequirement": 2,
-      "derived": { "def": 5, "maxHp": 10, "evasion": -1 },
+      "derived": {
+        "def": 5,
+        "maxHp": 10,
+        "evasion": -1
+      },
       "sellPrice": 20,
       "description": "角つきの鉄兜。"
     },
@@ -72,10 +177,13 @@
       "id": "cloth_vest",
       "name": "布の胴着",
       "slot": "torso",
-      "rarity": "common",
+      "rarity": 1,
       "visualId": "vest_cloth",
       "levelRequirement": 1,
-      "derived": { "def": 3, "maxHp": 8 },
+      "derived": {
+        "def": 3,
+        "maxHp": 8
+      },
       "sellPrice": 7,
       "description": "軽い布の胴着。"
     },
@@ -83,10 +191,14 @@
       "id": "iron_plate",
       "name": "鉄の胸当て",
       "slot": "torso",
-      "rarity": "common",
+      "rarity": 1,
       "visualId": "plate_iron",
       "levelRequirement": 2,
-      "derived": { "def": 8, "maxHp": 18, "moveSpeed": -4 },
+      "derived": {
+        "def": 8,
+        "maxHp": 18,
+        "moveSpeed": -4
+      },
       "sellPrice": 26,
       "description": "頑丈な鉄の胸当て。"
     },
@@ -94,12 +206,17 @@
       "id": "kings_blade",
       "name": "王者の剣",
       "slot": "main_hand",
-      "rarity": "rare",
+      "rarity": 5,
       "visualId": "sword_iron",
-      "weaponTags": ["sword"],
+      "weaponTags": [
+        "sword"
+      ],
       "element": "none",
       "levelRequirement": 3,
-      "derived": { "physAtk": 16, "critRate": 0.05 },
+      "derived": {
+        "physAtk": 16,
+        "critRate": 0.05
+      },
       "sellPrice": 120,
       "description": "ボスを討伐した者の証。"
     },
@@ -107,12 +224,18 @@
       "id": "radiant_blade",
       "name": "光輝の剣",
       "slot": "main_hand",
-      "rarity": "epic",
+      "rarity": 7,
       "visualId": "sword_iron",
-      "weaponTags": ["sword"],
+      "weaponTags": [
+        "sword"
+      ],
       "element": "none",
       "levelRequirement": 3,
-      "derived": { "physAtk": 24, "accuracy": 4, "critRate": 0.08 },
+      "derived": {
+        "physAtk": 24,
+        "accuracy": 4,
+        "critRate": 0.08
+      },
       "sellPrice": 280,
       "description": "ゴーレムの核を鍛え込んだ煌めく剣。レア素材から作られる。"
     },
@@ -120,10 +243,14 @@
       "id": "aegis_plate",
       "name": "要塞の鎧",
       "slot": "torso",
-      "rarity": "epic",
+      "rarity": 7,
       "visualId": "plate_iron",
       "levelRequirement": 3,
-      "derived": { "def": 14, "maxHp": 30, "moveSpeed": -5 },
+      "derived": {
+        "def": 14,
+        "maxHp": 30,
+        "moveSpeed": -5
+      },
       "sellPrice": 300,
       "description": "ゴーレムの核を芯にした難攻不落の鎧。"
     },
@@ -131,10 +258,15 @@
       "id": "starlight_crown",
       "name": "星冠",
       "slot": "head",
-      "rarity": "legendary",
+      "rarity": 8,
       "visualId": "helm_iron",
       "levelRequirement": 4,
-      "derived": { "def": 8, "maxHp": 20, "magAtk": 6, "critRate": 0.04 },
+      "derived": {
+        "def": 8,
+        "maxHp": 20,
+        "magAtk": 6,
+        "critRate": 0.04
+      },
       "sellPrice": 500,
       "description": "星のかけらを戴く伝説の冠。超希少素材を集めた者だけが作れる。"
     }

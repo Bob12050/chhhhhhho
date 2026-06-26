@@ -9,13 +9,30 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { EQUIP_SLOTS } from '../src/equipment/slots';
 import { VISUAL_ID_SET } from '../src/data/visual-ids';
-import { RARITY_SET } from '../src/data/rarity';
+import { isValidRank } from '../src/data/rarity';
+import { CLASS_FAMILIES } from '../src/jobs/job-defs';
 import { SHEET_ROWS, MAX_FRAMES, SHEET_WIDTH, SHEET_HEIGHT } from '../src/paperdoll/pose-atlas';
 import { CHAR_FRAME_W, CHAR_FRAME_H } from '../src/config/resolution';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const errors: string[] = [];
 const slotSet = new Set<string>(EQUIP_SLOTS);
+// The 12 canonical weapon tags (item_system_spec v0.1 §1.4). No new tags.
+const WEAPON_TAGS = new Set([
+  'sword',
+  'axe',
+  'spear',
+  'katana',
+  'staff',
+  'wand',
+  'mace',
+  'dagger',
+  'whip',
+  'shuriken',
+  'bow',
+  'shield',
+]);
+const CLASS_FAMILY_SET = new Set<string>(CLASS_FAMILIES);
 const DERIVED_KEYS = new Set([
   'maxHp',
   'maxMp',
@@ -36,13 +53,15 @@ function err(msg: string): void {
 
 function validateItems(): void {
   const file = JSON.parse(readFileSync(join(root, 'src/data/defs/items.json'), 'utf8')) as {
-    materials: { id: string; rarity?: string }[];
+    materials: { id: string; rarity?: number }[];
     consumables: { id: string; effect?: Record<string, number> }[];
     equipment: {
       id: string;
       slot: string;
       visualId: string;
-      rarity?: string;
+      rarity?: number;
+      weaponTags?: string[];
+      classRestrictions?: string[];
       derived?: Record<string, number>;
       sellPrice?: number;
     }[];
@@ -58,8 +77,8 @@ function validateItems(): void {
 
   for (const m of file.materials) {
     check(m.id, 'material');
-    if (m.rarity != null && !RARITY_SET.has(m.rarity))
-      err(`Material ${m.id}: invalid rarity "${m.rarity}"`);
+    if (m.rarity != null && !isValidRank(m.rarity))
+      err(`Material ${m.id}: rarity must be an integer R1〜R10 (got ${m.rarity})`);
   }
   for (const c of file.consumables ?? []) {
     check(c.id, 'consumable');
@@ -71,8 +90,24 @@ function validateItems(): void {
     check(e.id, 'equipment');
     if (!slotSet.has(e.slot)) err(`Equipment ${e.id}: invalid slot "${e.slot}"`);
     if (!VISUAL_ID_SET.has(e.visualId)) err(`Equipment ${e.id}: unknown visualId "${e.visualId}"`);
-    if (e.rarity != null && !RARITY_SET.has(e.rarity))
-      err(`Equipment ${e.id}: invalid rarity "${e.rarity}"`);
+    if (e.rarity != null && !isValidRank(e.rarity))
+      err(`Equipment ${e.id}: rarity must be an integer R1〜R10 (got ${e.rarity})`);
+    // Weapon tags: only on main_hand, only from the 12 canonical tags.
+    if (e.weaponTags) {
+      if (e.slot !== 'main_hand')
+        err(`Equipment ${e.id}: weaponTags only allowed on main_hand`);
+      for (const t of e.weaponTags) {
+        if (!WEAPON_TAGS.has(t)) err(`Equipment ${e.id}: unknown weaponTag "${t}"`);
+      }
+    }
+    // Class restrictions: only the 5 families; weapons use weaponTags instead.
+    if (e.classRestrictions) {
+      if (e.slot === 'main_hand')
+        err(`Equipment ${e.id}: weapons restrict by weaponTags, not classRestrictions`);
+      for (const f of e.classRestrictions) {
+        if (!CLASS_FAMILY_SET.has(f)) err(`Equipment ${e.id}: unknown class family "${f}"`);
+      }
+    }
     for (const k of Object.keys(e.derived ?? {})) {
       if (!DERIVED_KEYS.has(k)) err(`Equipment ${e.id}: invalid derived stat "${k}"`);
     }
@@ -275,6 +310,8 @@ function validateJobs(skillIds: Set<string>): void {
     jobs: {
       id: string;
       parentJobIds?: string[];
+      family?: string;
+      equippableWeaponTags?: string[];
       unlockConditions?: Record<string, unknown>[];
       baseStatModifiers?: Record<string, number>;
       derivedModifiers?: Record<string, number>;
@@ -307,6 +344,10 @@ function validateJobs(skillIds: Set<string>): void {
       if (!BASE_KEYS.has(k)) err(`Job ${j.id}: invalid base stat "${k}"`);
     for (const k of Object.keys(j.derivedModifiers ?? {}))
       if (!DERIVED_KEYS.has(k)) err(`Job ${j.id}: invalid derived stat "${k}"`);
+    if (j.family != null && !CLASS_FAMILY_SET.has(j.family))
+      err(`Job ${j.id}: unknown class family "${j.family}"`);
+    for (const t of j.equippableWeaponTags ?? [])
+      if (!WEAPON_TAGS.has(t)) err(`Job ${j.id}: unknown weaponTag "${t}"`);
   }
 }
 

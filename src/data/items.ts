@@ -12,8 +12,8 @@ export type ItemType = 'material' | 'consumable' | 'equipment' | 'quest' | 'pet_
 export interface MaterialDef {
   id: string;
   name: string;
-  /** Presentation tier (color/label). Optional; defaults to common. */
-  rarity?: string;
+  /** Rarity rank R1〜R10 (color/label derived). Optional; defaults to 1. */
+  rarity?: number;
   sellPrice: number;
   description: string;
 }
@@ -40,9 +40,16 @@ export interface EquipmentDef {
   id: string;
   name: string;
   slot: EquipSlot;
-  rarity: string;
+  /** Rarity rank R1〜R10 (color/label derived). */
+  rarity: number;
   visualId: string;
+  /** Weapon type tags (main_hand only); gated against the job's allowed tags. */
   weaponTags?: string[];
+  /**
+   * Optional class-family restriction for armour/accessories (warrior, mage,
+   * cleric, thief, tamer). Empty/undefined = anyone may equip (共通装備).
+   */
+  classRestrictions?: string[];
   element?: string;
   levelRequirement: number;
   jobRequirements?: string[];
