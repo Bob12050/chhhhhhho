@@ -1,0 +1,91 @@
+{
+  "id": "forest",
+  "name": "ささやきの森",
+  "travel": {
+    "order": 2,
+    "note": "1次職の狩場。R2〜R3素材"
+  },
+  "size": {
+    "w": 360,
+    "h": 1024
+  },
+  "ground": "grass",
+  "path": {
+    "axis": "v",
+    "thickness": 44
+  },
+  "border": "trees",
+  "obstacles": [
+    [
+      70,
+      260
+    ],
+    [
+      300,
+      320
+    ],
+    [
+      90,
+      560
+    ],
+    [
+      290,
+      620
+    ],
+    [
+      110,
+      840
+    ],
+    [
+      260,
+      880
+    ]
+  ],
+  "spawns": {
+    "from_field": [
+      180,
+      940
+    ]
+  },
+  "portals": [
+    {
+      "rect": [
+        148,
+        976,
+        64,
+        32
+      ],
+      "to": "field",
+      "toSpawn": "from_forest",
+      "label": "そうげんへ"
+    }
+  ],
+  "enemies": [
+    {
+      "type": "green_wolf",
+      "x": 150,
+      "y": 760
+    },
+    {
+      "type": "green_wolf",
+      "x": 230,
+      "y": 520
+    },
+    {
+      "type": "cap_shroom",
+      "x": 110,
+      "y": 620
+    },
+    {
+      "type": "cap_shroom",
+      "x": 250,
+      "y": 340
+    },
+    {
+      "type": "green_wolf",
+      "x": 180,
+      "y": 300
+    }
+  ],
+  "npcs": []
+}

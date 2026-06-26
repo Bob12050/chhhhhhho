@@ -2,7 +2,7 @@
   "id": "dungeon",
   "name": "うすぐらい洞窟",
   "travel": {
-    "order": 2,
+    "order": 3,
     "note": "ゴーレム。レア素材"
   },
   "size": {

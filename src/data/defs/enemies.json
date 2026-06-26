@@ -95,6 +95,37 @@
       "expReward": 130,
       "goldReward": 70,
       "dropTableId": "boss_stone"
+    },
+    {
+      "id": "green_wolf",
+      "name": "みどり狼",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#6db06a",
+      "scale": 1.1,
+      "maxHp": 40,
+      "moveSpeed": 58,
+      "contactDamage": 7,
+      "aggroRange": 120,
+      "attackRange": 18,
+      "expReward": 16,
+      "goldReward": 5,
+      "dropTableId": "wolf_basic"
+    },
+    {
+      "id": "cap_shroom",
+      "name": "ぼうし茸",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#b07ad0",
+      "scale": 1.0,
+      "maxHp": 52,
+      "moveSpeed": 20,
+      "contactDamage": 9,
+      "aggroRange": 80,
+      "attackRange": 18,
+      "knockbackResist": 0.4,
+      "expReward": 18,
+      "goldReward": 6,
+      "dropTableId": "shroom_basic"
     }
   ]
 }

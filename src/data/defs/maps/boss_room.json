@@ -2,7 +2,7 @@
   "id": "boss_room",
   "name": "ボスの間",
   "travel": {
-    "order": 3,
+    "order": 4,
     "note": "ボス戦"
   },
   "size": {

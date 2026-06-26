@@ -49,6 +49,10 @@
     "from_dungeon": [
       180,
       150
+    ],
+    "from_forest": [
+      70,
+      600
     ]
   },
   "portals": [
@@ -74,6 +78,17 @@
       "toSpawn": "from_field",
       "label": "どうくつへ",
       "requiresFlag": "boss_treant_defeated"
+    },
+    {
+      "rect": [
+        16,
+        584,
+        32,
+        48
+      ],
+      "to": "forest",
+      "toSpawn": "from_field",
+      "label": "もりへ"
     }
   ],
   "enemies": [
