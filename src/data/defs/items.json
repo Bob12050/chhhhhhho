@@ -58,6 +58,20 @@
       "rarity": 8,
       "sellPrice": 200,
       "description": "ごく稀に強敵が落とす超希少な結晶。伝説の装備に使う。"
+    },
+    {
+      "id": "steel_ingot",
+      "name": "鋼のインゴット",
+      "rarity": 4,
+      "sellPrice": 22,
+      "description": "鉄を精錬した上質な金属塊。"
+    },
+    {
+      "id": "mythril_ore",
+      "name": "ミスリル鉱",
+      "rarity": 6,
+      "sellPrice": 70,
+      "description": "淡く輝く稀少な魔法金属。"
     }
   ],
   "consumables": [
@@ -127,80 +141,58 @@
       "description": "練習用の木剣。"
     },
     {
+      "id": "hunters_sword",
+      "name": "狩人の剣",
+      "slot": "main_hand",
+      "rarity": 2,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "sword"
+      ],
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "physAtk": 7,
+        "accuracy": 2
+      },
+      "sellPrice": 12,
+      "description": "駆け出しの狩人が使う剣。"
+    },
+    {
       "id": "iron_sword",
       "name": "鉄の剣",
       "slot": "main_hand",
-      "rarity": 1,
+      "rarity": 3,
       "visualId": "sword_iron",
       "weaponTags": [
         "sword"
       ],
       "element": "none",
-      "levelRequirement": 2,
+      "levelRequirement": 6,
       "derived": {
-        "physAtk": 9,
+        "physAtk": 10,
         "accuracy": 3
       },
-      "sellPrice": 18,
-      "description": "鍛えた鉄の剣。"
+      "sellPrice": 25,
+      "description": "よく鍛えられた鉄の剣。"
     },
     {
-      "id": "leather_cap",
-      "name": "革の帽子",
-      "slot": "head",
-      "rarity": 1,
-      "visualId": "cap_leather",
-      "levelRequirement": 1,
+      "id": "steel_sword",
+      "name": "鋼の剣",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "sword"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
       "derived": {
-        "def": 2,
-        "maxHp": 6
+        "physAtk": 13,
+        "accuracy": 3
       },
-      "sellPrice": 6,
-      "description": "つばの大きい革の帽子。"
-    },
-    {
-      "id": "iron_helm",
-      "name": "鉄の兜",
-      "slot": "head",
-      "rarity": 1,
-      "visualId": "helm_iron",
-      "levelRequirement": 2,
-      "derived": {
-        "def": 5,
-        "maxHp": 10,
-        "evasion": -1
-      },
-      "sellPrice": 20,
-      "description": "角つきの鉄兜。"
-    },
-    {
-      "id": "cloth_vest",
-      "name": "布の胴着",
-      "slot": "torso",
-      "rarity": 1,
-      "visualId": "vest_cloth",
-      "levelRequirement": 1,
-      "derived": {
-        "def": 3,
-        "maxHp": 8
-      },
-      "sellPrice": 7,
-      "description": "軽い布の胴着。"
-    },
-    {
-      "id": "iron_plate",
-      "name": "鉄の胸当て",
-      "slot": "torso",
-      "rarity": 1,
-      "visualId": "plate_iron",
-      "levelRequirement": 2,
-      "derived": {
-        "def": 8,
-        "maxHp": 18,
-        "moveSpeed": -4
-      },
-      "sellPrice": 26,
-      "description": "頑丈な鉄の胸当て。"
+      "sellPrice": 50,
+      "description": "硬い鋼で打たれた剣。"
     },
     {
       "id": "kings_blade",
@@ -212,13 +204,32 @@
         "sword"
       ],
       "element": "none",
-      "levelRequirement": 3,
+      "levelRequirement": 15,
       "derived": {
         "physAtk": 16,
         "critRate": 0.05
       },
-      "sellPrice": 120,
-      "description": "ボスを討伐した者の証。"
+      "sellPrice": 90,
+      "description": "王に献じられたという剣。"
+    },
+    {
+      "id": "knight_saber",
+      "name": "騎士の剣",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "sword"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "physAtk": 20,
+        "accuracy": 4,
+        "critRate": 0.05
+      },
+      "sellPrice": 160,
+      "description": "熟練の騎士が帯びる剣。"
     },
     {
       "id": "radiant_blade",
@@ -230,45 +241,290 @@
         "sword"
       ],
       "element": "none",
-      "levelRequirement": 3,
+      "levelRequirement": 28,
       "derived": {
         "physAtk": 24,
         "accuracy": 4,
         "critRate": 0.08
       },
       "sellPrice": 280,
-      "description": "ゴーレムの核を鍛え込んだ煌めく剣。レア素材から作られる。"
+      "description": "光をまとう高位の剣。"
     },
     {
-      "id": "aegis_plate",
-      "name": "要塞の鎧",
-      "slot": "torso",
-      "rarity": 7,
-      "visualId": "plate_iron",
+      "id": "dragon_fang",
+      "name": "竜牙剣",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "sword"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 30,
+        "accuracy": 5,
+        "critRate": 0.1,
+        "atkSpeed": 2
+      },
+      "sellPrice": 480,
+      "description": "竜の牙を芯に鍛えた名剣。"
+    },
+    {
+      "id": "leather_cap",
+      "name": "革の帽子",
+      "slot": "head",
+      "rarity": 1,
+      "visualId": "cap_leather",
+      "element": "none",
+      "levelRequirement": 1,
+      "derived": {
+        "def": 2,
+        "maxHp": 6
+      },
+      "sellPrice": 5,
+      "description": "軽い革製の帽子。"
+    },
+    {
+      "id": "padded_hood",
+      "name": "綿入れ頭巾",
+      "slot": "head",
+      "rarity": 2,
+      "visualId": "cap_leather",
+      "element": "none",
       "levelRequirement": 3,
       "derived": {
-        "def": 14,
-        "maxHp": 30,
-        "moveSpeed": -5
+        "def": 3,
+        "maxHp": 10
       },
-      "sellPrice": 300,
-      "description": "ゴーレムの核を芯にした難攻不落の鎧。"
+      "sellPrice": 12,
+      "description": "綿を詰めた丈夫な頭巾。"
+    },
+    {
+      "id": "iron_helm",
+      "name": "鉄の兜",
+      "slot": "head",
+      "rarity": 3,
+      "visualId": "helm_iron",
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "def": 5,
+        "maxHp": 12,
+        "evasion": -1
+      },
+      "sellPrice": 25,
+      "description": "重いが頑丈な鉄兜。"
+    },
+    {
+      "id": "knight_helm",
+      "name": "騎士の兜",
+      "slot": "head",
+      "rarity": 4,
+      "visualId": "helm_iron",
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "def": 7,
+        "maxHp": 16,
+        "magDef": 2
+      },
+      "sellPrice": 50,
+      "description": "騎士団支給の兜。"
+    },
+    {
+      "id": "guardian_helm",
+      "name": "守護の兜",
+      "slot": "head",
+      "rarity": 5,
+      "visualId": "helm_iron",
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "def": 9,
+        "maxHp": 22,
+        "magDef": 4
+      },
+      "sellPrice": 90,
+      "description": "守りに優れた兜。"
+    },
+    {
+      "id": "royal_helm",
+      "name": "王室の兜",
+      "slot": "head",
+      "rarity": 6,
+      "visualId": "helm_iron",
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "def": 11,
+        "maxHp": 28,
+        "magDef": 5,
+        "accuracy": 2
+      },
+      "sellPrice": 160,
+      "description": "王室近衛の兜。"
+    },
+    {
+      "id": "aegis_helm",
+      "name": "イージスの兜",
+      "slot": "head",
+      "rarity": 7,
+      "visualId": "helm_iron",
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "def": 13,
+        "maxHp": 34,
+        "magDef": 7
+      },
+      "sellPrice": 280,
+      "description": "鉄壁の守護兜。"
     },
     {
       "id": "starlight_crown",
-      "name": "星冠",
+      "name": "星詠みの冠",
       "slot": "head",
       "rarity": 8,
       "visualId": "helm_iron",
-      "levelRequirement": 4,
+      "element": "none",
+      "levelRequirement": 36,
       "derived": {
         "def": 8,
         "maxHp": 20,
         "magAtk": 6,
         "critRate": 0.04
       },
-      "sellPrice": 500,
-      "description": "星のかけらを戴く伝説の冠。超希少素材を集めた者だけが作れる。"
+      "sellPrice": 480,
+      "description": "星の力を宿す冠。"
+    },
+    {
+      "id": "cloth_vest",
+      "name": "布の服",
+      "slot": "torso",
+      "rarity": 1,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 1,
+      "derived": {
+        "def": 3,
+        "maxHp": 8
+      },
+      "sellPrice": 5,
+      "description": "簡素な布の服。"
+    },
+    {
+      "id": "padded_vest",
+      "name": "綿入れの服",
+      "slot": "torso",
+      "rarity": 2,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "def": 5,
+        "maxHp": 14
+      },
+      "sellPrice": 12,
+      "description": "綿入りで保温性のある服。"
+    },
+    {
+      "id": "chain_vest",
+      "name": "鎖かたびら",
+      "slot": "torso",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "def": 7,
+        "maxHp": 18
+      },
+      "sellPrice": 25,
+      "description": "鎖を編んだ防具。"
+    },
+    {
+      "id": "iron_plate",
+      "name": "鉄の鎧",
+      "slot": "torso",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "def": 8,
+        "maxHp": 18,
+        "moveSpeed": -4
+      },
+      "sellPrice": 50,
+      "description": "重厚な鉄の鎧。"
+    },
+    {
+      "id": "steel_plate",
+      "name": "鋼の鎧",
+      "slot": "torso",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "def": 11,
+        "maxHp": 26,
+        "moveSpeed": -4
+      },
+      "sellPrice": 90,
+      "description": "鋼で組んだ堅牢な鎧。"
+    },
+    {
+      "id": "knight_plate",
+      "name": "騎士の鎧",
+      "slot": "torso",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "def": 13,
+        "maxHp": 30,
+        "magDef": 4,
+        "moveSpeed": -5
+      },
+      "sellPrice": 160,
+      "description": "騎士の正装鎧。"
+    },
+    {
+      "id": "aegis_plate",
+      "name": "イージスの鎧",
+      "slot": "torso",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "def": 14,
+        "maxHp": 32,
+        "magDef": 5,
+        "moveSpeed": -5
+      },
+      "sellPrice": 280,
+      "description": "防御に特化した重鎧。"
+    },
+    {
+      "id": "dragon_plate",
+      "name": "竜鱗の鎧",
+      "slot": "torso",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "def": 18,
+        "maxHp": 40,
+        "magDef": 6,
+        "moveSpeed": -5
+      },
+      "sellPrice": 480,
+      "description": "竜の鱗で覆った最高峰の鎧。"
     }
   ]
 }

@@ -11,8 +11,8 @@ describe('GameState equipment & stats', () => {
 
   it('equipping increases derived stats immediately', () => {
     const before = gs.derived.physAtk;
-    gs.equip('main_hand', 'iron_sword'); // +9 physAtk
-    expect(gs.derived.physAtk).toBe(before + 9);
+    gs.equip('main_hand', 'iron_sword'); // R3, +10 physAtk
+    expect(gs.derived.physAtk).toBe(before + 10);
   });
 
   it('unequipping reverts derived stats', () => {
@@ -24,9 +24,9 @@ describe('GameState equipment & stats', () => {
 
   it('stacking armor adds defense and max hp', () => {
     const hp0 = gs.derived.maxHp;
-    gs.equip('head', 'iron_helm'); // def+5, maxHp+10
-    gs.equip('torso', 'iron_plate'); // def+8, maxHp+18
-    expect(gs.derived.maxHp).toBe(hp0 + 28);
+    gs.equip('head', 'iron_helm'); // R3, def+5, maxHp+12
+    gs.equip('torso', 'iron_plate'); // R4, def+8, maxHp+18
+    expect(gs.derived.maxHp).toBe(hp0 + 30);
     expect(gs.derived.def).toBeGreaterThan(0);
   });
 

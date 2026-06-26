@@ -1,17 +1,577 @@
 {
   "recipes": [
-    { "id": "craft_potion_hp", "resultItemId": "potion_hp", "resultQty": 1, "materials": { "herb": 1, "slime_jelly": 1 }, "gold": 3, "station": "workbench" },
-    { "id": "craft_potion_mp", "resultItemId": "potion_mp", "resultQty": 1, "materials": { "slime_jelly": 2, "mana_stone": 1 }, "gold": 6, "station": "workbench" },
-    { "id": "craft_potion_hp_l", "resultItemId": "potion_hp_l", "resultQty": 1, "materials": { "herb": 2, "slime_jelly": 3 }, "gold": 12, "station": "workbench" },
-    { "id": "craft_leather_cap", "resultItemId": "leather_cap", "resultQty": 1, "materials": { "soft_leather": 3 }, "gold": 10, "station": "forge" },
-    { "id": "craft_cloth_vest", "resultItemId": "cloth_vest", "resultQty": 1, "materials": { "soft_leather": 4, "herb": 2 }, "gold": 12, "station": "forge" },
-    { "id": "craft_iron_helm", "resultItemId": "iron_helm", "resultQty": 1, "materials": { "iron_ore": 4, "mana_stone": 1 }, "gold": 20, "station": "forge" },
-    { "id": "craft_iron_sword", "resultItemId": "iron_sword", "resultQty": 1, "materials": { "iron_ore": 3, "soft_leather": 2, "mana_stone": 1 }, "gold": 25, "station": "forge" },
-    { "id": "upgrade_iron_sword", "resultItemId": "iron_sword", "resultQty": 1, "consumeEquipment": ["wood_sword"], "materials": { "iron_ore": 2, "mana_stone": 1 }, "gold": 15, "station": "forge" },
-    { "id": "upgrade_iron_helm", "resultItemId": "iron_helm", "resultQty": 1, "consumeEquipment": ["leather_cap"], "materials": { "iron_ore": 2, "mana_stone": 1 }, "gold": 12, "station": "forge" },
-    { "id": "craft_elixir", "resultItemId": "elixir", "resultQty": 1, "materials": { "king_jelly": 1, "slime_jelly": 5, "herb": 3, "mana_stone": 2 }, "gold": 40, "station": "workbench" },
-    { "id": "craft_radiant_blade", "resultItemId": "radiant_blade", "resultQty": 1, "materials": { "golem_core": 2, "iron_ore": 6, "mana_stone": 3 }, "gold": 150, "station": "forge" },
-    { "id": "craft_aegis_plate", "resultItemId": "aegis_plate", "resultQty": 1, "materials": { "golem_core": 3, "iron_ore": 8, "soft_leather": 4 }, "gold": 180, "station": "forge" },
-    { "id": "craft_starlight_crown", "resultItemId": "starlight_crown", "resultQty": 1, "materials": { "star_fragment": 1, "shadow_wing": 3, "king_jelly": 2, "mana_stone": 4 }, "gold": 300, "station": "forge" }
+    {
+      "id": "craft_potion_hp",
+      "resultItemId": "potion_hp",
+      "resultQty": 1,
+      "materials": {
+        "herb": 1,
+        "slime_jelly": 1
+      },
+      "gold": 3,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_potion_mp",
+      "resultItemId": "potion_mp",
+      "resultQty": 1,
+      "materials": {
+        "slime_jelly": 2,
+        "mana_stone": 1
+      },
+      "gold": 6,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_potion_hp_l",
+      "resultItemId": "potion_hp_l",
+      "resultQty": 1,
+      "materials": {
+        "herb": 2,
+        "slime_jelly": 3
+      },
+      "gold": 12,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_elixir",
+      "resultItemId": "elixir",
+      "resultQty": 1,
+      "materials": {
+        "king_jelly": 1,
+        "slime_jelly": 5,
+        "herb": 3,
+        "mana_stone": 2
+      },
+      "gold": 40,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_hunters_sword",
+      "resultItemId": "hunters_sword",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "slime_jelly": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_hunters_sword",
+      "resultItemId": "hunters_sword",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "wood_sword"
+      ],
+      "materials": {
+        "iron_ore": 2
+      },
+      "gold": 8,
+      "station": "forge"
+    },
+    {
+      "id": "craft_iron_sword",
+      "resultItemId": "iron_sword",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_iron_sword",
+      "resultItemId": "iron_sword",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "hunters_sword"
+      ],
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_sword",
+      "resultItemId": "steel_sword",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_sword",
+      "resultItemId": "steel_sword",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "iron_sword"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_kings_blade",
+      "resultItemId": "kings_blade",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_kings_blade",
+      "resultItemId": "kings_blade",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_sword"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_knight_saber",
+      "resultItemId": "knight_saber",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_knight_saber",
+      "resultItemId": "knight_saber",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "kings_blade"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_radiant_blade",
+      "resultItemId": "radiant_blade",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_radiant_blade",
+      "resultItemId": "radiant_blade",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "knight_saber"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_fang",
+      "resultItemId": "dragon_fang",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_fang",
+      "resultItemId": "dragon_fang",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "radiant_blade"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_padded_hood",
+      "resultItemId": "padded_hood",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 4,
+        "slime_jelly": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_padded_hood",
+      "resultItemId": "padded_hood",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "leather_cap"
+      ],
+      "materials": {
+        "soft_leather": 3
+      },
+      "gold": 8,
+      "station": "forge"
+    },
+    {
+      "id": "craft_iron_helm",
+      "resultItemId": "iron_helm",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_iron_helm",
+      "resultItemId": "iron_helm",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "padded_hood"
+      ],
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_knight_helm",
+      "resultItemId": "knight_helm",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_knight_helm",
+      "resultItemId": "knight_helm",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "iron_helm"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_guardian_helm",
+      "resultItemId": "guardian_helm",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_guardian_helm",
+      "resultItemId": "guardian_helm",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "knight_helm"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_royal_helm",
+      "resultItemId": "royal_helm",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_royal_helm",
+      "resultItemId": "royal_helm",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "guardian_helm"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_aegis_helm",
+      "resultItemId": "aegis_helm",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_aegis_helm",
+      "resultItemId": "aegis_helm",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "royal_helm"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starlight_crown",
+      "resultItemId": "starlight_crown",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_starlight_crown",
+      "resultItemId": "starlight_crown",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "aegis_helm"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_padded_vest",
+      "resultItemId": "padded_vest",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 4,
+        "slime_jelly": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_padded_vest",
+      "resultItemId": "padded_vest",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "cloth_vest"
+      ],
+      "materials": {
+        "soft_leather": 3
+      },
+      "gold": 8,
+      "station": "forge"
+    },
+    {
+      "id": "craft_chain_vest",
+      "resultItemId": "chain_vest",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 5,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_chain_vest",
+      "resultItemId": "chain_vest",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "padded_vest"
+      ],
+      "materials": {
+        "soft_leather": 3,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_iron_plate",
+      "resultItemId": "iron_plate",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_iron_plate",
+      "resultItemId": "iron_plate",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "chain_vest"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_plate",
+      "resultItemId": "steel_plate",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_plate",
+      "resultItemId": "steel_plate",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "iron_plate"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_knight_plate",
+      "resultItemId": "knight_plate",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_knight_plate",
+      "resultItemId": "knight_plate",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_plate"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_aegis_plate",
+      "resultItemId": "aegis_plate",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_aegis_plate",
+      "resultItemId": "aegis_plate",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "knight_plate"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_plate",
+      "resultItemId": "dragon_plate",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_plate",
+      "resultItemId": "dragon_plate",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "aegis_plate"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    }
   ]
 }
