@@ -14,7 +14,7 @@
       ],
       "rewards": {
         "gold": 60,
-        "exp": 40,
+        "exp": 120,
         "items": {
           "soft_leather": 3
         }
@@ -34,7 +34,7 @@
       ],
       "rewards": {
         "gold": 70,
-        "exp": 50,
+        "exp": 150,
         "items": {
           "herb": 4,
           "mana_stone": 1
@@ -58,7 +58,7 @@
       },
       "rewards": {
         "gold": 150,
-        "exp": 120,
+        "exp": 360,
         "items": {
           "king_jelly": 1
         }
@@ -81,7 +81,7 @@
       },
       "rewards": {
         "gold": 220,
-        "exp": 180,
+        "exp": 540,
         "items": {
           "golem_core": 1
         }
@@ -105,7 +105,7 @@
       },
       "rewards": {
         "gold": 500,
-        "exp": 600,
+        "exp": 1800,
         "setFlags": [
           "quest_tier4_trial"
         ]
@@ -125,7 +125,7 @@
       ],
       "rewards": {
         "gold": 20,
-        "exp": 15,
+        "exp": 45,
         "items": {
           "potion_hp": 1
         }
@@ -145,7 +145,7 @@
       ],
       "rewards": {
         "gold": 40,
-        "exp": 30,
+        "exp": 90,
         "items": {
           "slime_jelly": 3
         }
@@ -165,7 +165,7 @@
       ],
       "rewards": {
         "gold": 40,
-        "exp": 30,
+        "exp": 90,
         "items": {
           "soft_leather": 2
         }
@@ -190,7 +190,7 @@
       ],
       "rewards": {
         "gold": 30,
-        "exp": 25,
+        "exp": 75,
         "items": {
           "potion_hp": 2
         }
@@ -210,7 +210,7 @@
       ],
       "rewards": {
         "gold": 120,
-        "exp": 90,
+        "exp": 270,
         "items": {
           "soft_leather": 5
         }
@@ -233,7 +233,7 @@
       ],
       "rewards": {
         "gold": 120,
-        "exp": 90,
+        "exp": 270,
         "items": {
           "mana_stone": 2
         }
@@ -256,7 +256,7 @@
       ],
       "rewards": {
         "gold": 35,
-        "exp": 25,
+        "exp": 75,
         "items": {
           "herb": 5
         }
@@ -276,7 +276,7 @@
       ],
       "rewards": {
         "gold": 50,
-        "exp": 35,
+        "exp": 105,
         "items": {
           "soft_leather": 4
         }
@@ -301,7 +301,7 @@
       ],
       "rewards": {
         "gold": 180,
-        "exp": 140,
+        "exp": 420,
         "items": {
           "herb": 6,
           "mana_stone": 2
@@ -325,7 +325,7 @@
       ],
       "rewards": {
         "gold": 200,
-        "exp": 160,
+        "exp": 480,
         "items": {
           "iron_ore": 5,
           "mana_stone": 3
@@ -350,7 +350,7 @@
       ],
       "rewards": {
         "gold": 120,
-        "exp": 100,
+        "exp": 300,
         "items": {
           "iron_ore": 6
         }
@@ -378,7 +378,7 @@
       ],
       "rewards": {
         "gold": 260,
-        "exp": 200,
+        "exp": 600,
         "items": {
           "steel_ingot": 2
         }
@@ -402,7 +402,7 @@
       ],
       "rewards": {
         "gold": 300,
-        "exp": 240,
+        "exp": 720,
         "items": {
           "golem_core": 1
         }
@@ -426,7 +426,7 @@
       ],
       "rewards": {
         "gold": 350,
-        "exp": 300,
+        "exp": 900,
         "items": {
           "steel_ingot": 3,
           "golem_core": 1
@@ -451,7 +451,7 @@
       ],
       "rewards": {
         "gold": 50,
-        "exp": 40,
+        "exp": 120,
         "items": {
           "slime_jelly": 2
         }
@@ -472,7 +472,7 @@
       ],
       "rewards": {
         "gold": 90,
-        "exp": 70,
+        "exp": 210,
         "items": {
           "soft_leather": 3
         }
@@ -496,7 +496,7 @@
       ],
       "rewards": {
         "gold": 160,
-        "exp": 130,
+        "exp": 390,
         "items": {
           "mana_stone": 2,
           "iron_ore": 3
@@ -521,7 +521,7 @@
       ],
       "rewards": {
         "gold": 120,
-        "exp": 100,
+        "exp": 300,
         "items": {
           "shadow_wing": 1
         }
@@ -545,7 +545,7 @@
       ],
       "rewards": {
         "gold": 180,
-        "exp": 150,
+        "exp": 450,
         "items": {
           "golem_core": 1
         }
@@ -569,7 +569,7 @@
       ],
       "rewards": {
         "gold": 400,
-        "exp": 500,
+        "exp": 1500,
         "items": {
           "star_fragment": 1
         }

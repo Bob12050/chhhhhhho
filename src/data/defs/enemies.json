@@ -9,7 +9,7 @@
       "contactDamage": 5,
       "aggroRange": 130,
       "attackRange": 18,
-      "expReward": 10,
+      "expReward": 12,
       "goldReward": 3,
       "dropTableId": "slime_basic",
       "animSpeed": 0.5
@@ -25,7 +25,7 @@
       "aggroRange": 150,
       "attackRange": 16,
       "keepDistance": 46,
-      "expReward": 9,
+      "expReward": 12,
       "goldReward": 3,
       "dropTableId": "bat_basic"
     },
@@ -41,8 +41,8 @@
       "aggroRange": 100,
       "attackRange": 20,
       "knockbackResist": 0.8,
-      "expReward": 26,
-      "goldReward": 10,
+      "expReward": 85,
+      "goldReward": 14,
       "dropTableId": "golem_basic"
     },
     {
@@ -58,8 +58,8 @@
       "aggroRange": 280,
       "attackRange": 30,
       "knockbackResist": 0.5,
-      "expReward": 170,
-      "goldReward": 100,
+      "expReward": 1800,
+      "goldReward": 400,
       "dropTableId": "boss_slime"
     },
     {
@@ -75,8 +75,8 @@
       "aggroRange": 240,
       "attackRange": 28,
       "knockbackResist": 0.5,
-      "expReward": 90,
-      "goldReward": 50,
+      "expReward": 500,
+      "goldReward": 80,
       "dropTableId": "boss_treant"
     },
     {
@@ -92,8 +92,8 @@
       "aggroRange": 240,
       "attackRange": 28,
       "knockbackResist": 0.85,
-      "expReward": 130,
-      "goldReward": 70,
+      "expReward": 900,
+      "goldReward": 150,
       "dropTableId": "boss_stone"
     },
     {
@@ -107,8 +107,8 @@
       "contactDamage": 7,
       "aggroRange": 120,
       "attackRange": 18,
-      "expReward": 16,
-      "goldReward": 5,
+      "expReward": 32,
+      "goldReward": 6,
       "dropTableId": "wolf_basic"
     },
     {
@@ -123,7 +123,7 @@
       "aggroRange": 80,
       "attackRange": 18,
       "knockbackResist": 0.4,
-      "expReward": 18,
+      "expReward": 34,
       "goldReward": 6,
       "dropTableId": "shroom_basic"
     },
@@ -139,8 +139,8 @@
       "aggroRange": 110,
       "attackRange": 18,
       "knockbackResist": 0.3,
-      "expReward": 30,
-      "goldReward": 9,
+      "expReward": 95,
+      "goldReward": 16,
       "dropTableId": "rock_lizard"
     },
     {
@@ -155,8 +155,8 @@
       "aggroRange": 130,
       "attackRange": 16,
       "keepDistance": 60,
-      "expReward": 28,
-      "goldReward": 8,
+      "expReward": 80,
+      "goldReward": 13,
       "dropTableId": "cave_bat"
     },
     {
@@ -170,8 +170,8 @@
       "contactDamage": 18,
       "aggroRange": 150,
       "attackRange": 20,
-      "expReward": 60,
-      "goldReward": 18,
+      "expReward": 160,
+      "goldReward": 40,
       "dropTableId": "flame_hound"
     },
     {
@@ -186,8 +186,8 @@
       "aggroRange": 160,
       "attackRange": 120,
       "keepDistance": 110,
-      "expReward": 58,
-      "goldReward": 17,
+      "expReward": 155,
+      "goldReward": 38,
       "dropTableId": "frost_wisp"
     },
     {
@@ -202,8 +202,8 @@
       "aggroRange": 140,
       "attackRange": 22,
       "knockbackResist": 0.5,
-      "expReward": 75,
-      "goldReward": 24,
+      "expReward": 210,
+      "goldReward": 55,
       "dropTableId": "shadow_knight"
     },
     {
@@ -219,8 +219,8 @@
       "aggroRange": 280,
       "attackRange": 34,
       "knockbackResist": 0.7,
-      "expReward": 420,
-      "goldReward": 200,
+      "expReward": 1500,
+      "goldReward": 500,
       "dropTableId": "boss_dragon"
     }
   ]

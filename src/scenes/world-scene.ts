@@ -30,6 +30,9 @@ interface BuiltNpc {
   dialogueId?: string;
 }
 
+/** Delay before a defeated normal enemy respawns at its post (farmability). */
+const RESPAWN_MS = 8000;
+
 /**
  * Generic world scene: renders whichever map `gameState.mapId` points at,
  * spawns its enemies/NPCs, and handles movement, combat, one skill, loot,
@@ -203,7 +206,18 @@ export class WorldScene extends Phaser.Scene {
     });
     this.physics.add.collider(enemy.sprite, this.obstacles);
     this.physics.add.overlap(this.player.body, enemy.sprite, () => this.onContact(enemy));
-    enemy.onDeath = (dx, dy) => this.onEnemyDeath(dx, dy, def);
+    enemy.onDeath = (dx, dy) => {
+      this.onEnemyDeath(dx, dy, def);
+      // Normal enemies respawn at their post so zones stay farmable (needed for
+      // the time-based progression budget). Bosses only return on re-entry.
+      if (!def.isBoss) {
+        this.time.delayedCall(RESPAWN_MS, () => {
+          if (!this.transitioning && this.scene.isActive() && !this.playerDead) {
+            this.spawnEnemy(type, x, y);
+          }
+        });
+      }
+    };
     this.enemies.push(enemy);
     if (def.isBoss) {
       this.boss = enemy;
