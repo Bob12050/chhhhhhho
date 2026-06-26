@@ -1,22 +1,98 @@
 {
   "id": "town",
   "name": "はじまりの町",
-  "travel": { "order": 0, "note": "拠点。装備・鍛冶・ギルド" },
-  "size": { "w": 360, "h": 960 },
+  "travel": {
+    "order": 0,
+    "note": "拠点。装備・鍛冶・ギルド"
+  },
+  "size": {
+    "w": 360,
+    "h": 960
+  },
   "ground": "grass",
-  "path": { "axis": "v", "thickness": 64 },
+  "path": {
+    "axis": "v",
+    "thickness": 64
+  },
   "border": "trees",
-  "obstacles": [[70, 320], [290, 340], [80, 640], [300, 680]],
-  "spawns": { "default": [180, 820], "from_field": [180, 150] },
+  "obstacles": [
+    [
+      70,
+      320
+    ],
+    [
+      290,
+      340
+    ],
+    [
+      80,
+      640
+    ],
+    [
+      300,
+      680
+    ]
+  ],
+  "spawns": {
+    "default": [
+      180,
+      820
+    ],
+    "from_field": [
+      180,
+      150
+    ]
+  },
   "portals": [
-    { "rect": [148, 32, 64, 32], "to": "field", "toSpawn": "from_town", "label": "そうげんへ" }
+    {
+      "rect": [
+        148,
+        32,
+        64,
+        32
+      ],
+      "to": "field",
+      "toSpawn": "from_town",
+      "label": "そうげんへ"
+    }
   ],
   "enemies": [],
   "npcs": [
-    { "x": 180, "y": 230, "label": "装備屋", "action": "equip" },
-    { "x": 270, "y": 430, "label": "鍛冶屋", "action": "craft" },
-    { "x": 90, "y": 430, "label": "ギルド", "action": "job" },
-    { "x": 120, "y": 700, "label": "むらおさ", "dialogueId": "elder_intro" },
-    { "x": 250, "y": 700, "label": "むらびと", "dialogueId": "villager_hint" }
+    {
+      "x": 180,
+      "y": 230,
+      "label": "装備屋",
+      "action": "equip"
+    },
+    {
+      "x": 270,
+      "y": 430,
+      "label": "鍛冶屋",
+      "action": "craft"
+    },
+    {
+      "x": 90,
+      "y": 430,
+      "label": "ギルド",
+      "action": "job"
+    },
+    {
+      "x": 120,
+      "y": 700,
+      "label": "むらおさ",
+      "dialogueId": "elder_intro"
+    },
+    {
+      "x": 250,
+      "y": 700,
+      "label": "むらびと",
+      "dialogueId": "villager_hint"
+    },
+    {
+      "x": 180,
+      "y": 430,
+      "label": "クエスト掲示板",
+      "action": "quest"
+    }
   ]
 }

@@ -818,6 +818,7 @@ export class WorldScene extends Phaser.Scene {
     if (npc.action === 'equip') this.openInventory('equipment');
     else if (npc.action === 'craft') this.openMenu('Crafting');
     else if (npc.action === 'job') this.openMenu('JobChange');
+    else if (npc.action === 'quest') this.openMenu('QuestBoard');
     else if (npc.dialogueId) this.openMenu('Dialogue', { id: npc.dialogueId });
   }
 
