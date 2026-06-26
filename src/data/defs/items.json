@@ -525,6 +525,191 @@
       },
       "sellPrice": 480,
       "description": "竜の鱗で覆った最高峰の鎧。"
+    },
+    {
+      "id": "hatchet",
+      "name": "手斧",
+      "slot": "main_hand",
+      "rarity": 2,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "axe"
+      ],
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "physAtk": 8,
+        "critRate": 0.02
+      },
+      "sellPrice": 12,
+      "description": "手斧。1次職向けのaxe。"
+    },
+    {
+      "id": "battle_axe",
+      "name": "戦斧",
+      "slot": "main_hand",
+      "rarity": 3,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "axe"
+      ],
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "physAtk": 12,
+        "critRate": 0.04,
+        "maxHp": 6
+      },
+      "sellPrice": 25,
+      "description": "戦斧。鍛えられた1次職向けのaxe。"
+    },
+    {
+      "id": "wood_staff",
+      "name": "木の杖",
+      "slot": "main_hand",
+      "rarity": 2,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "magAtk": 8,
+        "maxMp": 10
+      },
+      "sellPrice": 12,
+      "description": "木の杖。1次職向けのstaff。"
+    },
+    {
+      "id": "mage_staff",
+      "name": "魔道の杖",
+      "slot": "main_hand",
+      "rarity": 3,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "magAtk": 12,
+        "maxMp": 16,
+        "magDef": 2
+      },
+      "sellPrice": 25,
+      "description": "魔道の杖。鍛えられた1次職向けのstaff。"
+    },
+    {
+      "id": "club",
+      "name": "こん棒",
+      "slot": "main_hand",
+      "rarity": 2,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "physAtk": 6,
+        "magAtk": 4
+      },
+      "sellPrice": 12,
+      "description": "こん棒。1次職向けのmace。"
+    },
+    {
+      "id": "iron_mace",
+      "name": "鉄の槌",
+      "slot": "main_hand",
+      "rarity": 3,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "physAtk": 8,
+        "magAtk": 6,
+        "def": 2
+      },
+      "sellPrice": 25,
+      "description": "鉄の槌。鍛えられた1次職向けのmace。"
+    },
+    {
+      "id": "knife",
+      "name": "ナイフ",
+      "slot": "main_hand",
+      "rarity": 2,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "dagger"
+      ],
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "physAtk": 6,
+        "atkSpeed": 2
+      },
+      "sellPrice": 12,
+      "description": "ナイフ。1次職向けのdagger。"
+    },
+    {
+      "id": "kris_dagger",
+      "name": "曲刀ダガー",
+      "slot": "main_hand",
+      "rarity": 3,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "dagger"
+      ],
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "physAtk": 9,
+        "atkSpeed": 3,
+        "critRate": 0.04
+      },
+      "sellPrice": 25,
+      "description": "曲刀ダガー。鍛えられた1次職向けのdagger。"
+    },
+    {
+      "id": "leather_whip",
+      "name": "革の鞭",
+      "slot": "main_hand",
+      "rarity": 2,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "whip"
+      ],
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "physAtk": 6,
+        "accuracy": 3
+      },
+      "sellPrice": 12,
+      "description": "革の鞭。1次職向けのwhip。"
+    },
+    {
+      "id": "chain_whip",
+      "name": "鎖の鞭",
+      "slot": "main_hand",
+      "rarity": 3,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "whip"
+      ],
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "physAtk": 9,
+        "accuracy": 4,
+        "atkSpeed": 2
+      },
+      "sellPrice": 25,
+      "description": "鎖の鞭。鍛えられた1次職向けのwhip。"
     }
   ]
 }

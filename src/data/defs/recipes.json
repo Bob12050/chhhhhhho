@@ -572,6 +572,187 @@
       },
       "gold": 260,
       "station": "forge"
+    },
+    {
+      "id": "craft_hatchet",
+      "resultItemId": "hatchet",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "slime_jelly": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_battle_axe",
+      "resultItemId": "battle_axe",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 5,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_battle_axe",
+      "resultItemId": "battle_axe",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "hatchet"
+      ],
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_wood_staff",
+      "resultItemId": "wood_staff",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mage_staff",
+      "resultItemId": "mage_staff",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "mana_stone": 3
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mage_staff",
+      "resultItemId": "mage_staff",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "wood_staff"
+      ],
+      "materials": {
+        "mana_stone": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_club",
+      "resultItemId": "club",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "slime_jelly": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_iron_mace",
+      "resultItemId": "iron_mace",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "mana_stone": 1,
+        "soft_leather": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_iron_mace",
+      "resultItemId": "iron_mace",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "club"
+      ],
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_knife",
+      "resultItemId": "knife",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 2,
+        "soft_leather": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_kris_dagger",
+      "resultItemId": "kris_dagger",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_kris_dagger",
+      "resultItemId": "kris_dagger",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "knife"
+      ],
+      "materials": {
+        "soft_leather": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_leather_whip",
+      "resultItemId": "leather_whip",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 4,
+        "slime_jelly": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_chain_whip",
+      "resultItemId": "chain_whip",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 5,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_chain_whip",
+      "resultItemId": "chain_whip",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "leather_whip"
+      ],
+      "materials": {
+        "soft_leather": 3,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
     }
   ]
 }
