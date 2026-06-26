@@ -7,6 +7,7 @@ import {
 import { getEquipment, getConsumable } from '@/data/items';
 import { getSkill } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
+import { getQuest } from '@/quests/quest-defs';
 import { canEquipClass, canEquipWeapon, canEquipTier } from '@/equipment/restrictions';
 import { getPet } from '@/pets/pet-defs';
 import { getPetItem } from '@/data/items';
@@ -44,6 +45,11 @@ export class GameState {
   equipmentOwned: string[] = [];
 
   flags: Record<string, boolean> = {};
+
+  /** Quest state: accepted ids, turned-in ids, and per-quest kill progress. */
+  activeQuests: string[] = [];
+  completedQuests: string[] = [];
+  questProgress: Record<string, Record<string, number>> = {};
 
   hp = 1;
   mp = 0;
@@ -390,6 +396,11 @@ export class GameState {
         equipmentOwned: [...this.equipmentOwned],
       },
       flags: { ...this.flags },
+      quests: {
+        active: [...this.activeQuests],
+        completed: [...this.completedQuests],
+        progress: structuredClone(this.questProgress),
+      },
       settings: { sfx: true, bgm: true },
     };
   }
@@ -419,6 +430,13 @@ export class GameState {
     // Owned equipment: keep only known ids.
     this.equipmentOwned = (data.inventory.equipmentOwned ?? []).filter((id) => !!getEquipment(id));
     this.flags = { ...data.flags };
+    // Quests: keep only known ids defensively.
+    this.activeQuests = (data.quests?.active ?? []).filter((id) => !!getQuest(id));
+    this.completedQuests = (data.quests?.completed ?? []).filter((id) => !!getQuest(id));
+    this.questProgress = {};
+    for (const [qid, counts] of Object.entries(data.quests?.progress ?? {})) {
+      if (getQuest(qid)) this.questProgress[qid] = { ...counts };
+    }
     // Equipment: drop unknown ids defensively.
     for (const slot of EQUIP_SLOTS) {
       const id = data.equipment[slot] ?? null;

@@ -37,6 +37,11 @@ export interface SaveDataV1 {
     equipmentOwned: string[]; // owned equipment ids (one entry per piece)
   };
   flags: Record<string, boolean>; // e.g. boss defeated
+  quests: {
+    active: string[]; // accepted, not yet turned in
+    completed: string[]; // turned in
+    progress: Record<string, Record<string, number>>; // questId -> enemyId -> kills
+  };
   settings: { sfx: boolean; bgm: boolean };
 }
 
@@ -75,6 +80,7 @@ export function createDefaultSave(slot: number): SaveData {
       equipmentOwned: ['wood_sword', 'leather_cap', 'cloth_vest'],
     },
     flags: {},
+    quests: { active: [], completed: [], progress: {} },
     settings: { sfx: true, bgm: true },
   };
 }
@@ -103,6 +109,11 @@ export function migrate(raw: unknown, slot: number): SaveData {
       equipmentOwned: [...(data.inventory?.equipmentOwned ?? [])],
     },
     flags: { ...(data.flags ?? {}) },
+    quests: {
+      active: [...(data.quests?.active ?? [])],
+      completed: [...(data.quests?.completed ?? [])],
+      progress: { ...(data.quests?.progress ?? {}) },
+    },
     settings: { ...def.settings, ...(data.settings ?? {}) },
   };
 

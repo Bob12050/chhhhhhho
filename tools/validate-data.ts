@@ -364,6 +364,34 @@ function validateJobs(skillIds: Set<string>): void {
   }
 }
 
+function validateQuests(itemIds: Set<string>, enemyIds: Set<string>): void {
+  const file = readJson<{
+    quests: {
+      id: string;
+      type: string;
+      objectives: { type: string; enemyId: string; count: number }[];
+      require?: { questDone?: string };
+      rewards: { items?: Record<string, number> };
+    }[];
+  }>('src/data/defs/quests.json');
+  const QTYPES = new Set(['subjugation', 'unlock', 'hunt']);
+  const ids = new Set(file.quests.map((q) => q.id));
+  for (const q of file.quests) {
+    if (!QTYPES.has(q.type)) err(`Quest ${q.id}: invalid type "${q.type}"`);
+    if (!q.objectives?.length) err(`Quest ${q.id}: needs at least one objective`);
+    for (const o of q.objectives ?? []) {
+      if (o.type !== 'kill') err(`Quest ${q.id}: invalid objective type "${o.type}"`);
+      if (!enemyIds.has(o.enemyId)) err(`Quest ${q.id}: unknown enemy "${o.enemyId}"`);
+      if (!(o.count >= 1)) err(`Quest ${q.id}: objective count must be >= 1`);
+    }
+    if (q.require?.questDone && !ids.has(q.require.questDone))
+      err(`Quest ${q.id}: requires unknown quest "${q.require.questDone}"`);
+    for (const id of Object.keys(q.rewards?.items ?? {})) {
+      if (!itemIds.has(id)) err(`Quest ${q.id}: reward item "${id}" not in items.json`);
+    }
+  }
+}
+
 const itemIds = collectItemIds();
 const dropTableIds = validateDrops(itemIds);
 const enemyIds = validateEnemies(itemIds, dropTableIds);
@@ -373,6 +401,7 @@ validateRecipes(itemIds);
 const skillIds = validateSkills();
 validateJobs(skillIds);
 validatePets();
+validateQuests(itemIds, enemyIds);
 
 if (errors.length > 0) {
   console.error(`Data validation FAILED with ${errors.length} error(s):`);

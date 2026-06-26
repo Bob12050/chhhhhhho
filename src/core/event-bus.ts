@@ -43,6 +43,9 @@ export interface GameEvents {
   // Jobs
   'job:changed': { jobId: string };
 
+  // Quests (accepted / progressed / turned in)
+  'quest:changed': Record<string, never>;
+
   // Pets
   'pet:changed': { petId: string | null };
 

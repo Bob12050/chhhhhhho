@@ -13,6 +13,7 @@ import { TEX } from '@/assets/gen/textures';
 import { Rng } from '@/core/rng';
 import { getDropTable, rollDrops } from '@/loot/drop-table';
 import { getSkill } from '@/skills/skill-defs';
+import { recordKill } from '@/quests/quests';
 import { input } from '@/input/input-state';
 import { bus } from '@/core/event-bus';
 import { saveManager } from '@/save/save-manager';
@@ -512,6 +513,7 @@ export class WorldScene extends Phaser.Scene {
       : 0xffffff;
     this.spawnDeathBurst(x, y, burstColor);
     gameState.flags['killed_any'] = true;
+    recordKill(gameState, def.id); // advance active quest objectives
     const killFlag = `boss_${def.id}_killed`;
     const firstKill = !!def.isBoss && !gameState.flags[killFlag];
     const table = def.dropTableId ? getDropTable(def.dropTableId) : undefined;

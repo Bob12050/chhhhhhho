@@ -1,0 +1,47 @@
+{
+  "quests": [
+    {
+      "id": "subj_wolves",
+      "name": "森の狼を間引く",
+      "type": "subjugation",
+      "description": "ささやきの森で増えすぎたみどり狼を5体討伐する。",
+      "objectives": [{ "type": "kill", "enemyId": "green_wolf", "count": 5 }],
+      "rewards": { "gold": 60, "exp": 40, "items": { "soft_leather": 3 } }
+    },
+    {
+      "id": "subj_shrooms",
+      "name": "ぼうし茸の駆除",
+      "type": "subjugation",
+      "description": "森に生い茂るぼうし茸を6体刈り取る。",
+      "objectives": [{ "type": "kill", "enemyId": "cap_shroom", "count": 6 }],
+      "rewards": { "gold": 70, "exp": 50, "items": { "herb": 4, "mana_stone": 1 } }
+    },
+    {
+      "id": "subj_treant",
+      "name": "森の主を討て",
+      "type": "subjugation",
+      "description": "ささやきの森の奥に棲むトレントを討伐する。看板級の強敵。",
+      "objectives": [{ "type": "kill", "enemyId": "boss_treant", "count": 1 }],
+      "require": { "minLevel": 6 },
+      "rewards": { "gold": 150, "exp": 120, "items": { "king_jelly": 1 } }
+    },
+    {
+      "id": "subj_stone",
+      "name": "洞窟の石像を砕け",
+      "type": "subjugation",
+      "description": "うすぐらい洞窟に潜む石像の主を討伐する。",
+      "objectives": [{ "type": "kill", "enemyId": "boss_stone", "count": 1 }],
+      "require": { "questDone": "subj_treant" },
+      "rewards": { "gold": 220, "exp": 180, "items": { "golem_core": 1 } }
+    },
+    {
+      "id": "tier4_trial",
+      "name": "極みの試練",
+      "type": "unlock",
+      "description": "全ての主を超えし者の証。キングスライムを討ち、4次職への道を開く。",
+      "objectives": [{ "type": "kill", "enemyId": "boss_slime", "count": 1 }],
+      "require": { "questDone": "subj_stone", "minLevel": 30 },
+      "rewards": { "gold": 500, "exp": 600, "setFlags": ["quest_tier4_trial"] }
+    }
+  ]
+}
