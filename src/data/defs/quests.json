@@ -5,43 +5,578 @@
       "name": "森の狼を間引く",
       "type": "subjugation",
       "description": "ささやきの森で増えすぎたみどり狼を5体討伐する。",
-      "objectives": [{ "type": "kill", "enemyId": "green_wolf", "count": 5 }],
-      "rewards": { "gold": 60, "exp": 40, "items": { "soft_leather": 3 } }
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "green_wolf",
+          "count": 5
+        }
+      ],
+      "rewards": {
+        "gold": 60,
+        "exp": 40,
+        "items": {
+          "soft_leather": 3
+        }
+      }
     },
     {
       "id": "subj_shrooms",
       "name": "ぼうし茸の駆除",
       "type": "subjugation",
       "description": "森に生い茂るぼうし茸を6体刈り取る。",
-      "objectives": [{ "type": "kill", "enemyId": "cap_shroom", "count": 6 }],
-      "rewards": { "gold": 70, "exp": 50, "items": { "herb": 4, "mana_stone": 1 } }
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "cap_shroom",
+          "count": 6
+        }
+      ],
+      "rewards": {
+        "gold": 70,
+        "exp": 50,
+        "items": {
+          "herb": 4,
+          "mana_stone": 1
+        }
+      }
     },
     {
       "id": "subj_treant",
       "name": "森の主を討て",
       "type": "subjugation",
       "description": "ささやきの森の奥に棲むトレントを討伐する。看板級の強敵。",
-      "objectives": [{ "type": "kill", "enemyId": "boss_treant", "count": 1 }],
-      "require": { "minLevel": 6 },
-      "rewards": { "gold": 150, "exp": 120, "items": { "king_jelly": 1 } }
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_treant",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 6
+      },
+      "rewards": {
+        "gold": 150,
+        "exp": 120,
+        "items": {
+          "king_jelly": 1
+        }
+      }
     },
     {
       "id": "subj_stone",
       "name": "洞窟の石像を砕け",
       "type": "subjugation",
       "description": "うすぐらい洞窟に潜む石像の主を討伐する。",
-      "objectives": [{ "type": "kill", "enemyId": "boss_stone", "count": 1 }],
-      "require": { "questDone": "subj_treant" },
-      "rewards": { "gold": 220, "exp": 180, "items": { "golem_core": 1 } }
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_stone",
+          "count": 1
+        }
+      ],
+      "require": {
+        "questDone": "subj_treant"
+      },
+      "rewards": {
+        "gold": 220,
+        "exp": 180,
+        "items": {
+          "golem_core": 1
+        }
+      }
     },
     {
       "id": "tier4_trial",
       "name": "極みの試練",
       "type": "unlock",
       "description": "全ての主を超えし者の証。キングスライムを討ち、4次職への道を開く。",
-      "objectives": [{ "type": "kill", "enemyId": "boss_slime", "count": 1 }],
-      "require": { "questDone": "subj_stone", "minLevel": 30 },
-      "rewards": { "gold": 500, "exp": 600, "setFlags": ["quest_tier4_trial"] }
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_slime",
+          "count": 1
+        }
+      ],
+      "require": {
+        "questDone": "subj_stone",
+        "minLevel": 30
+      },
+      "rewards": {
+        "gold": 500,
+        "exp": 600,
+        "setFlags": [
+          "quest_tier4_trial"
+        ]
+      }
+    },
+    {
+      "id": "q_apprentice",
+      "name": "駆け出しの証",
+      "type": "subjugation",
+      "description": "まずはスライムを5体倒して狩りに慣れよう。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "slime",
+          "count": 5
+        }
+      ],
+      "rewards": {
+        "gold": 20,
+        "exp": 15,
+        "items": {
+          "potion_hp": 1
+        }
+      }
+    },
+    {
+      "id": "q_slime_cull",
+      "name": "スライム退治",
+      "type": "subjugation",
+      "description": "町の周りのスライムを6体間引く。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "slime",
+          "count": 6
+        }
+      ],
+      "rewards": {
+        "gold": 40,
+        "exp": 30,
+        "items": {
+          "slime_jelly": 3
+        }
+      }
+    },
+    {
+      "id": "q_bat_roost",
+      "name": "コウモリの巣",
+      "type": "subjugation",
+      "description": "うるさいコウモリを6体追い払う。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "bat",
+          "count": 6
+        }
+      ],
+      "rewards": {
+        "gold": 40,
+        "exp": 30,
+        "items": {
+          "soft_leather": 2
+        }
+      }
+    },
+    {
+      "id": "q_first_blood",
+      "name": "はじめての二種狩り",
+      "type": "hunt",
+      "description": "スライムとコウモリ、両方を狩ってみよう。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "slime",
+          "count": 3
+        },
+        {
+          "type": "kill",
+          "enemyId": "bat",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "gold": 30,
+        "exp": 25,
+        "items": {
+          "potion_hp": 2
+        }
+      }
+    },
+    {
+      "id": "q_wolf_pack",
+      "name": "狼の群れ",
+      "type": "subjugation",
+      "description": "ささやきの森のみどり狼を12体討伐する。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "green_wolf",
+          "count": 12
+        }
+      ],
+      "rewards": {
+        "gold": 120,
+        "exp": 90,
+        "items": {
+          "soft_leather": 5
+        }
+      },
+      "require": {
+        "minLevel": 5
+      }
+    },
+    {
+      "id": "q_shroom_spores",
+      "name": "胞子の脅威",
+      "type": "subjugation",
+      "description": "繁殖するぼうし茸を12体刈り取る。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "cap_shroom",
+          "count": 12
+        }
+      ],
+      "rewards": {
+        "gold": 120,
+        "exp": 90,
+        "items": {
+          "mana_stone": 2
+        }
+      },
+      "require": {
+        "minLevel": 5
+      }
+    },
+    {
+      "id": "q_herb_gather",
+      "name": "薬草のために",
+      "type": "subjugation",
+      "description": "ぼうし茸を倒して薬草を確保する。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "cap_shroom",
+          "count": 5
+        }
+      ],
+      "rewards": {
+        "gold": 35,
+        "exp": 25,
+        "items": {
+          "herb": 5
+        }
+      }
+    },
+    {
+      "id": "q_leather_run",
+      "name": "革集め",
+      "type": "subjugation",
+      "description": "コウモリを8体倒してやわらか革を集める。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "bat",
+          "count": 8
+        }
+      ],
+      "rewards": {
+        "gold": 50,
+        "exp": 35,
+        "items": {
+          "soft_leather": 4
+        }
+      }
+    },
+    {
+      "id": "q_forest_balance",
+      "name": "森の均衡",
+      "type": "hunt",
+      "description": "みどり狼とぼうし茸を狩り、森の均衡を保つ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "green_wolf",
+          "count": 8
+        },
+        {
+          "type": "kill",
+          "enemyId": "cap_shroom",
+          "count": 8
+        }
+      ],
+      "rewards": {
+        "gold": 180,
+        "exp": 140,
+        "items": {
+          "herb": 6,
+          "mana_stone": 2
+        }
+      },
+      "require": {
+        "minLevel": 6
+      }
+    },
+    {
+      "id": "q_golem_watch",
+      "name": "石の番人",
+      "type": "subjugation",
+      "description": "洞窟のゴーレムを5体破壊する。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "golem",
+          "count": 5
+        }
+      ],
+      "rewards": {
+        "gold": 200,
+        "exp": 160,
+        "items": {
+          "iron_ore": 5,
+          "mana_stone": 3
+        }
+      },
+      "require": {
+        "questDone": "subj_treant",
+        "minLevel": 10
+      }
+    },
+    {
+      "id": "q_ore_run",
+      "name": "鉱石採取",
+      "type": "subjugation",
+      "description": "ゴーレムを倒して鉄鉱石を集める。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "golem",
+          "count": 5
+        }
+      ],
+      "rewards": {
+        "gold": 120,
+        "exp": 100,
+        "items": {
+          "iron_ore": 6
+        }
+      },
+      "require": {
+        "questDone": "subj_treant"
+      }
+    },
+    {
+      "id": "q_deep_delve",
+      "name": "洞窟の深部",
+      "type": "hunt",
+      "description": "ゴーレムとコウモリを掃討し深部を切り開く。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "golem",
+          "count": 8
+        },
+        {
+          "type": "kill",
+          "enemyId": "bat",
+          "count": 10
+        }
+      ],
+      "rewards": {
+        "gold": 260,
+        "exp": 200,
+        "items": {
+          "steel_ingot": 2
+        }
+      },
+      "require": {
+        "questDone": "subj_treant",
+        "minLevel": 11
+      }
+    },
+    {
+      "id": "q_golem_core_hunt",
+      "name": "核を集めよ",
+      "type": "subjugation",
+      "description": "ゴーレムを12体砕き、ゴーレムコアを得る。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "golem",
+          "count": 12
+        }
+      ],
+      "rewards": {
+        "gold": 300,
+        "exp": 240,
+        "items": {
+          "golem_core": 1
+        }
+      },
+      "require": {
+        "questDone": "subj_treant",
+        "minLevel": 12
+      }
+    },
+    {
+      "id": "q_silver_proof",
+      "name": "銀の試練",
+      "type": "subjugation",
+      "description": "ゴーレムを15体破壊する熟練の証明。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "golem",
+          "count": 15
+        }
+      ],
+      "rewards": {
+        "gold": 350,
+        "exp": 300,
+        "items": {
+          "steel_ingot": 3,
+          "golem_core": 1
+        }
+      },
+      "require": {
+        "minLevel": 15,
+        "questDone": "subj_stone"
+      }
+    },
+    {
+      "id": "rq_slime_daily",
+      "name": "日課・スライム掃除",
+      "type": "subjugation",
+      "description": "スライムを10体倒す日課。何度でも受注可。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "slime",
+          "count": 10
+        }
+      ],
+      "rewards": {
+        "gold": 50,
+        "exp": 40,
+        "items": {
+          "slime_jelly": 2
+        }
+      },
+      "repeatable": true
+    },
+    {
+      "id": "rq_wolf_daily",
+      "name": "日課・狼狩り",
+      "type": "subjugation",
+      "description": "みどり狼を10体倒す日課。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "green_wolf",
+          "count": 10
+        }
+      ],
+      "rewards": {
+        "gold": 90,
+        "exp": 70,
+        "items": {
+          "soft_leather": 3
+        }
+      },
+      "require": {
+        "minLevel": 5
+      },
+      "repeatable": true
+    },
+    {
+      "id": "rq_golem_daily",
+      "name": "日課・ゴーレム巡回",
+      "type": "subjugation",
+      "description": "ゴーレムを6体破壊する日課。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "golem",
+          "count": 6
+        }
+      ],
+      "rewards": {
+        "gold": 160,
+        "exp": 130,
+        "items": {
+          "mana_stone": 2,
+          "iron_ore": 3
+        }
+      },
+      "require": {
+        "questDone": "subj_treant"
+      },
+      "repeatable": true
+    },
+    {
+      "id": "hunt_treant_again",
+      "name": "主の再来",
+      "type": "hunt",
+      "description": "森の主トレントを再び討つ。何度でも挑戦可。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_treant",
+          "count": 1
+        }
+      ],
+      "rewards": {
+        "gold": 120,
+        "exp": 100,
+        "items": {
+          "shadow_wing": 1
+        }
+      },
+      "require": {
+        "questDone": "subj_treant"
+      },
+      "repeatable": true
+    },
+    {
+      "id": "hunt_stone_again",
+      "name": "石像、再び",
+      "type": "hunt",
+      "description": "洞窟の石像を再び砕く。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_stone",
+          "count": 1
+        }
+      ],
+      "rewards": {
+        "gold": 180,
+        "exp": 150,
+        "items": {
+          "golem_core": 1
+        }
+      },
+      "require": {
+        "questDone": "subj_stone"
+      },
+      "repeatable": true
+    },
+    {
+      "id": "hunt_kingslime",
+      "name": "王の狩り",
+      "type": "hunt",
+      "description": "強大なキングスライムへの挑戦状。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_slime",
+          "count": 1
+        }
+      ],
+      "rewards": {
+        "gold": 400,
+        "exp": 500,
+        "items": {
+          "star_fragment": 1
+        }
+      },
+      "require": {
+        "minLevel": 25
+      }
     }
   ]
 }
