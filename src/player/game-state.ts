@@ -7,7 +7,7 @@ import {
 import { getEquipment, getConsumable } from '@/data/items';
 import { getSkill } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
-import { canEquipClass, canEquipWeapon } from '@/equipment/restrictions';
+import { canEquipClass, canEquipWeapon, canEquipTier } from '@/equipment/restrictions';
 import { getPet } from '@/pets/pet-defs';
 import { getPetItem } from '@/data/items';
 import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
@@ -113,18 +113,25 @@ export class GameState {
   }
 
   /**
-   * Whether the current job may equip this item. Weapons are gated by weapon
-   * tag vs the job's allowed tags; armour/accessories may carry an optional
-   * class-family restriction (共通装備 when empty/undefined).
+   * Why the current job can't equip this item (or null if it can):
+   *  - 'tier'   : rarity needs a higher job tier (rarity↔progression gate)
+   *  - 'weapon' : weapon tag not allowed by the job
+   *  - 'class'  : armour/accessory class-family restriction
    */
-  canEquip(itemId: string): boolean {
+  equipBlock(itemId: string): 'tier' | 'weapon' | 'class' | null {
     const def = getEquipment(itemId);
-    if (!def) return false;
+    if (!def) return null;
     const job = getJob(this.jobId);
+    if (!canEquipTier(job?.tier ?? 0, def.rarity)) return 'tier';
     if (def.slot === 'main_hand') {
-      return canEquipWeapon(job?.equippableWeaponTags ?? [], def.weaponTags);
+      return canEquipWeapon(job?.equippableWeaponTags ?? [], def.weaponTags) ? null : 'weapon';
     }
-    return canEquipClass(job?.family, def.classRestrictions);
+    return canEquipClass(job?.family, def.classRestrictions) ? null : 'class';
+  }
+
+  /** Whether the current job may equip this item (tier + weapon/class gates). */
+  canEquip(itemId: string): boolean {
+    return !!getEquipment(itemId) && this.equipBlock(itemId) === null;
   }
 
   equip(slot: EquipSlot, itemId: string | null): void {

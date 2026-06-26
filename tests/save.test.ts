@@ -5,6 +5,7 @@ import { migrate, createDefaultSave, SAVE_VERSION } from '@/save/schema';
 describe('save round trip', () => {
   it('GameState -> save -> load preserves key state', () => {
     const gs = new GameState();
+    gs.jobId = 'fighter'; // iron_sword is R3 → needs tier1 (1次職)
     gs.recompute(false);
     gs.statPoints = 5;
     gs.allocateStat('STR', 3);

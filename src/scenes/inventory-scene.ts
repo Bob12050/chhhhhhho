@@ -309,10 +309,13 @@ export class InventoryScene extends Phaser.Scene {
         });
         this.content.add(btn);
       } else {
-        // The current job can't wield this weapon (weapon-tag restriction).
+        // Can't equip: distinguish a progression-tier gate from a job/weapon
+        // restriction so the player knows whether to advance or switch jobs.
+        const reason = gameState.equipBlock(id);
+        const label = reason === 'tier' ? '段階不足' : '職業不可';
         this.content.add(
           this.add
-            .text(w - 16, y, '職業不可', {
+            .text(w - 16, y, label, {
               fontFamily: 'system-ui, sans-serif',
               fontSize: '12px',
               color: '#a86a6a',

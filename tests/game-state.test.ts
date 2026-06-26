@@ -5,6 +5,8 @@ describe('GameState equipment & stats', () => {
   let gs: GameState;
   beforeEach(() => {
     gs = new GameState();
+    // R3/R4 gear used below requires tier 2 (2次職); samurai is warrior/sword.
+    gs.jobId = 'samurai';
     gs.recompute(false);
     gs.fullHeal();
   });

@@ -1,4 +1,5 @@
 import type { ClassFamily } from '@/jobs/job-defs';
+import { minJobTierForRank } from '@/data/rarity';
 
 /**
  * Pure equip-restriction helpers (no Phaser/DOM) so they stay headless-testable.
@@ -25,4 +26,12 @@ export function canEquipWeapon(
 ): boolean {
   if (!weaponTags || weaponTags.length === 0) return true;
   return weaponTags.some((t) => allowedTags.includes(t));
+}
+
+/**
+ * Tier gate: the rarity ladder is tied to job progression, so a job may only
+ * equip a rarity whose required tier it has reached (see docs/CONTENT_MAP.md).
+ */
+export function canEquipTier(jobTier: number, rarity: number | undefined): boolean {
+  return jobTier >= minJobTierForRank(rarity);
 }

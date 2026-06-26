@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { canEquipClass, canEquipWeapon } from '@/equipment/restrictions';
+import { canEquipClass, canEquipWeapon, canEquipTier } from '@/equipment/restrictions';
+import { minJobTierForRank } from '@/data/rarity';
 
 /**
  * Equip restrictions: weapons gate by weapon tag vs the job's allowed tags;
@@ -21,6 +22,30 @@ describe('canEquipClass (armour/accessory)', () => {
 
   it('the familyless starter (adventurer) cannot wear class-locked gear', () => {
     expect(canEquipClass(undefined, ['warrior'])).toBe(false);
+  });
+});
+
+describe('tier gate (rarity ↔ job progression)', () => {
+  it('maps rarity bands to the required job tier', () => {
+    expect(minJobTierForRank(1)).toBe(0); // 冒険者
+    expect(minJobTierForRank(2)).toBe(1); // 1次職
+    expect(minJobTierForRank(3)).toBe(1);
+    expect(minJobTierForRank(4)).toBe(2); // 2次職
+    expect(minJobTierForRank(6)).toBe(2);
+    expect(minJobTierForRank(7)).toBe(3); // 3次職
+    expect(minJobTierForRank(8)).toBe(3);
+    expect(minJobTierForRank(9)).toBe(4); // 4次職
+    expect(minJobTierForRank(10)).toBe(4);
+  });
+
+  it('lets a job equip only up to its tier band', () => {
+    expect(canEquipTier(0, 1)).toBe(true); // 冒険者 → R1
+    expect(canEquipTier(0, 2)).toBe(false); // 冒険者 ✗ R2
+    expect(canEquipTier(1, 3)).toBe(true); // 1次職 → R3
+    expect(canEquipTier(1, 4)).toBe(false); // 1次職 ✗ R4
+    expect(canEquipTier(2, 6)).toBe(true); // 2次職 → R6
+    expect(canEquipTier(2, 7)).toBe(false); // 2次職 ✗ R7
+    expect(canEquipTier(4, 10)).toBe(true); // 4次職 → R10
   });
 });
 

@@ -77,3 +77,18 @@ export function rarityLabel(rank?: number | null): string {
 export function rarityRank(rank?: number | null): number {
   return normalizeRank(rank);
 }
+
+/**
+ * Minimum job tier (0-4) required to equip an item of this rarity. The rarity
+ * ladder is tied to job progression (see docs/CONTENT_MAP.md):
+ *   R1 → tier0(冒険者) / R2-3 → tier1(1次職) / R4-6 → tier2(2次職)
+ *   R7-8 → tier3(3次職) / R9-10 → tier4(4次職)
+ */
+export function minJobTierForRank(rank?: number | null): number {
+  const r = normalizeRank(rank);
+  if (r <= 1) return 0;
+  if (r <= 3) return 1;
+  if (r <= 6) return 2;
+  if (r <= 8) return 3;
+  return 4;
+}
