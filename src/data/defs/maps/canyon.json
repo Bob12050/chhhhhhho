@@ -1,0 +1,107 @@
+{
+  "id": "canyon",
+  "name": "ひびわれ渓谷",
+  "travel": {
+    "order": 5,
+    "note": "2次職の狩場。R4〜R6素材",
+    "unlockFlag": "boss_stone_defeated"
+  },
+  "size": {
+    "w": 360,
+    "h": 1152
+  },
+  "ground": "stone",
+  "path": {
+    "axis": "v",
+    "thickness": 46
+  },
+  "border": "walls",
+  "obstacles": [
+    [
+      80,
+      260
+    ],
+    [
+      300,
+      340
+    ],
+    [
+      70,
+      620
+    ],
+    [
+      300,
+      680
+    ],
+    [
+      120,
+      920
+    ],
+    [
+      260,
+      960
+    ]
+  ],
+  "spawns": {
+    "from_dungeon": [
+      180,
+      1060
+    ],
+    "from_volcano": [
+      180,
+      150
+    ]
+  },
+  "portals": [
+    {
+      "rect": [
+        148,
+        1104,
+        64,
+        32
+      ],
+      "to": "dungeon",
+      "toSpawn": "from_canyon",
+      "label": "洞窟へ"
+    },
+    {
+      "rect": [
+        148,
+        32,
+        64,
+        32
+      ],
+      "to": "volcano",
+      "toSpawn": "from_canyon",
+      "label": "火山へ"
+    }
+  ],
+  "enemies": [
+    {
+      "type": "rock_lizard",
+      "x": 150,
+      "y": 900
+    },
+    {
+      "type": "rock_lizard",
+      "x": 240,
+      "y": 560
+    },
+    {
+      "type": "cave_bat",
+      "x": 110,
+      "y": 700
+    },
+    {
+      "type": "cave_bat",
+      "x": 260,
+      "y": 380
+    },
+    {
+      "type": "golem",
+      "x": 180,
+      "y": 300
+    }
+  ],
+  "npcs": []
+}

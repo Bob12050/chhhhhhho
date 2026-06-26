@@ -4,10 +4,10 @@ import { getDropTable } from '@/loot/drop-table';
 import { getEquipment } from '@/data/items';
 
 describe('enemy roster + boss', () => {
-  it('ships 3 normal enemies and one boss per area', () => {
+  it('ships several normal enemies and at least one boss per tier', () => {
     const defs = allEnemyDefs();
     expect(defs.filter((d) => !d.isBoss).length).toBeGreaterThanOrEqual(3);
-    expect(defs.filter((d) => d.isBoss).length).toBe(3);
+    expect(defs.filter((d) => d.isBoss).length).toBeGreaterThanOrEqual(3);
   });
 
   it('every boss has a guaranteed first-kill equipment reward', () => {

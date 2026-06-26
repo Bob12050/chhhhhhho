@@ -1,0 +1,91 @@
+{
+  "id": "volcano",
+  "name": "灼熱の火山",
+  "travel": {
+    "order": 6,
+    "note": "3次職の狩場。R7〜R8素材＋竜王"
+  },
+  "size": {
+    "w": 360,
+    "h": 1280
+  },
+  "ground": "stone",
+  "path": {
+    "axis": "v",
+    "thickness": 46
+  },
+  "border": "walls",
+  "obstacles": [
+    [
+      80,
+      300
+    ],
+    [
+      300,
+      360
+    ],
+    [
+      80,
+      700
+    ],
+    [
+      300,
+      760
+    ],
+    [
+      130,
+      1040
+    ],
+    [
+      250,
+      1080
+    ]
+  ],
+  "spawns": {
+    "from_canyon": [
+      180,
+      1180
+    ]
+  },
+  "portals": [
+    {
+      "rect": [
+        148,
+        1232,
+        64,
+        32
+      ],
+      "to": "canyon",
+      "toSpawn": "from_volcano",
+      "label": "渓谷へ"
+    }
+  ],
+  "enemies": [
+    {
+      "type": "flame_hound",
+      "x": 150,
+      "y": 980
+    },
+    {
+      "type": "flame_hound",
+      "x": 250,
+      "y": 640
+    },
+    {
+      "type": "frost_wisp",
+      "x": 110,
+      "y": 760
+    },
+    {
+      "type": "shadow_knight",
+      "x": 240,
+      "y": 420
+    },
+    {
+      "type": "boss_dragon",
+      "x": 180,
+      "y": 200
+    }
+  ],
+  "npcs": []
+}

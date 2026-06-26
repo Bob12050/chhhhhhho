@@ -2,6 +2,8 @@ import townJson from '@/data/defs/maps/town.json';
 import fieldJson from '@/data/defs/maps/field.json';
 import forestJson from '@/data/defs/maps/forest.json';
 import dungeonJson from '@/data/defs/maps/dungeon.json';
+import canyonJson from '@/data/defs/maps/canyon.json';
+import volcanoJson from '@/data/defs/maps/volcano.json';
 import bossRoomJson from '@/data/defs/maps/boss_room.json';
 
 /**
@@ -70,6 +72,8 @@ for (const m of [
   fieldJson,
   forestJson,
   dungeonJson,
+  canyonJson,
+  volcanoJson,
   bossRoomJson,
 ] as unknown as MapDef[]) {
   maps.set(m.id, m);

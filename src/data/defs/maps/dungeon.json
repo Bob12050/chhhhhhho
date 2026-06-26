@@ -45,6 +45,10 @@
     "from_boss": [
       180,
       150
+    ],
+    "from_canyon": [
+      60,
+      600
     ]
   },
   "portals": [
@@ -69,6 +73,18 @@
       "to": "boss_room",
       "toSpawn": "from_dungeon",
       "label": "ボスの間へ",
+      "requiresFlag": "boss_stone_defeated"
+    },
+    {
+      "rect": [
+        16,
+        584,
+        32,
+        48
+      ],
+      "to": "canyon",
+      "toSpawn": "from_dungeon",
+      "label": "渓谷へ",
       "requiresFlag": "boss_stone_defeated"
     }
   ],
