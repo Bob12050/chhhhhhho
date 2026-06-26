@@ -710,6 +710,1651 @@
       },
       "sellPrice": 25,
       "description": "鎖の鞭。鍛えられた1次職向けのwhip。"
+    },
+    {
+      "id": "steel_axe",
+      "name": "鋼の斧",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "axe"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "physAtk": 13,
+        "critRate": 0.04,
+        "maxHp": 8
+      },
+      "sellPrice": 50,
+      "description": "鋼の斧。斧使い向け。"
+    },
+    {
+      "id": "silver_axe",
+      "name": "銀の斧",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "axe"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "physAtk": 16,
+        "critRate": 0.04,
+        "maxHp": 9
+      },
+      "sellPrice": 90,
+      "description": "銀の斧。斧使い向け。"
+    },
+    {
+      "id": "mythril_axe",
+      "name": "ミスリルの斧",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "axe"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "physAtk": 20,
+        "critRate": 0.05,
+        "maxHp": 10
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの斧。斧使い向け。"
+    },
+    {
+      "id": "dragon_axe",
+      "name": "竜の斧",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "axe"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "physAtk": 24,
+        "critRate": 0.05,
+        "maxHp": 11
+      },
+      "sellPrice": 280,
+      "description": "竜の斧。斧使い向け。"
+    },
+    {
+      "id": "celestial_axe",
+      "name": "天上の斧",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "axe"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 30,
+        "critRate": 0.06,
+        "maxHp": 12
+      },
+      "sellPrice": 480,
+      "description": "天上の斧。斧使い向け。"
+    },
+    {
+      "id": "steel_staff",
+      "name": "鋼の杖",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "magAtk": 13,
+        "maxMp": 14,
+        "magDef": 3
+      },
+      "sellPrice": 50,
+      "description": "鋼の杖。杖使い向け。"
+    },
+    {
+      "id": "silver_staff",
+      "name": "銀の杖",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "magAtk": 16,
+        "maxMp": 16,
+        "magDef": 3
+      },
+      "sellPrice": 90,
+      "description": "銀の杖。杖使い向け。"
+    },
+    {
+      "id": "mythril_staff",
+      "name": "ミスリルの杖",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "magAtk": 20,
+        "maxMp": 18,
+        "magDef": 4
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの杖。杖使い向け。"
+    },
+    {
+      "id": "dragon_staff",
+      "name": "竜の杖",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "magAtk": 24,
+        "maxMp": 20,
+        "magDef": 4
+      },
+      "sellPrice": 280,
+      "description": "竜の杖。杖使い向け。"
+    },
+    {
+      "id": "celestial_staff",
+      "name": "天上の杖",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "magAtk": 30,
+        "maxMp": 22,
+        "magDef": 5
+      },
+      "sellPrice": 480,
+      "description": "天上の杖。杖使い向け。"
+    },
+    {
+      "id": "steel_mace",
+      "name": "鋼の槌",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "physAtk": 8,
+        "magAtk": 8,
+        "def": 3
+      },
+      "sellPrice": 50,
+      "description": "鋼の槌。槌使い向け。"
+    },
+    {
+      "id": "silver_mace",
+      "name": "銀の槌",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "physAtk": 10,
+        "magAtk": 10,
+        "def": 3
+      },
+      "sellPrice": 90,
+      "description": "銀の槌。槌使い向け。"
+    },
+    {
+      "id": "mythril_mace",
+      "name": "ミスリルの槌",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "physAtk": 12,
+        "magAtk": 12,
+        "def": 4
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの槌。槌使い向け。"
+    },
+    {
+      "id": "dragon_mace",
+      "name": "竜の槌",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "physAtk": 14,
+        "magAtk": 14,
+        "def": 4
+      },
+      "sellPrice": 280,
+      "description": "竜の槌。槌使い向け。"
+    },
+    {
+      "id": "celestial_mace",
+      "name": "天上の槌",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 18,
+        "magAtk": 18,
+        "def": 5
+      },
+      "sellPrice": 480,
+      "description": "天上の槌。槌使い向け。"
+    },
+    {
+      "id": "steel_dagger",
+      "name": "鋼の短剣",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "dagger"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "physAtk": 12,
+        "atkSpeed": 3,
+        "critRate": 0.05
+      },
+      "sellPrice": 50,
+      "description": "鋼の短剣。短剣使い向け。"
+    },
+    {
+      "id": "silver_dagger",
+      "name": "銀の短剣",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "dagger"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "physAtk": 15,
+        "atkSpeed": 3,
+        "critRate": 0.05,
+        "evasion": 7
+      },
+      "sellPrice": 90,
+      "description": "銀の短剣。短剣使い向け。"
+    },
+    {
+      "id": "mythril_dagger",
+      "name": "ミスリルの短剣",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "dagger"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "physAtk": 19,
+        "atkSpeed": 4,
+        "critRate": 0.06,
+        "evasion": 8
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの短剣。短剣使い向け。"
+    },
+    {
+      "id": "dragon_dagger",
+      "name": "竜の短剣",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "dagger"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "physAtk": 23,
+        "atkSpeed": 4,
+        "critRate": 0.06,
+        "evasion": 9
+      },
+      "sellPrice": 280,
+      "description": "竜の短剣。短剣使い向け。"
+    },
+    {
+      "id": "celestial_dagger",
+      "name": "天上の短剣",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "dagger"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 29,
+        "atkSpeed": 5,
+        "critRate": 0.07,
+        "evasion": 10
+      },
+      "sellPrice": 480,
+      "description": "天上の短剣。短剣使い向け。"
+    },
+    {
+      "id": "steel_whip",
+      "name": "鋼の鞭",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "whip"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "physAtk": 12,
+        "accuracy": 4,
+        "atkSpeed": 2
+      },
+      "sellPrice": 50,
+      "description": "鋼の鞭。鞭使い向け。"
+    },
+    {
+      "id": "silver_whip",
+      "name": "銀の鞭",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "whip"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "physAtk": 15,
+        "accuracy": 4,
+        "atkSpeed": 2
+      },
+      "sellPrice": 90,
+      "description": "銀の鞭。鞭使い向け。"
+    },
+    {
+      "id": "mythril_whip",
+      "name": "ミスリルの鞭",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "whip"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "physAtk": 19,
+        "accuracy": 5,
+        "atkSpeed": 3
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの鞭。鞭使い向け。"
+    },
+    {
+      "id": "dragon_whip",
+      "name": "竜の鞭",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "whip"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "physAtk": 23,
+        "accuracy": 5,
+        "atkSpeed": 3
+      },
+      "sellPrice": 280,
+      "description": "竜の鞭。鞭使い向け。"
+    },
+    {
+      "id": "celestial_whip",
+      "name": "天上の鞭",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "whip"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 29,
+        "accuracy": 6,
+        "atkSpeed": 3
+      },
+      "sellPrice": 480,
+      "description": "天上の鞭。鞭使い向け。"
+    },
+    {
+      "id": "copper_spear",
+      "name": "銅の槍",
+      "slot": "main_hand",
+      "rarity": 2,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "spear"
+      ],
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "physAtk": 7,
+        "accuracy": 3
+      },
+      "sellPrice": 12,
+      "description": "銅の槍。槍使い向け。"
+    },
+    {
+      "id": "iron_spear",
+      "name": "鉄の槍",
+      "slot": "main_hand",
+      "rarity": 3,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "spear"
+      ],
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "physAtk": 10,
+        "accuracy": 3
+      },
+      "sellPrice": 25,
+      "description": "鉄の槍。槍使い向け。"
+    },
+    {
+      "id": "steel_spear",
+      "name": "鋼の槍",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "spear"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "physAtk": 13,
+        "accuracy": 4,
+        "magDef": 2
+      },
+      "sellPrice": 50,
+      "description": "鋼の槍。槍使い向け。"
+    },
+    {
+      "id": "silver_spear",
+      "name": "銀の槍",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "spear"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "physAtk": 16,
+        "accuracy": 4,
+        "magDef": 2
+      },
+      "sellPrice": 90,
+      "description": "銀の槍。槍使い向け。"
+    },
+    {
+      "id": "mythril_spear",
+      "name": "ミスリルの槍",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "spear"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "physAtk": 20,
+        "accuracy": 5,
+        "magDef": 3
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの槍。槍使い向け。"
+    },
+    {
+      "id": "dragon_spear",
+      "name": "竜の槍",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "spear"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "physAtk": 24,
+        "accuracy": 5,
+        "magDef": 3
+      },
+      "sellPrice": 280,
+      "description": "竜の槍。槍使い向け。"
+    },
+    {
+      "id": "celestial_spear",
+      "name": "天上の槍",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "spear"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 30,
+        "accuracy": 6,
+        "magDef": 3
+      },
+      "sellPrice": 480,
+      "description": "天上の槍。槍使い向け。"
+    },
+    {
+      "id": "copper_wand",
+      "name": "銅のロッド",
+      "slot": "main_hand",
+      "rarity": 2,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "magAtk": 6,
+        "maxMp": 10,
+        "atkSpeed": 1
+      },
+      "sellPrice": 12,
+      "description": "銅のロッド。ロッド使い向け。"
+    },
+    {
+      "id": "iron_wand",
+      "name": "鉄のロッド",
+      "slot": "main_hand",
+      "rarity": 3,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "magAtk": 9,
+        "maxMp": 12,
+        "atkSpeed": 2
+      },
+      "sellPrice": 25,
+      "description": "鉄のロッド。ロッド使い向け。"
+    },
+    {
+      "id": "steel_wand",
+      "name": "鋼のロッド",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "magAtk": 12,
+        "maxMp": 14,
+        "atkSpeed": 2
+      },
+      "sellPrice": 50,
+      "description": "鋼のロッド。ロッド使い向け。"
+    },
+    {
+      "id": "silver_wand",
+      "name": "銀のロッド",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "magAtk": 15,
+        "maxMp": 16,
+        "atkSpeed": 2
+      },
+      "sellPrice": 90,
+      "description": "銀のロッド。ロッド使い向け。"
+    },
+    {
+      "id": "mythril_wand",
+      "name": "ミスリルのロッド",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "magAtk": 19,
+        "maxMp": 18,
+        "atkSpeed": 3
+      },
+      "sellPrice": 160,
+      "description": "ミスリルのロッド。ロッド使い向け。"
+    },
+    {
+      "id": "dragon_wand",
+      "name": "竜のロッド",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "magAtk": 23,
+        "maxMp": 20,
+        "atkSpeed": 3
+      },
+      "sellPrice": 280,
+      "description": "竜のロッド。ロッド使い向け。"
+    },
+    {
+      "id": "celestial_wand",
+      "name": "天上のロッド",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "magAtk": 29,
+        "maxMp": 22,
+        "atkSpeed": 3
+      },
+      "sellPrice": 480,
+      "description": "天上のロッド。ロッド使い向け。"
+    },
+    {
+      "id": "steel_katana",
+      "name": "鋼の刀",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "katana"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "physAtk": 13,
+        "critRate": 0.05,
+        "atkSpeed": 2
+      },
+      "sellPrice": 50,
+      "description": "鋼の刀。刀使い向け。"
+    },
+    {
+      "id": "silver_katana",
+      "name": "銀の刀",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "katana"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "physAtk": 16,
+        "critRate": 0.05,
+        "atkSpeed": 2
+      },
+      "sellPrice": 90,
+      "description": "銀の刀。刀使い向け。"
+    },
+    {
+      "id": "mythril_katana",
+      "name": "ミスリルの刀",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "katana"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "physAtk": 20,
+        "critRate": 0.06,
+        "atkSpeed": 3
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの刀。刀使い向け。"
+    },
+    {
+      "id": "dragon_katana",
+      "name": "竜の刀",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "katana"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "physAtk": 24,
+        "critRate": 0.06,
+        "atkSpeed": 3
+      },
+      "sellPrice": 280,
+      "description": "竜の刀。刀使い向け。"
+    },
+    {
+      "id": "celestial_katana",
+      "name": "天上の刀",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "katana"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 30,
+        "critRate": 0.07,
+        "atkSpeed": 3
+      },
+      "sellPrice": 480,
+      "description": "天上の刀。刀使い向け。"
+    },
+    {
+      "id": "steel_shuriken",
+      "name": "鋼の手裏剣",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shuriken"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "physAtk": 12,
+        "accuracy": 5,
+        "critRate": 0.05
+      },
+      "sellPrice": 50,
+      "description": "鋼の手裏剣。手裏剣使い向け。"
+    },
+    {
+      "id": "silver_shuriken",
+      "name": "銀の手裏剣",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shuriken"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "physAtk": 15,
+        "accuracy": 5,
+        "critRate": 0.05
+      },
+      "sellPrice": 90,
+      "description": "銀の手裏剣。手裏剣使い向け。"
+    },
+    {
+      "id": "mythril_shuriken",
+      "name": "ミスリルの手裏剣",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shuriken"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "physAtk": 19,
+        "accuracy": 6,
+        "critRate": 0.06
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの手裏剣。手裏剣使い向け。"
+    },
+    {
+      "id": "dragon_shuriken",
+      "name": "竜の手裏剣",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shuriken"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "physAtk": 23,
+        "accuracy": 6,
+        "critRate": 0.06
+      },
+      "sellPrice": 280,
+      "description": "竜の手裏剣。手裏剣使い向け。"
+    },
+    {
+      "id": "celestial_shuriken",
+      "name": "天上の手裏剣",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shuriken"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 29,
+        "accuracy": 7,
+        "critRate": 0.07
+      },
+      "sellPrice": 480,
+      "description": "天上の手裏剣。手裏剣使い向け。"
+    },
+    {
+      "id": "steel_bow",
+      "name": "鋼の弓",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "bow"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "physAtk": 13,
+        "accuracy": 5,
+        "critRate": 0.04
+      },
+      "sellPrice": 50,
+      "description": "鋼の弓。弓使い向け。"
+    },
+    {
+      "id": "silver_bow",
+      "name": "銀の弓",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "bow"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "physAtk": 16,
+        "accuracy": 5,
+        "critRate": 0.04
+      },
+      "sellPrice": 90,
+      "description": "銀の弓。弓使い向け。"
+    },
+    {
+      "id": "mythril_bow",
+      "name": "ミスリルの弓",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "bow"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "physAtk": 20,
+        "accuracy": 6,
+        "critRate": 0.05
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの弓。弓使い向け。"
+    },
+    {
+      "id": "dragon_bow",
+      "name": "竜の弓",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "bow"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "physAtk": 24,
+        "accuracy": 6,
+        "critRate": 0.05
+      },
+      "sellPrice": 280,
+      "description": "竜の弓。弓使い向け。"
+    },
+    {
+      "id": "celestial_bow",
+      "name": "天上の弓",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "bow"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 30,
+        "accuracy": 7,
+        "critRate": 0.06
+      },
+      "sellPrice": 480,
+      "description": "天上の弓。弓使い向け。"
+    },
+    {
+      "id": "steel_shield",
+      "name": "鋼の盾",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shield"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "physAtk": 4,
+        "def": 11,
+        "maxHp": 22,
+        "magDef": 3
+      },
+      "sellPrice": 50,
+      "description": "鋼の盾。盾使い向け。"
+    },
+    {
+      "id": "silver_shield",
+      "name": "銀の盾",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shield"
+      ],
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "physAtk": 5,
+        "def": 13,
+        "maxHp": 26,
+        "magDef": 3
+      },
+      "sellPrice": 90,
+      "description": "銀の盾。盾使い向け。"
+    },
+    {
+      "id": "mythril_shield",
+      "name": "ミスリルの盾",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shield"
+      ],
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "physAtk": 6,
+        "def": 15,
+        "maxHp": 30,
+        "magDef": 4
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの盾。盾使い向け。"
+    },
+    {
+      "id": "dragon_shield",
+      "name": "竜の盾",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shield"
+      ],
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "physAtk": 7,
+        "def": 17,
+        "maxHp": 34,
+        "magDef": 4
+      },
+      "sellPrice": 280,
+      "description": "竜の盾。盾使い向け。"
+    },
+    {
+      "id": "celestial_shield",
+      "name": "天上の盾",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shield"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 9,
+        "def": 19,
+        "maxHp": 38,
+        "magDef": 5
+      },
+      "sellPrice": 480,
+      "description": "天上の盾。盾使い向け。"
+    },
+    {
+      "id": "wood_gloves",
+      "name": "木の手甲",
+      "slot": "hands",
+      "rarity": 1,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 1,
+      "derived": {
+        "accuracy": 3,
+        "def": 1
+      },
+      "sellPrice": 5,
+      "description": "木の手甲。"
+    },
+    {
+      "id": "copper_gloves",
+      "name": "銅の手甲",
+      "slot": "hands",
+      "rarity": 2,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "accuracy": 4,
+        "def": 1
+      },
+      "sellPrice": 12,
+      "description": "銅の手甲。"
+    },
+    {
+      "id": "iron_gloves",
+      "name": "鉄の手甲",
+      "slot": "hands",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "accuracy": 5,
+        "def": 2
+      },
+      "sellPrice": 25,
+      "description": "鉄の手甲。"
+    },
+    {
+      "id": "steel_gloves",
+      "name": "鋼の手甲",
+      "slot": "hands",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "accuracy": 6,
+        "def": 4,
+        "atkSpeed": 2
+      },
+      "sellPrice": 50,
+      "description": "鋼の手甲。"
+    },
+    {
+      "id": "silver_gloves",
+      "name": "銀の手甲",
+      "slot": "hands",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "accuracy": 7,
+        "def": 6,
+        "atkSpeed": 2
+      },
+      "sellPrice": 90,
+      "description": "銀の手甲。"
+    },
+    {
+      "id": "mythril_gloves",
+      "name": "ミスリルの手甲",
+      "slot": "hands",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "accuracy": 8,
+        "def": 8,
+        "atkSpeed": 2
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの手甲。"
+    },
+    {
+      "id": "dragon_gloves",
+      "name": "竜の手甲",
+      "slot": "hands",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "accuracy": 9,
+        "def": 10,
+        "atkSpeed": 2
+      },
+      "sellPrice": 280,
+      "description": "竜の手甲。"
+    },
+    {
+      "id": "celestial_gloves",
+      "name": "天上の手甲",
+      "slot": "hands",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "accuracy": 10,
+        "def": 13,
+        "atkSpeed": 3
+      },
+      "sellPrice": 480,
+      "description": "天上の手甲。"
+    },
+    {
+      "id": "wood_belt",
+      "name": "木の帯",
+      "slot": "waist",
+      "rarity": 1,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 1,
+      "derived": {
+        "maxHp": 4,
+        "def": 1
+      },
+      "sellPrice": 5,
+      "description": "木の帯。"
+    },
+    {
+      "id": "copper_belt",
+      "name": "銅の帯",
+      "slot": "waist",
+      "rarity": 2,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "maxHp": 8,
+        "def": 2
+      },
+      "sellPrice": 12,
+      "description": "銅の帯。"
+    },
+    {
+      "id": "iron_belt",
+      "name": "鉄の帯",
+      "slot": "waist",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "maxHp": 12,
+        "def": 3,
+        "maxMp": 10
+      },
+      "sellPrice": 25,
+      "description": "鉄の帯。"
+    },
+    {
+      "id": "steel_belt",
+      "name": "鋼の帯",
+      "slot": "waist",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "maxHp": 16,
+        "def": 5,
+        "maxMp": 12,
+        "magDef": 2
+      },
+      "sellPrice": 50,
+      "description": "鋼の帯。"
+    },
+    {
+      "id": "silver_belt",
+      "name": "銀の帯",
+      "slot": "waist",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "maxHp": 22,
+        "def": 7,
+        "maxMp": 14,
+        "magDef": 2
+      },
+      "sellPrice": 90,
+      "description": "銀の帯。"
+    },
+    {
+      "id": "mythril_belt",
+      "name": "ミスリルの帯",
+      "slot": "waist",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "maxHp": 28,
+        "def": 9,
+        "maxMp": 16,
+        "magDef": 3
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの帯。"
+    },
+    {
+      "id": "dragon_belt",
+      "name": "竜の帯",
+      "slot": "waist",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "maxHp": 34,
+        "def": 11,
+        "maxMp": 18,
+        "magDef": 3
+      },
+      "sellPrice": 280,
+      "description": "竜の帯。"
+    },
+    {
+      "id": "celestial_belt",
+      "name": "天上の帯",
+      "slot": "waist",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "maxHp": 42,
+        "def": 14,
+        "maxMp": 20,
+        "magDef": 3
+      },
+      "sellPrice": 480,
+      "description": "天上の帯。"
+    },
+    {
+      "id": "wood_boots",
+      "name": "木の靴",
+      "slot": "feet",
+      "rarity": 1,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 1,
+      "derived": {
+        "moveSpeed": 1,
+        "evasion": 4,
+        "def": 1
+      },
+      "sellPrice": 5,
+      "description": "木の靴。"
+    },
+    {
+      "id": "copper_boots",
+      "name": "銅の靴",
+      "slot": "feet",
+      "rarity": 2,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "moveSpeed": 2,
+        "evasion": 5,
+        "def": 1
+      },
+      "sellPrice": 12,
+      "description": "銅の靴。"
+    },
+    {
+      "id": "iron_boots",
+      "name": "鉄の靴",
+      "slot": "feet",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "moveSpeed": 2,
+        "evasion": 6,
+        "def": 2
+      },
+      "sellPrice": 25,
+      "description": "鉄の靴。"
+    },
+    {
+      "id": "steel_boots",
+      "name": "鋼の靴",
+      "slot": "feet",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "moveSpeed": 3,
+        "evasion": 7,
+        "def": 4
+      },
+      "sellPrice": 50,
+      "description": "鋼の靴。"
+    },
+    {
+      "id": "silver_boots",
+      "name": "銀の靴",
+      "slot": "feet",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "moveSpeed": 3,
+        "evasion": 8,
+        "def": 6
+      },
+      "sellPrice": 90,
+      "description": "銀の靴。"
+    },
+    {
+      "id": "mythril_boots",
+      "name": "ミスリルの靴",
+      "slot": "feet",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "moveSpeed": 4,
+        "evasion": 9,
+        "def": 8
+      },
+      "sellPrice": 160,
+      "description": "ミスリルの靴。"
+    },
+    {
+      "id": "dragon_boots",
+      "name": "竜の靴",
+      "slot": "feet",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "moveSpeed": 4,
+        "evasion": 10,
+        "def": 10
+      },
+      "sellPrice": 280,
+      "description": "竜の靴。"
+    },
+    {
+      "id": "celestial_boots",
+      "name": "天上の靴",
+      "slot": "feet",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "moveSpeed": 5,
+        "evasion": 11,
+        "def": 13
+      },
+      "sellPrice": 480,
+      "description": "天上の靴。"
+    },
+    {
+      "id": "wood_cloak",
+      "name": "木のマント",
+      "slot": "back",
+      "rarity": 1,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 1,
+      "derived": {
+        "evasion": 3,
+        "magDef": 1,
+        "maxHp": 2
+      },
+      "sellPrice": 5,
+      "description": "木のマント。"
+    },
+    {
+      "id": "copper_cloak",
+      "name": "銅のマント",
+      "slot": "back",
+      "rarity": 2,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 3,
+      "derived": {
+        "evasion": 4,
+        "magDef": 2,
+        "maxHp": 5
+      },
+      "sellPrice": 12,
+      "description": "銅のマント。"
+    },
+    {
+      "id": "iron_cloak",
+      "name": "鉄のマント",
+      "slot": "back",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "evasion": 5,
+        "magDef": 2,
+        "maxHp": 7
+      },
+      "sellPrice": 25,
+      "description": "鉄のマント。"
+    },
+    {
+      "id": "steel_cloak",
+      "name": "鋼のマント",
+      "slot": "back",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "evasion": 6,
+        "magDef": 3,
+        "maxHp": 10,
+        "moveSpeed": 2
+      },
+      "sellPrice": 50,
+      "description": "鋼のマント。"
+    },
+    {
+      "id": "silver_cloak",
+      "name": "銀のマント",
+      "slot": "back",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 15,
+      "derived": {
+        "evasion": 7,
+        "magDef": 3,
+        "maxHp": 13,
+        "moveSpeed": 2
+      },
+      "sellPrice": 90,
+      "description": "銀のマント。"
+    },
+    {
+      "id": "mythril_cloak",
+      "name": "ミスリルのマント",
+      "slot": "back",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 21,
+      "derived": {
+        "evasion": 8,
+        "magDef": 4,
+        "maxHp": 17,
+        "moveSpeed": 2
+      },
+      "sellPrice": 160,
+      "description": "ミスリルのマント。"
+    },
+    {
+      "id": "dragon_cloak",
+      "name": "竜のマント",
+      "slot": "back",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 28,
+      "derived": {
+        "evasion": 9,
+        "magDef": 4,
+        "maxHp": 20,
+        "moveSpeed": 2
+      },
+      "sellPrice": 280,
+      "description": "竜のマント。"
+    },
+    {
+      "id": "celestial_cloak",
+      "name": "天上のマント",
+      "slot": "back",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "evasion": 10,
+        "magDef": 5,
+        "maxHp": 25,
+        "moveSpeed": 3
+      },
+      "sellPrice": 480,
+      "description": "天上のマント。"
     }
   ]
 }

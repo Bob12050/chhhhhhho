@@ -763,6 +763,2161 @@
       },
       "gold": 5,
       "station": "forge"
+    },
+    {
+      "id": "craft_steel_axe",
+      "resultItemId": "steel_axe",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_axe",
+      "resultItemId": "steel_axe",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "battle_axe"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_axe",
+      "resultItemId": "silver_axe",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_axe",
+      "resultItemId": "silver_axe",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_axe"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_axe",
+      "resultItemId": "mythril_axe",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_axe",
+      "resultItemId": "mythril_axe",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_axe"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_axe",
+      "resultItemId": "dragon_axe",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_axe",
+      "resultItemId": "dragon_axe",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_axe"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_axe",
+      "resultItemId": "celestial_axe",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_axe",
+      "resultItemId": "celestial_axe",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_axe"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_staff",
+      "resultItemId": "steel_staff",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "mana_stone": 3
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_staff",
+      "resultItemId": "steel_staff",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mage_staff"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_staff",
+      "resultItemId": "silver_staff",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1,
+        "mana_stone": 2
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_staff",
+      "resultItemId": "silver_staff",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_staff"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_staff",
+      "resultItemId": "mythril_staff",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "mana_stone": 4
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_staff",
+      "resultItemId": "mythril_staff",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_staff"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_staff",
+      "resultItemId": "dragon_staff",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 1,
+        "mana_stone": 3
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_staff",
+      "resultItemId": "dragon_staff",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_staff"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_staff",
+      "resultItemId": "celestial_staff",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "star_fragment": 1,
+        "mana_stone": 4
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_staff",
+      "resultItemId": "celestial_staff",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_staff"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_mace",
+      "resultItemId": "steel_mace",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_mace",
+      "resultItemId": "steel_mace",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "iron_mace"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_mace",
+      "resultItemId": "silver_mace",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_mace",
+      "resultItemId": "silver_mace",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_mace"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_mace",
+      "resultItemId": "mythril_mace",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_mace",
+      "resultItemId": "mythril_mace",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_mace"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_mace",
+      "resultItemId": "dragon_mace",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_mace",
+      "resultItemId": "dragon_mace",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_mace"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_mace",
+      "resultItemId": "celestial_mace",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_mace",
+      "resultItemId": "celestial_mace",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_mace"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_dagger",
+      "resultItemId": "steel_dagger",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_dagger",
+      "resultItemId": "steel_dagger",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "kris_dagger"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_dagger",
+      "resultItemId": "silver_dagger",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_dagger",
+      "resultItemId": "silver_dagger",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_dagger"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_dagger",
+      "resultItemId": "mythril_dagger",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_dagger",
+      "resultItemId": "mythril_dagger",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_dagger"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_dagger",
+      "resultItemId": "dragon_dagger",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_dagger",
+      "resultItemId": "dragon_dagger",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_dagger"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_dagger",
+      "resultItemId": "celestial_dagger",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_dagger",
+      "resultItemId": "celestial_dagger",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_dagger"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_whip",
+      "resultItemId": "steel_whip",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_whip",
+      "resultItemId": "steel_whip",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "chain_whip"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_whip",
+      "resultItemId": "silver_whip",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_whip",
+      "resultItemId": "silver_whip",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_whip"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_whip",
+      "resultItemId": "mythril_whip",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_whip",
+      "resultItemId": "mythril_whip",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_whip"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_whip",
+      "resultItemId": "dragon_whip",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_whip",
+      "resultItemId": "dragon_whip",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_whip"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_whip",
+      "resultItemId": "celestial_whip",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_whip",
+      "resultItemId": "celestial_whip",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_whip"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_copper_spear",
+      "resultItemId": "copper_spear",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "slime_jelly": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_iron_spear",
+      "resultItemId": "iron_spear",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_iron_spear",
+      "resultItemId": "iron_spear",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "copper_spear"
+      ],
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_spear",
+      "resultItemId": "steel_spear",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_spear",
+      "resultItemId": "steel_spear",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "iron_spear"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_spear",
+      "resultItemId": "silver_spear",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_spear",
+      "resultItemId": "silver_spear",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_spear"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_spear",
+      "resultItemId": "mythril_spear",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_spear",
+      "resultItemId": "mythril_spear",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_spear"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_spear",
+      "resultItemId": "dragon_spear",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_spear",
+      "resultItemId": "dragon_spear",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_spear"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_spear",
+      "resultItemId": "celestial_spear",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_spear",
+      "resultItemId": "celestial_spear",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_spear"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_copper_wand",
+      "resultItemId": "copper_wand",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_iron_wand",
+      "resultItemId": "iron_wand",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 3
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_iron_wand",
+      "resultItemId": "iron_wand",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "copper_wand"
+      ],
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_wand",
+      "resultItemId": "steel_wand",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "mana_stone": 3
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_wand",
+      "resultItemId": "steel_wand",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "iron_wand"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_wand",
+      "resultItemId": "silver_wand",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1,
+        "mana_stone": 2
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_wand",
+      "resultItemId": "silver_wand",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_wand"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_wand",
+      "resultItemId": "mythril_wand",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "mana_stone": 4
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_wand",
+      "resultItemId": "mythril_wand",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_wand"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_wand",
+      "resultItemId": "dragon_wand",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 1,
+        "mana_stone": 3
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_wand",
+      "resultItemId": "dragon_wand",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_wand"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_wand",
+      "resultItemId": "celestial_wand",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "star_fragment": 1,
+        "mana_stone": 4
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_wand",
+      "resultItemId": "celestial_wand",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_wand"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_katana",
+      "resultItemId": "steel_katana",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_katana",
+      "resultItemId": "silver_katana",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_katana",
+      "resultItemId": "silver_katana",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_katana"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_katana",
+      "resultItemId": "mythril_katana",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_katana",
+      "resultItemId": "mythril_katana",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_katana"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_katana",
+      "resultItemId": "dragon_katana",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_katana",
+      "resultItemId": "dragon_katana",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_katana"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_katana",
+      "resultItemId": "celestial_katana",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_katana",
+      "resultItemId": "celestial_katana",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_katana"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_shuriken",
+      "resultItemId": "steel_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_shuriken",
+      "resultItemId": "silver_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_shuriken",
+      "resultItemId": "silver_shuriken",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_shuriken"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_shuriken",
+      "resultItemId": "mythril_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_shuriken",
+      "resultItemId": "mythril_shuriken",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_shuriken"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_shuriken",
+      "resultItemId": "dragon_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_shuriken",
+      "resultItemId": "dragon_shuriken",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_shuriken"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_shuriken",
+      "resultItemId": "celestial_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_shuriken",
+      "resultItemId": "celestial_shuriken",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_shuriken"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_bow",
+      "resultItemId": "steel_bow",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_bow",
+      "resultItemId": "silver_bow",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_bow",
+      "resultItemId": "silver_bow",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_bow"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_bow",
+      "resultItemId": "mythril_bow",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_bow",
+      "resultItemId": "mythril_bow",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_bow"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_bow",
+      "resultItemId": "dragon_bow",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_bow",
+      "resultItemId": "dragon_bow",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_bow"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_bow",
+      "resultItemId": "celestial_bow",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_bow",
+      "resultItemId": "celestial_bow",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_bow"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_shield",
+      "resultItemId": "steel_shield",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_shield",
+      "resultItemId": "silver_shield",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_shield",
+      "resultItemId": "silver_shield",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_shield"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_shield",
+      "resultItemId": "mythril_shield",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_shield",
+      "resultItemId": "mythril_shield",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_shield"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_shield",
+      "resultItemId": "dragon_shield",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_shield",
+      "resultItemId": "dragon_shield",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_shield"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_shield",
+      "resultItemId": "celestial_shield",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_shield",
+      "resultItemId": "celestial_shield",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_shield"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_wood_gloves",
+      "resultItemId": "wood_gloves",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 2,
+        "slime_jelly": 1
+      },
+      "gold": 5,
+      "station": "forge"
+    },
+    {
+      "id": "craft_copper_gloves",
+      "resultItemId": "copper_gloves",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 4,
+        "iron_ore": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_copper_gloves",
+      "resultItemId": "copper_gloves",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "wood_gloves"
+      ],
+      "materials": {
+        "soft_leather": 2
+      },
+      "gold": 8,
+      "station": "forge"
+    },
+    {
+      "id": "craft_iron_gloves",
+      "resultItemId": "iron_gloves",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_iron_gloves",
+      "resultItemId": "iron_gloves",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "copper_gloves"
+      ],
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_gloves",
+      "resultItemId": "steel_gloves",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_gloves",
+      "resultItemId": "steel_gloves",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "iron_gloves"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_gloves",
+      "resultItemId": "silver_gloves",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_gloves",
+      "resultItemId": "silver_gloves",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_gloves"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_gloves",
+      "resultItemId": "mythril_gloves",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_gloves",
+      "resultItemId": "mythril_gloves",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_gloves"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_gloves",
+      "resultItemId": "dragon_gloves",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_gloves",
+      "resultItemId": "dragon_gloves",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_gloves"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_gloves",
+      "resultItemId": "celestial_gloves",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_gloves",
+      "resultItemId": "celestial_gloves",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_gloves"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_wood_belt",
+      "resultItemId": "wood_belt",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 2,
+        "slime_jelly": 1
+      },
+      "gold": 5,
+      "station": "forge"
+    },
+    {
+      "id": "craft_copper_belt",
+      "resultItemId": "copper_belt",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 4,
+        "iron_ore": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_copper_belt",
+      "resultItemId": "copper_belt",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "wood_belt"
+      ],
+      "materials": {
+        "soft_leather": 2
+      },
+      "gold": 8,
+      "station": "forge"
+    },
+    {
+      "id": "craft_iron_belt",
+      "resultItemId": "iron_belt",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_iron_belt",
+      "resultItemId": "iron_belt",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "copper_belt"
+      ],
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_belt",
+      "resultItemId": "steel_belt",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_belt",
+      "resultItemId": "steel_belt",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "iron_belt"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_belt",
+      "resultItemId": "silver_belt",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_belt",
+      "resultItemId": "silver_belt",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_belt"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_belt",
+      "resultItemId": "mythril_belt",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_belt",
+      "resultItemId": "mythril_belt",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_belt"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_belt",
+      "resultItemId": "dragon_belt",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_belt",
+      "resultItemId": "dragon_belt",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_belt"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_belt",
+      "resultItemId": "celestial_belt",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_belt",
+      "resultItemId": "celestial_belt",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_belt"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_wood_boots",
+      "resultItemId": "wood_boots",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 2,
+        "slime_jelly": 1
+      },
+      "gold": 5,
+      "station": "forge"
+    },
+    {
+      "id": "craft_copper_boots",
+      "resultItemId": "copper_boots",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 4,
+        "iron_ore": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_copper_boots",
+      "resultItemId": "copper_boots",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "wood_boots"
+      ],
+      "materials": {
+        "soft_leather": 2
+      },
+      "gold": 8,
+      "station": "forge"
+    },
+    {
+      "id": "craft_iron_boots",
+      "resultItemId": "iron_boots",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_iron_boots",
+      "resultItemId": "iron_boots",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "copper_boots"
+      ],
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_boots",
+      "resultItemId": "steel_boots",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_boots",
+      "resultItemId": "steel_boots",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "iron_boots"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_boots",
+      "resultItemId": "silver_boots",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_boots",
+      "resultItemId": "silver_boots",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_boots"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_boots",
+      "resultItemId": "mythril_boots",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_boots",
+      "resultItemId": "mythril_boots",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_boots"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_boots",
+      "resultItemId": "dragon_boots",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_boots",
+      "resultItemId": "dragon_boots",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_boots"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_boots",
+      "resultItemId": "celestial_boots",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_boots",
+      "resultItemId": "celestial_boots",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_boots"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
+    },
+    {
+      "id": "craft_wood_cloak",
+      "resultItemId": "wood_cloak",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 2,
+        "slime_jelly": 1
+      },
+      "gold": 5,
+      "station": "forge"
+    },
+    {
+      "id": "craft_copper_cloak",
+      "resultItemId": "copper_cloak",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 4,
+        "iron_ore": 2
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_copper_cloak",
+      "resultItemId": "copper_cloak",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "wood_cloak"
+      ],
+      "materials": {
+        "soft_leather": 2
+      },
+      "gold": 8,
+      "station": "forge"
+    },
+    {
+      "id": "craft_iron_cloak",
+      "resultItemId": "iron_cloak",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2,
+        "mana_stone": 1
+      },
+      "gold": 25,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_iron_cloak",
+      "resultItemId": "iron_cloak",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "copper_cloak"
+      ],
+      "materials": {
+        "iron_ore": 2,
+        "mana_stone": 1
+      },
+      "gold": 15,
+      "station": "forge"
+    },
+    {
+      "id": "craft_steel_cloak",
+      "resultItemId": "steel_cloak",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "steel_ingot": 2
+      },
+      "gold": 45,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_steel_cloak",
+      "resultItemId": "steel_cloak",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "iron_cloak"
+      ],
+      "materials": {
+        "steel_ingot": 1,
+        "iron_ore": 2
+      },
+      "gold": 28,
+      "station": "forge"
+    },
+    {
+      "id": "craft_silver_cloak",
+      "resultItemId": "silver_cloak",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "king_jelly": 1
+      },
+      "gold": 80,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_silver_cloak",
+      "resultItemId": "silver_cloak",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "steel_cloak"
+      ],
+      "materials": {
+        "steel_ingot": 2,
+        "king_jelly": 1
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mythril_cloak",
+      "resultItemId": "mythril_cloak",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 4,
+        "mythril_ore": 2
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_mythril_cloak",
+      "resultItemId": "mythril_cloak",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "silver_cloak"
+      ],
+      "materials": {
+        "mythril_ore": 1,
+        "steel_ingot": 2
+      },
+      "gold": 90,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragon_cloak",
+      "resultItemId": "dragon_cloak",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "golem_core": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_dragon_cloak",
+      "resultItemId": "dragon_cloak",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "mythril_cloak"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "golem_core": 1
+      },
+      "gold": 150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_celestial_cloak",
+      "resultItemId": "celestial_cloak",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "star_fragment": 1,
+        "golem_core": 1
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_celestial_cloak",
+      "resultItemId": "celestial_cloak",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "dragon_cloak"
+      ],
+      "materials": {
+        "mythril_ore": 2,
+        "star_fragment": 1
+      },
+      "gold": 260,
+      "station": "forge"
     }
   ]
 }

@@ -42,7 +42,7 @@ describe('crafting', () => {
     expect(Object.keys(elixir.materials)).toContain('slime_jelly');
   });
 
-  it('ships 62 recipes', () => {
-    expect(allRecipes().length).toBe(62);
+  it('ships 234 recipes', () => {
+    expect(allRecipes().length).toBe(234);
   });
 });

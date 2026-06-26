@@ -15,7 +15,13 @@ type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
 const SLOT_LABEL: Record<string, string> = {
   head: '頭',
   torso: '胴',
+  hands: '手',
+  waist: '腰',
+  feet: '足',
+  back: '背',
   main_hand: '武器',
+  accessory_1: '装飾1',
+  accessory_2: '装飾2',
 };
 
 /**
