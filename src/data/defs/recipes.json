@@ -753,6 +753,16 @@
       },
       "gold": 15,
       "station": "forge"
+    },
+    {
+      "id": "smelt_steel_ingot",
+      "resultItemId": "steel_ingot",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3
+      },
+      "gold": 5,
+      "station": "forge"
     }
   ]
 }
