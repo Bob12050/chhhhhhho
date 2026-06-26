@@ -231,6 +231,31 @@ export class GameState {
     bus.emit('inventory:changed', {});
   }
 
+  /** How many copies of an equipment piece the player owns. */
+  ownedEquipmentCount(id: string): number {
+    return this.equipmentOwned.filter((e) => e === id).length;
+  }
+
+  /**
+   * Remove one copy of an equipment piece (used by upgrade recipes). Unequips
+   * it first if that copy is currently worn. Returns false if none owned.
+   */
+  removeEquipment(id: string): boolean {
+    const idx = this.equipmentOwned.indexOf(id);
+    if (idx < 0) return false;
+    this.equipmentOwned.splice(idx, 1);
+    for (const slot of EQUIP_SLOTS) {
+      if (this.equipment[slot] === id && !this.equipmentOwned.includes(id)) {
+        this.equipment[slot] = null;
+        this.recompute();
+        bus.emit('equipment:changed', { slot });
+        break;
+      }
+    }
+    bus.emit('inventory:changed', {});
+    return true;
+  }
+
   /** Obtain a pet via a pet item: add it and auto-summon if none active. */
   obtainPetItem(petItemId: string): boolean {
     const def = getPetItem(petItemId);

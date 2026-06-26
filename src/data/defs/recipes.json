@@ -7,6 +7,8 @@
     { "id": "craft_cloth_vest", "resultItemId": "cloth_vest", "resultQty": 1, "materials": { "soft_leather": 4, "herb": 2 }, "gold": 12, "station": "forge" },
     { "id": "craft_iron_helm", "resultItemId": "iron_helm", "resultQty": 1, "materials": { "iron_ore": 4, "mana_stone": 1 }, "gold": 20, "station": "forge" },
     { "id": "craft_iron_sword", "resultItemId": "iron_sword", "resultQty": 1, "materials": { "iron_ore": 3, "soft_leather": 2, "mana_stone": 1 }, "gold": 25, "station": "forge" },
+    { "id": "upgrade_iron_sword", "resultItemId": "iron_sword", "resultQty": 1, "consumeEquipment": ["wood_sword"], "materials": { "iron_ore": 2, "mana_stone": 1 }, "gold": 15, "station": "forge" },
+    { "id": "upgrade_iron_helm", "resultItemId": "iron_helm", "resultQty": 1, "consumeEquipment": ["leather_cap"], "materials": { "iron_ore": 2, "mana_stone": 1 }, "gold": 12, "station": "forge" },
     { "id": "craft_elixir", "resultItemId": "elixir", "resultQty": 1, "materials": { "king_jelly": 1, "slime_jelly": 5, "herb": 3, "mana_stone": 2 }, "gold": 40, "station": "workbench" },
     { "id": "craft_radiant_blade", "resultItemId": "radiant_blade", "resultQty": 1, "materials": { "golem_core": 2, "iron_ore": 6, "mana_stone": 3 }, "gold": 150, "station": "forge" },
     { "id": "craft_aegis_plate", "resultItemId": "aegis_plate", "resultQty": 1, "materials": { "golem_core": 3, "iron_ore": 8, "soft_leather": 4 }, "gold": 180, "station": "forge" },

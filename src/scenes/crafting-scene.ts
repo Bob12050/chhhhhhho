@@ -116,6 +116,11 @@ export class CraftingScene extends Phaser.Scene {
       const have = gameState.materials[id] ?? 0;
       return `${itemDisplayName(id)} ${have}/${qty}`;
     });
+    // Upgrade recipes also consume a lower-tier piece (下位装備 → 上位装備).
+    for (const eq of r.consumeEquipment ?? []) {
+      const have = gameState.ownedEquipmentCount(eq);
+      parts.push(`${itemDisplayName(eq)}(装備) ${have}/1`);
+    }
     parts.push(`${gameState.gold}/${r.gold} G`);
     this.content.add(
       this.add.text(16, y + 20, parts.join('   '), {

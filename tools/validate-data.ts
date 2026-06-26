@@ -244,8 +244,17 @@ function validatePets(): void {
 validateItems();
 validateSheetMath();
 function validateRecipes(itemIds: Set<string>): void {
+  const itemsFile = readJson<{ equipment: { id: string }[] }>('src/data/defs/items.json');
+  const equipmentIds = new Set(itemsFile.equipment.map((e) => e.id));
   const file = readJson<{
-    recipes: { id: string; resultItemId: string; resultQty: number; materials: Record<string, number>; gold: number }[];
+    recipes: {
+      id: string;
+      resultItemId: string;
+      resultQty: number;
+      materials: Record<string, number>;
+      consumeEquipment?: string[];
+      gold: number;
+    }[];
   }>('src/data/defs/recipes.json');
   const ids = new Set<string>();
   for (const r of file.recipes) {
@@ -257,6 +266,10 @@ function validateRecipes(itemIds: Set<string>): void {
     for (const [id, qty] of Object.entries(r.materials)) {
       if (!itemIds.has(id)) err(`Recipe ${r.id}: unknown material "${id}"`);
       if (qty < 1) err(`Recipe ${r.id}: material "${id}" qty < 1`);
+    }
+    // Upgrade recipes consume equipment pieces; each must be a real equipment id.
+    for (const eq of r.consumeEquipment ?? []) {
+      if (!equipmentIds.has(eq)) err(`Recipe ${r.id}: consumeEquipment "${eq}" is not equipment`);
     }
   }
 }

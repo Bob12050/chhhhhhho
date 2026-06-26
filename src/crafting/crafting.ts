@@ -4,11 +4,21 @@ import { bus } from '@/core/event-bus';
 import type { Recipe } from '@/crafting/recipes';
 
 /** Why a recipe can't be crafted right now (or null if it can). */
-export type CraftBlock = 'gold' | 'materials' | null;
+export type CraftBlock = 'gold' | 'materials' | 'equipment' | null;
+
+/** Count of each required equipment piece (upgrade recipes consume gear). */
+function requiredEquipment(r: Recipe): Map<string, number> {
+  const need = new Map<string, number>();
+  for (const id of r.consumeEquipment ?? []) need.set(id, (need.get(id) ?? 0) + 1);
+  return need;
+}
 
 export function craftBlock(gs: GameState, r: Recipe): CraftBlock {
   for (const [id, qty] of Object.entries(r.materials)) {
     if ((gs.materials[id] ?? 0) < qty) return 'materials';
+  }
+  for (const [id, qty] of requiredEquipment(r)) {
+    if (gs.ownedEquipmentCount(id) < qty) return 'equipment';
   }
   if (gs.gold < r.gold) return 'gold';
   return null;
@@ -23,6 +33,7 @@ export function craft(gs: GameState, r: Recipe): boolean {
   if (!canCraft(gs, r)) return false;
   gs.addGold(-r.gold);
   gs.consumeMaterials(r.materials);
+  for (const id of r.consumeEquipment ?? []) gs.removeEquipment(id);
   grantResult(gs, r.resultItemId, r.resultQty);
   gs.flags['crafted_any'] = true;
   bus.emit('craft:made', { recipeId: r.id });

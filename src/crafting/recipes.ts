@@ -10,6 +10,11 @@ export interface Recipe {
   resultItemId: string;
   resultQty: number;
   materials: Record<string, number>;
+  /**
+   * Optional equipment pieces consumed by an upgrade recipe (下位装備 + 素材 →
+   * 上位装備). Each id is consumed once. Omitted for direct-craft recipes.
+   */
+  consumeEquipment?: string[];
   gold: number;
   station?: string;
 }
