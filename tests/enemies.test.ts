@@ -19,6 +19,17 @@ describe('enemy roster + boss', () => {
     }
   });
 
+  it('bosses are tougher and hit harder than any normal enemy', () => {
+    const defs = allEnemyDefs();
+    const normals = defs.filter((d) => !d.isBoss);
+    const bosses = defs.filter((d) => d.isBoss);
+    const maxNormalHp = Math.max(...normals.map((d) => d.maxHp));
+    for (const b of bosses) {
+      expect(b.maxHp, `${b.id} hp`).toBeGreaterThan(maxNormalHp);
+      expect(b.contactDamage, `${b.id} atk`).toBeGreaterThanOrEqual(20);
+    }
+  });
+
   it('every enemy with a drop table references a real table', () => {
     for (const d of allEnemyDefs()) {
       if (d.dropTableId) expect(getDropTable(d.dropTableId), d.id).toBeDefined();
