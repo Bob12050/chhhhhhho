@@ -507,13 +507,15 @@ export class InventoryScene extends Phaser.Scene {
           const note =
             block === 'job'
               ? `${FAMILY_LABEL[def.family!]}専用`
-              : block === 'level'
-                ? `Lv${def.requiredLevel}必要`
-                : block === 'requires'
-                  ? '前提技が必要'
-                  : block === 'points'
-                    ? 'ポイント不足'
-                    : '';
+              : block === 'tier'
+                ? `${def.minTier}次職必要`
+                : block === 'level'
+                  ? `Lv${def.requiredLevel}必要`
+                  : block === 'requires'
+                    ? '前提技が必要'
+                    : block === 'points'
+                      ? 'ポイント不足'
+                      : '';
           this.content.add(
             this.add
               .text(w - 16, y + 4, note, {

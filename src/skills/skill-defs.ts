@@ -40,6 +40,12 @@ export interface SkillDef {
    * family matches. Omitted = common skill, learnable by any job.
    */
   family?: ClassFamily;
+  /**
+   * Minimum job tier (1=1次職 … 4=4次職) required to learn. The active job must
+   * have reached this tier, so promotion — not just character level — unlocks
+   * higher skills. Omitted = no tier gate (common skills).
+   */
+  minTier?: number;
 }
 
 interface SkillsFile {

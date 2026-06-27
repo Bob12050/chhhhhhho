@@ -284,6 +284,7 @@ function validateSkills(): Set<string> {
       fx?: string;
       family?: string;
       scaling?: string;
+      minTier?: number;
     }[];
   }>('src/data/defs/skills.json');
   const FX_STYLES = new Set(['slash', 'impact', 'magic']);
@@ -298,6 +299,10 @@ function validateSkills(): Set<string> {
       err(`Skill ${s.id}: unknown scaling "${s.scaling}"`);
     if (s.family !== undefined && !CLASS_FAMILY_SET.has(s.family))
       err(`Skill ${s.id}: unknown class family "${s.family}"`);
+    if (s.minTier !== undefined && (!Number.isInteger(s.minTier) || s.minTier < 1 || s.minTier > 4))
+      err(`Skill ${s.id}: minTier must be an integer 1〜4 (got ${s.minTier})`);
+    if (s.minTier !== undefined && s.family === undefined)
+      err(`Skill ${s.id}: minTier set without a family`);
     if (s.family !== undefined && s.scaling !== undefined && s.type === 'passive')
       err(`Skill ${s.id}: passive skill should not set scaling`);
     for (const k of Object.keys(s.derived ?? {})) {

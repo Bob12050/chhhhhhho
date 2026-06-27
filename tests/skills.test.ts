@@ -67,6 +67,26 @@ describe('skills', () => {
     expect(gs.skills['w_cleave']).toBe(1);
   });
 
+  it('gates higher skills by job tier (promotion), not just level', () => {
+    const gs = new GameState();
+    gs.level = 60; // high enough level for every warrior skill
+    gs.skillPoints = 20;
+    // 1次職 fighter: tier-1 skills OK, tier-2+ locked behind promotion.
+    gs.jobId = 'fighter';
+    gs.recompute(false);
+    expect(getSkill('w_cleave')!.minTier).toBe(1);
+    expect(getSkill('w_whirl')!.minTier).toBe(2);
+    expect(gs.skillLearnBlock('w_cleave')).toBeNull(); // t1 skill, t1 job
+    expect(gs.skillLearnBlock('w_whirl')).toBe('tier'); // needs 2次職
+    // 2次職 samurai unlocks the tier-2 skill (after its prerequisite).
+    gs.jobId = 'samurai';
+    gs.learnSkill('w_cleave');
+    expect(gs.skillLearnBlock('w_whirl')).toBeNull();
+    // 4次職-only skill still locked for a 2次職.
+    expect(getSkill('w_calamity')!.minTier).toBe(4);
+    expect(gs.skillLearnBlock('w_calamity')).toBe('tier');
+  });
+
   it('learned skills persist after changing to a different family', () => {
     const gs = new GameState();
     gs.level = 10;

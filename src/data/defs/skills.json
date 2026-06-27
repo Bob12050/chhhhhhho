@@ -58,7 +58,8 @@
       "fx": "impact",
       "scaling": "phys",
       "requiredLevel": 6,
-      "family": "warrior"
+      "family": "warrior",
+      "minTier": 1
     },
     {
       "id": "w_ironwall",
@@ -70,7 +71,8 @@
         "def": 6
       },
       "requiredLevel": 8,
-      "family": "warrior"
+      "family": "warrior",
+      "minTier": 1
     },
     {
       "id": "w_whirl",
@@ -89,7 +91,8 @@
       "requires": [
         "w_cleave"
       ],
-      "family": "warrior"
+      "family": "warrior",
+      "minTier": 2
     },
     {
       "id": "w_berserk",
@@ -101,7 +104,8 @@
         "critRate": 0.05
       },
       "requiredLevel": 22,
-      "family": "warrior"
+      "family": "warrior",
+      "minTier": 2
     },
     {
       "id": "w_quake",
@@ -120,7 +124,8 @@
       "requires": [
         "w_whirl"
       ],
-      "family": "warrior"
+      "family": "warrior",
+      "minTier": 3
     },
     {
       "id": "w_titan",
@@ -133,7 +138,8 @@
         "def": 8
       },
       "requiredLevel": 44,
-      "family": "warrior"
+      "family": "warrior",
+      "minTier": 3
     },
     {
       "id": "w_calamity",
@@ -152,7 +158,8 @@
       "requires": [
         "w_quake"
       ],
-      "family": "warrior"
+      "family": "warrior",
+      "minTier": 4
     },
     {
       "id": "m_firebolt",
@@ -168,7 +175,8 @@
       "fx": "magic",
       "scaling": "mag",
       "requiredLevel": 6,
-      "family": "mage"
+      "family": "mage",
+      "minTier": 1
     },
     {
       "id": "m_focus",
@@ -180,7 +188,8 @@
         "maxMp": 20
       },
       "requiredLevel": 8,
-      "family": "mage"
+      "family": "mage",
+      "minTier": 1
     },
     {
       "id": "m_frost",
@@ -199,7 +208,8 @@
       "requires": [
         "m_firebolt"
       ],
-      "family": "mage"
+      "family": "mage",
+      "minTier": 2
     },
     {
       "id": "m_arcane",
@@ -211,7 +221,8 @@
         "maxMp": 30
       },
       "requiredLevel": 22,
-      "family": "mage"
+      "family": "mage",
+      "minTier": 2
     },
     {
       "id": "m_thunder",
@@ -230,7 +241,8 @@
       "requires": [
         "m_frost"
       ],
-      "family": "mage"
+      "family": "mage",
+      "minTier": 3
     },
     {
       "id": "m_sage",
@@ -243,7 +255,8 @@
         "maxMp": 50
       },
       "requiredLevel": 44,
-      "family": "mage"
+      "family": "mage",
+      "minTier": 3
     },
     {
       "id": "m_meteor",
@@ -262,7 +275,8 @@
       "requires": [
         "m_thunder"
       ],
-      "family": "mage"
+      "family": "mage",
+      "minTier": 4
     },
     {
       "id": "c_smite",
@@ -278,7 +292,8 @@
       "fx": "magic",
       "scaling": "mag",
       "requiredLevel": 6,
-      "family": "cleric"
+      "family": "cleric",
+      "minTier": 1
     },
     {
       "id": "c_bless",
@@ -290,7 +305,8 @@
         "magDef": 6
       },
       "requiredLevel": 8,
-      "family": "cleric"
+      "family": "cleric",
+      "minTier": 1
     },
     {
       "id": "c_holylight",
@@ -309,7 +325,8 @@
       "requires": [
         "c_smite"
       ],
-      "family": "cleric"
+      "family": "cleric",
+      "minTier": 2
     },
     {
       "id": "c_aegis",
@@ -322,7 +339,8 @@
         "maxHp": 50
       },
       "requiredLevel": 22,
-      "family": "cleric"
+      "family": "cleric",
+      "minTier": 2
     },
     {
       "id": "c_judgment",
@@ -341,7 +359,8 @@
       "requires": [
         "c_holylight"
       ],
-      "family": "cleric"
+      "family": "cleric",
+      "minTier": 3
     },
     {
       "id": "c_saint",
@@ -355,7 +374,8 @@
         "maxHp": 80
       },
       "requiredLevel": 44,
-      "family": "cleric"
+      "family": "cleric",
+      "minTier": 3
     },
     {
       "id": "c_genesis",
@@ -374,7 +394,8 @@
       "requires": [
         "c_judgment"
       ],
-      "family": "cleric"
+      "family": "cleric",
+      "minTier": 4
     },
     {
       "id": "t_quickstab",
@@ -390,7 +411,8 @@
       "fx": "slash",
       "scaling": "phys",
       "requiredLevel": 6,
-      "family": "thief"
+      "family": "thief",
+      "minTier": 1
     },
     {
       "id": "t_nimble",
@@ -402,7 +424,8 @@
         "atkSpeed": 0.1
       },
       "requiredLevel": 8,
-      "family": "thief"
+      "family": "thief",
+      "minTier": 1
     },
     {
       "id": "t_doublecut",
@@ -421,7 +444,8 @@
       "requires": [
         "t_quickstab"
       ],
-      "family": "thief"
+      "family": "thief",
+      "minTier": 2
     },
     {
       "id": "t_sharp",
@@ -433,7 +457,8 @@
         "accuracy": 10
       },
       "requiredLevel": 22,
-      "family": "thief"
+      "family": "thief",
+      "minTier": 2
     },
     {
       "id": "t_shadowfang",
@@ -452,7 +477,8 @@
       "requires": [
         "t_doublecut"
       ],
-      "family": "thief"
+      "family": "thief",
+      "minTier": 3
     },
     {
       "id": "t_assassin",
@@ -465,7 +491,8 @@
         "evasion": 12
       },
       "requiredLevel": 44,
-      "family": "thief"
+      "family": "thief",
+      "minTier": 3
     },
     {
       "id": "t_phantom",
@@ -484,7 +511,8 @@
       "requires": [
         "t_shadowfang"
       ],
-      "family": "thief"
+      "family": "thief",
+      "minTier": 4
     },
     {
       "id": "b_beastclaw",
@@ -500,7 +528,8 @@
       "fx": "impact",
       "scaling": "phys",
       "requiredLevel": 6,
-      "family": "tamer"
+      "family": "tamer",
+      "minTier": 1
     },
     {
       "id": "b_bond",
@@ -512,7 +541,8 @@
         "accuracy": 8
       },
       "requiredLevel": 8,
-      "family": "tamer"
+      "family": "tamer",
+      "minTier": 1
     },
     {
       "id": "b_volley",
@@ -531,7 +561,8 @@
       "requires": [
         "b_beastclaw"
       ],
-      "family": "tamer"
+      "family": "tamer",
+      "minTier": 2
     },
     {
       "id": "b_wild",
@@ -544,7 +575,8 @@
         "evasion": 8
       },
       "requiredLevel": 22,
-      "family": "tamer"
+      "family": "tamer",
+      "minTier": 2
     },
     {
       "id": "b_stampede",
@@ -563,7 +595,8 @@
       "requires": [
         "b_volley"
       ],
-      "family": "tamer"
+      "family": "tamer",
+      "minTier": 3
     },
     {
       "id": "b_alpha",
@@ -576,7 +609,8 @@
         "accuracy": 16
       },
       "requiredLevel": 44,
-      "family": "tamer"
+      "family": "tamer",
+      "minTier": 3
     },
     {
       "id": "b_genesis",
@@ -595,7 +629,8 @@
       "requires": [
         "b_stampede"
       ],
-      "family": "tamer"
+      "family": "tamer",
+      "minTier": 4
     }
   ]
 }
