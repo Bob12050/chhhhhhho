@@ -169,7 +169,10 @@ function validateDialogue(): Set<string> {
 }
 
 function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<string> {
-  const files = ['town', 'field', 'forest', 'dungeon', 'canyon', 'volcano', 'boss_room', 'arena_volcano'];
+  const files = [
+    'town', 'field', 'forest', 'dungeon', 'canyon', 'volcano', 'boss_room',
+    'arena_volcano', 'arena_grove', 'arena_marsh', 'arena_cavern', 'arena_peak',
+  ];
   type MapDoc = {
     id: string;
     spawns: Record<string, [number, number]>;

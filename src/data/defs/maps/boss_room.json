@@ -3,7 +3,8 @@
   "name": "ボスの間",
   "travel": {
     "order": 4,
-    "note": "ボス戦"
+    "note": "ボス戦",
+    "hidden": true
   },
   "size": {
     "w": 360,
@@ -31,12 +32,6 @@
       "label": "洞窟へ"
     }
   ],
-  "enemies": [
-    {
-      "type": "boss_slime",
-      "x": 180,
-      "y": 240
-    }
-  ],
+  "enemies": [],
   "npcs": []
 }

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { allMaps, getMap, spawnPoint } from '@/maps/map-def';
-import { getEnemyDef } from '@/enemies/enemy-defs';
+import { getEnemyDef, allEnemyDefs } from '@/enemies/enemy-defs';
+import { allQuests } from '@/quests/quest-defs';
 
 describe('map definitions', () => {
   it('every portal targets an existing map + spawn', () => {
@@ -18,6 +19,24 @@ describe('map definitions', () => {
       for (const e of m.enemies ?? []) {
         expect(getEnemyDef(e.type), `${m.id} enemy ${e.type}`).toBeDefined();
       }
+    }
+  });
+
+  it('bosses are hunt-only: never walk-up in a zone, only spawned via huntMap quests', () => {
+    // No map statically places a boss (they belong in quest arenas now).
+    for (const m of allMaps()) {
+      for (const e of m.enemies ?? []) {
+        expect(getEnemyDef(e.type)!.isBoss, `${m.id} places boss ${e.type}`).toBeFalsy();
+      }
+    }
+    // Every boss is reachable through at least one quest that spawns it (huntMap).
+    const huntable = new Set(
+      allQuests()
+        .filter((q) => q.huntMap)
+        .flatMap((q) => q.objectives.map((o) => o.enemyId)),
+    );
+    for (const b of allEnemyDefs().filter((d) => d.isBoss)) {
+      expect(huntable.has(b.id), `${b.id} has no huntMap quest`).toBe(true);
     }
   });
 

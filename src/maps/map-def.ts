@@ -6,6 +6,10 @@ import canyonJson from '@/data/defs/maps/canyon.json';
 import volcanoJson from '@/data/defs/maps/volcano.json';
 import bossRoomJson from '@/data/defs/maps/boss_room.json';
 import arenaVolcanoJson from '@/data/defs/maps/arena_volcano.json';
+import arenaGroveJson from '@/data/defs/maps/arena_grove.json';
+import arenaMarshJson from '@/data/defs/maps/arena_marsh.json';
+import arenaCavernJson from '@/data/defs/maps/arena_cavern.json';
+import arenaPeakJson from '@/data/defs/maps/arena_peak.json';
 
 /**
  * Map definitions (data-driven). A map is a portrait area built from a ground
@@ -77,6 +81,10 @@ for (const m of [
   volcanoJson,
   bossRoomJson,
   arenaVolcanoJson,
+  arenaGroveJson,
+  arenaMarshJson,
+  arenaCavernJson,
+  arenaPeakJson,
 ] as unknown as MapDef[]) {
   maps.set(m.id, m);
 }

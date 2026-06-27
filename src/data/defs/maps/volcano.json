@@ -3,7 +3,8 @@
   "name": "灼熱の火山",
   "travel": {
     "order": 6,
-    "note": "3次職の狩場。R7〜R8素材＋竜王"
+    "note": "3次職の狩場。R7〜R8素材＋竜王",
+    "unlockFlag": "boss_flame_defeated"
   },
   "size": {
     "w": 360,
@@ -80,11 +81,6 @@
       "type": "shadow_knight",
       "x": 240,
       "y": 420
-    },
-    {
-      "type": "boss_dragon",
-      "x": 180,
-      "y": 200
     }
   ],
   "npcs": []

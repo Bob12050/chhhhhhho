@@ -62,7 +62,8 @@
         "items": {
           "king_jelly": 1
         }
-      }
+      },
+      "huntMap": "arena_grove"
     },
     {
       "id": "subj_stone",
@@ -85,7 +86,8 @@
         "items": {
           "golem_core": 1
         }
-      }
+      },
+      "huntMap": "arena_cavern"
     },
     {
       "id": "tier4_trial",
@@ -109,7 +111,8 @@
         "setFlags": [
           "quest_tier4_trial"
         ]
-      }
+      },
+      "huntMap": "arena_marsh"
     },
     {
       "id": "q_apprentice",
@@ -529,7 +532,8 @@
       "require": {
         "questDone": "subj_treant"
       },
-      "repeatable": true
+      "repeatable": true,
+      "huntMap": "arena_grove"
     },
     {
       "id": "hunt_stone_again",
@@ -553,7 +557,8 @@
       "require": {
         "questDone": "subj_stone"
       },
-      "repeatable": true
+      "repeatable": true,
+      "huntMap": "arena_cavern"
     },
     {
       "id": "hunt_kingslime",
@@ -576,7 +581,9 @@
       },
       "require": {
         "minLevel": 25
-      }
+      },
+      "huntMap": "arena_marsh",
+      "repeatable": true
     },
     {
       "id": "hunt_flame_lord",
@@ -600,6 +607,32 @@
         "items": {
           "star_fragment": 2,
           "mythril_ore": 3
+        }
+      },
+      "repeatable": true
+    },
+    {
+      "id": "hunt_dragon",
+      "name": "大型狩猟：竜王ヴァルガ",
+      "type": "hunt",
+      "description": "竜の巣に巣食う竜王ヴァルガを討伐せよ。最強格の大型モンスター。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_dragon",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 30
+      },
+      "huntMap": "arena_peak",
+      "rewards": {
+        "gold": 800,
+        "exp": 3200,
+        "items": {
+          "star_fragment": 3,
+          "mythril_ore": 4
         }
       },
       "repeatable": true
