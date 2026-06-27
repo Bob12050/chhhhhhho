@@ -13,7 +13,8 @@ import { TEX } from '@/assets/gen/textures';
 import { Rng } from '@/core/rng';
 import { getDropTable, rollDrops } from '@/loot/drop-table';
 import { getSkill } from '@/skills/skill-defs';
-import { recordKill } from '@/quests/quests';
+import { recordKill, isComplete } from '@/quests/quests';
+import { getQuest } from '@/quests/quest-defs';
 import { input } from '@/input/input-state';
 import { bus } from '@/core/event-bus';
 import { saveManager } from '@/save/save-manager';
@@ -131,6 +132,7 @@ export class WorldScene extends Phaser.Scene {
     );
 
     for (const e of this.map.enemies ?? []) this.spawnEnemy(e.type, e.x, e.y);
+    this.spawnHuntTargets();
     for (const n of this.map.npcs ?? []) this.spawnNpc(n.x, n.y, n.label, n.action, n.dialogueId);
     this.spawnPetIfAny();
 
@@ -185,6 +187,26 @@ export class WorldScene extends Phaser.Scene {
       const id = gameState.equipment[slot];
       const def = id ? getEquipment(id) : undefined;
       this.player.setEquipVisual(slot, def ? visualTexture(def.visualId) : null);
+    }
+  }
+
+  /**
+   * Monster-Hunter style hunts: for every active quest whose `huntMap` is the
+   * current map, spawn its (still-unfinished) target enemies. The boss returns
+   * each time you enter while the quest is active, so repeatable hunts let you
+   * farm materials. A central 'boss' spawn point is used if defined.
+   */
+  private spawnHuntTargets(): void {
+    const seen = new Set<string>();
+    for (const qid of gameState.activeQuests) {
+      const q = getQuest(qid);
+      if (!q || q.huntMap !== this.map.id) continue;
+      for (const obj of q.objectives) {
+        if (seen.has(obj.enemyId)) continue;
+        seen.add(obj.enemyId);
+        const sp = spawnPoint(this.map, 'boss');
+        this.spawnEnemy(obj.enemyId, sp.x, sp.y);
+      }
     }
   }
 
@@ -530,6 +552,7 @@ export class WorldScene extends Phaser.Scene {
     this.spawnDeathBurst(x, y, burstColor);
     gameState.flags['killed_any'] = true;
     recordKill(gameState, def.id); // advance active quest objectives
+    this.notifyHuntComplete(def);
     const killFlag = `boss_${def.id}_killed`;
     const firstKill = !!def.isBoss && !gameState.flags[killFlag];
     const table = def.dropTableId ? getDropTable(def.dropTableId) : undefined;
@@ -552,6 +575,18 @@ export class WorldScene extends Phaser.Scene {
       this.boss = null;
       this.floatText(x, y - 46, `${def.name} を倒した！`);
       void this.save();
+    }
+  }
+
+  /** Show a hunt-complete banner when killing this enemy finishes a hunt quest. */
+  private notifyHuntComplete(def: EnemyDef): void {
+    for (const qid of gameState.activeQuests) {
+      const q = getQuest(qid);
+      if (!q?.huntMap || !q.objectives.some((o) => o.enemyId === def.id)) continue;
+      if (isComplete(gameState, qid)) {
+        this.showMapName(`クエスト達成！「${q.name}」\n町の掲示板で報酬を受取ろう`);
+        break;
+      }
     }
   }
 

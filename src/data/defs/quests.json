@@ -577,6 +577,32 @@
       "require": {
         "minLevel": 25
       }
+    },
+    {
+      "id": "hunt_flame_lord",
+      "name": "大型狩猟：業火の主",
+      "type": "hunt",
+      "description": "火口の闘技場に現れる業火の主ヴルムを狩猟せよ。素材は強力な火属性装備の材料になる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_flame",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 20
+      },
+      "huntMap": "arena_volcano",
+      "rewards": {
+        "gold": 600,
+        "exp": 2400,
+        "items": {
+          "star_fragment": 2,
+          "mythril_ore": 3
+        }
+      },
+      "repeatable": true
     }
   ]
 }

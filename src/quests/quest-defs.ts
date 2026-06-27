@@ -36,6 +36,12 @@ export interface QuestDef {
   require?: QuestRequire;
   rewards: QuestReward;
   repeatable?: boolean;
+  /**
+   * Monster-Hunter style hunt: while this quest is active, its target
+   * enemies spawn in `huntMap`. Accepting it departs the player to that map.
+   * The target despawns/returns on quest turn-in (re-accept to re-hunt).
+   */
+  huntMap?: string;
 }
 
 interface QuestsFile {

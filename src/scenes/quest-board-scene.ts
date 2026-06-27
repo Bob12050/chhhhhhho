@@ -10,6 +10,7 @@ import {
   turnInQuest,
   objectiveProgress,
 } from '@/quests/quests';
+import { getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
 
 /**
@@ -187,10 +188,13 @@ export class QuestBoardScene extends Phaser.Scene {
     }
 
     if (state === 'available') {
-      this.actionButton(w - 16, y + 10, '[ 受ける ]', '#9fe3a0', () => {
+      // Hunt quests "depart" to their arena on accept (MH style); others just
+      // join the active list and are tracked wherever you fight.
+      const label = q.huntMap ? '[ 受けて出発 ]' : '[ 受ける ]';
+      this.actionButton(w - 16, y + 10, label, '#9fe3a0', () => {
         if (this.dragged) return;
-        acceptQuest(gameState, q.id);
-        this.render();
+        if (acceptQuest(gameState, q.id) && q.huntMap) this.departTo(q.huntMap);
+        else this.render();
       });
     } else if (state === 'active') {
       if (isComplete(gameState, q.id)) {
@@ -245,6 +249,22 @@ export class QuestBoardScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(2);
     this.tweens.add({ targets: t, alpha: 0, delay: 800, duration: 500, onComplete: () => t.destroy() });
+  }
+
+  /** Warp to a hunt arena (mirrors fast-travel) and close the board. */
+  private departTo(mapId: string): void {
+    const target = getMap(mapId);
+    if (!target) {
+      this.render();
+      return;
+    }
+    const sp = spawnPoint(target, 'default');
+    gameState.mapId = mapId;
+    gameState.x = sp.x;
+    gameState.y = sp.y;
+    this.scene.stop();
+    this.scene.resume('World');
+    bus.emit('map:travel', {});
   }
 
   private close(): void {

@@ -222,6 +222,23 @@
       "expReward": 1500,
       "goldReward": 500,
       "dropTableId": "boss_dragon"
+    },
+    {
+      "id": "boss_flame",
+      "name": "業火の主 ヴルム",
+      "textureKey": "gen.enemy.wolf",
+      "tint": "#ff5a28",
+      "scale": 2.0,
+      "isBoss": true,
+      "maxHp": 640,
+      "moveSpeed": 64,
+      "contactDamage": 30,
+      "aggroRange": 300,
+      "attackRange": 24,
+      "knockbackResist": 0.78,
+      "expReward": 1200,
+      "goldReward": 300,
+      "dropTableId": "boss_flame"
     }
   ]
 }

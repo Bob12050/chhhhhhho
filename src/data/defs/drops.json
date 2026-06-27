@@ -397,6 +397,36 @@
           "max": 4
         }
       ]
+    },
+    {
+      "id": "boss_flame",
+      "entries": [
+        {
+          "itemId": "radiant_blade",
+          "dropRate": 0,
+          "min": 1,
+          "max": 1,
+          "bossFirstGuaranteed": true
+        },
+        {
+          "itemId": "star_fragment",
+          "dropRate": 0.7,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "golem_core",
+          "dropRate": 1,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "mythril_ore",
+          "dropRate": 1,
+          "min": 2,
+          "max": 4
+        }
+      ]
     }
   ]
 }

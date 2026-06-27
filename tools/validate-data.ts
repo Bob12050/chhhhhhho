@@ -168,8 +168,8 @@ function validateDialogue(): Set<string> {
   return ids;
 }
 
-function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): void {
-  const files = ['town', 'field', 'forest', 'dungeon', 'canyon', 'volcano', 'boss_room'];
+function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<string> {
+  const files = ['town', 'field', 'forest', 'dungeon', 'canyon', 'volcano', 'boss_room', 'arena_volcano'];
   type MapDoc = {
     id: string;
     spawns: Record<string, [number, number]>;
@@ -209,6 +209,7 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): void {
       }
     }
   }
+  return new Set(maps.keys());
 }
 
 function collectItemIds(): Set<string> {
@@ -378,7 +379,7 @@ function validateJobs(skillIds: Set<string>): void {
   }
 }
 
-function validateQuests(itemIds: Set<string>, enemyIds: Set<string>): void {
+function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set<string>): void {
   const file = readJson<{
     quests: {
       id: string;
@@ -386,11 +387,14 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>): void {
       objectives: { type: string; enemyId: string; count: number }[];
       require?: { questDone?: string };
       rewards: { items?: Record<string, number> };
+      huntMap?: string;
     }[];
   }>('src/data/defs/quests.json');
   const QTYPES = new Set(['subjugation', 'unlock', 'hunt']);
   const ids = new Set(file.quests.map((q) => q.id));
   for (const q of file.quests) {
+    if (q.huntMap && !mapIds.has(q.huntMap))
+      err(`Quest ${q.id}: huntMap "${q.huntMap}" is not a known map`);
     if (!QTYPES.has(q.type)) err(`Quest ${q.id}: invalid type "${q.type}"`);
     if (!q.objectives?.length) err(`Quest ${q.id}: needs at least one objective`);
     for (const o of q.objectives ?? []) {
@@ -410,12 +414,12 @@ const itemIds = collectItemIds();
 const dropTableIds = validateDrops(itemIds);
 const enemyIds = validateEnemies(itemIds, dropTableIds);
 const dialogueIds = validateDialogue();
-validateMaps(enemyIds, dialogueIds);
+const mapIds = validateMaps(enemyIds, dialogueIds);
 validateRecipes(itemIds);
 const skillIds = validateSkills();
 validateJobs(skillIds);
 validatePets();
-validateQuests(itemIds, enemyIds);
+validateQuests(itemIds, enemyIds, mapIds);
 
 if (errors.length > 0) {
   console.error(`Data validation FAILED with ${errors.length} error(s):`);

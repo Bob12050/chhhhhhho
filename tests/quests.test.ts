@@ -73,6 +73,25 @@ describe('quests', () => {
     expect(gs.flags['quest_tier4_trial']).toBe(true);
   });
 
+  it('hunt quest: repeatable boss hunt with a huntMap, re-acceptable after turn-in', () => {
+    const gs = fresh();
+    gs.level = 20; // meets minLevel
+    const hunt = getQuest('hunt_flame_lord')!;
+    expect(hunt.type).toBe('hunt');
+    expect(hunt.huntMap).toBe('arena_volcano');
+    expect(hunt.repeatable).toBe(true);
+    expect(hunt.objectives[0].enemyId).toBe('boss_flame');
+
+    expect(acceptQuest(gs, 'hunt_flame_lord')).toBe(true);
+    recordKill(gs, 'boss_flame');
+    expect(isComplete(gs, 'hunt_flame_lord')).toBe(true);
+    expect(turnInQuest(gs, 'hunt_flame_lord')).toBe(true);
+    // Repeatable: not marked completed, can be accepted again.
+    expect(gs.completedQuests).not.toContain('hunt_flame_lord');
+    expect(availableQuests(gs).map((q) => q.id)).toContain('hunt_flame_lord');
+    expect(acceptQuest(gs, 'hunt_flame_lord')).toBe(true);
+  });
+
   it('available list excludes active and completed quests', () => {
     const gs = fresh();
     const before = availableQuests(gs).map((q) => q.id);
