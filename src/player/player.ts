@@ -56,6 +56,12 @@ export class Player {
     const group = SLOT_TO_GROUP[slot];
     if (!group) return;
     this.doll.setLayer(group, textureKey);
+    // Helmets sit on a hairless head: swap the base body to the bald sheet while
+    // a head item is worn (frame layout is identical, so layers stay aligned),
+    // and restore the normal haired body when the head slot is empty.
+    if (slot === 'head') {
+      this.doll.setLayer('base_body', textureKey ? TEX.playerBodyBald : TEX.playerBody);
+    }
   }
 
   getDirection(): Direction {

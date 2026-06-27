@@ -31,6 +31,7 @@ const img = (key: string, src: string): AssetEntry => ({ key, type: 'image', src
 export const ASSET_MANIFEST: AssetEntry[] = [
   // Paper-doll layers + enemy (pose-atlas spritesheets).
   sheet(TEX.playerBody, 'assets/char/player_body.png'),
+  sheet(TEX.playerBodyBald, 'assets/char/player_body_bald.png'),
   sheet(TEX.capLeather, 'assets/equip/cap_leather.png'),
   sheet(TEX.helmIron, 'assets/equip/helm_iron.png'),
   sheet(TEX.vestCloth, 'assets/equip/vest_cloth.png'),

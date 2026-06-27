@@ -10,6 +10,10 @@ import { CHAR_FRAME_W, CHAR_FRAME_H } from '@/config/resolution';
 export const TEX = {
   shadow: 'gen.shadow',
   playerBody: 'gen.player.body',
+  // Hairless base body, swapped in for `playerBody` whenever a helmet is
+  // equipped so the helm has a clean (bald) head to sit on. See
+  // Player.setEquipVisual. Real art at assets/char/player_body_bald.png.
+  playerBodyBald: 'gen.player.body.bald',
   capLeather: 'gen.equip.cap_leather',
   helmIron: 'gen.equip.helm_iron',
   vestCloth: 'gen.equip.vest_cloth',
@@ -38,6 +42,8 @@ export const TEX = {
 const SPECS: Record<string, LayerSpec> = {
   [TEX.shadow]: { kind: 'shadow' },
   [TEX.playerBody]: { kind: 'body', palette: PALETTES.player },
+  // Fallback placeholder only; the real bald sheet ships as a PNG (manifest).
+  [TEX.playerBodyBald]: { kind: 'body', palette: PALETTES.player },
   [TEX.capLeather]: { kind: 'head', ramp: EQUIP_RAMPS.leatherCap },
   [TEX.helmIron]: { kind: 'head', ramp: EQUIP_RAMPS.ironHelm },
   [TEX.vestCloth]: { kind: 'torso', ramp: EQUIP_RAMPS.clothVest },
