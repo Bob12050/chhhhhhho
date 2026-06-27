@@ -9,6 +9,11 @@ import { bus } from '@/core/event-bus';
  */
 export class JobChangeScene extends Phaser.Scene {
   private content!: Phaser.GameObjects.Container;
+  private scrollY = 0;
+  private maxScroll = 0;
+  private dragged = false;
+  private viewTop = 56;
+  private viewBottom = 0;
 
   constructor() {
     super('JobChange');
@@ -17,6 +22,7 @@ export class JobChangeScene extends Phaser.Scene {
   create(): void {
     const w = this.scale.width;
     const h = this.scale.height;
+    this.viewBottom = h - 64;
     this.add.rectangle(0, 0, w, h, 0x0e0f1a, 0.94).setOrigin(0).setDepth(0);
     this.add
       .text(16, 24, '転職', { fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#fff' })
@@ -32,14 +38,20 @@ export class JobChangeScene extends Phaser.Scene {
       .setDepth(1)
       .setInteractive({ useHandCursor: true });
     treeBtn.on('pointerup', () => {
+      if (this.dragged) return;
       this.scene.pause();
       this.scene.launch('JobTree');
     });
 
     this.content = this.add.container(0, 0).setDepth(1);
+    const maskG = this.make.graphics({}, false);
+    maskG.fillStyle(0xffffff);
+    maskG.fillRect(0, this.viewTop, w, this.viewBottom - this.viewTop);
+    this.content.setMask(maskG.createGeometryMask());
+    this.setupScroll();
 
     const close = this.add
-      .text(w / 2, h - 44, '[ とじる ]', {
+      .text(w / 2, h - 36, '[ とじる ]', {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '16px',
         color: '#ffd86b',
@@ -47,7 +59,10 @@ export class JobChangeScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(1)
       .setInteractive({ useHandCursor: true });
-    close.on('pointerup', () => this.close());
+    close.on('pointerup', () => {
+      if (this.dragged) return;
+      this.close();
+    });
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
     this.render();
@@ -58,18 +73,44 @@ export class JobChangeScene extends Phaser.Scene {
     const w = this.scale.width;
     const cur = getJob(gameState.jobId);
     this.content.add(
-      this.add.text(16, 60, `現在の職業: ${cur?.name ?? gameState.jobId} (Lv${gameState.level})`, {
+      this.add.text(16, this.viewTop + 4, `現在の職業: ${cur?.name ?? gameState.jobId} (Lv${gameState.level})`, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '13px',
         color: '#9fd0ff',
       }),
     );
 
-    let y = 96;
+    let y = this.viewTop + 36;
     for (const job of this.relevantJobs()) {
       this.renderJob(job, y, w);
       y += 76;
     }
+    this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
+    this.scrollTo(this.scrollY);
+  }
+
+  private setupScroll(): void {
+    let startY = 0;
+    let startScroll = 0;
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      startY = p.y;
+      startScroll = this.scrollY;
+      this.dragged = false;
+    });
+    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      if (!p.isDown) return;
+      const d = startY - p.y;
+      if (Math.abs(d) > 6) this.dragged = true;
+      this.scrollTo(startScroll + d);
+    });
+    this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
+      this.scrollTo(this.scrollY + dy * 0.5);
+    });
+  }
+
+  private scrollTo(y: number): void {
+    this.scrollY = Phaser.Math.Clamp(y, 0, this.maxScroll);
+    this.content.y = -this.scrollY;
   }
 
   /**
@@ -92,8 +133,11 @@ export class JobChangeScene extends Phaser.Scene {
   private renderJob(job: JobDef, y: number, w: number): void {
     const isCurrent = gameState.jobId === job.id;
     const block = gameState.jobChangeBlock(job.id);
+    // Per-job level: the active job uses the live level; others show their
+    // stored job level (0 if never played). Helps plan multi-job leveling.
+    const lvl = gameState.jobLevelOf(job.id);
     this.content.add(
-      this.add.text(16, y, `${job.name}  (Tier ${job.tier})${isCurrent ? '  ★現在' : ''}`, {
+      this.add.text(16, y, `${job.name}  Lv${lvl}  (Tier ${job.tier})${isCurrent ? '  ★現在' : ''}`, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '15px',
         color: isCurrent ? '#9fe3a0' : '#fff',
@@ -118,6 +162,7 @@ export class JobChangeScene extends Phaser.Scene {
           .setOrigin(1, 0)
           .setInteractive({ useHandCursor: true });
         btn.on('pointerup', () => {
+          if (this.dragged) return;
           gameState.changeJob(job.id);
           this.render();
         });
