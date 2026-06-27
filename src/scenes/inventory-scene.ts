@@ -24,6 +24,15 @@ const SLOT_LABEL: Record<string, string> = {
   accessory_2: '装飾2',
 };
 
+/** Japanese labels for class families (skill tab grouping). */
+const FAMILY_LABEL: Record<string, string> = {
+  warrior: '戦士系',
+  mage: '魔法系',
+  cleric: '僧侶系',
+  thief: '盗賊系',
+  tamer: 'テイマー系',
+};
+
 /**
  * Bag / menu overlay (replaces the old equipment-only screen). Three tabs:
  * materials, consumables (use), and equipment (equip from owned). Opened from
@@ -430,14 +439,40 @@ export class InventoryScene extends Phaser.Scene {
       }),
     );
 
+    const myFamily = getJob(gs.jobId)?.family;
+    // Order: common skills, then the current job's family, then the rest. Within
+    // each group keep declaration order (already tiered by required level).
+    const rank = (fam?: string): number =>
+      fam == null ? 0 : fam === myFamily ? 1 : 2;
+    const ordered = allSkills()
+      .map((def, i) => ({ def, i }))
+      .sort((a, b) => rank(a.def.family) - rank(b.def.family) || a.i - b.i);
+
     let y = 124;
-    for (const def of allSkills()) {
+    let lastGroup = -1;
+    for (const { def } of ordered) {
+      const group = rank(def.family);
+      if (group !== lastGroup) {
+        lastGroup = group;
+        const header =
+          group === 0 ? '共通' : group === 1 ? `${FAMILY_LABEL[def.family!]}（現職）` : '他系統';
+        this.content.add(
+          this.add.text(16, y, `― ${header} ―`, {
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '12px',
+            color: '#c9b27a',
+          }),
+        );
+        y += 22;
+      }
+
       const learned = !!gs.skills[def.id];
       const kind = def.type === 'active' ? 'A' : 'P';
       const slot = gs.skillSlots.indexOf(def.id);
+      const famTag = def.family ? `《${FAMILY_LABEL[def.family]}》` : '';
       const tag = learned ? (slot >= 0 ? `習得(S${slot + 1})` : '習得') : '';
       this.content.add(
-        this.add.text(16, y, `[${kind}] ${def.name}  ${tag}`, {
+        this.add.text(16, y, `[${kind}] ${def.name} ${famTag} ${tag}`.trim(), {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '14px',
           color: learned ? '#9fe3a0' : '#fff',
@@ -470,13 +505,15 @@ export class InventoryScene extends Phaser.Scene {
           this.content.add(btn);
         } else {
           const note =
-            block === 'level'
-              ? `Lv${def.requiredLevel}必要`
-              : block === 'requires'
-                ? '前提技が必要'
-                : block === 'points'
-                  ? 'ポイント不足'
-                  : '';
+            block === 'job'
+              ? `${FAMILY_LABEL[def.family!]}専用`
+              : block === 'level'
+                ? `Lv${def.requiredLevel}必要`
+                : block === 'requires'
+                  ? '前提技が必要'
+                  : block === 'points'
+                    ? 'ポイント不足'
+                    : '';
           this.content.add(
             this.add
               .text(w - 16, y + 4, note, {

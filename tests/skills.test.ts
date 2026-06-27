@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { GameState } from '@/player/game-state';
-import { getSkill } from '@/skills/skill-defs';
+import { getSkill, allSkills } from '@/skills/skill-defs';
+import { CLASS_FAMILIES } from '@/jobs/job-defs';
 
 describe('skills', () => {
   it('gates learning by points, level, and prerequisites', () => {
@@ -46,5 +47,52 @@ describe('skills', () => {
     const p0 = gs.skillPoints;
     gs.gainExp(100000); // force several level-ups
     expect(gs.skillPoints).toBeGreaterThan(p0);
+  });
+
+  it('gates family skills by the active job family', () => {
+    const gs = new GameState();
+    gs.level = 10;
+    gs.skillPoints = 5;
+    gs.recompute(false);
+    // w_cleave is a warrior skill; as adventurer (no family) it is locked.
+    expect(getSkill('w_cleave')!.family).toBe('warrior');
+    expect(gs.skillLearnBlock('w_cleave')).toBe('job');
+    // A mage cannot learn it either.
+    gs.jobId = 'mage';
+    expect(gs.skillLearnBlock('w_cleave')).toBe('job');
+    // A warrior-family job can.
+    gs.jobId = 'fighter';
+    expect(gs.skillLearnBlock('w_cleave')).toBeNull();
+    gs.learnSkill('w_cleave');
+    expect(gs.skills['w_cleave']).toBe(1);
+  });
+
+  it('learned skills persist after changing to a different family', () => {
+    const gs = new GameState();
+    gs.level = 10;
+    gs.skillPoints = 5;
+    gs.jobId = 'fighter';
+    gs.recompute(false);
+    gs.learnSkill('w_cleave');
+    gs.jobId = 'mage'; // switch family
+    expect(gs.skills['w_cleave']).toBe(1); // still known
+  });
+
+  it('every class family has at least one active and one passive skill', () => {
+    for (const fam of CLASS_FAMILIES) {
+      const fams = allSkills().filter((s) => s.family === fam);
+      expect(fams.some((s) => s.type === 'active'), `${fam} active`).toBe(true);
+      expect(fams.some((s) => s.type === 'passive'), `${fam} passive`).toBe(true);
+    }
+  });
+
+  it('active skills declare a valid scaling and passives declare none', () => {
+    for (const s of allSkills()) {
+      if (s.type === 'active') {
+        expect(['phys', 'mag', undefined]).toContain(s.scaling);
+      } else {
+        expect(s.scaling).toBeUndefined();
+      }
+    }
   });
 });

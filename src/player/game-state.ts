@@ -291,10 +291,14 @@ export class GameState {
   }
 
   /** Why a skill can't be learned right now (or null if it can). */
-  skillLearnBlock(id: string): 'known' | 'unknown' | 'points' | 'level' | 'requires' | null {
+  skillLearnBlock(
+    id: string,
+  ): 'known' | 'unknown' | 'job' | 'points' | 'level' | 'requires' | null {
     if (this.skills[id]) return 'known';
     const def = getSkill(id);
     if (!def) return 'unknown';
+    // Job skills require the active job to be of the matching class family.
+    if (def.family && getJob(this.jobId)?.family !== def.family) return 'job';
     if (this.skillPoints < 1) return 'points';
     if (this.level < (def.requiredLevel ?? 1)) return 'level';
     for (const req of def.requires ?? []) if (!this.skills[req]) return 'requires';

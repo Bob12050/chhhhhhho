@@ -1,13 +1,18 @@
 import skillsJson from '@/data/defs/skills.json';
 import type { DerivedStats } from '@/stats/stats';
+import type { ClassFamily } from '@/jobs/job-defs';
 
 /**
  * Skill definitions (data-driven). Active skills are forward strikes with a
  * power multiplier / reach / MP cost / cooldown; passive skills contribute
- * derived-stat modifiers via computeDerived. Learning is gated by level and
- * prerequisite skills. Effect composition expands in later phases.
+ * derived-stat modifiers via computeDerived. Learning is gated by level,
+ * prerequisite skills, and (for job skills) the active job's class family.
+ * Effect composition expands in later phases.
  */
 export type SkillType = 'active' | 'passive';
+
+/** Which stat an active skill scales off. Defaults to 'phys'. */
+export type SkillScaling = 'phys' | 'mag';
 
 export interface SkillDef {
   id: string;
@@ -17,10 +22,12 @@ export interface SkillDef {
   // Active
   mpCost?: number;
   cooldown?: number; // ms
-  powerMult?: number; // damage = physAtk * powerMult
+  powerMult?: number; // damage = (phys|mag)Atk * powerMult
   reach?: number;
   radius?: number;
   knockback?: number;
+  /** Which attack stat the damage scales off ('phys' default | 'mag'). */
+  scaling?: SkillScaling;
   /** Visual style for the cast effect ('slash' | 'impact' | 'magic'). */
   fx?: string;
   // Passive
@@ -28,6 +35,11 @@ export interface SkillDef {
   // Learning gates
   requiredLevel?: number;
   requires?: string[];
+  /**
+   * Class family this skill belongs to. Only learnable while the active job's
+   * family matches. Omitted = common skill, learnable by any job.
+   */
+  family?: ClassFamily;
 }
 
 interface SkillsFile {

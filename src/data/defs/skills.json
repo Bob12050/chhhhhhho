@@ -12,6 +12,7 @@
       "radius": 36,
       "knockback": 26,
       "fx": "slash",
+      "scaling": "phys",
       "requiredLevel": 1
     },
     {
@@ -26,16 +27,575 @@
       "radius": 34,
       "knockback": 46,
       "fx": "impact",
+      "scaling": "phys",
       "requiredLevel": 3,
-      "requires": ["slash"]
+      "requires": [
+        "slash"
+      ]
     },
     {
       "id": "toughness",
       "name": "頑強",
       "type": "passive",
       "description": "最大HPと防御が上がる。",
-      "derived": { "maxHp": 20, "def": 3 },
+      "derived": {
+        "maxHp": 20,
+        "def": 3
+      },
       "requiredLevel": 2
+    },
+    {
+      "id": "w_cleave",
+      "name": "兜割り",
+      "type": "active",
+      "description": "渾身の一撃で前方を叩き割る。",
+      "mpCost": 8,
+      "cooldown": 1100,
+      "powerMult": 2.0,
+      "reach": 34,
+      "radius": 40,
+      "knockback": 40,
+      "fx": "impact",
+      "scaling": "phys",
+      "requiredLevel": 6,
+      "family": "warrior"
+    },
+    {
+      "id": "w_ironwall",
+      "name": "鉄壁",
+      "type": "passive",
+      "description": "最大HPと防御が大きく上がる。",
+      "derived": {
+        "maxHp": 30,
+        "def": 6
+      },
+      "requiredLevel": 8,
+      "family": "warrior"
+    },
+    {
+      "id": "w_whirl",
+      "name": "旋風斬",
+      "type": "active",
+      "description": "身を回して周囲を薙ぎ払う。",
+      "mpCost": 14,
+      "cooldown": 1700,
+      "powerMult": 2.4,
+      "reach": 30,
+      "radius": 52,
+      "knockback": 30,
+      "fx": "slash",
+      "scaling": "phys",
+      "requiredLevel": 16,
+      "requires": [
+        "w_cleave"
+      ],
+      "family": "warrior"
+    },
+    {
+      "id": "w_berserk",
+      "name": "闘気",
+      "type": "passive",
+      "description": "攻撃力と会心率が上がる。",
+      "derived": {
+        "physAtk": 8,
+        "critRate": 0.05
+      },
+      "requiredLevel": 22,
+      "family": "warrior"
+    },
+    {
+      "id": "w_quake",
+      "name": "震波",
+      "type": "active",
+      "description": "地を砕き衝撃で吹き飛ばす。",
+      "mpCost": 22,
+      "cooldown": 2600,
+      "powerMult": 3.4,
+      "reach": 30,
+      "radius": 58,
+      "knockback": 60,
+      "fx": "impact",
+      "scaling": "phys",
+      "requiredLevel": 32,
+      "requires": [
+        "w_whirl"
+      ],
+      "family": "warrior"
+    },
+    {
+      "id": "w_titan",
+      "name": "巨力",
+      "type": "passive",
+      "description": "攻撃力・最大HP・防御を底上げする。",
+      "derived": {
+        "physAtk": 16,
+        "maxHp": 60,
+        "def": 8
+      },
+      "requiredLevel": 44,
+      "family": "warrior"
+    },
+    {
+      "id": "w_calamity",
+      "name": "滅び斬り",
+      "type": "active",
+      "description": "全身全霊の大技。広範囲を断つ。",
+      "mpCost": 40,
+      "cooldown": 4000,
+      "powerMult": 5.0,
+      "reach": 40,
+      "radius": 60,
+      "knockback": 70,
+      "fx": "impact",
+      "scaling": "phys",
+      "requiredLevel": 56,
+      "requires": [
+        "w_quake"
+      ],
+      "family": "warrior"
+    },
+    {
+      "id": "m_firebolt",
+      "name": "火球",
+      "type": "active",
+      "description": "火の弾を放ち前方を焼く。",
+      "mpCost": 8,
+      "cooldown": 1000,
+      "powerMult": 2.0,
+      "reach": 40,
+      "radius": 40,
+      "knockback": 0,
+      "fx": "magic",
+      "scaling": "mag",
+      "requiredLevel": 6,
+      "family": "mage"
+    },
+    {
+      "id": "m_focus",
+      "name": "精神集中",
+      "type": "passive",
+      "description": "魔力と最大MPが上がる。",
+      "derived": {
+        "magAtk": 8,
+        "maxMp": 20
+      },
+      "requiredLevel": 8,
+      "family": "mage"
+    },
+    {
+      "id": "m_frost",
+      "name": "氷嵐",
+      "type": "active",
+      "description": "冷気で前方広範囲を凍てつかせる。",
+      "mpCost": 16,
+      "cooldown": 1800,
+      "powerMult": 2.6,
+      "reach": 40,
+      "radius": 54,
+      "knockback": 20,
+      "fx": "magic",
+      "scaling": "mag",
+      "requiredLevel": 16,
+      "requires": [
+        "m_firebolt"
+      ],
+      "family": "mage"
+    },
+    {
+      "id": "m_arcane",
+      "name": "魔導",
+      "type": "passive",
+      "description": "魔力と最大MPを大きく高める。",
+      "derived": {
+        "magAtk": 14,
+        "maxMp": 30
+      },
+      "requiredLevel": 22,
+      "family": "mage"
+    },
+    {
+      "id": "m_thunder",
+      "name": "雷霆",
+      "type": "active",
+      "description": "落雷で前方を貫く。",
+      "mpCost": 26,
+      "cooldown": 2600,
+      "powerMult": 3.6,
+      "reach": 44,
+      "radius": 56,
+      "knockback": 0,
+      "fx": "magic",
+      "scaling": "mag",
+      "requiredLevel": 32,
+      "requires": [
+        "m_frost"
+      ],
+      "family": "mage"
+    },
+    {
+      "id": "m_sage",
+      "name": "賢者の知",
+      "type": "passive",
+      "description": "魔力・魔防・最大MPを底上げする。",
+      "derived": {
+        "magAtk": 22,
+        "magDef": 10,
+        "maxMp": 50
+      },
+      "requiredLevel": 44,
+      "family": "mage"
+    },
+    {
+      "id": "m_meteor",
+      "name": "流星群",
+      "type": "active",
+      "description": "空より星を降らせ広範囲を蹂躙する。",
+      "mpCost": 48,
+      "cooldown": 4200,
+      "powerMult": 5.4,
+      "reach": 48,
+      "radius": 66,
+      "knockback": 0,
+      "fx": "magic",
+      "scaling": "mag",
+      "requiredLevel": 56,
+      "requires": [
+        "m_thunder"
+      ],
+      "family": "mage"
+    },
+    {
+      "id": "c_smite",
+      "name": "聖打",
+      "type": "active",
+      "description": "聖なる力を込めて打ち据える。",
+      "mpCost": 8,
+      "cooldown": 1100,
+      "powerMult": 1.8,
+      "reach": 32,
+      "radius": 42,
+      "knockback": 30,
+      "fx": "magic",
+      "scaling": "mag",
+      "requiredLevel": 6,
+      "family": "cleric"
+    },
+    {
+      "id": "c_bless",
+      "name": "加護",
+      "type": "passive",
+      "description": "最大HPと魔防が上がる。",
+      "derived": {
+        "maxHp": 40,
+        "magDef": 6
+      },
+      "requiredLevel": 8,
+      "family": "cleric"
+    },
+    {
+      "id": "c_holylight",
+      "name": "聖光",
+      "type": "active",
+      "description": "清浄の光で前方を浄化する。",
+      "mpCost": 16,
+      "cooldown": 1800,
+      "powerMult": 2.4,
+      "reach": 36,
+      "radius": 52,
+      "knockback": 0,
+      "fx": "magic",
+      "scaling": "mag",
+      "requiredLevel": 16,
+      "requires": [
+        "c_smite"
+      ],
+      "family": "cleric"
+    },
+    {
+      "id": "c_aegis",
+      "name": "聖盾",
+      "type": "passive",
+      "description": "防御・魔防・最大HPを高める。",
+      "derived": {
+        "def": 8,
+        "magDef": 8,
+        "maxHp": 50
+      },
+      "requiredLevel": 22,
+      "family": "cleric"
+    },
+    {
+      "id": "c_judgment",
+      "name": "裁き",
+      "type": "active",
+      "description": "天罰を下し敵を打ち砕く。",
+      "mpCost": 26,
+      "cooldown": 2700,
+      "powerMult": 3.4,
+      "reach": 36,
+      "radius": 56,
+      "knockback": 36,
+      "fx": "impact",
+      "scaling": "mag",
+      "requiredLevel": 32,
+      "requires": [
+        "c_holylight"
+      ],
+      "family": "cleric"
+    },
+    {
+      "id": "c_saint",
+      "name": "聖者",
+      "type": "passive",
+      "description": "攻守と最大HPを大きく底上げする。",
+      "derived": {
+        "magAtk": 14,
+        "def": 10,
+        "magDef": 12,
+        "maxHp": 80
+      },
+      "requiredLevel": 44,
+      "family": "cleric"
+    },
+    {
+      "id": "c_genesis",
+      "name": "創世の光",
+      "type": "active",
+      "description": "万物を照らす極光を放つ。",
+      "mpCost": 46,
+      "cooldown": 4200,
+      "powerMult": 4.8,
+      "reach": 40,
+      "radius": 64,
+      "knockback": 0,
+      "fx": "magic",
+      "scaling": "mag",
+      "requiredLevel": 56,
+      "requires": [
+        "c_judgment"
+      ],
+      "family": "cleric"
+    },
+    {
+      "id": "t_quickstab",
+      "name": "速突き",
+      "type": "active",
+      "description": "素早く突き刺す。隙が少ない。",
+      "mpCost": 5,
+      "cooldown": 650,
+      "powerMult": 1.5,
+      "reach": 30,
+      "radius": 32,
+      "knockback": 0,
+      "fx": "slash",
+      "scaling": "phys",
+      "requiredLevel": 6,
+      "family": "thief"
+    },
+    {
+      "id": "t_nimble",
+      "name": "身軽",
+      "type": "passive",
+      "description": "回避と攻撃速度が上がる。",
+      "derived": {
+        "evasion": 8,
+        "atkSpeed": 0.1
+      },
+      "requiredLevel": 8,
+      "family": "thief"
+    },
+    {
+      "id": "t_doublecut",
+      "name": "二段斬り",
+      "type": "active",
+      "description": "間髪入れず二度斬る。",
+      "mpCost": 10,
+      "cooldown": 900,
+      "powerMult": 2.0,
+      "reach": 30,
+      "radius": 38,
+      "knockback": 0,
+      "fx": "slash",
+      "scaling": "phys",
+      "requiredLevel": 16,
+      "requires": [
+        "t_quickstab"
+      ],
+      "family": "thief"
+    },
+    {
+      "id": "t_sharp",
+      "name": "鋭敏",
+      "type": "passive",
+      "description": "会心率と命中が上がる。",
+      "derived": {
+        "critRate": 0.08,
+        "accuracy": 10
+      },
+      "requiredLevel": 22,
+      "family": "thief"
+    },
+    {
+      "id": "t_shadowfang",
+      "name": "影牙",
+      "type": "active",
+      "description": "影から急所を抉る一撃。",
+      "mpCost": 18,
+      "cooldown": 1300,
+      "powerMult": 3.0,
+      "reach": 32,
+      "radius": 42,
+      "knockback": 0,
+      "fx": "slash",
+      "scaling": "phys",
+      "requiredLevel": 32,
+      "requires": [
+        "t_doublecut"
+      ],
+      "family": "thief"
+    },
+    {
+      "id": "t_assassin",
+      "name": "暗殺者",
+      "type": "passive",
+      "description": "会心率・攻撃力・回避を高める。",
+      "derived": {
+        "critRate": 0.12,
+        "physAtk": 10,
+        "evasion": 12
+      },
+      "requiredLevel": 44,
+      "family": "thief"
+    },
+    {
+      "id": "t_phantom",
+      "name": "幻影乱舞",
+      "type": "active",
+      "description": "残像を残し斬撃を浴びせる。",
+      "mpCost": 34,
+      "cooldown": 2600,
+      "powerMult": 4.4,
+      "reach": 34,
+      "radius": 48,
+      "knockback": 0,
+      "fx": "slash",
+      "scaling": "phys",
+      "requiredLevel": 56,
+      "requires": [
+        "t_shadowfang"
+      ],
+      "family": "thief"
+    },
+    {
+      "id": "b_beastclaw",
+      "name": "獣爪",
+      "type": "active",
+      "description": "鋭い爪で薙ぎ払う。",
+      "mpCost": 7,
+      "cooldown": 1000,
+      "powerMult": 1.8,
+      "reach": 36,
+      "radius": 40,
+      "knockback": 24,
+      "fx": "impact",
+      "scaling": "phys",
+      "requiredLevel": 6,
+      "family": "tamer"
+    },
+    {
+      "id": "b_bond",
+      "name": "絆",
+      "type": "passive",
+      "description": "最大HPと命中が上がる。",
+      "derived": {
+        "maxHp": 30,
+        "accuracy": 8
+      },
+      "requiredLevel": 8,
+      "family": "tamer"
+    },
+    {
+      "id": "b_volley",
+      "name": "連弾",
+      "type": "active",
+      "description": "遠くまで届く連撃を放つ。",
+      "mpCost": 14,
+      "cooldown": 1500,
+      "powerMult": 2.4,
+      "reach": 46,
+      "radius": 46,
+      "knockback": 0,
+      "fx": "magic",
+      "scaling": "phys",
+      "requiredLevel": 16,
+      "requires": [
+        "b_beastclaw"
+      ],
+      "family": "tamer"
+    },
+    {
+      "id": "b_wild",
+      "name": "野性",
+      "type": "passive",
+      "description": "攻撃力・命中・回避を高める。",
+      "derived": {
+        "physAtk": 8,
+        "accuracy": 12,
+        "evasion": 8
+      },
+      "requiredLevel": 22,
+      "family": "tamer"
+    },
+    {
+      "id": "b_stampede",
+      "name": "群襲",
+      "type": "active",
+      "description": "獣の群れで広範囲を蹴散らす。",
+      "mpCost": 24,
+      "cooldown": 2500,
+      "powerMult": 3.4,
+      "reach": 44,
+      "radius": 58,
+      "knockback": 40,
+      "fx": "impact",
+      "scaling": "phys",
+      "requiredLevel": 32,
+      "requires": [
+        "b_volley"
+      ],
+      "family": "tamer"
+    },
+    {
+      "id": "b_alpha",
+      "name": "群れの長",
+      "type": "passive",
+      "description": "攻撃力・最大HP・命中を底上げする。",
+      "derived": {
+        "physAtk": 14,
+        "maxHp": 60,
+        "accuracy": 16
+      },
+      "requiredLevel": 44,
+      "family": "tamer"
+    },
+    {
+      "id": "b_genesis",
+      "name": "百獣繚乱",
+      "type": "active",
+      "description": "あらゆる獣を従え一斉に襲わせる。",
+      "mpCost": 42,
+      "cooldown": 4000,
+      "powerMult": 4.8,
+      "reach": 46,
+      "radius": 62,
+      "knockback": 40,
+      "fx": "impact",
+      "scaling": "phys",
+      "requiredLevel": 56,
+      "requires": [
+        "b_stampede"
+      ],
+      "family": "tamer"
     }
   ]
 }

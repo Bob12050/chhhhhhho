@@ -301,6 +301,7 @@ export class WorldScene extends Phaser.Scene {
     knockback: number,
     reach = 30,
     half = 34,
+    atk = gameState.derived.physAtk,
   ): void {
     const { ax, ay } = aheadOffset(dir, reach);
     const hx = this.player.x + ax;
@@ -310,7 +311,7 @@ export class WorldScene extends Phaser.Scene {
     for (const e of this.enemies) {
       if (e.isDead()) continue;
       if (Phaser.Math.Distance.Between(hx, hy, e.x, e.y) <= half) {
-        const base = gameState.derived.physAtk;
+        const base = atk;
         const crit = Math.random() < gameState.derived.critRate;
         const amount = Math.max(1, Math.round(base * mult * (crit ? 1.6 : 1)));
         e.takeDamage(amount, this.player.x, this.player.y, knockback);
@@ -434,8 +435,9 @@ export class WorldScene extends Phaser.Scene {
     this.player.play('cast');
     const dir = this.player.getDirection();
     this.spawnSkillEffect(dir, def.fx ?? 'magic');
+    const atk = def.scaling === 'mag' ? gameState.derived.magAtk : gameState.derived.physAtk;
     this.time.delayedCall(120, () =>
-      this.resolveMelee(dir, def.powerMult ?? 1.5, def.knockback ?? 26, def.reach ?? 30, def.radius ?? 34),
+      this.resolveMelee(dir, def.powerMult ?? 1.5, def.knockback ?? 26, def.reach ?? 30, def.radius ?? 34, atk),
     );
   }
 

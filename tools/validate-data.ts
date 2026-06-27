@@ -282,15 +282,24 @@ function validateSkills(): Set<string> {
       requires?: string[];
       derived?: Record<string, number>;
       fx?: string;
+      family?: string;
+      scaling?: string;
     }[];
   }>('src/data/defs/skills.json');
   const FX_STYLES = new Set(['slash', 'impact', 'magic']);
+  const SCALINGS = new Set(['phys', 'mag']);
   const ids = new Set<string>();
   for (const s of file.skills) {
     if (ids.has(s.id)) err(`Duplicate skill id: ${s.id}`);
     ids.add(s.id);
     if (s.type !== 'active' && s.type !== 'passive') err(`Skill ${s.id}: bad type "${s.type}"`);
     if (s.fx !== undefined && !FX_STYLES.has(s.fx)) err(`Skill ${s.id}: unknown fx "${s.fx}"`);
+    if (s.scaling !== undefined && !SCALINGS.has(s.scaling))
+      err(`Skill ${s.id}: unknown scaling "${s.scaling}"`);
+    if (s.family !== undefined && !CLASS_FAMILY_SET.has(s.family))
+      err(`Skill ${s.id}: unknown class family "${s.family}"`);
+    if (s.family !== undefined && s.scaling !== undefined && s.type === 'passive')
+      err(`Skill ${s.id}: passive skill should not set scaling`);
     for (const k of Object.keys(s.derived ?? {})) {
       if (!DERIVED_KEYS.has(k)) err(`Skill ${s.id}: invalid derived stat "${k}"`);
     }
