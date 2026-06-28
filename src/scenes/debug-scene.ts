@@ -19,7 +19,7 @@ export class DebugScene extends Phaser.Scene {
   create(): void {
     const w = this.scale.width;
     const h = this.scale.height;
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 0.95).setOrigin(0).setDepth(0);
+    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
       .text(16, 20, 'DEBUG', { fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#ff8888' })
       .setDepth(1);

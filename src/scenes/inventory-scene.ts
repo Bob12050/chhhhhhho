@@ -62,14 +62,14 @@ export class InventoryScene extends Phaser.Scene {
     const h = this.scale.height;
     this.tabButtons = [];
 
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 0.94).setOrigin(0).setDepth(0);
+    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
       .text(16, 24, 'もちもの', { fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#fff' })
-      .setDepth(1);
+      .setDepth(3);
     this.goldText = this.add
       .text(w - 16, 26, '', { fontFamily: 'system-ui, sans-serif', fontSize: '14px', color: '#ffd86b' })
       .setOrigin(1, 0)
-      .setDepth(1);
+      .setDepth(3);
 
     // Tabs.
     const tabs: { id: Tab; label: string }[] = [
@@ -88,7 +88,7 @@ export class InventoryScene extends Phaser.Scene {
           backgroundColor: '#2a2d44',
           padding: { x: 10, y: 8 },
         })
-        .setDepth(1)
+        .setDepth(3)
         .setInteractive({ useHandCursor: true });
       tb.on('pointerup', () => {
         this.tab = t.id;
@@ -98,12 +98,11 @@ export class InventoryScene extends Phaser.Scene {
     });
 
     this.content = this.add.container(0, 0).setDepth(1);
-    this.viewBottom = h - 64;
-    // Clip content to the scroll viewport so rows don't overlap header/footer.
-    const maskG = this.make.graphics({}, false);
-    maskG.fillStyle(0xffffff);
-    maskG.fillRect(0, this.viewTop, w, this.viewBottom - this.viewTop);
-    this.content.setMask(maskG.createGeometryMask());
+    this.viewBottom = h - 76;
+    // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1) so
+    // rows never overlap the tabs or the close row.
+    this.add.rectangle(0, 0, w, this.viewTop, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
+    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
     this.setupScroll();
 
     // Close + return-to-title.
@@ -114,7 +113,7 @@ export class InventoryScene extends Phaser.Scene {
         color: '#ffd86b',
       })
       .setOrigin(0.5)
-      .setDepth(1)
+      .setDepth(3)
       .setInteractive({ useHandCursor: true });
     close.on('pointerup', () => this.close());
     this.input.keyboard?.on('keydown-ESC', () => this.close());
@@ -126,7 +125,7 @@ export class InventoryScene extends Phaser.Scene {
         color: '#9aa0b5',
       })
       .setOrigin(1, 0.5)
-      .setDepth(1)
+      .setDepth(3)
       .setInteractive({ useHandCursor: true });
     toTitle.on('pointerup', () => {
       bus.emit('save:written', { slot: -1 });

@@ -23,10 +23,10 @@ export class JobChangeScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
     this.viewBottom = h - 64;
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 0.94).setOrigin(0).setDepth(0);
+    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
       .text(16, 24, '転職', { fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#fff' })
-      .setDepth(1);
+      .setDepth(3);
 
     const treeBtn = this.add
       .text(w - 16, 26, '[ ツリーを見る ]', {
@@ -35,7 +35,7 @@ export class JobChangeScene extends Phaser.Scene {
         color: '#c8b6ff',
       })
       .setOrigin(1, 0)
-      .setDepth(1)
+      .setDepth(3)
       .setInteractive({ useHandCursor: true });
     treeBtn.on('pointerup', () => {
       if (this.dragged) return;
@@ -44,10 +44,9 @@ export class JobChangeScene extends Phaser.Scene {
     });
 
     this.content = this.add.container(0, 0).setDepth(1);
-    const maskG = this.make.graphics({}, false);
-    maskG.fillStyle(0xffffff);
-    maskG.fillRect(0, this.viewTop, w, this.viewBottom - this.viewTop);
-    this.content.setMask(maskG.createGeometryMask());
+    // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1).
+    this.add.rectangle(0, 0, w, this.viewTop, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
+    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
     this.setupScroll();
 
     const close = this.add
@@ -57,7 +56,7 @@ export class JobChangeScene extends Phaser.Scene {
         color: '#ffd86b',
       })
       .setOrigin(0.5)
-      .setDepth(1)
+      .setDepth(3)
       .setInteractive({ useHandCursor: true });
     close.on('pointerup', () => {
       if (this.dragged) return;

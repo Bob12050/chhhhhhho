@@ -39,14 +39,14 @@ export class CraftingScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 0.94).setOrigin(0).setDepth(0);
+    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
       .text(16, 24, 'クラフト', { fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#fff' })
-      .setDepth(1);
+      .setDepth(3);
     this.goldText = this.add
       .text(w - 16, 26, '', { fontFamily: 'system-ui, sans-serif', fontSize: '14px', color: '#ffd86b' })
       .setOrigin(1, 0)
-      .setDepth(1);
+      .setDepth(3);
 
     // Tabs: weapons / armour / tools.
     this.tabButtons = [];
@@ -64,7 +64,7 @@ export class CraftingScene extends Phaser.Scene {
           backgroundColor: '#2a2d44',
           padding: { x: 12, y: 8 },
         })
-        .setDepth(1)
+        .setDepth(3)
         .setInteractive({ useHandCursor: true });
       tb.on('pointerup', () => {
         if (this.dragged) return;
@@ -76,11 +76,12 @@ export class CraftingScene extends Phaser.Scene {
     });
 
     this.content = this.add.container(0, 0).setDepth(1);
-    this.viewBottom = h - 60;
-    const maskG = this.make.graphics({}, false);
-    maskG.fillStyle(0xffffff);
-    maskG.fillRect(0, this.viewTop, w, this.viewBottom - this.viewTop);
-    this.content.setMask(maskG.createGeometryMask());
+    this.viewBottom = h - 72;
+    // Opaque header/footer bars (depth 2) clip the scrolling list (depth 1) so
+    // rows never bleed over the tabs or the close button. (Geometry masks proved
+    // unreliable here, so we cover instead of clip.)
+    this.add.rectangle(0, 0, w, this.viewTop, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
+    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
     this.setupScroll();
 
     const close = this.add
@@ -90,7 +91,7 @@ export class CraftingScene extends Phaser.Scene {
         color: '#ffd86b',
       })
       .setOrigin(0.5)
-      .setDepth(1)
+      .setDepth(3)
       .setInteractive({ useHandCursor: true });
     close.on('pointerup', () => this.close());
     this.input.keyboard?.on('keydown-ESC', () => this.close());
@@ -179,6 +180,9 @@ export class CraftingScene extends Phaser.Scene {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '11px',
         color: block ? '#e58a8a' : '#9fd0a0',
+        // Wrap long upgrade-recipe cost lines instead of running off the right
+        // edge; keep clear of the make button (top-right ~90px).
+        wordWrap: { width: w - 104 },
       }),
     );
 

@@ -40,13 +40,12 @@ export class JobTreeScene extends Phaser.Scene {
         fontSize: '18px',
         color: '#fff',
       })
-      .setDepth(2);
+      .setDepth(3);
 
     this.content = this.add.container(0, 0).setDepth(1);
-    const maskG = this.make.graphics({}, false);
-    maskG.fillStyle(0xffffff);
-    maskG.fillRect(0, this.viewTop, w, this.viewBottom - this.viewTop);
-    this.content.setMask(maskG.createGeometryMask());
+    // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1).
+    this.add.rectangle(0, 0, w, this.viewTop, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
+    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
 
     const close = this.add
       .text(w / 2, h - 30, '[ とじる ]', {
@@ -55,7 +54,7 @@ export class JobTreeScene extends Phaser.Scene {
         color: '#ffd86b',
       })
       .setOrigin(0.5)
-      .setDepth(2)
+      .setDepth(3)
       .setInteractive({ useHandCursor: true });
     close.on('pointerup', () => this.close());
     this.input.keyboard?.on('keydown-ESC', () => this.close());

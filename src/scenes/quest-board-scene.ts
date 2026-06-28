@@ -34,21 +34,20 @@ export class QuestBoardScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 0.94).setOrigin(0).setDepth(0);
+    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
       .text(16, 24, 'クエストボード', {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
         color: '#fff',
       })
-      .setDepth(1);
+      .setDepth(3);
 
     this.content = this.add.container(0, 0).setDepth(1);
-    this.viewBottom = h - 60;
-    const maskG = this.make.graphics({}, false);
-    maskG.fillStyle(0xffffff);
-    maskG.fillRect(0, this.viewTop, w, this.viewBottom - this.viewTop);
-    this.content.setMask(maskG.createGeometryMask());
+    this.viewBottom = h - 72;
+    // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1).
+    this.add.rectangle(0, 0, w, this.viewTop, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
+    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
     this.setupScroll();
 
     const close = this.add
@@ -58,7 +57,7 @@ export class QuestBoardScene extends Phaser.Scene {
         color: '#ffd86b',
       })
       .setOrigin(0.5)
-      .setDepth(1)
+      .setDepth(3)
       .setInteractive({ useHandCursor: true });
     close.on('pointerup', () => this.close());
     this.input.keyboard?.on('keydown-ESC', () => this.close());

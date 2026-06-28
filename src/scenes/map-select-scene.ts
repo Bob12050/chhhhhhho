@@ -28,7 +28,7 @@ export class MapSelectScene extends Phaser.Scene {
     const h = this.scale.height;
     this.viewBottom = h - 60;
 
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 0.95).setOrigin(0).setDepth(0);
+    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
       .text(16, 22, 'マップ移動', {
         fontFamily: 'system-ui, sans-serif',
