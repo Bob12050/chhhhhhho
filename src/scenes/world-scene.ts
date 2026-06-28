@@ -8,7 +8,6 @@ import { getEquipment, getConsumable, getMaterial, getPetItem, itemDisplayName }
 import { rarityColor, rarityColorHex, rarityRank } from '@/data/rarity';
 import { Pet } from '@/pets/pet';
 import { getPet } from '@/pets/pet-defs';
-import { visualTexture } from '@/equipment/visuals';
 import { TEX } from '@/assets/gen/textures';
 import { Rng } from '@/core/rng';
 import { getDropTable, rollDrops } from '@/loot/drop-table';
@@ -22,7 +21,6 @@ import { getMap, spawnPoint, type MapDef } from '@/maps/map-def';
 import { buildMap, type BuiltPortal } from '@/maps/map-builder';
 import type { UIScene } from '@/scenes/ui-scene';
 import type { Direction } from '@/config/layers';
-import type { EquipSlot } from '@/equipment/slots';
 
 interface BuiltNpc {
   x: number;
@@ -113,9 +111,9 @@ export class WorldScene extends Phaser.Scene {
     // Map title flash.
     this.showMapName(this.map.name);
 
-    // Player.
+    // Player. Appearance is job-fixed; equipment only changes stats.
     this.player = new Player(this, gameState.x, gameState.y);
-    this.applyEquipmentVisuals();
+    this.player.setJobAppearance(gameState.jobId);
     this.player.setMoveSpeed(gameState.derived.moveSpeed);
     this.player.onAttackHit = (dir) => {
       this.spawnSlash(dir);
@@ -139,7 +137,13 @@ export class WorldScene extends Phaser.Scene {
     // Listeners (unsubscribed on shutdown to avoid accumulation on re-entry).
     this.busOff.push(
       bus.on('equipment:changed', () => {
-        this.applyEquipmentVisuals();
+        // Equipment changes stats only (look is job-fixed); just refresh speed.
+        this.player.setMoveSpeed(gameState.derived.moveSpeed);
+      }),
+    );
+    this.busOff.push(
+      bus.on('job:changed', () => {
+        this.player.setJobAppearance(gameState.jobId);
         this.player.setMoveSpeed(gameState.derived.moveSpeed);
       }),
     );
@@ -179,15 +183,6 @@ export class WorldScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(8000);
     this.tweens.add({ targets: t, alpha: 0, delay: 1100, duration: 500, onComplete: () => t.destroy() });
-  }
-
-  private applyEquipmentVisuals(): void {
-    const slots: EquipSlot[] = ['head', 'torso', 'main_hand'];
-    for (const slot of slots) {
-      const id = gameState.equipment[slot];
-      const def = id ? getEquipment(id) : undefined;
-      this.player.setEquipVisual(slot, def ? visualTexture(def.visualId) : null);
-    }
   }
 
   /**

@@ -47,6 +47,11 @@ export interface JobDef {
   derivedModifiers?: Partial<DerivedStats>;
   equippableWeaponTags: string[];
   skillTreeId?: string;
+  /**
+   * Job-fixed appearance id (see job-appearance-ids). The player's body sprite
+   * is decided by this, not by equipment. Omitted = use the default body.
+   */
+  appearance?: string;
 }
 
 interface JobsFile {

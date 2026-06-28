@@ -11,6 +11,7 @@ import { EQUIP_SLOTS } from '../src/equipment/slots';
 import { VISUAL_ID_SET } from '../src/data/visual-ids';
 import { isValidRank } from '../src/data/rarity';
 import { CLASS_FAMILIES } from '../src/jobs/job-defs';
+import { JOB_APPEARANCE_IDS } from '../src/jobs/job-appearance-ids';
 import { SHEET_ROWS, MAX_FRAMES, SHEET_WIDTH, SHEET_HEIGHT } from '../src/paperdoll/pose-atlas';
 import { CHAR_FRAME_W, CHAR_FRAME_H } from '../src/config/resolution';
 
@@ -346,9 +347,11 @@ function validateJobs(skillIds: Set<string>): void {
       unlockConditions?: Record<string, unknown>[];
       baseStatModifiers?: Record<string, number>;
       derivedModifiers?: Record<string, number>;
+      appearance?: string;
     }[];
   }>('src/data/defs/jobs.json');
   const ids = new Set(file.jobs.map((j) => j.id));
+  const APPEARANCE_SET = new Set<string>(JOB_APPEARANCE_IDS);
   const BASE_KEYS = new Set(['STR', 'VIT', 'INT', 'DEX', 'LUK']);
   const COND_TYPES = new Set(['jobLevel', 'charLevel', 'skill', 'flag', 'quest']);
   for (const j of file.jobs) {
@@ -377,6 +380,8 @@ function validateJobs(skillIds: Set<string>): void {
       if (!DERIVED_KEYS.has(k)) err(`Job ${j.id}: invalid derived stat "${k}"`);
     if (j.family != null && !CLASS_FAMILY_SET.has(j.family))
       err(`Job ${j.id}: unknown class family "${j.family}"`);
+    if (j.appearance != null && !APPEARANCE_SET.has(j.appearance))
+      err(`Job ${j.id}: unknown appearance "${j.appearance}"`);
     for (const t of j.equippableWeaponTags ?? [])
       if (!WEAPON_TAGS.has(t)) err(`Job ${j.id}: unknown weaponTag "${t}"`);
   }

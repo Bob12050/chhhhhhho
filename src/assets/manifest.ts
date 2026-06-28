@@ -32,6 +32,12 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   // Paper-doll layers + enemy (pose-atlas spritesheets).
   sheet(TEX.playerBody, 'assets/char/player_body.png'),
   sheet(TEX.playerBodyBald, 'assets/char/player_body_bald.png'),
+  // Job-fixed appearance bodies (drop these PNGs to give a job its own look).
+  sheet(TEX.jobFighter, 'assets/char/job_fighter.png'),
+  sheet(TEX.jobMage, 'assets/char/job_mage.png'),
+  sheet(TEX.jobPriest, 'assets/char/job_priest.png'),
+  sheet(TEX.jobThief, 'assets/char/job_thief.png'),
+  sheet(TEX.jobPetRaiser, 'assets/char/job_pet_raiser.png'),
   sheet(TEX.capLeather, 'assets/equip/cap_leather.png'),
   sheet(TEX.helmIron, 'assets/equip/helm_iron.png'),
   sheet(TEX.vestCloth, 'assets/equip/vest_cloth.png'),

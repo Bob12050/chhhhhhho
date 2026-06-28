@@ -14,6 +14,14 @@ export const TEX = {
   // equipped so the helm has a clean (bald) head to sit on. See
   // Player.setEquipVisual. Real art at assets/char/player_body_bald.png.
   playerBodyBald: 'gen.player.body.bald',
+  // Job-fixed appearance bodies (look is decided by job, not equipment). Real
+  // art ships as PNGs (manifest); until a job's PNG exists the player falls back
+  // to `playerBody`. NOT in SPECS on purpose so the fallback check can work.
+  jobFighter: 'gen.char.fighter',
+  jobMage: 'gen.char.mage',
+  jobPriest: 'gen.char.priest',
+  jobThief: 'gen.char.thief',
+  jobPetRaiser: 'gen.char.pet_raiser',
   capLeather: 'gen.equip.cap_leather',
   helmIron: 'gen.equip.helm_iron',
   vestCloth: 'gen.equip.vest_cloth',

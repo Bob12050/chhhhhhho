@@ -48,7 +48,8 @@
         "axe",
         "spear"
       ],
-      "skillTreeId": "fighter"
+      "skillTreeId": "fighter",
+      "appearance": "fighter"
     },
     {
       "id": "mage",
@@ -74,7 +75,8 @@
         "staff",
         "wand"
       ],
-      "skillTreeId": "mage"
+      "skillTreeId": "mage",
+      "appearance": "mage"
     },
     {
       "id": "priest",
@@ -100,7 +102,8 @@
         "mace",
         "staff"
       ],
-      "skillTreeId": "priest"
+      "skillTreeId": "priest",
+      "appearance": "priest"
     },
     {
       "id": "thief",
@@ -126,7 +129,8 @@
         "dagger",
         "sword"
       ],
-      "skillTreeId": "thief"
+      "skillTreeId": "thief",
+      "appearance": "thief"
     },
     {
       "id": "pet_raiser",
@@ -152,7 +156,8 @@
         "whip",
         "wand"
       ],
-      "skillTreeId": "pet_raiser"
+      "skillTreeId": "pet_raiser",
+      "appearance": "pet_raiser"
     },
     {
       "id": "samurai",

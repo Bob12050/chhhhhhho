@@ -1,24 +1,22 @@
 import Phaser from 'phaser';
 import { PaperDollAnimator } from '@/paperdoll/paper-doll-animator';
-import type { Direction, DrawGroup } from '@/config/layers';
+import type { Direction } from '@/config/layers';
 import type { AnimName } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
 import { CHAR_FRAME_W } from '@/config/resolution';
-import type { EquipSlot } from '@/equipment/slots';
+import { getJob } from '@/jobs/job-defs';
+import { appearanceTexKey } from '@/jobs/job-appearance';
+import { gameState } from '@/player/game-state';
 
 /**
- * Player actor. Owns a single PaperDollAnimator (base body + equipment layers)
- * and an Arcade physics body for movement/collision. The paper-doll container
- * follows the physics body each frame, snapped to integer pixels.
+ * Player actor. Owns a single PaperDollAnimator (body sprite) and an Arcade
+ * physics body for movement/collision. The paper-doll container follows the
+ * physics body each frame, snapped to integer pixels.
  *
- * Equipment slots map onto paper-doll draw groups. Phase 0 supports head /
- * torso / main_hand. Visual updates are immediate on equip change.
+ * Appearance is JOB-FIXED: the body sprite is decided by the active job, and
+ * equipment only changes stats (not the look). Until a job's art PNG ships, the
+ * body falls back to the default player body.
  */
-const SLOT_TO_GROUP: Partial<Record<EquipSlot, DrawGroup>> = {
-  head: 'head',
-  torso: 'torso',
-  main_hand: 'near_weapon',
-};
 
 export class Player {
   readonly body: Phaser.Physics.Arcade.Image;
@@ -47,21 +45,19 @@ export class Player {
 
     this.doll = new PaperDollAnimator(scene, x, y);
     this.doll.setLayer('shadow', TEX.shadow);
-    this.doll.setLayer('base_body', TEX.playerBody);
+    this.setJobAppearance(gameState.jobId);
     this.doll.play('idle');
   }
 
-  /** Equip (or clear) a visual layer for a slot. */
-  setEquipVisual(slot: EquipSlot, textureKey: string | null): void {
-    const group = SLOT_TO_GROUP[slot];
-    if (!group) return;
-    this.doll.setLayer(group, textureKey);
-    // Helmets sit on a hairless head: swap the base body to the bald sheet while
-    // a head item is worn (frame layout is identical, so layers stay aligned),
-    // and restore the normal haired body when the head slot is empty.
-    if (slot === 'head') {
-      this.doll.setLayer('base_body', textureKey ? TEX.playerBodyBald : TEX.playerBody);
-    }
+  /**
+   * Set the body sprite from the active job (job-fixed appearance). Uses the
+   * job's art if its PNG is loaded, else the default body. Equipment layers stay
+   * cleared — gear changes stats only.
+   */
+  setJobAppearance(jobId: string): void {
+    const key = appearanceTexKey(getJob(jobId)?.appearance);
+    const tex = key && this.scene.textures.exists(key) ? key : TEX.playerBody;
+    this.doll.setLayer('base_body', tex);
   }
 
   getDirection(): Direction {

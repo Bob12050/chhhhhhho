@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { GameState } from '@/player/game-state';
+import { allJobs } from '@/jobs/job-defs';
+import { JOB_APPEARANCE_IDS } from '@/jobs/job-appearance-ids';
 
 describe('jobs / job change', () => {
   it('starts as adventurer and gates the 1次職 change by job level', () => {
@@ -59,6 +61,18 @@ describe('jobs / job change', () => {
     gs.changeJob('adventurer'); // back to adventurer (level 20 retained)
     expect(gs.level).toBe(20);
     expect(gs.jobLevelOf('fighter')).toBe(35);
+  });
+
+  it('job-fixed appearance: every 1次職 has a valid appearance id', () => {
+    const tier1 = allJobs().filter((j) => j.tier === 1);
+    expect(tier1.length).toBeGreaterThan(0);
+    const valid = new Set<string>(JOB_APPEARANCE_IDS);
+    for (const j of tier1) {
+      expect(j.appearance, `${j.id} appearance`).toBeTruthy();
+      expect(valid.has(j.appearance!), `${j.id} appearance "${j.appearance}"`).toBe(true);
+    }
+    // The starter job (adventurer) keeps the default look (no override).
+    expect(allJobs().find((j) => j.id === 'adventurer')?.appearance).toBeUndefined();
   });
 
   it('persists job through save round-trip', () => {
