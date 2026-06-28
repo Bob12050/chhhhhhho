@@ -12,6 +12,7 @@ import {
 } from '@/quests/quests';
 import { getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
+import { FONT, UI, addPanelChrome } from '@/ui/theme';
 
 /**
  * Quest Board overlay (opened by the town board NPC). Lists active quests (with
@@ -34,10 +35,9 @@ export class QuestBoardScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
       .text(16, 24, 'クエストボード', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '18px',
         color: '#fff',
       })
@@ -46,13 +46,12 @@ export class QuestBoardScene extends Phaser.Scene {
     this.content = this.add.container(0, 0).setDepth(1);
     this.viewBottom = h - 72;
     // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1).
-    this.add.rectangle(0, 0, w, this.viewTop, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
-    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
+    addPanelChrome(this, this.viewTop, this.viewBottom);
     this.setupScroll();
 
     const close = this.add
       .text(w / 2, h - 40, '[ とじる ]', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
       })
@@ -113,7 +112,7 @@ export class QuestBoardScene extends Phaser.Scene {
     if (!active.length && !avail.length && !done.length) {
       this.content.add(
         this.add.text(16, y, '今は受けられるクエストがありません。', {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '13px',
           color: '#9aa0b4',
         }),
@@ -128,13 +127,13 @@ export class QuestBoardScene extends Phaser.Scene {
   private heading(text: string, y: number, w: number): number {
     this.content.add(
       this.add.text(16, y, text, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '12px',
         color: '#8fa0ff',
         fontStyle: 'bold',
       }),
     );
-    this.content.add(this.add.rectangle(w / 2, y + 18, w - 32, 1, 0x333a5a).setOrigin(0.5));
+    this.content.add(this.add.rectangle(w / 2, y + 18, w - 32, 1, UI.divider).setOrigin(0.5));
     return y + 26;
   }
 
@@ -163,14 +162,14 @@ export class QuestBoardScene extends Phaser.Scene {
     const titleColor = state === 'done' ? '#6b7088' : q.type === 'unlock' ? '#ffe9a8' : '#ffffff';
     this.content.add(
       this.add.text(16, y, q.name, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '15px',
         color: titleColor,
       }),
     );
     this.content.add(
       this.add.text(16, y + 20, this.objectiveText(q, state === 'active'), {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '11px',
         color: state === 'done' ? '#6b7088' : '#cfe0a0',
       }),
@@ -179,7 +178,7 @@ export class QuestBoardScene extends Phaser.Scene {
     if (rt) {
       this.content.add(
         this.add.text(16, y + 36, rt, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '10px',
           color: state === 'done' ? '#5a607a' : '#bda9e0',
         }),
@@ -206,7 +205,7 @@ export class QuestBoardScene extends Phaser.Scene {
         this.content.add(
           this.add
             .text(w - 16, y + 10, '進行中', {
-              fontFamily: 'system-ui, sans-serif',
+              fontFamily: FONT,
               fontSize: '12px',
               color: '#9aa0b4',
             })
@@ -217,7 +216,7 @@ export class QuestBoardScene extends Phaser.Scene {
       this.content.add(
         this.add
           .text(w - 16, y + 10, '済', {
-            fontFamily: 'system-ui, sans-serif',
+            fontFamily: FONT,
             fontSize: '12px',
             color: '#6b7088',
           })
@@ -231,7 +230,7 @@ export class QuestBoardScene extends Phaser.Scene {
 
   private actionButton(x: number, y: number, label: string, color: string, fn: () => void): void {
     const btn = this.add
-      .text(x, y, label, { fontFamily: 'system-ui, sans-serif', fontSize: '14px', color })
+      .text(x, y, label, { fontFamily: FONT, fontSize: '14px', color })
       .setOrigin(1, 0)
       .setInteractive({ useHandCursor: true });
     btn.on('pointerup', fn);
@@ -241,7 +240,7 @@ export class QuestBoardScene extends Phaser.Scene {
   private flash(msg: string): void {
     const t = this.add
       .text(this.scale.width / 2, this.scale.height - 70, msg, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: '#ffe9a8',
       })

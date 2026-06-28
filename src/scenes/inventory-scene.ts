@@ -8,6 +8,7 @@ import { expToNext } from '@/stats/leveling';
 import { allSkills } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
+import { FONT, UI, addPanelChrome } from '@/ui/theme';
 import { returnToTitle } from '@/core/game-flow';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
@@ -62,12 +63,11 @@ export class InventoryScene extends Phaser.Scene {
     const h = this.scale.height;
     this.tabButtons = [];
 
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
-      .text(16, 24, 'もちもの', { fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#fff' })
+      .text(16, 24, 'もちもの', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
       .setDepth(3);
     this.goldText = this.add
-      .text(w - 16, 26, '', { fontFamily: 'system-ui, sans-serif', fontSize: '14px', color: '#ffd86b' })
+      .text(w - 16, 26, '', { fontFamily: FONT, fontSize: '14px', color: '#ffd86b' })
       .setOrigin(1, 0)
       .setDepth(3);
 
@@ -82,10 +82,10 @@ export class InventoryScene extends Phaser.Scene {
     tabs.forEach((t, i) => {
       const tb = this.add
         .text(10 + i * 70, 58, t.label, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '13px',
           color: '#fff',
-          backgroundColor: '#2a2d44',
+          backgroundColor: UI.tabIdleBg,
           padding: { x: 10, y: 8 },
         })
         .setDepth(3)
@@ -101,14 +101,13 @@ export class InventoryScene extends Phaser.Scene {
     this.viewBottom = h - 76;
     // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1) so
     // rows never overlap the tabs or the close row.
-    this.add.rectangle(0, 0, w, this.viewTop, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
-    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
+    addPanelChrome(this, this.viewTop, this.viewBottom);
     this.setupScroll();
 
     // Close + return-to-title.
     const close = this.add
       .text(w / 2, h - 44, '[ とじる ]', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
       })
@@ -120,7 +119,7 @@ export class InventoryScene extends Phaser.Scene {
 
     const toTitle = this.add
       .text(w - 16, h - 44, 'タイトルへ', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '12px',
         color: '#9aa0b5',
       })
@@ -186,7 +185,7 @@ export class InventoryScene extends Phaser.Scene {
     this.scrollY = 0;
     this.content.y = 0;
     for (const tb of this.tabButtons) {
-      tb.text.setBackgroundColor(tb.id === this.tab ? '#46508a' : '#2a2d44');
+      tb.text.setBackgroundColor(tb.id === this.tab ? UI.tabActiveBg : UI.tabIdleBg);
     }
     if (this.tab === 'items') this.renderItems();
     else if (this.tab === 'consumables') this.renderConsumables();
@@ -204,7 +203,7 @@ export class InventoryScene extends Phaser.Scene {
   private emptyNote(): void {
     this.content.add(
       this.add.text(16, 110, '（なし）', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: '#7e8499',
       }),
@@ -219,13 +218,13 @@ export class InventoryScene extends Phaser.Scene {
       this.addRow(
         y,
         this.add.text(16, y, itemDisplayName(id), {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '14px',
           color: rarityColorHex(getMaterial(id)?.rarity),
         }),
         this.add
           .text(this.scale.width - 16, y, `×${qty}`, {
-            fontFamily: 'system-ui, sans-serif',
+            fontFamily: FONT,
             fontSize: '14px',
             color: '#cfd3e6',
           })
@@ -244,7 +243,7 @@ export class InventoryScene extends Phaser.Scene {
       const def = getConsumable(id);
       this.content.add(
         this.add.text(16, y, `${itemDisplayName(id)}  ×${qty}`, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '14px',
           color: '#fff',
         }),
@@ -252,7 +251,7 @@ export class InventoryScene extends Phaser.Scene {
       if (def) {
         this.content.add(
           this.add.text(16, y + 17, def.description, {
-            fontFamily: 'system-ui, sans-serif',
+            fontFamily: FONT,
             fontSize: '11px',
             color: '#9aa0b5',
           }),
@@ -260,7 +259,7 @@ export class InventoryScene extends Phaser.Scene {
       }
       const use = this.add
         .text(w - 16, y + 6, '[ つかう ]', {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '13px',
           color: '#9fe3a0',
         })
@@ -294,7 +293,7 @@ export class InventoryScene extends Phaser.Scene {
       const qty = count > 1 ? ` ×${count}` : '';
       this.content.add(
         this.add.text(16, y, `${SLOT_LABEL[slot] ?? slot}: ${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '14px',
           color: equipped ? '#9fe3a0' : canEq ? rarityColorHex(def.rarity) : '#666a78',
         }),
@@ -302,7 +301,7 @@ export class InventoryScene extends Phaser.Scene {
       // Rarity label (R-number + band name), coloured by rank.
       this.content.add(
         this.add.text(16, y + 17, rarityLabel(def.rarity), {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '11px',
           color: rarityColorHex(def.rarity),
         }),
@@ -310,7 +309,7 @@ export class InventoryScene extends Phaser.Scene {
       if (canEq) {
         const btn = this.add
           .text(w - 16, y, equipped ? '[ はずす ]' : '[ そうび ]', {
-            fontFamily: 'system-ui, sans-serif',
+            fontFamily: FONT,
             fontSize: '13px',
             color: '#9fd0ff',
           })
@@ -330,7 +329,7 @@ export class InventoryScene extends Phaser.Scene {
         this.content.add(
           this.add
             .text(w - 16, y, label, {
-              fontFamily: 'system-ui, sans-serif',
+              fontFamily: FONT,
               fontSize: '12px',
               color: '#a86a6a',
             })
@@ -355,21 +354,21 @@ export class InventoryScene extends Phaser.Scene {
     const gs = gameState;
     this.content.add(
       this.add.text(16, 96, `Lv ${gs.level}  ${getJob(gs.jobId)?.name ?? gs.jobId}`, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '14px',
         color: '#fff',
       }),
     );
     this.content.add(
       this.add.text(w - 16, 96, `EXP ${gs.exp}/${expToNext(gs.level)}`, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '12px',
         color: '#9aa0b5',
       }).setOrigin(1, 0),
     );
     this.content.add(
       this.add.text(16, 118, `余りポイント: ${gs.statPoints}`, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: gs.statPoints > 0 ? '#ffe9a8' : '#9aa0b5',
       }),
@@ -394,7 +393,7 @@ export class InventoryScene extends Phaser.Scene {
       if (gs.statPoints > 0) {
         const plus = this.add
           .text(w - 16, y - 2, '[ ＋ ]', {
-            fontFamily: 'system-ui, sans-serif',
+            fontFamily: FONT,
             fontSize: '15px',
             color: '#9fe3a0',
           })
@@ -432,7 +431,7 @@ export class InventoryScene extends Phaser.Scene {
     const gs = gameState;
     this.content.add(
       this.add.text(16, 96, `スキルポイント: ${gs.skillPoints}`, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: gs.skillPoints > 0 ? '#ffe9a8' : '#9aa0b5',
       }),
@@ -457,7 +456,7 @@ export class InventoryScene extends Phaser.Scene {
           group === 0 ? '共通' : group === 1 ? `${FAMILY_LABEL[def.family!]}（現職）` : '他系統';
         this.content.add(
           this.add.text(16, y, `― ${header} ―`, {
-            fontFamily: 'system-ui, sans-serif',
+            fontFamily: FONT,
             fontSize: '12px',
             color: '#c9b27a',
           }),
@@ -472,14 +471,14 @@ export class InventoryScene extends Phaser.Scene {
       const tag = learned ? (slot >= 0 ? `習得(S${slot + 1})` : '習得') : '';
       this.content.add(
         this.add.text(16, y, `[${kind}] ${def.name} ${famTag} ${tag}`.trim(), {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '14px',
           color: learned ? '#9fe3a0' : '#fff',
         }),
       );
       this.content.add(
         this.add.text(16, y + 18, def.description, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '11px',
           color: '#9aa0b5',
         }),
@@ -490,7 +489,7 @@ export class InventoryScene extends Phaser.Scene {
         if (block === null) {
           const btn = this.add
             .text(w - 16, y + 4, '[ 覚える ]', {
-              fontFamily: 'system-ui, sans-serif',
+              fontFamily: FONT,
               fontSize: '13px',
               color: '#9fd0ff',
             })
@@ -518,7 +517,7 @@ export class InventoryScene extends Phaser.Scene {
           this.content.add(
             this.add
               .text(w - 16, y + 4, note, {
-                fontFamily: 'system-ui, sans-serif',
+                fontFamily: FONT,
                 fontSize: '11px',
                 color: '#7e8499',
               })

@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { travelMaps, getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
+import { FONT, addPanelChrome } from '@/ui/theme';
 
 /**
  * Fast-travel map list. Opened from the HUD map button anywhere. Picking a
@@ -28,30 +29,26 @@ export class MapSelectScene extends Phaser.Scene {
     const h = this.scale.height;
     this.viewBottom = h - 60;
 
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
       .text(16, 22, 'マップ移動', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '18px',
         color: '#fff',
       })
-      .setDepth(1);
+      .setDepth(3);
 
     this.content = this.add.container(0, 0).setDepth(1);
-    const maskG = this.make.graphics({}, false);
-    maskG.fillStyle(0xffffff);
-    maskG.fillRect(0, this.viewTop, w, this.viewBottom - this.viewTop);
-    this.content.setMask(maskG.createGeometryMask());
+    addPanelChrome(this, this.viewTop, this.viewBottom);
     this.setupScroll();
 
     const close = this.add
       .text(w / 2, h - 36, '[ とじる ]', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
       })
       .setOrigin(0.5)
-      .setDepth(1)
+      .setDepth(3)
       .setInteractive({ useHandCursor: true });
     close.on('pointerup', () => {
       if (this.dragged) return;
@@ -77,7 +74,7 @@ export class MapSelectScene extends Phaser.Scene {
 
       this.content.add(
         this.add.text(24, y + 16, m.name, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '15px',
           color: locked ? '#7e8499' : '#fff',
         }),
@@ -85,7 +82,7 @@ export class MapSelectScene extends Phaser.Scene {
       const sub = current ? '現在地' : locked ? 'ロック中' : (m.travel?.note ?? '');
       this.content.add(
         this.add.text(24, y + 38, sub, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '11px',
           color: current ? '#9fe3a0' : '#9aa0b5',
         }),
@@ -94,7 +91,7 @@ export class MapSelectScene extends Phaser.Scene {
       if (!current && !locked) {
         const go = this.add
           .text(w - 28, y + 22, '[ 移動 ]', {
-            fontFamily: 'system-ui, sans-serif',
+            fontFamily: FONT,
             fontSize: '14px',
             color: '#9fd0ff',
           })

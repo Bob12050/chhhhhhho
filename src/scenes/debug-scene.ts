@@ -3,6 +3,7 @@ import { gameState } from '@/player/game-state';
 import { allEquipment } from '@/data/items';
 import { getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
+import { FONT, addBackdrop } from '@/ui/theme';
 
 /**
  * Debug menu (gated by core/debug.isDebugEnabled). Warp between maps and grant
@@ -18,10 +19,9 @@ export class DebugScene extends Phaser.Scene {
 
   create(): void {
     const w = this.scale.width;
-    const h = this.scale.height;
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
+    addBackdrop(this);
     this.add
-      .text(16, 20, 'DEBUG', { fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#ff8888' })
+      .text(16, 20, 'DEBUG', { fontFamily: FONT, fontSize: '18px', color: '#ff8888' })
       .setDepth(1);
 
     this.status = this.add
@@ -109,14 +109,14 @@ export class DebugScene extends Phaser.Scene {
 
   private label(text: string, y: number): void {
     this.add
-      .text(16, y, text, { fontFamily: 'system-ui, sans-serif', fontSize: '12px', color: '#9aa0b5' })
+      .text(16, y, text, { fontFamily: FONT, fontSize: '12px', color: '#9aa0b5' })
       .setDepth(1);
   }
 
   private btn(x: number, y: number, label: string, cb: () => void, color = 0x2a2d44): void {
     const t = this.add
       .text(x, y, label, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: '#ffffff',
         backgroundColor: typeof color === 'number' ? `#${color.toString(16).padStart(6, '0')}` : '#2a2d44',

@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { allJobs, getJob, type JobDef } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
+import { FONT, UI, addPanelChrome } from '@/ui/theme';
 
 /**
  * Job-change overlay (opened by the guild NPC). Lists jobs with their unlock
@@ -23,14 +24,13 @@ export class JobChangeScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
     this.viewBottom = h - 64;
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
-      .text(16, 24, '転職', { fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#fff' })
+      .text(16, 24, '転職', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
       .setDepth(3);
 
     const treeBtn = this.add
       .text(w - 16, 26, '[ ツリーを見る ]', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: '#c8b6ff',
       })
@@ -45,13 +45,12 @@ export class JobChangeScene extends Phaser.Scene {
 
     this.content = this.add.container(0, 0).setDepth(1);
     // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1).
-    this.add.rectangle(0, 0, w, this.viewTop, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
-    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
+    addPanelChrome(this, this.viewTop, this.viewBottom);
     this.setupScroll();
 
     const close = this.add
       .text(w / 2, h - 36, '[ とじる ]', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
       })
@@ -73,7 +72,7 @@ export class JobChangeScene extends Phaser.Scene {
     const cur = getJob(gameState.jobId);
     this.content.add(
       this.add.text(16, this.viewTop + 4, `現在の職業: ${cur?.name ?? gameState.jobId} (Lv${gameState.level})`, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: '#9fd0ff',
       }),
@@ -137,14 +136,14 @@ export class JobChangeScene extends Phaser.Scene {
     const lvl = gameState.jobLevelOf(job.id);
     this.content.add(
       this.add.text(16, y, `${job.name}  Lv${lvl}  (Tier ${job.tier})${isCurrent ? '  ★現在' : ''}`, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '15px',
         color: isCurrent ? '#9fe3a0' : '#fff',
       }),
     );
     this.content.add(
       this.add.text(16, y + 20, job.description, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '11px',
         color: '#9aa0b5',
       }),
@@ -154,7 +153,7 @@ export class JobChangeScene extends Phaser.Scene {
       if (block === null) {
         const btn = this.add
           .text(w - 16, y + 6, '[ 転職する ]', {
-            fontFamily: 'system-ui, sans-serif',
+            fontFamily: FONT,
             fontSize: '14px',
             color: '#9fd0ff',
           })
@@ -171,7 +170,7 @@ export class JobChangeScene extends Phaser.Scene {
         this.content.add(
           this.add
             .text(w - 16, y + 6, note, {
-              fontFamily: 'system-ui, sans-serif',
+              fontFamily: FONT,
               fontSize: '11px',
               color: '#7e8499',
             })
@@ -179,7 +178,7 @@ export class JobChangeScene extends Phaser.Scene {
         );
       }
     }
-    this.content.add(this.add.rectangle(w / 2, y + 62, w - 32, 1, 0x333a5a).setOrigin(0.5));
+    this.content.add(this.add.rectangle(w / 2, y + 62, w - 32, 1, UI.divider).setOrigin(0.5));
   }
 
   /** Human-readable transfer requirements built from data-driven conditions. */

@@ -8,6 +8,7 @@ import { isDebugEnabled } from '@/core/debug';
 import { gameState } from '@/player/game-state';
 import { getJob } from '@/jobs/job-defs';
 import { expToNext } from '@/stats/leveling';
+import { FONT, UI } from '@/ui/theme';
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
@@ -106,7 +107,7 @@ export class UIScene extends Phaser.Scene {
     const BAR_H = 16;
     const makeBar = (y: number, color: number): Phaser.GameObjects.Rectangle => {
       this.add
-        .rectangle(hudX, y, BAR_W, BAR_H, 0x10121c, 0.7)
+        .rectangle(hudX, y, BAR_W, BAR_H, UI.panel, 0.7)
         .setOrigin(0, 0)
         .setDepth(depth)
         .setStrokeStyle(1, 0xffffff, 0.25);
@@ -118,7 +119,7 @@ export class UIScene extends Phaser.Scene {
     const barLabel = (y: number, t: string): void => {
       this.add
         .text(hudX + 5, y + 2, t, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '11px',
           color: '#ffffff',
           fontStyle: 'bold',
@@ -128,7 +129,7 @@ export class UIScene extends Phaser.Scene {
     const barValue = (y: number): Phaser.GameObjects.Text =>
       this.add
         .text(hudX + BAR_W - 5, y + 2, '', {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '12px',
           color: '#ffffff',
         })
@@ -170,13 +171,13 @@ export class UIScene extends Phaser.Scene {
     // Level + job in a matching framed box, directly under the MP bar.
     const lvY = insets.top + 44;
     this.add
-      .rectangle(hudX, lvY, BAR_W, BAR_H, 0x10121c, 0.7)
+      .rectangle(hudX, lvY, BAR_W, BAR_H, UI.panel, 0.7)
       .setOrigin(0, 0)
       .setDepth(depth)
       .setStrokeStyle(1, 0xffffff, 0.25);
     this.jobText = this.add
       .text(hudX + 5, lvY + 2, '', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '11px',
         color: '#ffe9a8',
         fontStyle: 'bold',
@@ -209,7 +210,7 @@ export class UIScene extends Phaser.Scene {
     // Gold under the EXP bar.
     this.goldText = this.add
       .text(insets.left + 8, insets.top + 86, '', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '12px',
         color: '#ffd86b',
       })
@@ -240,7 +241,7 @@ export class UIScene extends Phaser.Scene {
     // PWA update notice (applied later, never mid-combat).
     this.updateText = this.add
       .text(w / 2, insets.top + 6, '更新があります（タイトルで適用）', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '11px',
         color: '#ffd86b',
       })

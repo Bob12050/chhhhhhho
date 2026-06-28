@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { allJobs, getJob, type JobDef } from '@/jobs/job-defs';
+import { FONT, UI } from '@/ui/theme';
 
 type JobStatus = 'current' | 'unlocked' | 'reachable' | 'locked';
 
@@ -30,13 +31,13 @@ export class JobTreeScene extends Phaser.Scene {
     // Fully opaque, interactive backdrop hides the paused screen behind and
     // swallows its clicks.
     this.add
-      .rectangle(0, 0, w, h, 0x0e0f1a, 1)
+      .rectangle(0, 0, w, h, UI.overlay, 1)
       .setOrigin(0)
       .setDepth(0)
       .setInteractive();
     this.add
       .text(16, 22, '職業ツリー', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '18px',
         color: '#fff',
       })
@@ -44,12 +45,12 @@ export class JobTreeScene extends Phaser.Scene {
 
     this.content = this.add.container(0, 0).setDepth(1);
     // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1).
-    this.add.rectangle(0, 0, w, this.viewTop, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
-    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
+    this.add.rectangle(0, 0, w, this.viewTop, UI.overlay, 1).setOrigin(0).setDepth(2);
+    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, UI.overlay, 1).setOrigin(0).setDepth(2);
 
     const close = this.add
       .text(w / 2, h - 30, '[ とじる ]', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
       })
@@ -97,7 +98,7 @@ export class JobTreeScene extends Phaser.Scene {
       if (jobs.length === 0) continue;
       this.content.add(
         this.add.text(12, y, TIER_LABEL[tier], {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '13px',
           color: '#ffd86b',
         }),
@@ -121,7 +122,7 @@ export class JobTreeScene extends Phaser.Scene {
                 : '#6f7488';
         this.content.add(
           this.add.text(20, y, `${job.name}${tag}`, {
-            fontFamily: 'system-ui, sans-serif',
+            fontFamily: FONT,
             fontSize: '14px',
             color,
           }),
@@ -131,7 +132,7 @@ export class JobTreeScene extends Phaser.Scene {
           this.content.add(
             this.add
               .text(w - 16, y + 2, this.conditionText(job), {
-                fontFamily: 'system-ui, sans-serif',
+                fontFamily: FONT,
                 fontSize: '10px',
                 color: st === 'reachable' ? '#9aa0b5' : '#6f7488',
               })

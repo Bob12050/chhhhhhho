@@ -5,6 +5,7 @@ import { rarityColorHex } from '@/data/rarity';
 import { allRecipes, type Recipe } from '@/crafting/recipes';
 import { craft, craftBlock } from '@/crafting/crafting';
 import { bus } from '@/core/event-bus';
+import { FONT, UI, addPanelChrome } from '@/ui/theme';
 
 /**
  * Crafting overlay (opened by the craft NPC). Lists recipes with their
@@ -39,12 +40,11 @@ export class CraftingScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
-    this.add.rectangle(0, 0, w, h, 0x0e0f1a, 1).setOrigin(0).setDepth(0);
     this.add
-      .text(16, 24, 'クラフト', { fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#fff' })
+      .text(16, 24, 'クラフト', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
       .setDepth(3);
     this.goldText = this.add
-      .text(w - 16, 26, '', { fontFamily: 'system-ui, sans-serif', fontSize: '14px', color: '#ffd86b' })
+      .text(w - 16, 26, '', { fontFamily: FONT, fontSize: '14px', color: '#ffd86b' })
       .setOrigin(1, 0)
       .setDepth(3);
 
@@ -58,10 +58,10 @@ export class CraftingScene extends Phaser.Scene {
     tabs.forEach((t, i) => {
       const tb = this.add
         .text(12 + i * 78, 54, t.label, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '13px',
           color: '#fff',
-          backgroundColor: '#2a2d44',
+          backgroundColor: UI.tabIdleBg,
           padding: { x: 12, y: 8 },
         })
         .setDepth(3)
@@ -77,16 +77,12 @@ export class CraftingScene extends Phaser.Scene {
 
     this.content = this.add.container(0, 0).setDepth(1);
     this.viewBottom = h - 72;
-    // Opaque header/footer bars (depth 2) clip the scrolling list (depth 1) so
-    // rows never bleed over the tabs or the close button. (Geometry masks proved
-    // unreliable here, so we cover instead of clip.)
-    this.add.rectangle(0, 0, w, this.viewTop, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
-    this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, 0x0e0f1a, 1).setOrigin(0).setDepth(2);
+    addPanelChrome(this, this.viewTop, this.viewBottom);
     this.setupScroll();
 
     const close = this.add
       .text(w / 2, h - 40, '[ とじる ]', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
       })
@@ -130,7 +126,7 @@ export class CraftingScene extends Phaser.Scene {
     this.content.removeAll(true);
     this.goldText.setText(`${gameState.gold} G`);
     for (const tb of this.tabButtons) {
-      tb.text.setBackgroundColor(tb.id === this.tab ? '#46508a' : '#2a2d44');
+      tb.text.setBackgroundColor(tb.id === this.tab ? UI.tabActiveBg : UI.tabIdleBg);
     }
     const w = this.scale.width;
     let y = this.viewTop + 8;
@@ -138,7 +134,7 @@ export class CraftingScene extends Phaser.Scene {
     if (list.length === 0) {
       this.content.add(
         this.add.text(16, y, '作れるものがありません。', {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '13px',
           color: '#9aa0b4',
         }),
@@ -159,7 +155,7 @@ export class CraftingScene extends Phaser.Scene {
       getEquipment(r.resultItemId)?.rarity ?? getMaterial(r.resultItemId)?.rarity;
     this.content.add(
       this.add.text(16, y, `${itemDisplayName(r.resultItemId)} ×${r.resultQty}`, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '15px',
         color: rarityColorHex(resultRarity),
       }),
@@ -177,7 +173,7 @@ export class CraftingScene extends Phaser.Scene {
     parts.push(`${gameState.gold}/${r.gold} G`);
     this.content.add(
       this.add.text(16, y + 20, parts.join('   '), {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '11px',
         color: block ? '#e58a8a' : '#9fd0a0',
         // Wrap long upgrade-recipe cost lines instead of running off the right
@@ -188,7 +184,7 @@ export class CraftingScene extends Phaser.Scene {
 
     const btn = this.add
       .text(w - 16, y + 8, block ? '不足' : '[ 作る ]', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '14px',
         color: block ? '#7e8499' : '#9fe3a0',
       })
@@ -203,14 +199,14 @@ export class CraftingScene extends Phaser.Scene {
     }
     this.content.add(btn);
     this.content.add(
-      this.add.rectangle(w / 2, y + 64, w - 32, 1, 0x333a5a).setOrigin(0.5),
+      this.add.rectangle(w / 2, y + 64, w - 32, 1, UI.divider).setOrigin(0.5),
     );
   }
 
   private flash(msg: string): void {
     const t = this.add
       .text(this.scale.width / 2, this.scale.height - 70, msg, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: '#ffe9a8',
       })
