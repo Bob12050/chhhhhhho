@@ -650,12 +650,12 @@
         }
       ],
       "require": {
-        "minLevel": 10
+        "minLevel": 12
       },
       "huntMap": "arena_night",
       "rewards": {
-        "gold": 60,
-        "exp": 600,
+        "gold": 65,
+        "exp": 700,
         "items": {
           "soft_leather": 2,
           "mana_stone": 2
@@ -676,12 +676,12 @@
         }
       ],
       "require": {
-        "minLevel": 13
+        "minLevel": 24
       },
       "huntMap": "arena_plain",
       "rewards": {
-        "gold": 80,
-        "exp": 800,
+        "gold": 160,
+        "exp": 1500,
         "items": {
           "soft_leather": 2,
           "iron_ore": 2
@@ -702,12 +702,12 @@
         }
       ],
       "require": {
-        "minLevel": 16
+        "minLevel": 34
       },
       "huntMap": "arena_swamp",
       "rewards": {
-        "gold": 100,
-        "exp": 1000,
+        "gold": 260,
+        "exp": 2400,
         "items": {
           "herb": 2,
           "mana_stone": 2
@@ -728,12 +728,12 @@
         }
       ],
       "require": {
-        "minLevel": 22
+        "minLevel": 44
       },
       "huntMap": "arena_canyon",
       "rewards": {
-        "gold": 160,
-        "exp": 1400,
+        "gold": 360,
+        "exp": 3400,
         "items": {
           "iron_ore": 2,
           "golem_core": 2
@@ -754,12 +754,12 @@
         }
       ],
       "require": {
-        "minLevel": 28
+        "minLevel": 56
       },
       "huntMap": "arena_frost",
       "rewards": {
-        "gold": 225,
-        "exp": 2000,
+        "gold": 500,
+        "exp": 5000,
         "items": {
           "mana_stone": 2,
           "star_fragment": 2
@@ -780,12 +780,12 @@
         }
       ],
       "require": {
-        "minLevel": 35
+        "minLevel": 68
       },
       "huntMap": "arena_ruins",
       "rewards": {
-        "gold": 325,
-        "exp": 2800,
+        "gold": 700,
+        "exp": 7000,
         "items": {
           "shadow_wing": 2,
           "mythril_ore": 2
@@ -806,12 +806,12 @@
         }
       ],
       "require": {
-        "minLevel": 40
+        "minLevel": 80
       },
       "huntMap": "arena_abyss",
       "rewards": {
-        "gold": 450,
-        "exp": 3600,
+        "gold": 1000,
+        "exp": 10000,
         "items": {
           "king_jelly": 2,
           "mythril_ore": 2
