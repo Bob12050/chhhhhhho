@@ -10,6 +10,13 @@ import arenaGroveJson from '@/data/defs/maps/arena_grove.json';
 import arenaMarshJson from '@/data/defs/maps/arena_marsh.json';
 import arenaCavernJson from '@/data/defs/maps/arena_cavern.json';
 import arenaPeakJson from '@/data/defs/maps/arena_peak.json';
+import arenaNightJson from '@/data/defs/maps/arena_night.json';
+import arenaPlainJson from '@/data/defs/maps/arena_plain.json';
+import arenaSwampJson from '@/data/defs/maps/arena_swamp.json';
+import arenaCanyonAJson from '@/data/defs/maps/arena_canyon.json';
+import arenaFrostJson from '@/data/defs/maps/arena_frost.json';
+import arenaRuinsJson from '@/data/defs/maps/arena_ruins.json';
+import arenaAbyssJson from '@/data/defs/maps/arena_abyss.json';
 
 /**
  * Map definitions (data-driven). A map is a portrait area built from a ground
@@ -85,6 +92,13 @@ for (const m of [
   arenaMarshJson,
   arenaCavernJson,
   arenaPeakJson,
+  arenaNightJson,
+  arenaPlainJson,
+  arenaSwampJson,
+  arenaCanyonAJson,
+  arenaFrostJson,
+  arenaRuinsJson,
+  arenaAbyssJson,
 ] as unknown as MapDef[]) {
   maps.set(m.id, m);
 }

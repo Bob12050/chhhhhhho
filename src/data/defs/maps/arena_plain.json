@@ -1,0 +1,41 @@
+{
+  "id": "arena_plain",
+  "name": "草原の決闘場",
+  "travel": {
+    "order": 21,
+    "hidden": true,
+    "note": "狩猟クエスト専用"
+  },
+  "size": {
+    "w": 360,
+    "h": 640
+  },
+  "ground": "grass",
+  "border": "trees",
+  "obstacles": [],
+  "spawns": {
+    "default": [
+      180,
+      560
+    ],
+    "boss": [
+      180,
+      240
+    ]
+  },
+  "portals": [
+    {
+      "rect": [
+        148,
+        584,
+        64,
+        32
+      ],
+      "to": "town",
+      "toSpawn": "default",
+      "label": "町へ戻る"
+    }
+  ],
+  "enemies": [],
+  "npcs": []
+}

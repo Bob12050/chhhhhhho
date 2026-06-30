@@ -427,6 +427,180 @@
           "max": 4
         }
       ]
+    },
+    {
+      "id": "boss_bat_lord",
+      "entries": [
+        {
+          "itemId": "hunters_sword",
+          "dropRate": 0,
+          "min": 1,
+          "max": 1,
+          "bossFirstGuaranteed": true
+        },
+        {
+          "itemId": "soft_leather",
+          "dropRate": 1,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "mana_stone",
+          "dropRate": 1,
+          "min": 1,
+          "max": 3
+        }
+      ]
+    },
+    {
+      "id": "boss_wolf_alpha",
+      "entries": [
+        {
+          "itemId": "battle_axe",
+          "dropRate": 0,
+          "min": 1,
+          "max": 1,
+          "bossFirstGuaranteed": true
+        },
+        {
+          "itemId": "soft_leather",
+          "dropRate": 1,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "iron_ore",
+          "dropRate": 1,
+          "min": 1,
+          "max": 3
+        }
+      ]
+    },
+    {
+      "id": "boss_mushroom",
+      "entries": [
+        {
+          "itemId": "chain_vest",
+          "dropRate": 0,
+          "min": 1,
+          "max": 1,
+          "bossFirstGuaranteed": true
+        },
+        {
+          "itemId": "herb",
+          "dropRate": 1,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "mana_stone",
+          "dropRate": 1,
+          "min": 1,
+          "max": 3
+        }
+      ]
+    },
+    {
+      "id": "boss_lizard_king",
+      "entries": [
+        {
+          "itemId": "steel_sword",
+          "dropRate": 0,
+          "min": 1,
+          "max": 1,
+          "bossFirstGuaranteed": true
+        },
+        {
+          "itemId": "iron_ore",
+          "dropRate": 1,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "golem_core",
+          "dropRate": 1,
+          "min": 1,
+          "max": 3
+        }
+      ]
+    },
+    {
+      "id": "boss_wisp_queen",
+      "entries": [
+        {
+          "itemId": "silver_staff",
+          "dropRate": 0,
+          "min": 1,
+          "max": 1,
+          "bossFirstGuaranteed": true
+        },
+        {
+          "itemId": "mana_stone",
+          "dropRate": 1,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "star_fragment",
+          "dropRate": 1,
+          "min": 1,
+          "max": 3
+        }
+      ]
+    },
+    {
+      "id": "boss_knight_dread",
+      "entries": [
+        {
+          "itemId": "knight_saber",
+          "dropRate": 0,
+          "min": 1,
+          "max": 1,
+          "bossFirstGuaranteed": true
+        },
+        {
+          "itemId": "shadow_wing",
+          "dropRate": 1,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "mythril_ore",
+          "dropRate": 1,
+          "min": 1,
+          "max": 3
+        }
+      ]
+    },
+    {
+      "id": "boss_slime_abyss",
+      "entries": [
+        {
+          "itemId": "aegis_plate",
+          "dropRate": 0,
+          "min": 1,
+          "max": 1,
+          "bossFirstGuaranteed": true
+        },
+        {
+          "itemId": "king_jelly",
+          "dropRate": 1,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "star_fragment",
+          "dropRate": 1,
+          "min": 1,
+          "max": 3
+        },
+        {
+          "itemId": "mythril_ore",
+          "dropRate": 0.5,
+          "min": 1,
+          "max": 4
+        }
+      ]
     }
   ]
 }

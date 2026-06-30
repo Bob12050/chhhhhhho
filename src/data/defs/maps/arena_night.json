@@ -1,0 +1,41 @@
+{
+  "id": "arena_night",
+  "name": "常闇の祭壇",
+  "travel": {
+    "order": 20,
+    "hidden": true,
+    "note": "狩猟クエスト専用"
+  },
+  "size": {
+    "w": 360,
+    "h": 640
+  },
+  "ground": "floor",
+  "border": "walls",
+  "obstacles": [],
+  "spawns": {
+    "default": [
+      180,
+      560
+    ],
+    "boss": [
+      180,
+      240
+    ]
+  },
+  "portals": [
+    {
+      "rect": [
+        148,
+        584,
+        64,
+        32
+      ],
+      "to": "town",
+      "toSpawn": "default",
+      "label": "町へ戻る"
+    }
+  ],
+  "enemies": [],
+  "npcs": []
+}

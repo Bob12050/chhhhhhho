@@ -173,6 +173,8 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
   const files = [
     'town', 'field', 'forest', 'dungeon', 'canyon', 'volcano', 'boss_room',
     'arena_volcano', 'arena_grove', 'arena_marsh', 'arena_cavern', 'arena_peak',
+    'arena_night', 'arena_plain', 'arena_swamp', 'arena_canyon', 'arena_frost',
+    'arena_ruins', 'arena_abyss',
   ];
   type MapDoc = {
     id: string;

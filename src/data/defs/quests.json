@@ -636,6 +636,188 @@
         }
       },
       "repeatable": true
+    },
+    {
+      "id": "hunt_bat_lord",
+      "name": "大型狩猟：夜の王 ノクス",
+      "type": "hunt",
+      "description": "夜の王 ノクスを狩猟せよ。素材は装備の材料になる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_bat_lord",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 10
+      },
+      "huntMap": "arena_night",
+      "rewards": {
+        "gold": 60,
+        "exp": 600,
+        "items": {
+          "soft_leather": 2,
+          "mana_stone": 2
+        }
+      },
+      "repeatable": true
+    },
+    {
+      "id": "hunt_wolf_alpha",
+      "name": "大型狩猟：群狼の長 フェンリル",
+      "type": "hunt",
+      "description": "群狼の長 フェンリルを狩猟せよ。素材は装備の材料になる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_wolf_alpha",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 13
+      },
+      "huntMap": "arena_plain",
+      "rewards": {
+        "gold": 80,
+        "exp": 800,
+        "items": {
+          "soft_leather": 2,
+          "iron_ore": 2
+        }
+      },
+      "repeatable": true
+    },
+    {
+      "id": "hunt_mushroom",
+      "name": "大型狩猟：胞子の母 スポラ",
+      "type": "hunt",
+      "description": "胞子の母 スポラを狩猟せよ。素材は装備の材料になる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_mushroom",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 16
+      },
+      "huntMap": "arena_swamp",
+      "rewards": {
+        "gold": 100,
+        "exp": 1000,
+        "items": {
+          "herb": 2,
+          "mana_stone": 2
+        }
+      },
+      "repeatable": true
+    },
+    {
+      "id": "hunt_lizard_king",
+      "name": "大型狩猟：岩牙竜 ガロ",
+      "type": "hunt",
+      "description": "岩牙竜 ガロを狩猟せよ。素材は装備の材料になる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_lizard_king",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 22
+      },
+      "huntMap": "arena_canyon",
+      "rewards": {
+        "gold": 160,
+        "exp": 1400,
+        "items": {
+          "iron_ore": 2,
+          "golem_core": 2
+        }
+      },
+      "repeatable": true
+    },
+    {
+      "id": "hunt_wisp_queen",
+      "name": "大型狩猟：霜の女王 グラキエス",
+      "type": "hunt",
+      "description": "霜の女王 グラキエスを狩猟せよ。素材は装備の材料になる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_wisp_queen",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 28
+      },
+      "huntMap": "arena_frost",
+      "rewards": {
+        "gold": 225,
+        "exp": 2000,
+        "items": {
+          "mana_stone": 2,
+          "star_fragment": 2
+        }
+      },
+      "repeatable": true
+    },
+    {
+      "id": "hunt_knight_dread",
+      "name": "大型狩猟：不死騎士 モルド",
+      "type": "hunt",
+      "description": "不死騎士 モルドを狩猟せよ。素材は装備の材料になる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_knight_dread",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 35
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 325,
+        "exp": 2800,
+        "items": {
+          "shadow_wing": 2,
+          "mythril_ore": 2
+        }
+      },
+      "repeatable": true
+    },
+    {
+      "id": "hunt_slime_abyss",
+      "name": "大型狩猟：深淵のスライム",
+      "type": "hunt",
+      "description": "深淵のスライムを狩猟せよ。素材は装備の材料になる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_slime_abyss",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 40
+      },
+      "huntMap": "arena_abyss",
+      "rewards": {
+        "gold": 450,
+        "exp": 3600,
+        "items": {
+          "king_jelly": 2,
+          "mythril_ore": 2
+        }
+      },
+      "repeatable": true
     }
   ]
 }
