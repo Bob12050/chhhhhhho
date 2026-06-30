@@ -2918,6 +2918,144 @@
       },
       "gold": 260,
       "station": "forge"
+    },
+    {
+      "id": "craft_lifewood_staff",
+      "resultItemId": "lifewood_staff",
+      "resultQty": 1,
+      "materials": {
+        "treant_sap": 5,
+        "herb": 3
+      },
+      "gold": 180,
+      "station": "forge"
+    },
+    {
+      "id": "craft_nightfang_dagger",
+      "resultItemId": "nightfang_dagger",
+      "resultQty": 1,
+      "materials": {
+        "night_fang": 5,
+        "soft_leather": 3
+      },
+      "gold": 180,
+      "station": "forge"
+    },
+    {
+      "id": "craft_inferno_blade",
+      "resultItemId": "inferno_blade",
+      "resultQty": 1,
+      "materials": {
+        "flame_core": 5,
+        "iron_ore": 4
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_fang_axe",
+      "resultItemId": "fang_axe",
+      "resultQty": 1,
+      "materials": {
+        "alpha_pelt": 5,
+        "iron_ore": 3,
+        "soft_leather": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "craft_royal_mace",
+      "resultItemId": "royal_mace",
+      "resultQty": 1,
+      "materials": {
+        "royal_ichor": 5,
+        "mana_stone": 3
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragonscale_lance",
+      "resultItemId": "dragonscale_lance",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 5,
+        "mythril_ore": 3,
+        "star_fragment": 1
+      },
+      "gold": 420,
+      "station": "forge"
+    },
+    {
+      "id": "craft_spore_wand",
+      "resultItemId": "spore_wand",
+      "resultQty": 1,
+      "materials": {
+        "spore_sac": 5,
+        "mana_stone": 4
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_garo_katana",
+      "resultItemId": "garo_katana",
+      "resultQty": 1,
+      "materials": {
+        "garo_fang": 5,
+        "mythril_ore": 3,
+        "golem_core": 1
+      },
+      "gold": 360,
+      "station": "forge"
+    },
+    {
+      "id": "craft_glacier_staff",
+      "resultItemId": "glacier_staff",
+      "resultQty": 1,
+      "materials": {
+        "frost_heart": 5,
+        "mythril_ore": 4,
+        "star_fragment": 2
+      },
+      "gold": 420,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dread_plate_armor",
+      "resultItemId": "dread_plate_armor",
+      "resultQty": 1,
+      "materials": {
+        "dread_carapace": 5,
+        "mythril_ore": 5,
+        "star_fragment": 2
+      },
+      "gold": 420,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abyss_blade",
+      "resultItemId": "abyss_blade",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 5,
+        "mythril_ore": 6,
+        "star_fragment": 4
+      },
+      "gold": 480,
+      "station": "forge"
+    },
+    {
+      "id": "craft_bastion_helm",
+      "resultItemId": "bastion_helm",
+      "resultQty": 1,
+      "materials": {
+        "stone_heart": 5,
+        "iron_ore": 4
+      },
+      "gold": 240,
+      "station": "forge"
     }
   ]
 }

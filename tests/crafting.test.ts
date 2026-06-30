@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { GameState } from '@/player/game-state';
 import { craft, canCraft, craftBlock } from '@/crafting/crafting';
 import { getRecipe, allRecipes } from '@/crafting/recipes';
+import { getMaterial, getEquipment } from '@/data/items';
+import dropsJson from '@/data/defs/drops.json';
 
 describe('crafting', () => {
   it('blocks when materials or gold are missing', () => {
@@ -42,7 +44,24 @@ describe('crafting', () => {
     expect(Object.keys(elixir.materials)).toContain('slime_jelly');
   });
 
-  it('ships 234 recipes', () => {
-    expect(allRecipes().length).toBe(234);
+  it('ships 246 recipes', () => {
+    expect(allRecipes().length).toBe(246);
+  });
+
+  it('boss signature materials drop and craft themed gear (MH loop)', () => {
+    const SIG = [
+      'treant_sap', 'night_fang', 'flame_core', 'alpha_pelt', 'royal_ichor', 'dragon_scale',
+      'spore_sac', 'garo_fang', 'frost_heart', 'dread_carapace', 'abyss_core', 'stone_heart',
+    ];
+    const dropItems = new Set<string>();
+    for (const t of (dropsJson as { tables: { entries: { itemId: string }[] }[] }).tables)
+      for (const e of t.entries) dropItems.add(e.itemId);
+    for (const m of SIG) {
+      expect(getMaterial(m), `${m} is a material`).toBeDefined();
+      expect(dropItems.has(m), `${m} drops from a boss`).toBe(true);
+      const recipe = allRecipes().find((r) => r.materials[m]);
+      expect(recipe, `${m} is used in a recipe`).toBeDefined();
+      expect(getEquipment(recipe!.resultItemId), `${m} recipe makes equipment`).toBeDefined();
+    }
   });
 });

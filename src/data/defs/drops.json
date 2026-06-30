@@ -120,6 +120,12 @@
           "dropRate": 0.02,
           "min": 1,
           "max": 1
+        },
+        {
+          "itemId": "royal_ichor",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     },
@@ -150,6 +156,12 @@
           "dropRate": 0.3,
           "min": 1,
           "max": 1
+        },
+        {
+          "itemId": "treant_sap",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     },
@@ -190,6 +202,12 @@
         {
           "itemId": "mythril_ore",
           "dropRate": 0.5,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "stone_heart",
+          "dropRate": 0.85,
           "min": 1,
           "max": 2
         }
@@ -395,6 +413,12 @@
           "dropRate": 1,
           "min": 2,
           "max": 4
+        },
+        {
+          "itemId": "dragon_scale",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     },
@@ -425,6 +449,12 @@
           "dropRate": 1,
           "min": 2,
           "max": 4
+        },
+        {
+          "itemId": "flame_core",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     },
@@ -449,6 +479,12 @@
           "dropRate": 1,
           "min": 1,
           "max": 3
+        },
+        {
+          "itemId": "night_fang",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     },
@@ -473,6 +509,12 @@
           "dropRate": 1,
           "min": 1,
           "max": 3
+        },
+        {
+          "itemId": "alpha_pelt",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     },
@@ -497,6 +539,12 @@
           "dropRate": 1,
           "min": 1,
           "max": 3
+        },
+        {
+          "itemId": "spore_sac",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     },
@@ -521,6 +569,12 @@
           "dropRate": 1,
           "min": 1,
           "max": 3
+        },
+        {
+          "itemId": "garo_fang",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     },
@@ -545,6 +599,12 @@
           "dropRate": 1,
           "min": 1,
           "max": 3
+        },
+        {
+          "itemId": "frost_heart",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     },
@@ -569,6 +629,12 @@
           "dropRate": 1,
           "min": 1,
           "max": 3
+        },
+        {
+          "itemId": "dread_carapace",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     },
@@ -599,6 +665,12 @@
           "dropRate": 0.5,
           "min": 1,
           "max": 4
+        },
+        {
+          "itemId": "abyss_core",
+          "dropRate": 0.85,
+          "min": 1,
+          "max": 2
         }
       ]
     }

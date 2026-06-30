@@ -72,6 +72,90 @@
       "rarity": 6,
       "sellPrice": 70,
       "description": "淡く輝く稀少な魔法金属。"
+    },
+    {
+      "id": "treant_sap",
+      "name": "大樹の樹液",
+      "rarity": 3,
+      "sellPrice": 36,
+      "description": "生命の杖の素材。treantの討伐で得られる。"
+    },
+    {
+      "id": "night_fang",
+      "name": "夜の牙",
+      "rarity": 3,
+      "sellPrice": 36,
+      "description": "夜牙の短剣の素材。bat_lordの討伐で得られる。"
+    },
+    {
+      "id": "flame_core",
+      "name": "業火の核",
+      "rarity": 5,
+      "sellPrice": 60,
+      "description": "業火の剣の素材。flameの討伐で得られる。"
+    },
+    {
+      "id": "alpha_pelt",
+      "name": "群狼の毛皮",
+      "rarity": 4,
+      "sellPrice": 48,
+      "description": "狼牙の斧の素材。wolf_alphaの討伐で得られる。"
+    },
+    {
+      "id": "royal_ichor",
+      "name": "王者の粘液",
+      "rarity": 5,
+      "sellPrice": 60,
+      "description": "粘王の槌の素材。slimeの討伐で得られる。"
+    },
+    {
+      "id": "dragon_scale",
+      "name": "竜鱗",
+      "rarity": 7,
+      "sellPrice": 84,
+      "description": "竜鱗の槍の素材。dragonの討伐で得られる。"
+    },
+    {
+      "id": "spore_sac",
+      "name": "胞子嚢",
+      "rarity": 5,
+      "sellPrice": 60,
+      "description": "胞子の杖の素材。mushroomの討伐で得られる。"
+    },
+    {
+      "id": "garo_fang",
+      "name": "岩牙",
+      "rarity": 6,
+      "sellPrice": 72,
+      "description": "岩牙刀の素材。lizard_kingの討伐で得られる。"
+    },
+    {
+      "id": "frost_heart",
+      "name": "氷霜の心核",
+      "rarity": 7,
+      "sellPrice": 84,
+      "description": "氷霜の杖の素材。wisp_queenの討伐で得られる。"
+    },
+    {
+      "id": "dread_carapace",
+      "name": "不死の甲殻",
+      "rarity": 7,
+      "sellPrice": 84,
+      "description": "不死の鎧の素材。knight_dreadの討伐で得られる。"
+    },
+    {
+      "id": "abyss_core",
+      "name": "深淵核",
+      "rarity": 8,
+      "sellPrice": 96,
+      "description": "深淵剣の素材。slime_abyssの討伐で得られる。"
+    },
+    {
+      "id": "stone_heart",
+      "name": "石の心臓",
+      "rarity": 4,
+      "sellPrice": 48,
+      "description": "砦の兜の素材。stoneの討伐で得られる。"
     }
   ],
   "consumables": [
@@ -2355,6 +2439,219 @@
       },
       "sellPrice": 480,
       "description": "天上のマント。"
+    },
+    {
+      "id": "lifewood_staff",
+      "name": "生命の杖",
+      "slot": "main_hand",
+      "rarity": 3,
+      "visualId": "sword_wood",
+      "element": "none",
+      "levelRequirement": 6,
+      "derived": {
+        "magAtk": 12,
+        "maxHp": 20,
+        "maxMp": 10
+      },
+      "sellPrice": 120,
+      "description": "大樹の樹液を加工した一品。",
+      "weaponTags": [
+        "staff"
+      ]
+    },
+    {
+      "id": "nightfang_dagger",
+      "name": "夜牙の短剣",
+      "slot": "main_hand",
+      "rarity": 3,
+      "visualId": "sword_iron",
+      "element": "none",
+      "levelRequirement": 12,
+      "derived": {
+        "physAtk": 10,
+        "critRate": 0.06,
+        "evasion": 4
+      },
+      "sellPrice": 120,
+      "description": "夜の牙を加工した一品。",
+      "weaponTags": [
+        "dagger"
+      ]
+    },
+    {
+      "id": "inferno_blade",
+      "name": "業火の剣",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "element": "none",
+      "levelRequirement": 20,
+      "derived": {
+        "physAtk": 18,
+        "critRate": 0.04
+      },
+      "sellPrice": 200,
+      "description": "業火の核を加工した一品。",
+      "weaponTags": [
+        "sword"
+      ]
+    },
+    {
+      "id": "fang_axe",
+      "name": "狼牙の斧",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "element": "none",
+      "levelRequirement": 24,
+      "derived": {
+        "physAtk": 16,
+        "accuracy": 6
+      },
+      "sellPrice": 160,
+      "description": "群狼の毛皮を加工した一品。",
+      "weaponTags": [
+        "axe"
+      ]
+    },
+    {
+      "id": "royal_mace",
+      "name": "粘王の槌",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "element": "none",
+      "levelRequirement": 25,
+      "derived": {
+        "physAtk": 17,
+        "maxHp": 30
+      },
+      "sellPrice": 200,
+      "description": "王者の粘液を加工した一品。",
+      "weaponTags": [
+        "mace"
+      ]
+    },
+    {
+      "id": "dragonscale_lance",
+      "name": "竜鱗の槍",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "element": "none",
+      "levelRequirement": 30,
+      "derived": {
+        "physAtk": 26,
+        "accuracy": 5
+      },
+      "sellPrice": 280,
+      "description": "竜鱗を加工した一品。",
+      "weaponTags": [
+        "spear"
+      ]
+    },
+    {
+      "id": "spore_wand",
+      "name": "胞子の杖",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_wood",
+      "element": "none",
+      "levelRequirement": 34,
+      "derived": {
+        "magAtk": 18,
+        "magDef": 8
+      },
+      "sellPrice": 200,
+      "description": "胞子嚢を加工した一品。",
+      "weaponTags": [
+        "wand"
+      ]
+    },
+    {
+      "id": "garo_katana",
+      "name": "岩牙刀",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "element": "none",
+      "levelRequirement": 44,
+      "derived": {
+        "physAtk": 24,
+        "critRate": 0.05
+      },
+      "sellPrice": 240,
+      "description": "岩牙を加工した一品。",
+      "weaponTags": [
+        "katana"
+      ]
+    },
+    {
+      "id": "glacier_staff",
+      "name": "氷霜の杖",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_wood",
+      "element": "none",
+      "levelRequirement": 56,
+      "derived": {
+        "magAtk": 28,
+        "maxMp": 30
+      },
+      "sellPrice": 280,
+      "description": "氷霜の心核を加工した一品。",
+      "weaponTags": [
+        "staff"
+      ]
+    },
+    {
+      "id": "dread_plate_armor",
+      "name": "不死の鎧",
+      "slot": "torso",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 68,
+      "derived": {
+        "def": 22,
+        "maxHp": 80,
+        "magDef": 12
+      },
+      "sellPrice": 280,
+      "description": "不死の甲殻を加工した一品。"
+    },
+    {
+      "id": "abyss_blade",
+      "name": "深淵剣",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "element": "none",
+      "levelRequirement": 80,
+      "derived": {
+        "physAtk": 34,
+        "critRate": 0.08
+      },
+      "sellPrice": 320,
+      "description": "深淵核を加工した一品。",
+      "weaponTags": [
+        "sword"
+      ]
+    },
+    {
+      "id": "bastion_helm",
+      "name": "砦の兜",
+      "slot": "head",
+      "rarity": 4,
+      "visualId": "helm_iron",
+      "element": "none",
+      "levelRequirement": 16,
+      "derived": {
+        "def": 10,
+        "maxHp": 40
+      },
+      "sellPrice": 160,
+      "description": "石の心臓を加工した一品。"
     }
   ]
 }
