@@ -128,6 +128,14 @@ export class QuestBoardScene extends Phaser.Scene {
   private byRank = (a: QuestDef, b: QuestDef): number =>
     (a.rank ?? 1) - (b.rank ?? 1) || a.name.localeCompare(b.name);
 
+  /** Star color per rank (★1 pale → ★7 red), MH-style escalation. */
+  private static readonly RANK_COLORS = [
+    '#c9d0e0', '#9fe3a0', '#7fb0ff', '#c89bff', '#ffcf5a', '#ff8a5a', '#ff5a7a',
+  ];
+  private rankColor(rank: number): string {
+    return QuestBoardScene.RANK_COLORS[Phaser.Math.Clamp(rank, 1, 7) - 1];
+  }
+
   private render(): void {
     this.content.removeAll(true);
     const w = this.scale.width;
@@ -159,7 +167,7 @@ export class QuestBoardScene extends Phaser.Scene {
         .setStrokeStyle(1, 0x39406a);
       this.content.add(row);
       this.content.add(
-        this.add.text(24, y + 12, '★'.repeat(r), { fontFamily: FONT, fontSize: '18px', color: '#ffcf5a' }),
+        this.add.text(24, y + 12, '★'.repeat(r), { fontFamily: FONT, fontSize: '18px', color: this.rankColor(r) }),
       );
       this.content.add(
         this.add.text(24, y + 38, `受注できる ${availCount} / 全${inRank.length}`, {
@@ -270,10 +278,16 @@ export class QuestBoardScene extends Phaser.Scene {
 
   private renderQuest(q: QuestDef, y: number, w: number, state: 'active' | 'available' | 'done'): number {
     const titleColor = state === 'done' ? '#6b7088' : q.type === 'unlock' ? '#ffe9a8' : '#ffffff';
-    // MH-style star rank prefix (☆ for done keeps it subtle).
-    const stars = `★${q.rank ?? 1} `;
+    // MH-style star rank prefix, colored by rank (dimmed once done).
+    const rank = q.rank ?? 1;
+    const starTxt = this.add.text(16, y, `★${rank}`, {
+      fontFamily: FONT,
+      fontSize: '15px',
+      color: state === 'done' ? '#6b7088' : this.rankColor(rank),
+    });
+    this.content.add(starTxt);
     this.content.add(
-      this.add.text(16, y, stars + q.name, {
+      this.add.text(16 + starTxt.width + 6, y, q.name, {
         fontFamily: FONT,
         fontSize: '15px',
         color: titleColor,
