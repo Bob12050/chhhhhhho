@@ -30,6 +30,12 @@ export interface SkillDef {
   scaling?: SkillScaling;
   /** Visual style for the cast effect ('slash' | 'impact' | 'magic'). */
   fx?: string;
+  /**
+   * Element carried by this skill's damage (see elements.ts). Omitted/`none`
+   * falls back to the equipped weapon's element so martial skills still riding
+   * an elemental weapon proc its status.
+   */
+  element?: string;
   // Passive
   derived?: Partial<DerivedStats>;
   // Learning gates

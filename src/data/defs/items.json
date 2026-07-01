@@ -2484,7 +2484,7 @@
       "slot": "main_hand",
       "rarity": 5,
       "visualId": "sword_iron",
-      "element": "none",
+      "element": "fire",
       "levelRequirement": 20,
       "derived": {
         "physAtk": 18,
@@ -2538,7 +2538,7 @@
       "slot": "main_hand",
       "rarity": 7,
       "visualId": "sword_iron",
-      "element": "none",
+      "element": "thunder",
       "levelRequirement": 30,
       "derived": {
         "physAtk": 26,
@@ -2556,7 +2556,7 @@
       "slot": "main_hand",
       "rarity": 5,
       "visualId": "sword_wood",
-      "element": "none",
+      "element": "poison",
       "levelRequirement": 34,
       "derived": {
         "magAtk": 18,
@@ -2592,7 +2592,7 @@
       "slot": "main_hand",
       "rarity": 7,
       "visualId": "sword_wood",
-      "element": "none",
+      "element": "ice",
       "levelRequirement": 56,
       "derived": {
         "magAtk": 28,
@@ -2626,7 +2626,7 @@
       "slot": "main_hand",
       "rarity": 8,
       "visualId": "sword_iron",
-      "element": "none",
+      "element": "dark",
       "levelRequirement": 80,
       "derived": {
         "physAtk": 34,

@@ -135,6 +135,12 @@ export class GameState {
     return canEquipClass(job?.family, def.classRestrictions) ? null : 'class';
   }
 
+  /** Equipped main-hand weapon's element ('none' if unarmed/no element). */
+  weaponElement(): string {
+    const id = this.equipment.main_hand;
+    return (id ? getEquipment(id)?.element : undefined) ?? 'none';
+  }
+
   /** Whether the current job may equip this item (tier + weapon/class gates). */
   canEquip(itemId: string): boolean {
     return !!getEquipment(itemId) && this.equipBlock(itemId) === null;

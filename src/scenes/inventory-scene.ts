@@ -10,6 +10,7 @@ import { getJob } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
 import { FONT, UI, addPanelChrome } from '@/ui/theme';
 import { returnToTitle } from '@/core/game-flow';
+import { ELEMENT_LABEL, ELEMENT_COLOR, isElement } from '@/combat/elements';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
 
@@ -299,13 +300,23 @@ export class InventoryScene extends Phaser.Scene {
         }),
       );
       // Rarity label (R-number + band name), coloured by rank.
-      this.content.add(
-        this.add.text(16, y + 17, rarityLabel(def.rarity), {
-          fontFamily: FONT,
-          fontSize: '11px',
-          color: rarityColorHex(def.rarity),
-        }),
-      );
+      const rarityText = this.add.text(16, y + 17, rarityLabel(def.rarity), {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: rarityColorHex(def.rarity),
+      });
+      this.content.add(rarityText);
+      // Element badge for elemental weapons (e.g. 属性:火), coloured to match.
+      if (isElement(def.element) && def.element !== 'none') {
+        const hex = `#${ELEMENT_COLOR[def.element].toString(16).padStart(6, '0')}`;
+        this.content.add(
+          this.add.text(rarityText.x + rarityText.width + 8, y + 17, `属性:${ELEMENT_LABEL[def.element]}`, {
+            fontFamily: FONT,
+            fontSize: '11px',
+            color: hex,
+          }),
+        );
+      }
       if (canEq) {
         const btn = this.add
           .text(w - 16, y, equipped ? '[ はずす ]' : '[ そうび ]', {
@@ -469,13 +480,23 @@ export class InventoryScene extends Phaser.Scene {
       const slot = gs.skillSlots.indexOf(def.id);
       const famTag = def.family ? `《${FAMILY_LABEL[def.family]}》` : '';
       const tag = learned ? (slot >= 0 ? `習得(S${slot + 1})` : '習得') : '';
-      this.content.add(
-        this.add.text(16, y, `[${kind}] ${def.name} ${famTag} ${tag}`.trim(), {
-          fontFamily: FONT,
-          fontSize: '14px',
-          color: learned ? '#9fe3a0' : '#fff',
-        }),
-      );
+      const nameText = this.add.text(16, y, `[${kind}] ${def.name} ${famTag} ${tag}`.trim(), {
+        fontFamily: FONT,
+        fontSize: '14px',
+        color: learned ? '#9fe3a0' : '#fff',
+      });
+      this.content.add(nameText);
+      // Element badge for elemental active skills.
+      if (isElement(def.element) && def.element !== 'none') {
+        const hex = `#${ELEMENT_COLOR[def.element].toString(16).padStart(6, '0')}`;
+        this.content.add(
+          this.add.text(nameText.x + nameText.width + 6, y + 2, `〔${ELEMENT_LABEL[def.element]}〕`, {
+            fontFamily: FONT,
+            fontSize: '12px',
+            color: hex,
+          }),
+        );
+      }
       this.content.add(
         this.add.text(16, y + 18, def.description, {
           fontFamily: FONT,

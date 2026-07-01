@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { frameIndex, ANIMATIONS, type AnimName } from '@/paperdoll/pose-atlas';
 import type { Direction } from '@/config/layers';
+import { STATUS_CATEGORY, STATUS_COLOR, type Element, type StatusType } from '@/combat/elements';
 
 /**
  * Phase 0 enemy with a small finite-state machine. Enemies use a single
@@ -25,6 +26,9 @@ export interface EnemyConfig {
   readonly knockbackResist?: number;
   /** Animation speed multiplier (1 = normal, <1 = slower). */
   readonly animSpeed?: number;
+  /** Elemental weakness (×1.5) / resist (×0.5). */
+  readonly weakness?: Element;
+  readonly resist?: Element;
 }
 
 export class Enemy {
@@ -49,8 +53,13 @@ export class Enemy {
   private knockback = 0;
   private flashTimer = 0;
   private dead = false;
+  // Status effects: dot = damage-over-time (burn/poison), stun = halt (freeze/paralyze).
+  private dot = { remaining: 0, power: 0, timer: 0, color: 0xffffff };
+  private stun = { remaining: 0, color: 0xffffff };
 
   onDeath: ((x: number, y: number) => void) | null = null;
+  /** Fired on each DoT tick so the scene can show a number / juice. */
+  onStatusTick: ((amount: number, x: number, y: number) => void) | null = null;
 
   constructor(scene: Phaser.Scene, x: number, y: number, cfg: EnemyConfig) {
     this.scene = scene;
@@ -122,10 +131,59 @@ export class Enemy {
     });
   }
 
+  /**
+   * Inflict a status. DoT (burn/poison) deals `power` every 500ms for the
+   * duration; stun (freeze/paralyze) halts the enemy. Re-applying refreshes.
+   */
+  applyStatus(type: StatusType, durationMs: number, power: number): void {
+    if (this.dead) return;
+    const color = STATUS_COLOR[type];
+    if (STATUS_CATEGORY[type] === 'stun') {
+      this.stun = { remaining: Math.max(this.stun.remaining, durationMs), color };
+    } else {
+      this.dot = { remaining: durationMs, power: Math.max(1, Math.round(power)), timer: 0, color };
+    }
+    this.applyStatusTint();
+  }
+
+  isStunned(): boolean {
+    return this.stun.remaining > 0;
+  }
+
   /** Reset to the base tint (clears the white hit-flash / FILL mode). */
   private restoreTint(): void {
     this.visual.clearTint();
     if (this.cfg.tint !== undefined) this.visual.setTint(this.cfg.tint);
+    this.applyStatusTint();
+  }
+
+  /** Tint by active status (stun > dot > base) when not mid hit-flash. */
+  private applyStatusTint(): void {
+    if (this.flashTimer > 0) return; // white flash takes priority
+    if (this.stun.remaining > 0) this.visual.setTint(this.stun.color);
+    else if (this.dot.remaining > 0) this.visual.setTint(this.dot.color);
+    else if (this.cfg.tint !== undefined) this.visual.setTint(this.cfg.tint);
+    else this.visual.clearTint();
+  }
+
+  /** Advance status timers; returns true if a DoT tick killed the enemy. */
+  private tickStatus(dtMs: number): boolean {
+    if (this.stun.remaining > 0) this.stun.remaining -= dtMs;
+    if (this.dot.remaining > 0) {
+      this.dot.remaining -= dtMs;
+      this.dot.timer += dtMs;
+      while (this.dot.timer >= 500 && this.dot.remaining > -500) {
+        this.dot.timer -= 500;
+        this.hp -= this.dot.power;
+        this.onStatusTick?.(this.dot.power, this.x, this.y);
+        if (this.hp <= 0) {
+          this.die();
+          return true;
+        }
+      }
+      if (this.dot.remaining <= 0) this.applyStatusTint();
+    }
+    return false;
   }
 
   private setState(s: EnemyState): void {
@@ -142,6 +200,15 @@ export class Enemy {
     if (this.flashTimer > 0) {
       this.flashTimer -= dtMs;
       if (this.flashTimer <= 0) this.restoreTint();
+    }
+
+    if (this.tickStatus(dtMs)) return; // a DoT tick may have killed it
+
+    if (this.stun.remaining > 0) {
+      // Frozen/paralyzed: halt and hold pose.
+      this.sprite.setVelocity(0, 0);
+      this.stepAnim(dtMs, 'hurt');
+      return;
     }
 
     if (this.knockback > 0) {

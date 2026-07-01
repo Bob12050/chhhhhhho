@@ -15,10 +15,11 @@ export class DamageNumbers {
     this.depth = depth;
   }
 
-  show(x: number, y: number, amount: number, crit: boolean): void {
+  /** `color` overrides the number color (e.g. elemental / DoT tints). */
+  show(x: number, y: number, amount: number, crit: boolean, color?: string): void {
     const t = this.acquire();
     t.setText(crit ? `${amount}!` : `${amount}`);
-    t.setColor(crit ? '#ffd24a' : '#ffffff');
+    t.setColor(color ?? (crit ? '#ffd24a' : '#ffffff'));
     t.setFontSize(crit ? 19 : 13);
     // Dark outline keeps numbers readable over any tile/sprite.
     t.setStroke('#1a1020', crit ? 5 : 4);

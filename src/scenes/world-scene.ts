@@ -22,6 +22,15 @@ import { buildMap, type BuiltPortal } from '@/maps/map-builder';
 import type { UIScene } from '@/scenes/ui-scene';
 import type { Direction } from '@/config/layers';
 import { FONT } from '@/ui/theme';
+import {
+  elementMultiplier,
+  statusFromElement,
+  ELEMENT_COLOR,
+  STATUS_CATEGORY,
+  STATUS_PROC_CHANCE,
+  isElement,
+  type Element,
+} from '@/combat/elements';
 
 interface BuiltNpc {
   x: number;
@@ -118,7 +127,7 @@ export class WorldScene extends Phaser.Scene {
     this.player.setMoveSpeed(gameState.derived.moveSpeed);
     this.player.onAttackHit = (dir) => {
       this.spawnSlash(dir);
-      this.resolveMelee(dir, 1.0, 18);
+      this.resolveMelee(dir, 1.0, 18, 30, 34, gameState.derived.physAtk, this.weaponElement());
     };
     this.cameras.main.startFollow(this.player.body, true, 0.15, 0.15);
     this.physics.add.collider(this.player.body, this.obstacles);
@@ -221,7 +230,14 @@ export class WorldScene extends Phaser.Scene {
       keepDistance: def.keepDistance,
       knockbackResist: def.knockbackResist,
       animSpeed: def.animSpeed,
+      weakness: isElement(def.weakness) ? def.weakness : undefined,
+      resist: isElement(def.resist) ? def.resist : undefined,
     });
+    // DoT ticks show a green/red number and a small spark (juice + feedback).
+    enemy.onStatusTick = (amount, sx, sy) => {
+      this.dmg.show(sx, sy - 42, amount, false, '#9fe36a');
+      bus.emit('combat:damage-dealt', { x: sx, y: sy, amount, crit: false });
+    };
     this.physics.add.collider(enemy.sprite, this.obstacles);
     this.physics.add.overlap(this.player.body, enemy.sprite, () => this.onContact(enemy));
     enemy.onDeath = (dx, dy) => {
@@ -320,6 +336,7 @@ export class WorldScene extends Phaser.Scene {
     reach = 30,
     half = 34,
     atk = gameState.derived.physAtk,
+    element: Element = 'none',
   ): void {
     const { ax, ay } = aheadOffset(dir, reach);
     const hx = this.player.x + ax;
@@ -331,11 +348,26 @@ export class WorldScene extends Phaser.Scene {
       if (Phaser.Math.Distance.Between(hx, hy, e.x, e.y) <= half) {
         const base = atk;
         const crit = Math.random() < gameState.derived.critRate;
-        const amount = Math.max(1, Math.round(base * mult * (crit ? 1.6 : 1)));
-        e.takeDamage(amount, this.player.x, this.player.y, knockback);
-        this.dmg.show(e.x, e.y - 42, amount, crit);
+        const elemMult = elementMultiplier(element, e.cfg.weakness, e.cfg.resist);
+        const weak = elemMult > 1;
+        const amount = Math.max(1, Math.round(base * mult * (crit ? 1.6 : 1) * elemMult));
+        const killed = e.takeDamage(amount, this.player.x, this.player.y, knockback);
+        // Elemental hits color the number; a super-effective hit reads red.
+        const color =
+          element !== 'none'
+            ? `#${ELEMENT_COLOR[element].toString(16).padStart(6, '0')}`
+            : undefined;
+        this.dmg.show(e.x, e.y - 42, amount, crit, weak ? '#ff5a5a' : color);
         this.spawnHitSpark(e.x, e.y - 22, crit);
         bus.emit('combat:damage-dealt', { x: e.x, y: e.y, amount, crit });
+        // On-hit status proc (only on a live enemy; weakness improves the odds).
+        if (!killed && element !== 'none') {
+          const st = statusFromElement(element);
+          if (st && Math.random() < STATUS_PROC_CHANCE * (weak ? 1.5 : 1)) {
+            if (STATUS_CATEGORY[st] === 'stun') e.applyStatus(st, 900, 0);
+            else e.applyStatus(st, 3000, Math.max(1, Math.round(atk * 0.25)));
+          }
+        }
         hitStop = true;
         anyCrit = anyCrit || crit;
       }
@@ -454,9 +486,26 @@ export class WorldScene extends Phaser.Scene {
     const dir = this.player.getDirection();
     this.spawnSkillEffect(dir, def.fx ?? 'magic');
     const atk = def.scaling === 'mag' ? gameState.derived.magAtk : gameState.derived.physAtk;
+    // Skill element overrides the weapon's; otherwise the weapon's element rides along.
+    const skillEl: Element = isElement(def.element) ? def.element : 'none';
+    const element = skillEl !== 'none' ? skillEl : this.weaponElement();
     this.time.delayedCall(120, () =>
-      this.resolveMelee(dir, def.powerMult ?? 1.5, def.knockback ?? 26, def.reach ?? 30, def.radius ?? 34, atk),
+      this.resolveMelee(
+        dir,
+        def.powerMult ?? 1.5,
+        def.knockback ?? 26,
+        def.reach ?? 30,
+        def.radius ?? 34,
+        atk,
+        element,
+      ),
     );
+  }
+
+  /** The active weapon's element (falls back to 'none' when unarmed/neutral). */
+  private weaponElement(): Element {
+    const el = gameState.weaponElement();
+    return isElement(el) ? el : 'none';
   }
 
   /** Cast effect, styled per skill (data-driven `fx`: slash | impact | magic). */

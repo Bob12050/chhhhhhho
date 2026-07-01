@@ -29,6 +29,9 @@ export interface EnemyDef {
   animSpeed?: number;
   /** Drop table id (see drops.json); rolled on death. */
   dropTableId?: string;
+  /** Elemental weakness (takes ×1.5 from it) / resist (×0.5). See elements.ts. */
+  weakness?: string;
+  resist?: string;
 }
 
 interface EnemiesFile {

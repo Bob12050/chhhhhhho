@@ -12,6 +12,7 @@ import { VISUAL_ID_SET } from '../src/data/visual-ids';
 import { isValidRank } from '../src/data/rarity';
 import { CLASS_FAMILIES } from '../src/jobs/job-defs';
 import { JOB_APPEARANCE_IDS } from '../src/jobs/job-appearance-ids';
+import { ELEMENTS } from '../src/combat/elements';
 import { SHEET_ROWS, MAX_FRAMES, SHEET_WIDTH, SHEET_HEIGHT } from '../src/paperdoll/pose-atlas';
 import { CHAR_FRAME_W, CHAR_FRAME_H } from '../src/config/resolution';
 
@@ -34,6 +35,7 @@ const WEAPON_TAGS = new Set([
   'shield',
 ]);
 const CLASS_FAMILY_SET = new Set<string>(CLASS_FAMILIES);
+const ELEMENT_SET = new Set<string>(ELEMENTS);
 const DERIVED_KEYS = new Set([
   'maxHp',
   'maxMp',
@@ -65,6 +67,7 @@ function validateItems(): void {
       classRestrictions?: string[];
       derived?: Record<string, number>;
       sellPrice?: number;
+      element?: string;
     }[];
   };
 
@@ -113,6 +116,11 @@ function validateItems(): void {
       if (!DERIVED_KEYS.has(k)) err(`Equipment ${e.id}: invalid derived stat "${k}"`);
     }
     if (e.sellPrice != null && e.sellPrice < 0) err(`Equipment ${e.id}: negative sellPrice`);
+    if (e.element != null && !ELEMENT_SET.has(e.element))
+      err(`Equipment ${e.id}: unknown element "${e.element}"`);
+    // Only weapons carry an offensive element (armour element would be inert).
+    if (e.element != null && e.element !== 'none' && e.slot !== 'main_hand')
+      err(`Equipment ${e.id}: element only meaningful on main_hand weapons`);
   }
 }
 
@@ -145,9 +153,9 @@ function validateDrops(itemIds: Set<string>): Set<string> {
 
 function validateEnemies(itemIds: Set<string>, dropTableIds: Set<string>): Set<string> {
   void itemIds;
-  const file = readJson<{ enemies: { id: string; dropTableId?: string }[] }>(
-    'src/data/defs/enemies.json',
-  );
+  const file = readJson<{
+    enemies: { id: string; dropTableId?: string; weakness?: string; resist?: string }[];
+  }>('src/data/defs/enemies.json');
   const ids = new Set<string>();
   for (const e of file.enemies) {
     if (ids.has(e.id)) err(`Duplicate enemy id: ${e.id}`);
@@ -155,6 +163,14 @@ function validateEnemies(itemIds: Set<string>, dropTableIds: Set<string>): Set<s
     if (e.dropTableId && !dropTableIds.has(e.dropTableId)) {
       err(`Enemy ${e.id}: unknown dropTableId "${e.dropTableId}"`);
     }
+    if (e.weakness != null && !ELEMENT_SET.has(e.weakness))
+      err(`Enemy ${e.id}: unknown weakness "${e.weakness}"`);
+    if (e.resist != null && !ELEMENT_SET.has(e.resist))
+      err(`Enemy ${e.id}: unknown resist "${e.resist}"`);
+    if (e.weakness === 'none') err(`Enemy ${e.id}: weakness "none" is meaningless`);
+    if (e.resist === 'none') err(`Enemy ${e.id}: resist "none" is meaningless`);
+    if (e.weakness != null && e.weakness === e.resist)
+      err(`Enemy ${e.id}: weakness and resist are the same element`);
   }
   return ids;
 }
@@ -292,6 +308,7 @@ function validateSkills(): Set<string> {
       family?: string;
       scaling?: string;
       minTier?: number;
+      element?: string;
     }[];
   }>('src/data/defs/skills.json');
   const FX_STYLES = new Set(['slash', 'impact', 'magic']);
@@ -312,6 +329,10 @@ function validateSkills(): Set<string> {
       err(`Skill ${s.id}: minTier set without a family`);
     if (s.family !== undefined && s.scaling !== undefined && s.type === 'passive')
       err(`Skill ${s.id}: passive skill should not set scaling`);
+    if (s.element !== undefined && !ELEMENT_SET.has(s.element))
+      err(`Skill ${s.id}: unknown element "${s.element}"`);
+    if (s.element !== undefined && s.type === 'passive')
+      err(`Skill ${s.id}: passive skill should not set element`);
     for (const k of Object.keys(s.derived ?? {})) {
       if (!DERIVED_KEYS.has(k)) err(`Skill ${s.id}: invalid derived stat "${k}"`);
     }

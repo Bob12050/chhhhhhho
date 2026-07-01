@@ -43,7 +43,8 @@
       "knockbackResist": 0.85,
       "expReward": 85,
       "goldReward": 14,
-      "dropTableId": "golem_basic"
+      "dropTableId": "golem_basic",
+      "weakness": "thunder"
     },
     {
       "id": "boss_slime",
@@ -77,7 +78,9 @@
       "knockbackResist": 0.7,
       "expReward": 500,
       "goldReward": 80,
-      "dropTableId": "boss_treant"
+      "dropTableId": "boss_treant",
+      "weakness": "fire",
+      "resist": "poison"
     },
     {
       "id": "boss_stone",
@@ -94,7 +97,8 @@
       "knockbackResist": 0.9,
       "expReward": 900,
       "goldReward": 150,
-      "dropTableId": "boss_stone"
+      "dropTableId": "boss_stone",
+      "weakness": "thunder"
     },
     {
       "id": "green_wolf",
@@ -125,7 +129,9 @@
       "knockbackResist": 0.4,
       "expReward": 34,
       "goldReward": 6,
-      "dropTableId": "shroom_basic"
+      "dropTableId": "shroom_basic",
+      "weakness": "fire",
+      "resist": "poison"
     },
     {
       "id": "rock_lizard",
@@ -141,7 +147,8 @@
       "knockbackResist": 0.3,
       "expReward": 95,
       "goldReward": 16,
-      "dropTableId": "rock_lizard"
+      "dropTableId": "rock_lizard",
+      "weakness": "thunder"
     },
     {
       "id": "cave_bat",
@@ -172,7 +179,9 @@
       "attackRange": 20,
       "expReward": 160,
       "goldReward": 40,
-      "dropTableId": "flame_hound"
+      "dropTableId": "flame_hound",
+      "weakness": "ice",
+      "resist": "fire"
     },
     {
       "id": "frost_wisp",
@@ -188,7 +197,9 @@
       "keepDistance": 110,
       "expReward": 155,
       "goldReward": 38,
-      "dropTableId": "frost_wisp"
+      "dropTableId": "frost_wisp",
+      "weakness": "fire",
+      "resist": "ice"
     },
     {
       "id": "shadow_knight",
@@ -204,7 +215,9 @@
       "knockbackResist": 0.6,
       "expReward": 210,
       "goldReward": 55,
-      "dropTableId": "shadow_knight"
+      "dropTableId": "shadow_knight",
+      "weakness": "holy",
+      "resist": "dark"
     },
     {
       "id": "boss_dragon",
@@ -221,7 +234,9 @@
       "knockbackResist": 0.85,
       "expReward": 1500,
       "goldReward": 500,
-      "dropTableId": "boss_dragon"
+      "dropTableId": "boss_dragon",
+      "weakness": "ice",
+      "resist": "fire"
     },
     {
       "id": "boss_flame",
@@ -238,7 +253,9 @@
       "knockbackResist": 0.78,
       "expReward": 1200,
       "goldReward": 300,
-      "dropTableId": "boss_flame"
+      "dropTableId": "boss_flame",
+      "weakness": "ice",
+      "resist": "fire"
     },
     {
       "id": "boss_bat_lord",
@@ -255,7 +272,9 @@
       "knockbackResist": 0.78,
       "expReward": 700,
       "goldReward": 130,
-      "dropTableId": "boss_bat_lord"
+      "dropTableId": "boss_bat_lord",
+      "weakness": "holy",
+      "resist": "dark"
     },
     {
       "id": "boss_wolf_alpha",
@@ -272,7 +291,8 @@
       "knockbackResist": 0.78,
       "expReward": 1500,
       "goldReward": 320,
-      "dropTableId": "boss_wolf_alpha"
+      "dropTableId": "boss_wolf_alpha",
+      "weakness": "thunder"
     },
     {
       "id": "boss_mushroom",
@@ -289,7 +309,9 @@
       "knockbackResist": 0.78,
       "expReward": 2400,
       "goldReward": 520,
-      "dropTableId": "boss_mushroom"
+      "dropTableId": "boss_mushroom",
+      "weakness": "fire",
+      "resist": "poison"
     },
     {
       "id": "boss_lizard_king",
@@ -306,7 +328,8 @@
       "knockbackResist": 0.78,
       "expReward": 3400,
       "goldReward": 720,
-      "dropTableId": "boss_lizard_king"
+      "dropTableId": "boss_lizard_king",
+      "weakness": "ice"
     },
     {
       "id": "boss_wisp_queen",
@@ -323,7 +346,9 @@
       "knockbackResist": 0.78,
       "expReward": 5000,
       "goldReward": 1000,
-      "dropTableId": "boss_wisp_queen"
+      "dropTableId": "boss_wisp_queen",
+      "weakness": "fire",
+      "resist": "ice"
     },
     {
       "id": "boss_knight_dread",
@@ -340,7 +365,9 @@
       "knockbackResist": 0.78,
       "expReward": 7000,
       "goldReward": 1400,
-      "dropTableId": "boss_knight_dread"
+      "dropTableId": "boss_knight_dread",
+      "weakness": "holy",
+      "resist": "dark"
     },
     {
       "id": "boss_slime_abyss",
@@ -357,7 +384,9 @@
       "knockbackResist": 0.78,
       "expReward": 10000,
       "goldReward": 2000,
-      "dropTableId": "boss_slime_abyss"
+      "dropTableId": "boss_slime_abyss",
+      "weakness": "holy",
+      "resist": "dark"
     }
   ]
 }
