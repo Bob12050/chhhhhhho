@@ -61,7 +61,31 @@
       "knockbackResist": 0.7,
       "expReward": 1800,
       "goldReward": 400,
-      "dropTableId": "boss_slime"
+      "dropTableId": "boss_slime",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 52,
+          "damageMult": 1.1,
+          "telegraphMs": 900,
+          "count": 1,
+          "at": "self"
+        },
+        {
+          "type": "summon",
+          "enemyId": "slime",
+          "count": 2,
+          "maxMinions": 4
+        },
+        {
+          "type": "aoe",
+          "radius": 44,
+          "damageMult": 1.0,
+          "telegraphMs": 900,
+          "count": 1
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "boss_treant",
@@ -80,7 +104,24 @@
       "goldReward": 80,
       "dropTableId": "boss_treant",
       "weakness": "fire",
-      "resist": "poison"
+      "resist": "poison",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 44,
+          "damageMult": 1.0,
+          "telegraphMs": 1000,
+          "count": 1
+        },
+        {
+          "type": "shots",
+          "count": 6,
+          "speed": 110,
+          "damageMult": 0.6,
+          "spread": "radial"
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "boss_stone",
@@ -98,7 +139,23 @@
       "expReward": 900,
       "goldReward": 150,
       "dropTableId": "boss_stone",
-      "weakness": "thunder"
+      "weakness": "thunder",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 56,
+          "damageMult": 1.2,
+          "telegraphMs": 1100,
+          "count": 1
+        },
+        {
+          "type": "charge",
+          "speed": 210,
+          "durationMs": 600,
+          "telegraphMs": 800
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "green_wolf",
@@ -236,7 +293,31 @@
       "goldReward": 500,
       "dropTableId": "boss_dragon",
       "weakness": "ice",
-      "resist": "fire"
+      "resist": "fire",
+      "attacks": [
+        {
+          "type": "shots",
+          "count": 5,
+          "speed": 170,
+          "damageMult": 0.7,
+          "spread": "aim",
+          "arcDeg": 56
+        },
+        {
+          "type": "charge",
+          "speed": 280,
+          "durationMs": 600,
+          "telegraphMs": 700
+        },
+        {
+          "type": "aoe",
+          "radius": 48,
+          "damageMult": 1.1,
+          "telegraphMs": 900,
+          "count": 3
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "boss_flame",
@@ -255,7 +336,23 @@
       "goldReward": 300,
       "dropTableId": "boss_flame",
       "weakness": "ice",
-      "resist": "fire"
+      "resist": "fire",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 300,
+          "durationMs": 550,
+          "telegraphMs": 650
+        },
+        {
+          "type": "aoe",
+          "radius": 46,
+          "damageMult": 1.0,
+          "telegraphMs": 850,
+          "count": 2
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "boss_bat_lord",
@@ -274,7 +371,22 @@
       "goldReward": 130,
       "dropTableId": "boss_bat_lord",
       "weakness": "holy",
-      "resist": "dark"
+      "resist": "dark",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 250,
+          "durationMs": 550,
+          "telegraphMs": 700
+        },
+        {
+          "type": "summon",
+          "enemyId": "bat",
+          "count": 2,
+          "maxMinions": 4
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "boss_wolf_alpha",
@@ -292,7 +404,29 @@
       "expReward": 1500,
       "goldReward": 320,
       "dropTableId": "boss_wolf_alpha",
-      "weakness": "thunder"
+      "weakness": "thunder",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 290,
+          "durationMs": 500,
+          "telegraphMs": 650
+        },
+        {
+          "type": "summon",
+          "enemyId": "green_wolf",
+          "count": 2,
+          "maxMinions": 4
+        },
+        {
+          "type": "aoe",
+          "radius": 40,
+          "damageMult": 0.9,
+          "telegraphMs": 800,
+          "count": 1
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "boss_mushroom",
@@ -311,7 +445,30 @@
       "goldReward": 520,
       "dropTableId": "boss_mushroom",
       "weakness": "fire",
-      "resist": "poison"
+      "resist": "poison",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 46,
+          "damageMult": 0.9,
+          "telegraphMs": 850,
+          "count": 3
+        },
+        {
+          "type": "summon",
+          "enemyId": "cap_shroom",
+          "count": 2,
+          "maxMinions": 4
+        },
+        {
+          "type": "shots",
+          "count": 8,
+          "speed": 120,
+          "damageMult": 0.55,
+          "spread": "radial"
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "boss_lizard_king",
@@ -329,7 +486,23 @@
       "expReward": 3400,
       "goldReward": 720,
       "dropTableId": "boss_lizard_king",
-      "weakness": "ice"
+      "weakness": "ice",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 320,
+          "durationMs": 600,
+          "telegraphMs": 600
+        },
+        {
+          "type": "aoe",
+          "radius": 56,
+          "damageMult": 1.2,
+          "telegraphMs": 850,
+          "count": 2
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "boss_wisp_queen",
@@ -348,7 +521,32 @@
       "goldReward": 1000,
       "dropTableId": "boss_wisp_queen",
       "weakness": "fire",
-      "resist": "ice"
+      "resist": "ice",
+      "attacks": [
+        {
+          "type": "shots",
+          "count": 10,
+          "speed": 150,
+          "damageMult": 0.6,
+          "spread": "radial"
+        },
+        {
+          "type": "aoe",
+          "radius": 50,
+          "damageMult": 1.0,
+          "telegraphMs": 800,
+          "count": 2
+        },
+        {
+          "type": "shots",
+          "count": 4,
+          "speed": 190,
+          "damageMult": 0.7,
+          "spread": "aim",
+          "arcDeg": 40
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "boss_knight_dread",
@@ -367,7 +565,31 @@
       "goldReward": 1400,
       "dropTableId": "boss_knight_dread",
       "weakness": "holy",
-      "resist": "dark"
+      "resist": "dark",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 330,
+          "durationMs": 550,
+          "telegraphMs": 550
+        },
+        {
+          "type": "aoe",
+          "radius": 54,
+          "damageMult": 1.1,
+          "telegraphMs": 750,
+          "count": 2
+        },
+        {
+          "type": "shots",
+          "count": 6,
+          "speed": 180,
+          "damageMult": 0.65,
+          "spread": "aim",
+          "arcDeg": 72
+        }
+      ],
+      "enrageAtHpPct": 0.5
     },
     {
       "id": "boss_slime_abyss",
@@ -386,7 +608,30 @@
       "goldReward": 2000,
       "dropTableId": "boss_slime_abyss",
       "weakness": "holy",
-      "resist": "dark"
+      "resist": "dark",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 50,
+          "damageMult": 1.0,
+          "telegraphMs": 750,
+          "count": 4
+        },
+        {
+          "type": "summon",
+          "enemyId": "slime",
+          "count": 3,
+          "maxMinions": 5
+        },
+        {
+          "type": "shots",
+          "count": 12,
+          "speed": 150,
+          "damageMult": 0.55,
+          "spread": "radial"
+        }
+      ],
+      "enrageAtHpPct": 0.5
     }
   ]
 }

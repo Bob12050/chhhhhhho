@@ -56,6 +56,13 @@ export class Enemy {
   // Status effects: dot = damage-over-time (burn/poison), stun = halt (freeze/paralyze).
   private dot = { remaining: 0, power: 0, timer: 0, color: 0xffffff };
   private stun = { remaining: 0, color: 0xffffff };
+  // Boss-brain overrides: cast hold (stand still, cast pose) and dash.
+  private holdMs = 0;
+  private dashMs = 0;
+  /** Movement speed multiplier (boss enrage). */
+  speedMult = 1;
+  /** When set, replaces the base tint (boss enrage glow). */
+  rageTint: number | null = null;
 
   onDeath: ((x: number, y: number) => void) | null = null;
   /** Fired on each DoT tick so the scene can show a number / juice. */
@@ -158,6 +165,25 @@ export class Enemy {
     return this.stun.remaining > 0;
   }
 
+  /** Stand still in the cast pose for ms (boss attack windup). */
+  castHold(ms: number): void {
+    if (this.dead) return;
+    this.holdMs = Math.max(this.holdMs, ms);
+    this.sprite.setVelocity(0, 0);
+  }
+
+  /** Dash toward (tx, ty) at speed for ms (boss charge; contact damage applies). */
+  beginDash(tx: number, ty: number, speed: number, ms: number): void {
+    if (this.dead) return;
+    const ang = Math.atan2(ty - this.y, tx - this.x);
+    this.sprite.setVelocity(Math.cos(ang) * speed, Math.sin(ang) * speed);
+    const vx = Math.cos(ang);
+    const vy = Math.sin(ang);
+    this.dir = Math.abs(vx) > Math.abs(vy) ? (vx > 0 ? 'right' : 'left') : vy > 0 ? 'down' : 'up';
+    this.dashMs = ms;
+    this.holdMs = 0;
+  }
+
   /** Reset to the base tint (clears the white hit-flash / FILL mode). */
   private restoreTint(): void {
     this.visual.clearTint();
@@ -165,13 +191,20 @@ export class Enemy {
     this.applyStatusTint();
   }
 
-  /** Tint by active status (stun > dot > base) when not mid hit-flash. */
+  /** Tint by active status (stun > dot > rage > base) when not mid hit-flash. */
   private applyStatusTint(): void {
     if (this.flashTimer > 0) return; // white flash takes priority
     if (this.stun.remaining > 0) this.visual.setTint(this.stun.color);
     else if (this.dot.remaining > 0) this.visual.setTint(this.dot.color);
+    else if (this.rageTint !== null) this.visual.setTint(this.rageTint);
     else if (this.cfg.tint !== undefined) this.visual.setTint(this.cfg.tint);
     else this.visual.clearTint();
+  }
+
+  /** Enter the enraged look (reddened tint until death). */
+  enrageVisual(tint: number): void {
+    this.rageTint = tint;
+    this.applyStatusTint();
   }
 
   /** Advance status timers; returns true if a DoT tick killed the enemy. */
@@ -224,6 +257,20 @@ export class Enemy {
       this.knockback -= dtMs;
       this.stepAnim(dtMs, 'hurt');
       return; // knockback overrides movement
+    }
+
+    // Boss-brain overrides (dash keeps its velocity; hold stands in cast pose).
+    if (this.dashMs > 0) {
+      this.dashMs -= dtMs;
+      this.stepAnim(dtMs, 'attack');
+      if (this.dashMs <= 0) this.sprite.setVelocity(0, 0);
+      return;
+    }
+    if (this.holdMs > 0) {
+      this.holdMs -= dtMs;
+      this.sprite.setVelocity(0, 0);
+      this.stepAnim(dtMs, 'cast');
+      return;
     }
 
     const distToPlayer = Phaser.Math.Distance.Between(this.x, this.y, playerX, playerY);
@@ -303,7 +350,8 @@ export class Enemy {
 
   private moveToward(tx: number, ty: number, speed: number): void {
     const ang = Math.atan2(ty - this.y, tx - this.x);
-    this.sprite.setVelocity(Math.cos(ang) * speed, Math.sin(ang) * speed);
+    const s = speed * this.speedMult;
+    this.sprite.setVelocity(Math.cos(ang) * s, Math.sin(ang) * s);
     const vx = Math.cos(ang);
     const vy = Math.sin(ang);
     this.dir = Math.abs(vx) > Math.abs(vy) ? (vx > 0 ? 'right' : 'left') : vy > 0 ? 'down' : 'up';
@@ -312,7 +360,8 @@ export class Enemy {
   /** Move directly away from a point (hit-and-run retreat). */
   private moveAway(tx: number, ty: number, speed: number): void {
     const ang = Math.atan2(this.y - ty, this.x - tx);
-    this.sprite.setVelocity(Math.cos(ang) * speed, Math.sin(ang) * speed);
+    const s = speed * this.speedMult;
+    this.sprite.setVelocity(Math.cos(ang) * s, Math.sin(ang) * s);
     const vx = Math.cos(ang);
     const vy = Math.sin(ang);
     this.dir = Math.abs(vx) > Math.abs(vy) ? (vx > 0 ? 'right' : 'left') : vy > 0 ? 'down' : 'up';

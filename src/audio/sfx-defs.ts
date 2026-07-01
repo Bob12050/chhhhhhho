@@ -46,7 +46,9 @@ export type SfxId =
   | 'craft'
   | 'equip'
   | 'coin'
-  | 'ui_tap';
+  | 'ui_tap'
+  | 'boom'
+  | 'roar';
 
 export const SFX: Record<SfxId, SfxDef> = {
   // Whoosh of a swing: a short noise swish plus a low body.
@@ -153,6 +155,25 @@ export const SFX: Record<SfxId, SfxDef> = {
     gain: 0.3,
     minGapMs: 20,
     steps: [{ freq: 330, type: 'square', delay: 0, attack: 0.001, decay: 0.04, gain: 0.3 }],
+  },
+  // Boss AoE detonation: deep thump + noise burst.
+  boom: {
+    gain: 0.6,
+    minGapMs: 90,
+    steps: [
+      { freq: 120, freqEnd: 45, type: 'square', delay: 0, attack: 0.004, decay: 0.24, gain: 0.6 },
+      { freq: 0, noise: true, delay: 0, attack: 0.002, decay: 0.18, gain: 0.45 },
+    ],
+  },
+  // Boss enrage roar: long falling saw growl with a noise bed.
+  roar: {
+    gain: 0.6,
+    minGapMs: 400,
+    steps: [
+      { freq: 300, freqEnd: 70, type: 'sawtooth', delay: 0, attack: 0.02, decay: 0.55, gain: 0.55 },
+      { freq: 150, freqEnd: 55, type: 'square', delay: 0.05, attack: 0.02, decay: 0.5, gain: 0.4 },
+      { freq: 0, noise: true, delay: 0, attack: 0.01, decay: 0.4, gain: 0.3 },
+    ],
   },
 };
 

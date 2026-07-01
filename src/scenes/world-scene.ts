@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Player } from '@/player/player';
 import { Enemy } from '@/enemies/enemy';
 import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
+import { BossBrain, type Arena } from '@/enemies/boss-brain';
 import { DamageNumbers } from '@/combat/damage-numbers';
 import { gameState } from '@/player/game-state';
 import { getEquipment, getConsumable, getMaterial, getPetItem, itemDisplayName } from '@/data/items';
@@ -73,6 +74,11 @@ export class WorldScene extends Phaser.Scene {
   private rng = new Rng();
   private pet: Pet | null = null;
   private boss: Enemy | null = null;
+  private bossBrain: BossBrain | null = null;
+  /** Pooled enemy projectiles (mobile-perf rule: projectiles use a pool). */
+  private bullets: { obj: Phaser.GameObjects.Arc; vx: number; vy: number; ttl: number; damage: number }[] = [];
+  private bulletPool: Phaser.GameObjects.Arc[] = [];
+  private minions: Enemy[] = [];
   private bossMaxHp = 0;
   private bossBar: {
     bg: Phaser.GameObjects.Rectangle;
@@ -103,6 +109,10 @@ export class WorldScene extends Phaser.Scene {
     this.boss = null;
     this.bossMaxHp = 0;
     this.bossBar = null;
+    this.bossBrain = null;
+    this.bullets = [];
+    this.bulletPool = [];
+    this.minions = [];
 
     this.map = getMap(gameState.mapId) ?? getMap('town')!;
     gameState.flags[`visited_${this.map.id}`] = true;
@@ -216,9 +226,14 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
-  private spawnEnemy(type: string, x: number, y: number): void {
+  private spawnEnemy(
+    type: string,
+    x: number,
+    y: number,
+    opts?: { respawn?: boolean },
+  ): Enemy | undefined {
     const def = getEnemyDef(type);
-    if (!def) return;
+    if (!def) return undefined;
     const enemy = new Enemy(this, x, y, {
       textureKey: def.textureKey,
       maxHp: def.maxHp,
@@ -256,7 +271,7 @@ export class WorldScene extends Phaser.Scene {
       this.onEnemyDeath(dx, dy, def);
       // Normal enemies respawn at their post so zones stay farmable (needed for
       // the time-based progression budget). Bosses only return on re-entry.
-      if (!def.isBoss) {
+      if (!def.isBoss && opts?.respawn !== false) {
         this.time.delayedCall(RESPAWN_MS, () => {
           if (!this.transitioning && this.scene.isActive() && !this.playerDead) {
             this.spawnEnemy(type, x, y);
@@ -269,7 +284,136 @@ export class WorldScene extends Phaser.Scene {
       this.boss = enemy;
       this.bossMaxHp = def.maxHp;
       this.buildBossBar(def.name);
+      if (def.attacks && def.attacks.length > 0) {
+        this.bossBrain = new BossBrain(
+          this.makeArena(enemy, def),
+          def.attacks,
+          def.contactDamage,
+          def.enrageAtHpPct,
+        );
+      }
     }
+    return enemy;
+  }
+
+  /** Scene services handed to the (engine-independent) BossBrain. */
+  private makeArena(boss: Enemy, def: EnemyDef): Arena {
+    return {
+      bossPos: () => ({ x: boss.x, y: boss.y }),
+      playerPos: () => ({ x: this.player.x, y: this.player.y }),
+      hpPct: () => Math.max(0, boss.hp) / def.maxHp,
+      telegraph: (x, y, r, ms, onDone) => this.telegraphFx(x, y, r, ms, onDone),
+      explode: (x, y, r, dmg) => this.explodeAt(x, y, r, dmg),
+      hold: (ms) => boss.castHold(ms),
+      dash: (x, y, speed, ms) => boss.beginDash(x, y, speed, ms),
+      fireProjectile: (ang, speed, dmg) => this.fireBullet(boss.x, boss.y - 24, ang, speed, dmg),
+      summon: (id) => this.summonMinion(boss, id),
+      minionCount: () => this.minions.filter((m) => !m.isDead()).length,
+      setSpeedMult: (m) => {
+        boss.speedMult = m;
+      },
+      onEnrage: () => this.onBossEnrage(boss, def),
+      random: () => Math.random(),
+    };
+  }
+
+  /** Warning circle that fills up over `ms`, then detonates via `onDone`. */
+  private telegraphFx(x: number, y: number, radius: number, ms: number, onDone: () => void): void {
+    const ring = this.add
+      .circle(Math.round(x), Math.round(y), radius, 0xff3030, 0.12)
+      .setStrokeStyle(2, 0xff5050, 0.9)
+      .setDepth(6);
+    const fill = this.add
+      .circle(Math.round(x), Math.round(y), radius, 0xff4040, 0.26)
+      .setScale(0.06)
+      .setDepth(6);
+    this.tweens.add({ targets: fill, scale: 1, duration: ms, ease: 'Linear' });
+    this.time.delayedCall(ms, () => {
+      ring.destroy();
+      fill.destroy();
+      onDone();
+    });
+  }
+
+  /** AoE detonation: blast visual + player range check. */
+  private explodeAt(x: number, y: number, radius: number, damage: number): void {
+    const boom = this.add.circle(Math.round(x), Math.round(y), radius, 0xffa050, 0.5).setDepth(9000);
+    this.tweens.add({
+      targets: boom,
+      alpha: 0,
+      scale: 1.18,
+      duration: 230,
+      ease: 'Quad.easeOut',
+      onComplete: () => boom.destroy(),
+    });
+    this.cameras.main.shake(90, 0.004);
+    bus.emit('sfx:play', { id: 'boom' });
+    if (!this.playerDead && Phaser.Math.Distance.Between(x, y, this.player.x, this.player.y) <= radius + 10) {
+      this.damagePlayer(damage, x, y);
+    }
+  }
+
+  /** Spawn a pooled enemy projectile. */
+  private fireBullet(x: number, y: number, angle: number, speed: number, damage: number): void {
+    const obj =
+      this.bulletPool.pop() ??
+      this.add.circle(0, 0, 5, 0xff8a5a, 1).setStrokeStyle(1, 0xffd0a0, 0.9).setDepth(9000);
+    obj.setPosition(Math.round(x), Math.round(y)).setVisible(true);
+    this.bullets.push({
+      obj,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      ttl: 2600,
+      damage,
+    });
+  }
+
+  private updateBullets(dtMs: number): void {
+    const dt = dtMs / 1000;
+    for (let i = this.bullets.length - 1; i >= 0; i--) {
+      const b = this.bullets[i];
+      b.ttl -= dtMs;
+      b.obj.x += b.vx * dt;
+      b.obj.y += b.vy * dt;
+      const hit =
+        !this.playerDead &&
+        this.playerInvuln <= 0 &&
+        Phaser.Math.Distance.Between(b.obj.x, b.obj.y, this.player.x, this.player.y - 20) < 16;
+      if (hit) this.damagePlayer(b.damage, b.obj.x, b.obj.y);
+      const out =
+        b.obj.x < -20 || b.obj.y < -20 || b.obj.x > this.map.size.w + 20 || b.obj.y > this.map.size.h + 20;
+      if (hit || out || b.ttl <= 0) {
+        b.obj.setVisible(false);
+        this.bulletPool.push(b.obj);
+        this.bullets.splice(i, 1);
+      }
+    }
+  }
+
+  /** Summon one minion near the boss (screen-cap + no respawn). */
+  private summonMinion(boss: Enemy, enemyId: string): boolean {
+    if (this.enemies.filter((e) => !e.isDead()).length >= 12) return false; // mobile cap
+    const ang = Math.random() * Math.PI * 2;
+    const x = Phaser.Math.Clamp(boss.x + Math.cos(ang) * 56, 48, this.map.size.w - 48);
+    const y = Phaser.Math.Clamp(boss.y + Math.sin(ang) * 56, 48, this.map.size.h - 48);
+    const e = this.spawnEnemy(enemyId, x, y, { respawn: false });
+    if (!e) return false;
+    this.minions.push(e);
+    this.spawnHitSpark(x, y - 20, false);
+    return true;
+  }
+
+  /** One-shot enrage cue: roar, shake, red flash, and a lasting reddened tint. */
+  private onBossEnrage(boss: Enemy, def: EnemyDef): void {
+    const base = def.tint ? Phaser.Display.Color.HexStringToColor(def.tint).color : 0xffffff;
+    const r = Math.min(255, ((base >> 16) & 0xff) / 2 + 200);
+    const g = ((base >> 8) & 0xff) * 0.55;
+    const b = (base & 0xff) * 0.55;
+    boss.enrageVisual((Math.round(r) << 16) | (Math.round(g) << 8) | Math.round(b));
+    this.floatText(boss.x, boss.y - 76, '怒り状態！', '#ff6a5a');
+    this.cameras.main.shake(240, 0.008);
+    this.flashScreen(0xff3020, 0.18, 260);
+    bus.emit('sfx:play', { id: 'roar' });
   }
 
   private buildBossBar(name: string): void {
@@ -868,6 +1012,8 @@ export class WorldScene extends Phaser.Scene {
     this.player.update(delta);
     this.pet?.update(delta, this.player.x, this.player.y);
     for (const e of this.enemies) e.update(delta, this.player.x, this.player.y);
+    if (this.boss && !this.boss.isDead()) this.bossBrain?.update(delta);
+    this.updateBullets(delta);
 
     const lead = 28;
     this.cameras.main.setFollowOffset(-v.x * lead, -v.y * lead);

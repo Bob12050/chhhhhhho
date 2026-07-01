@@ -154,9 +154,18 @@ function validateDrops(itemIds: Set<string>): Set<string> {
 function validateEnemies(itemIds: Set<string>, dropTableIds: Set<string>): Set<string> {
   void itemIds;
   const file = readJson<{
-    enemies: { id: string; dropTableId?: string; weakness?: string; resist?: string }[];
+    enemies: {
+      id: string;
+      isBoss?: boolean;
+      dropTableId?: string;
+      weakness?: string;
+      resist?: string;
+      attacks?: Record<string, unknown>[];
+      enrageAtHpPct?: number;
+    }[];
   }>('src/data/defs/enemies.json');
   const ids = new Set<string>();
+  const summonRefs: [string, string][] = [];
   for (const e of file.enemies) {
     if (ids.has(e.id)) err(`Duplicate enemy id: ${e.id}`);
     ids.add(e.id);
@@ -171,6 +180,44 @@ function validateEnemies(itemIds: Set<string>, dropTableIds: Set<string>): Set<s
     if (e.resist === 'none') err(`Enemy ${e.id}: resist "none" is meaningless`);
     if (e.weakness != null && e.weakness === e.resist)
       err(`Enemy ${e.id}: weakness and resist are the same element`);
+    // Boss attack patterns.
+    if (e.attacks && !e.isBoss) err(`Enemy ${e.id}: attacks are boss-only`);
+    if (e.enrageAtHpPct != null && !(e.enrageAtHpPct > 0 && e.enrageAtHpPct <= 1))
+      err(`Enemy ${e.id}: enrageAtHpPct out of (0,1]`);
+    for (const [i, a] of (e.attacks ?? []).entries()) {
+      const at = `Enemy ${e.id}: attacks[${i}]`;
+      const num = (k: string): number => a[k] as number;
+      switch (a.type) {
+        case 'aoe':
+          if (!(num('radius') > 0)) err(`${at}: radius must be > 0`);
+          if (!(num('damageMult') > 0)) err(`${at}: damageMult must be > 0`);
+          if (!(num('telegraphMs') >= 300)) err(`${at}: telegraphMs must be >= 300 (must be dodgeable)`);
+          if (a.count != null && !(num('count') >= 1)) err(`${at}: count must be >= 1`);
+          if (a.at != null && a.at !== 'player' && a.at !== 'self') err(`${at}: bad "at"`);
+          break;
+        case 'charge':
+          if (!(num('speed') > 0)) err(`${at}: speed must be > 0`);
+          if (!(num('durationMs') > 0)) err(`${at}: durationMs must be > 0`);
+          if (!(num('telegraphMs') >= 300)) err(`${at}: telegraphMs must be >= 300 (must be dodgeable)`);
+          break;
+        case 'shots':
+          if (!(num('count') >= 1)) err(`${at}: count must be >= 1`);
+          if (!(num('speed') > 0)) err(`${at}: speed must be > 0`);
+          if (!(num('damageMult') > 0)) err(`${at}: damageMult must be > 0`);
+          if (a.spread !== 'radial' && a.spread !== 'aim') err(`${at}: bad spread`);
+          break;
+        case 'summon':
+          if (typeof a.enemyId !== 'string') err(`${at}: summon needs enemyId`);
+          else summonRefs.push([`${at}`, a.enemyId]);
+          if (!(num('count') >= 1)) err(`${at}: count must be >= 1`);
+          break;
+        default:
+          err(`${at}: unknown type "${String(a.type)}"`);
+      }
+    }
+  }
+  for (const [at, id] of summonRefs) {
+    if (!ids.has(id)) err(`${at}: summon enemyId "${id}" unknown`);
   }
   return ids;
 }
