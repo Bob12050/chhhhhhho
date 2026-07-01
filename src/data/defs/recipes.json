@@ -3056,6 +3056,138 @@
       },
       "gold": 240,
       "station": "forge"
+    },
+    {
+      "id": "craft_ring_copper",
+      "resultItemId": "ring_copper",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 1,
+        "slime_jelly": 1
+      },
+      "gold": 8,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_ring_iron",
+      "resultItemId": "ring_iron",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 2,
+        "soft_leather": 1
+      },
+      "gold": 16,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_ring_steel",
+      "resultItemId": "ring_steel",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 1,
+        "stone_heart": 1
+      },
+      "gold": 40,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_ring_mythril",
+      "resultItemId": "ring_mythril",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "mana_stone": 2
+      },
+      "gold": 120,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_ring_astral",
+      "resultItemId": "ring_astral",
+      "resultQty": 1,
+      "materials": {
+        "star_fragment": 1,
+        "abyss_core": 1
+      },
+      "gold": 300,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_ring_arcane",
+      "resultItemId": "ring_arcane",
+      "resultQty": 1,
+      "materials": {
+        "mana_stone": 2,
+        "steel_ingot": 1
+      },
+      "gold": 50,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_amulet_wood",
+      "resultItemId": "amulet_wood",
+      "resultQty": 1,
+      "materials": {
+        "herb": 2,
+        "soft_leather": 1
+      },
+      "gold": 8,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_amulet_bone",
+      "resultItemId": "amulet_bone",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 2,
+        "slime_jelly": 1
+      },
+      "gold": 16,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_amulet_jade",
+      "resultItemId": "amulet_jade",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 1,
+        "treant_sap": 1
+      },
+      "gold": 40,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_amulet_dragon",
+      "resultItemId": "amulet_dragon",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 1,
+        "mythril_ore": 1
+      },
+      "gold": 120,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_amulet_abyss",
+      "resultItemId": "amulet_abyss",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 1,
+        "frost_heart": 1
+      },
+      "gold": 300,
+      "station": "workbench"
+    },
+    {
+      "id": "craft_amulet_thief",
+      "resultItemId": "amulet_thief",
+      "resultQty": 1,
+      "materials": {
+        "night_fang": 1,
+        "soft_leather": 2
+      },
+      "gold": 50,
+      "station": "workbench"
     }
   ]
 }

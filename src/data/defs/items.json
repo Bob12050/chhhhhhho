@@ -2652,6 +2652,189 @@
       },
       "sellPrice": 160,
       "description": "石の心臓を加工した一品。"
+    },
+    {
+      "id": "ring_copper",
+      "name": "銅の指輪",
+      "slot": "accessory_1",
+      "rarity": 1,
+      "visualId": "vest_cloth",
+      "levelRequirement": 3,
+      "derived": {
+        "critRate": 0.02,
+        "accuracy": 2
+      },
+      "sellPrice": 20,
+      "description": "ささやかな加護を宿す銅の指輪。"
+    },
+    {
+      "id": "ring_iron",
+      "name": "鉄の指輪",
+      "slot": "accessory_1",
+      "rarity": 2,
+      "visualId": "vest_cloth",
+      "levelRequirement": 8,
+      "derived": {
+        "critRate": 0.03,
+        "physAtk": 2
+      },
+      "sellPrice": 40,
+      "description": "打ち手の勘を研ぎ澄ます鉄の指輪。"
+    },
+    {
+      "id": "ring_steel",
+      "name": "鋼の指輪",
+      "slot": "accessory_1",
+      "rarity": 4,
+      "visualId": "vest_cloth",
+      "levelRequirement": 18,
+      "derived": {
+        "critRate": 0.04,
+        "physAtk": 4,
+        "accuracy": 3
+      },
+      "sellPrice": 90,
+      "description": "鋼を鍛えた重厚な指輪。"
+    },
+    {
+      "id": "ring_mythril",
+      "name": "ミスリルの指輪",
+      "slot": "accessory_1",
+      "rarity": 6,
+      "visualId": "vest_cloth",
+      "levelRequirement": 40,
+      "derived": {
+        "critRate": 0.05,
+        "physAtk": 6,
+        "magAtk": 6
+      },
+      "sellPrice": 180,
+      "description": "魔力を通すミスリルの指輪。"
+    },
+    {
+      "id": "ring_astral",
+      "name": "星辰の指輪",
+      "slot": "accessory_1",
+      "rarity": 8,
+      "visualId": "vest_cloth",
+      "levelRequirement": 70,
+      "derived": {
+        "critRate": 0.07,
+        "physAtk": 8,
+        "magAtk": 8,
+        "accuracy": 5
+      },
+      "sellPrice": 320,
+      "description": "星屑の輝きを封じた至高の指輪。"
+    },
+    {
+      "id": "ring_arcane",
+      "name": "魔導の宝珠",
+      "slot": "accessory_1",
+      "rarity": 4,
+      "visualId": "vest_cloth",
+      "levelRequirement": 20,
+      "derived": {
+        "magAtk": 8,
+        "maxMp": 20
+      },
+      "sellPrice": 100,
+      "description": "術者のための魔力を蓄えた宝珠。",
+      "classRestrictions": [
+        "mage",
+        "cleric"
+      ]
+    },
+    {
+      "id": "amulet_wood",
+      "name": "木の護符",
+      "slot": "accessory_2",
+      "rarity": 1,
+      "visualId": "vest_cloth",
+      "levelRequirement": 3,
+      "derived": {
+        "maxHp": 10,
+        "evasion": 2
+      },
+      "sellPrice": 20,
+      "description": "森の気を宿した素朴な護符。"
+    },
+    {
+      "id": "amulet_bone",
+      "name": "骨の護符",
+      "slot": "accessory_2",
+      "rarity": 2,
+      "visualId": "vest_cloth",
+      "levelRequirement": 8,
+      "derived": {
+        "maxMp": 8,
+        "magDef": 2
+      },
+      "sellPrice": 40,
+      "description": "魔を退ける骨細工の護符。"
+    },
+    {
+      "id": "amulet_jade",
+      "name": "翠玉の護符",
+      "slot": "accessory_2",
+      "rarity": 4,
+      "visualId": "vest_cloth",
+      "levelRequirement": 18,
+      "derived": {
+        "maxHp": 30,
+        "magDef": 4,
+        "evasion": 3
+      },
+      "sellPrice": 90,
+      "description": "翠の玉が身を守る護符。"
+    },
+    {
+      "id": "amulet_dragon",
+      "name": "竜鱗の護符",
+      "slot": "accessory_2",
+      "rarity": 6,
+      "visualId": "vest_cloth",
+      "levelRequirement": 40,
+      "derived": {
+        "maxHp": 60,
+        "def": 5,
+        "magDef": 6
+      },
+      "sellPrice": 180,
+      "description": "竜鱗を編み込んだ堅牢な護符。"
+    },
+    {
+      "id": "amulet_abyss",
+      "name": "深淵の護符",
+      "slot": "accessory_2",
+      "rarity": 8,
+      "visualId": "vest_cloth",
+      "levelRequirement": 70,
+      "derived": {
+        "maxHp": 100,
+        "magDef": 10,
+        "moveSpeed": 4
+      },
+      "sellPrice": 320,
+      "description": "深淵の力を封じた漆黒の護符。"
+    },
+    {
+      "id": "amulet_thief",
+      "name": "盗賊の耳飾り",
+      "slot": "accessory_2",
+      "rarity": 4,
+      "visualId": "vest_cloth",
+      "levelRequirement": 20,
+      "derived": {
+        "evasion": 6,
+        "moveSpeed": 6,
+        "critRate": 0.03
+      },
+      "sellPrice": 100,
+      "description": "身軽さを与える盗賊の耳飾り。",
+      "classRestrictions": [
+        "thief"
+      ]
     }
   ]
 }
