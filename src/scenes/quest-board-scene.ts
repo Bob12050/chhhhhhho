@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { itemDisplayName } from '@/data/items';
 import { getEnemyDef } from '@/enemies/enemy-defs';
-import { getQuest, type QuestDef } from '@/quests/quest-defs';
+import { getQuest, allQuests, type QuestDef } from '@/quests/quest-defs';
 import {
   availableQuests,
   acceptQuest,
@@ -28,6 +28,8 @@ export class QuestBoardScene extends Phaser.Scene {
   private viewBottom = 0;
   private tab: 'normal' | 'hunt' = 'normal';
   private tabButtons: { id: 'normal' | 'hunt'; text: Phaser.GameObjects.Text }[] = [];
+  /** In the 大型狩猟 tab: null = show the ★rank list, else the picked rank's quests. */
+  private selectedRank: number | null = null;
 
   constructor() {
     super('QuestBoard');
@@ -65,6 +67,7 @@ export class QuestBoardScene extends Phaser.Scene {
       tb.on('pointerup', () => {
         if (this.dragged) return;
         this.tab = t.id;
+        this.selectedRank = null;
         this.scrollY = 0;
         this.render();
       });
@@ -128,17 +131,85 @@ export class QuestBoardScene extends Phaser.Scene {
   private render(): void {
     this.content.removeAll(true);
     const w = this.scale.width;
-    let y = this.viewTop + 8;
     for (const tb of this.tabButtons)
       tb.text.setBackgroundColor(tb.id === this.tab ? UI.tabActiveBg : UI.tabIdleBg);
 
-    const inTab = (q: QuestDef): boolean => this.inTab(q);
+    let y = this.viewTop + 8;
+    // 大型狩猟 tab, no rank picked yet: show the ★rank menu (drill-down).
+    if (this.tab === 'hunt' && this.selectedRank === null) {
+      y = this.renderRankList(y, w);
+    } else {
+      y = this.renderQuestList(y, w);
+    }
+    this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
+    this.scrollTo(this.scrollY);
+  }
+
+  /** ★1〜★7 selector rows for the 大型狩猟 tab. Tapping a rank drills in. */
+  private renderRankList(y: number, w: number): number {
+    const hunts = allQuests().filter((q) => !!q.huntMap);
+    const availSet = new Set(availableQuests(gameState).map((q) => q.id));
+    const ranks = [...new Set(hunts.map((q) => q.rank ?? 1))].sort((a, b) => a - b);
+    for (const r of ranks) {
+      const inRank = hunts.filter((q) => (q.rank ?? 1) === r);
+      const availCount = inRank.filter((q) => availSet.has(q.id)).length;
+      const row = this.add
+        .rectangle(w / 2, y + 22, w - 24, 48, 0x20233a, 1)
+        .setOrigin(0.5, 0)
+        .setStrokeStyle(1, 0x39406a);
+      this.content.add(row);
+      this.content.add(
+        this.add.text(24, y + 12, '★'.repeat(r), { fontFamily: FONT, fontSize: '18px', color: '#ffcf5a' }),
+      );
+      this.content.add(
+        this.add.text(24, y + 38, `受注できる ${availCount} / 全${inRank.length}`, {
+          fontFamily: FONT,
+          fontSize: '11px',
+          color: availCount > 0 ? '#9fe3a0' : '#9aa0b5',
+        }),
+      );
+      this.content.add(
+        this.add.text(w - 28, y + 22, '[ 見る ]', { fontFamily: FONT, fontSize: '14px', color: '#9fd0ff' }).setOrigin(1, 0.5),
+      );
+      row.setInteractive({ useHandCursor: true });
+      row.on('pointerup', () => {
+        if (this.dragged) return;
+        this.selectedRank = r;
+        this.scrollY = 0;
+        this.render();
+      });
+      y += 60;
+    }
+    return y;
+  }
+
+  /** Flat quest list for the 通常 tab, or a single ★rank inside the 大型狩猟 tab. */
+  private renderQuestList(y: number, w: number): number {
+    if (this.tab === 'hunt' && this.selectedRank !== null) {
+      const back = this.add
+        .text(16, y, `← ★${this.selectedRank} 一覧へ戻る`, { fontFamily: FONT, fontSize: '13px', color: '#9fd0ff' })
+        .setInteractive({ useHandCursor: true });
+      back.on('pointerup', () => {
+        if (this.dragged) return;
+        this.selectedRank = null;
+        this.scrollY = 0;
+        this.render();
+      });
+      this.content.add(back);
+      y += 30;
+    }
+
+    const inScope = (q: QuestDef): boolean => {
+      if (!this.inTab(q)) return false;
+      if (this.tab === 'hunt' && this.selectedRank !== null) return (q.rank ?? 1) === this.selectedRank;
+      return true;
+    };
     const active = (gameState.activeQuests.map((id) => getQuest(id)).filter(Boolean) as QuestDef[])
-      .filter(inTab)
+      .filter(inScope)
       .sort(this.byRank);
-    const avail = availableQuests(gameState).filter(inTab).sort(this.byRank);
+    const avail = availableQuests(gameState).filter(inScope).sort(this.byRank);
     const done = (gameState.completedQuests.map((id) => getQuest(id)).filter(Boolean) as QuestDef[])
-      .filter(inTab)
+      .filter(inScope)
       .sort(this.byRank);
 
     if (active.length) {
@@ -154,15 +225,13 @@ export class QuestBoardScene extends Phaser.Scene {
       for (const q of done) y = this.renderQuest(q, y, w, 'done');
     }
     if (!active.length && !avail.length && !done.length) {
-      const msg = this.tab === 'hunt' ? '今は受けられる狩猟がありません。' : '今は受けられるクエストがありません。';
+      const msg = this.tab === 'hunt' ? 'このランクの狩猟はまだありません。' : '今は受けられるクエストがありません。';
       this.content.add(
         this.add.text(16, y, msg, { fontFamily: FONT, fontSize: '13px', color: '#9aa0b4' }),
       );
       y += 28;
     }
-
-    this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
-    this.scrollTo(this.scrollY);
+    return y;
   }
 
   private heading(text: string, y: number, w: number): number {
