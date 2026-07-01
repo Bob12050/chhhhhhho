@@ -124,7 +124,7 @@ export class CraftingScene extends Phaser.Scene {
 
   private render(): void {
     this.content.removeAll(true);
-    this.goldText.setText(`${gameState.gold} G`);
+    this.goldText.setText(`${gameState.gold} Gold`);
     for (const tb of this.tabButtons) {
       tb.text.setBackgroundColor(tb.id === this.tab ? UI.tabActiveBg : UI.tabIdleBg);
     }
@@ -170,7 +170,7 @@ export class CraftingScene extends Phaser.Scene {
       const have = gameState.ownedEquipmentCount(eq);
       parts.push(`${itemDisplayName(eq)}(装備) ${have}/1`);
     }
-    parts.push(`${gameState.gold}/${r.gold} G`);
+    parts.push(`${gameState.gold}/${r.gold} Gold`);
     this.content.add(
       this.add.text(16, y + 20, parts.join('   '), {
         fontFamily: FONT,

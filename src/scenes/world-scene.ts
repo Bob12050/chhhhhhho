@@ -239,6 +239,17 @@ export class WorldScene extends Phaser.Scene {
       this.dmg.show(sx, sy - 42, amount, false, '#9fe36a');
       bus.emit('combat:damage-dealt', { x: sx, y: sy, amount, crit: false });
     };
+    // Attack-state strike: hits if the player is still within attackRange when
+    // the windup lands. This is what lets keep-distance enemies deal damage at
+    // all (contact is their only other damage path and they avoid contact).
+    enemy.onAttackStrike = () => {
+      if (enemy.isDead() || this.playerDead) return;
+      const dist = Phaser.Math.Distance.Between(enemy.x, enemy.y, this.player.x, this.player.y);
+      if (dist > enemy.cfg.attackRange + 14) return;
+      // Ranged strikes get a zap beam so the hit reads at a distance.
+      if (dist > 44) this.spawnZap(enemy.x, enemy.y - 20, this.player.x, this.player.y - 24);
+      this.damagePlayer(enemy.cfg.contactDamage, enemy.x, enemy.y);
+    };
     this.physics.add.collider(enemy.sprite, this.obstacles);
     this.physics.add.overlap(this.player.body, enemy.sprite, () => this.onContact(enemy));
     enemy.onDeath = (dx, dy) => {
@@ -298,16 +309,23 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private onContact(enemy: Enemy): void {
-    if (enemy.isDead() || this.playerInvuln > 0 || this.playerDead) return;
+    if (enemy.isDead()) return;
+    this.damagePlayer(enemy.cfg.contactDamage, enemy.x, enemy.y);
+  }
+
+  /** Apply damage to the player (shared by contact + attack strikes).
+   *  Respects the post-hit invulnerability window. */
+  private damagePlayer(amount: number, fromX: number, fromY: number): void {
+    if (this.playerInvuln > 0 || this.playerDead) return;
     this.playerInvuln = 700;
-    gameState.hp = Math.max(0, gameState.hp - enemy.cfg.contactDamage);
+    gameState.hp = Math.max(0, gameState.hp - amount);
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
-    this.dmg.show(this.player.x, this.player.y - 40, enemy.cfg.contactDamage, false);
+    this.dmg.show(this.player.x, this.player.y - 40, amount, false);
     this.player.hurt();
     bus.emit('sfx:play', { id: 'hurt' });
     this.cameras.main.shake(120, 0.006);
     this.flashScreen(0xff2a2a, 0.32, 180);
-    const ang = Math.atan2(this.player.y - enemy.y, this.player.x - enemy.x);
+    const ang = Math.atan2(this.player.y - fromY, this.player.x - fromX);
     this.player.body.setVelocity(Math.cos(ang) * 160, Math.sin(ang) * 160);
     if (gameState.hp <= 0) this.onPlayerDown();
   }
@@ -398,6 +416,24 @@ export class WorldScene extends Phaser.Scene {
       duration: 160,
       ease: 'Quad.easeOut',
       onComplete: () => g.destroy(),
+    });
+  }
+
+  /** Quick beam from a ranged enemy to the player (attack-strike feedback). */
+  private spawnZap(x1: number, y1: number, x2: number, y2: number): void {
+    const g = this.add.graphics().setDepth(9000);
+    g.lineStyle(2, 0x9fd0ff, 0.9);
+    g.lineBetween(Math.round(x1), Math.round(y1), Math.round(x2), Math.round(y2));
+    const spark = this.add.circle(Math.round(x2), Math.round(y2), 4, 0x9fd0ff, 0.9).setDepth(9000);
+    this.tweens.add({
+      targets: [g, spark],
+      alpha: 0,
+      duration: 180,
+      ease: 'Quad.easeOut',
+      onComplete: () => {
+        g.destroy();
+        spark.destroy();
+      },
     });
   }
 

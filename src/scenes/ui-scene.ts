@@ -207,16 +207,22 @@ export class UIScene extends Phaser.Scene {
       bus.on('player:level-up', () => setExp(gameState.exp, expToNext(gameState.level))),
     );
 
-    // Gold under the EXP bar.
+    // Gold under the EXP bar. Coin icon + amount — a bare "G" suffix reads as
+    // "6" at this size in the dot font.
+    const goldY = insets.top + 86;
+    this.add
+      .circle(insets.left + 13, goldY + 8, 5, 0xf5c542)
+      .setStrokeStyle(1.5, 0x8a6a1a, 1)
+      .setDepth(depth);
     this.goldText = this.add
-      .text(insets.left + 8, insets.top + 86, '', {
+      .text(insets.left + 22, goldY, '', {
         fontFamily: FONT,
         fontSize: '12px',
         color: '#ffd86b',
       })
       .setDepth(depth);
     this.busOff.push(
-      bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current} G`)),
+      bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current}`)),
     );
 
     // Bag button (top-right) opens the inventory/menu.

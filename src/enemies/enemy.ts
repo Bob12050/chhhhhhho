@@ -60,6 +60,14 @@ export class Enemy {
   onDeath: ((x: number, y: number) => void) | null = null;
   /** Fired on each DoT tick so the scene can show a number / juice. */
   onStatusTick: ((amount: number, x: number, y: number) => void) | null = null;
+  /**
+   * Fired at the strike moment of the attack state (after a short windup).
+   * The scene resolves it (range check + player damage) — without this,
+   * keep-distance enemies could never hurt anyone: contact was the only
+   * damage path and they actively avoid contact.
+   */
+  onAttackStrike: (() => void) | null = null;
+  private attackStruck = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, cfg: EnemyConfig) {
     this.scene = scene;
@@ -190,6 +198,7 @@ export class Enemy {
     if (this.state === s) return;
     this.state = s;
     this.stateTimer = 0;
+    if (s === 'attack') this.attackStruck = false;
   }
 
   update(dtMs: number, playerX: number, playerY: number): void {
@@ -263,6 +272,11 @@ export class Enemy {
         break;
       case 'attack':
         this.sprite.setVelocity(0, 0);
+        // Strike lands after a short windup so the attack animation telegraphs it.
+        if (!this.attackStruck && this.stateTimer > 260) {
+          this.attackStruck = true;
+          this.onAttackStrike?.();
+        }
         if (this.stateTimer > 500) {
           this.setState(distToPlayer < this.cfg.aggroRange ? 'chase' : 'idle');
         }

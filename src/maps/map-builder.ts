@@ -139,7 +139,7 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     });
 
     if (p.label) {
-      scene.add
+      const label = scene.add
         .text(cx, exitUp ? cy + ph + 16 : cy - ph - 16, locked ? `🔒 ${p.label}` : p.label, {
           fontFamily: FONT,
           fontSize: '10px',
@@ -149,6 +149,10 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
         })
         .setOrigin(0.5)
         .setDepth(6);
+      // Edge portals: keep the label fully inside the map so the camera
+      // (clamped to map bounds) can never crop it.
+      label.setX(Phaser.Math.Clamp(label.x, label.width / 2 + 2, w - label.width / 2 - 2));
+      label.setY(Phaser.Math.Clamp(label.y, label.height / 2 + 2, h - label.height / 2 - 2));
     }
   }
 

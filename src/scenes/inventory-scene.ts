@@ -178,7 +178,7 @@ export class InventoryScene extends Phaser.Scene {
   }
 
   private refreshGold(): void {
-    this.goldText.setText(`${gameState.gold} G`);
+    this.goldText.setText(`${gameState.gold} Gold`);
   }
 
   private renderTab(): void {
