@@ -302,6 +302,9 @@ export class WorldScene extends Phaser.Scene {
         fontFamily: FONT,
         fontSize: '11px',
         color: '#ffe',
+        // Dark backing keeps labels readable over bright building walls.
+        backgroundColor: '#00000066',
+        padding: { x: 3, y: 1 },
       })
       .setOrigin(0.5)
       .setDepth(Math.round(y) + 1);

@@ -43,8 +43,15 @@ export const TEX = {
   tileStone: 'gen.tile.stone',
   tileFloor: 'gen.tile.floor',
   obstacle: 'gen.obstacle',
+  obstacleBush: 'gen.obstacle.bush',
+  obstaclePine: 'gen.obstacle.pine',
   wall: 'gen.wall',
   npc: 'gen.npc',
+  decorTuft: 'gen.decor.tuft',
+  decorFlowerA: 'gen.decor.flower_a',
+  decorFlowerB: 'gen.decor.flower_b',
+  decorPebble: 'gen.decor.pebble',
+  decorCrack: 'gen.decor.crack',
 } as const;
 
 const SPECS: Record<string, LayerSpec> = {
@@ -181,6 +188,76 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     ctx.fillStyle = '#2f7a3a';
     ctx.fillRect(7, 5, 14, 7);
   });
+
+  // Tree variants: mixed in deterministically by the map builder so tree lines
+  // stop reading as a repeated single stamp.
+  make(TEX.obstacleBush, (ctx) => {
+    // Low round bush, no trunk.
+    ctx.fillStyle = '#16371c';
+    ctx.fillRect(4, 10, 24, 18);
+    ctx.fillStyle = '#215628';
+    ctx.fillRect(6, 12, 20, 14);
+    ctx.fillStyle = '#2c7336';
+    ctx.fillRect(8, 13, 12, 6);
+    ctx.fillStyle = '#173a1d';
+    ctx.fillRect(2, 16, 4, 8);
+    ctx.fillRect(26, 16, 4, 8);
+  });
+  make(TEX.obstaclePine, (ctx) => {
+    // Tall narrow pine: stacked shrinking tiers + trunk.
+    ctx.fillStyle = '#3a2418';
+    ctx.fillRect(14, 24, 4, 8);
+    ctx.fillStyle = '#12331a';
+    ctx.fillRect(8, 16, 16, 9);
+    ctx.fillRect(10, 9, 12, 9);
+    ctx.fillRect(12, 2, 8, 9);
+    ctx.fillStyle = '#1d4f27';
+    ctx.fillRect(10, 17, 12, 5);
+    ctx.fillRect(12, 10, 8, 5);
+    ctx.fillRect(13, 3, 6, 5);
+  });
+
+  // 16x16 ground decorations (non-colliding, scattered by the map builder).
+  make(TEX.decorTuft, (ctx) => {
+    ctx.fillStyle = '#2f6038';
+    ctx.fillRect(3, 8, 2, 6);
+    ctx.fillRect(7, 6, 2, 8);
+    ctx.fillRect(11, 9, 2, 5);
+    ctx.fillStyle = '#3a7a46';
+    ctx.fillRect(5, 9, 2, 5);
+    ctx.fillRect(9, 8, 2, 6);
+  }, 16, 16);
+  make(TEX.decorFlowerA, (ctx) => {
+    ctx.fillStyle = '#2f6038';
+    ctx.fillRect(7, 9, 2, 5);
+    ctx.fillStyle = '#f0f0e6';
+    ctx.fillRect(5, 5, 6, 4);
+    ctx.fillRect(6, 4, 4, 6);
+    ctx.fillStyle = '#f5c542';
+    ctx.fillRect(7, 6, 2, 2);
+  }, 16, 16);
+  make(TEX.decorFlowerB, (ctx) => {
+    ctx.fillStyle = '#2f6038';
+    ctx.fillRect(7, 9, 2, 5);
+    ctx.fillStyle = '#e07a9a';
+    ctx.fillRect(5, 5, 6, 4);
+    ctx.fillRect(6, 4, 4, 6);
+    ctx.fillStyle = '#f5e0a0';
+    ctx.fillRect(7, 6, 2, 2);
+  }, 16, 16);
+  make(TEX.decorPebble, (ctx) => {
+    ctx.fillStyle = '#565a66';
+    ctx.fillRect(4, 8, 8, 5);
+    ctx.fillStyle = '#7a7e8a';
+    ctx.fillRect(5, 9, 5, 2);
+  }, 16, 16);
+  make(TEX.decorCrack, (ctx) => {
+    ctx.fillStyle = '#1a1c24';
+    ctx.fillRect(3, 7, 6, 1);
+    ctx.fillRect(8, 8, 4, 1);
+    ctx.fillRect(6, 4, 1, 4);
+    ctx.fillRect(11, 9, 1, 3);
+  }, 16, 16);
 
   make(
     TEX.npc,

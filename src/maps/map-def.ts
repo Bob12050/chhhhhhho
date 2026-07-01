@@ -53,6 +53,15 @@ export interface MapNpc {
   dialogueId?: string;
 }
 
+/** Procedurally drawn building (top-left px + size + wall style). */
+export interface BuildingDef {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  style: 'wood' | 'stone' | 'plaster';
+}
+
 export interface MapDef {
   id: string;
   name: string;
@@ -61,6 +70,8 @@ export interface MapDef {
   path?: { axis: 'v' | 'h'; thickness: number };
   border: BorderKind;
   obstacles?: [number, number][];
+  /** Procedural buildings (collidable, drawn by the map builder). */
+  buildings?: BuildingDef[];
   spawns: Record<string, [number, number]>;
   portals?: PortalDef[];
   enemies?: MapEnemy[];

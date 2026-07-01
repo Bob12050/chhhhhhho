@@ -194,12 +194,15 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
   ];
   type MapDoc = {
     id: string;
+    size: { w: number; h: number };
     spawns: Record<string, [number, number]>;
     portals?: { to: string; toSpawn: string }[];
     enemies?: { type: string }[];
     npcs?: { dialogueId?: string }[];
+    buildings?: { x: number; y: number; w: number; h: number; style: string }[];
     travel?: { order?: number; hidden?: boolean; unlockFlag?: string; note?: string };
   };
+  const BUILDING_STYLES = new Set(['wood', 'stone', 'plaster']);
   const maps = new Map<string, MapDoc>();
   const travelOrders = new Map<number, string>();
   for (const f of files) {
@@ -229,6 +232,13 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
       if (n.dialogueId && !dialogueIds.has(n.dialogueId)) {
         err(`Map ${m.id}: npc references unknown dialogue "${n.dialogueId}"`);
       }
+    }
+    for (const [i, b] of (m.buildings ?? []).entries()) {
+      if (!BUILDING_STYLES.has(b.style))
+        err(`Map ${m.id}: building[${i}] unknown style "${b.style}"`);
+      if (!(b.w > 0) || !(b.h > 0)) err(`Map ${m.id}: building[${i}] non-positive size`);
+      if (b.x < 0 || b.y < 0 || b.x + b.w > m.size.w || b.y + b.h > m.size.h)
+        err(`Map ${m.id}: building[${i}] out of map bounds`);
     }
   }
   return new Set(maps.keys());
