@@ -24,8 +24,10 @@ export class QuestBoardScene extends Phaser.Scene {
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
-  private viewTop = 60;
+  private viewTop = 92;
   private viewBottom = 0;
+  private tab: 'normal' | 'hunt' = 'normal';
+  private tabButtons: { id: 'normal' | 'hunt'; text: Phaser.GameObjects.Text }[] = [];
 
   constructor() {
     super('QuestBoard');
@@ -42,6 +44,32 @@ export class QuestBoardScene extends Phaser.Scene {
         color: '#fff',
       })
       .setDepth(3);
+
+    // Category tabs: 通常クエスト / 大型狩猟 (MH style).
+    this.tabButtons = [];
+    const tabs: { id: 'normal' | 'hunt'; label: string }[] = [
+      { id: 'normal', label: '通常クエスト' },
+      { id: 'hunt', label: '大型狩猟' },
+    ];
+    tabs.forEach((t, i) => {
+      const tb = this.add
+        .text(16 + i * 130, 56, t.label, {
+          fontFamily: FONT,
+          fontSize: '13px',
+          color: '#fff',
+          backgroundColor: UI.tabIdleBg,
+          padding: { x: 12, y: 8 },
+        })
+        .setDepth(3)
+        .setInteractive({ useHandCursor: true });
+      tb.on('pointerup', () => {
+        if (this.dragged) return;
+        this.tab = t.id;
+        this.scrollY = 0;
+        this.render();
+      });
+      this.tabButtons.push({ id: t.id, text: tb });
+    });
 
     this.content = this.add.container(0, 0).setDepth(1);
     this.viewBottom = h - 72;
@@ -88,14 +116,30 @@ export class QuestBoardScene extends Phaser.Scene {
     this.content.y = -this.scrollY;
   }
 
+  /** A quest belongs to the 大型狩猟 tab if it spawns a boss in an arena. */
+  private inTab(q: QuestDef): boolean {
+    const isHunt = !!q.huntMap;
+    return this.tab === 'hunt' ? isHunt : !isHunt;
+  }
+
+  private byRank = (a: QuestDef, b: QuestDef): number =>
+    (a.rank ?? 1) - (b.rank ?? 1) || a.name.localeCompare(b.name);
+
   private render(): void {
     this.content.removeAll(true);
     const w = this.scale.width;
-    let y = 70;
+    let y = this.viewTop + 8;
+    for (const tb of this.tabButtons)
+      tb.text.setBackgroundColor(tb.id === this.tab ? UI.tabActiveBg : UI.tabIdleBg);
 
-    const active = gameState.activeQuests.map((id) => getQuest(id)).filter(Boolean) as QuestDef[];
-    const avail = availableQuests(gameState);
-    const done = gameState.completedQuests.map((id) => getQuest(id)).filter(Boolean) as QuestDef[];
+    const inTab = (q: QuestDef): boolean => this.inTab(q);
+    const active = (gameState.activeQuests.map((id) => getQuest(id)).filter(Boolean) as QuestDef[])
+      .filter(inTab)
+      .sort(this.byRank);
+    const avail = availableQuests(gameState).filter(inTab).sort(this.byRank);
+    const done = (gameState.completedQuests.map((id) => getQuest(id)).filter(Boolean) as QuestDef[])
+      .filter(inTab)
+      .sort(this.byRank);
 
     if (active.length) {
       y = this.heading('進行中', y, w);
@@ -110,12 +154,9 @@ export class QuestBoardScene extends Phaser.Scene {
       for (const q of done) y = this.renderQuest(q, y, w, 'done');
     }
     if (!active.length && !avail.length && !done.length) {
+      const msg = this.tab === 'hunt' ? '今は受けられる狩猟がありません。' : '今は受けられるクエストがありません。';
       this.content.add(
-        this.add.text(16, y, '今は受けられるクエストがありません。', {
-          fontFamily: FONT,
-          fontSize: '13px',
-          color: '#9aa0b4',
-        }),
+        this.add.text(16, y, msg, { fontFamily: FONT, fontSize: '13px', color: '#9aa0b4' }),
       );
       y += 28;
     }
@@ -160,8 +201,10 @@ export class QuestBoardScene extends Phaser.Scene {
 
   private renderQuest(q: QuestDef, y: number, w: number, state: 'active' | 'available' | 'done'): number {
     const titleColor = state === 'done' ? '#6b7088' : q.type === 'unlock' ? '#ffe9a8' : '#ffffff';
+    // MH-style star rank prefix (☆ for done keeps it subtle).
+    const stars = `★${q.rank ?? 1} `;
     this.content.add(
-      this.add.text(16, y, q.name, {
+      this.add.text(16, y, stars + q.name, {
         fontFamily: FONT,
         fontSize: '15px',
         color: titleColor,

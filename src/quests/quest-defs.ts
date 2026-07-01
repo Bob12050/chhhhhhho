@@ -36,6 +36,8 @@ export interface QuestDef {
   require?: QuestRequire;
   rewards: QuestReward;
   repeatable?: boolean;
+  /** MH-style difficulty rank (★1〜★7). Drives board grouping/sorting. */
+  rank?: number;
   /**
    * Monster-Hunter style hunt: while this quest is active, its target
    * enemies spawn in `huntMap`. Accepting it departs the player to that map.

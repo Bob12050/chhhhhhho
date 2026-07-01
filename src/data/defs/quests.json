@@ -18,7 +18,8 @@
         "items": {
           "soft_leather": 3
         }
-      }
+      },
+      "rank": 1
     },
     {
       "id": "subj_shrooms",
@@ -39,7 +40,8 @@
           "herb": 4,
           "mana_stone": 1
         }
-      }
+      },
+      "rank": 1
     },
     {
       "id": "subj_treant",
@@ -63,7 +65,8 @@
           "king_jelly": 1
         }
       },
-      "huntMap": "arena_grove"
+      "huntMap": "arena_grove",
+      "rank": 1
     },
     {
       "id": "subj_stone",
@@ -87,7 +90,8 @@
           "golem_core": 1
         }
       },
-      "huntMap": "arena_cavern"
+      "huntMap": "arena_cavern",
+      "rank": 1
     },
     {
       "id": "tier4_trial",
@@ -112,7 +116,8 @@
           "quest_tier4_trial"
         ]
       },
-      "huntMap": "arena_marsh"
+      "huntMap": "arena_marsh",
+      "rank": 4
     },
     {
       "id": "q_apprentice",
@@ -132,7 +137,8 @@
         "items": {
           "potion_hp": 1
         }
-      }
+      },
+      "rank": 1
     },
     {
       "id": "q_slime_cull",
@@ -152,7 +158,8 @@
         "items": {
           "slime_jelly": 3
         }
-      }
+      },
+      "rank": 1
     },
     {
       "id": "q_bat_roost",
@@ -172,7 +179,8 @@
         "items": {
           "soft_leather": 2
         }
-      }
+      },
+      "rank": 1
     },
     {
       "id": "q_first_blood",
@@ -197,7 +205,8 @@
         "items": {
           "potion_hp": 2
         }
-      }
+      },
+      "rank": 1
     },
     {
       "id": "q_wolf_pack",
@@ -220,7 +229,8 @@
       },
       "require": {
         "minLevel": 5
-      }
+      },
+      "rank": 1
     },
     {
       "id": "q_shroom_spores",
@@ -243,7 +253,8 @@
       },
       "require": {
         "minLevel": 5
-      }
+      },
+      "rank": 1
     },
     {
       "id": "q_herb_gather",
@@ -263,7 +274,8 @@
         "items": {
           "herb": 5
         }
-      }
+      },
+      "rank": 1
     },
     {
       "id": "q_leather_run",
@@ -283,7 +295,8 @@
         "items": {
           "soft_leather": 4
         }
-      }
+      },
+      "rank": 1
     },
     {
       "id": "q_forest_balance",
@@ -312,7 +325,8 @@
       },
       "require": {
         "minLevel": 6
-      }
+      },
+      "rank": 1
     },
     {
       "id": "q_golem_watch",
@@ -337,7 +351,8 @@
       "require": {
         "questDone": "subj_treant",
         "minLevel": 10
-      }
+      },
+      "rank": 2
     },
     {
       "id": "q_ore_run",
@@ -360,7 +375,8 @@
       },
       "require": {
         "questDone": "subj_treant"
-      }
+      },
+      "rank": 1
     },
     {
       "id": "q_deep_delve",
@@ -389,7 +405,8 @@
       "require": {
         "questDone": "subj_treant",
         "minLevel": 11
-      }
+      },
+      "rank": 2
     },
     {
       "id": "q_golem_core_hunt",
@@ -413,7 +430,8 @@
       "require": {
         "questDone": "subj_treant",
         "minLevel": 12
-      }
+      },
+      "rank": 2
     },
     {
       "id": "q_silver_proof",
@@ -438,7 +456,8 @@
       "require": {
         "minLevel": 15,
         "questDone": "subj_stone"
-      }
+      },
+      "rank": 2
     },
     {
       "id": "rq_slime_daily",
@@ -459,7 +478,8 @@
           "slime_jelly": 2
         }
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 1
     },
     {
       "id": "rq_wolf_daily",
@@ -483,7 +503,8 @@
       "require": {
         "minLevel": 5
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 1
     },
     {
       "id": "rq_golem_daily",
@@ -508,7 +529,8 @@
       "require": {
         "questDone": "subj_treant"
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 1
     },
     {
       "id": "hunt_treant_again",
@@ -533,7 +555,8 @@
         "questDone": "subj_treant"
       },
       "repeatable": true,
-      "huntMap": "arena_grove"
+      "huntMap": "arena_grove",
+      "rank": 1
     },
     {
       "id": "hunt_stone_again",
@@ -558,7 +581,8 @@
         "questDone": "subj_stone"
       },
       "repeatable": true,
-      "huntMap": "arena_cavern"
+      "huntMap": "arena_cavern",
+      "rank": 1
     },
     {
       "id": "hunt_kingslime",
@@ -583,7 +607,8 @@
         "minLevel": 25
       },
       "huntMap": "arena_marsh",
-      "repeatable": true
+      "repeatable": true,
+      "rank": 3
     },
     {
       "id": "hunt_flame_lord",
@@ -609,7 +634,8 @@
           "mythril_ore": 3
         }
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 3
     },
     {
       "id": "hunt_dragon",
@@ -635,7 +661,8 @@
           "mythril_ore": 4
         }
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 4
     },
     {
       "id": "hunt_bat_lord",
@@ -661,7 +688,8 @@
           "mana_stone": 2
         }
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 2
     },
     {
       "id": "hunt_wolf_alpha",
@@ -687,7 +715,8 @@
           "iron_ore": 2
         }
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 3
     },
     {
       "id": "hunt_mushroom",
@@ -713,7 +742,8 @@
           "mana_stone": 2
         }
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 4
     },
     {
       "id": "hunt_lizard_king",
@@ -739,7 +769,8 @@
           "golem_core": 2
         }
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 4
     },
     {
       "id": "hunt_wisp_queen",
@@ -765,7 +796,8 @@
           "star_fragment": 2
         }
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 5
     },
     {
       "id": "hunt_knight_dread",
@@ -791,7 +823,8 @@
           "mythril_ore": 2
         }
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 6
     },
     {
       "id": "hunt_slime_abyss",
@@ -817,7 +850,8 @@
           "mythril_ore": 2
         }
       },
-      "repeatable": true
+      "repeatable": true,
+      "rank": 7
     }
   ]
 }

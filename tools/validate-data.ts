@@ -398,6 +398,7 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set
       require?: { questDone?: string };
       rewards: { items?: Record<string, number> };
       huntMap?: string;
+      rank?: number;
     }[];
   }>('src/data/defs/quests.json');
   const QTYPES = new Set(['subjugation', 'unlock', 'hunt']);
@@ -405,6 +406,8 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set
   for (const q of file.quests) {
     if (q.huntMap && !mapIds.has(q.huntMap))
       err(`Quest ${q.id}: huntMap "${q.huntMap}" is not a known map`);
+    if (q.rank != null && (!Number.isInteger(q.rank) || q.rank < 1 || q.rank > 7))
+      err(`Quest ${q.id}: rank must be an integer 1〜7 (got ${q.rank})`);
     if (!QTYPES.has(q.type)) err(`Quest ${q.id}: invalid type "${q.type}"`);
     if (!q.objectives?.length) err(`Quest ${q.id}: needs at least one objective`);
     for (const o of q.objectives ?? []) {
