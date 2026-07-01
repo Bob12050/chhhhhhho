@@ -127,6 +127,7 @@ export class WorldScene extends Phaser.Scene {
     this.player.setMoveSpeed(gameState.derived.moveSpeed);
     this.player.onAttackHit = (dir) => {
       this.spawnSlash(dir);
+      bus.emit('sfx:play', { id: 'attack' });
       this.resolveMelee(dir, 1.0, 18, 30, 34, gameState.derived.physAtk, this.weaponElement());
     };
     this.cameras.main.startFollow(this.player.body, true, 0.15, 0.15);
@@ -303,6 +304,7 @@ export class WorldScene extends Phaser.Scene {
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
     this.dmg.show(this.player.x, this.player.y - 40, enemy.cfg.contactDamage, false);
     this.player.hurt();
+    bus.emit('sfx:play', { id: 'hurt' });
     this.cameras.main.shake(120, 0.006);
     this.flashScreen(0xff2a2a, 0.32, 180);
     const ang = Math.atan2(this.player.y - enemy.y, this.player.x - enemy.x);
@@ -375,6 +377,7 @@ export class WorldScene extends Phaser.Scene {
     if (hitStop) {
       this.hitStop(60);
       this.cameras.main.shake(anyCrit ? 90 : 60, anyCrit ? 0.005 : 0.0028);
+      bus.emit('sfx:play', { id: anyCrit ? 'crit' : 'hit' });
     }
   }
 
@@ -595,6 +598,7 @@ export class WorldScene extends Phaser.Scene {
       ? Phaser.Display.Color.HexStringToColor(def.tint).color
       : 0xffffff;
     this.spawnDeathBurst(x, y, burstColor);
+    bus.emit('sfx:play', { id: 'enemy_down' });
     gameState.flags['killed_any'] = true;
     recordKill(gameState, def.id); // advance active quest objectives
     this.notifyHuntComplete(def);

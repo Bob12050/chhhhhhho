@@ -21,6 +21,7 @@ import { MapSelectScene } from '@/scenes/map-select-scene';
 import { installOrientationGuard } from '@/scenes/orientation-guard';
 import { installLifecycle } from '@/core/lifecycle';
 import { registerServiceWorker } from '@/core/pwa';
+import { soundEngine } from '@/audio/sound-engine';
 
 // Logical size: width is fixed at 360; height follows the device aspect ratio
 // clamped to [640, 800]. Integer zoom + letterbox is handled by Phaser FIT
@@ -81,6 +82,7 @@ const config: Phaser.Types.Core.GameConfig = {
 
 function startGame(): void {
   const game = new Phaser.Game(config);
+  soundEngine.install();
   installOrientationGuard(game);
   installLifecycle(game);
   void registerServiceWorker();

@@ -2,6 +2,7 @@
  * Typed event bus for loose coupling between systems and UI. Avoids stringly
  * typed event names: keys live in the `GameEvents` map and payloads are typed.
  */
+import type { SfxId } from '@/audio/sfx-defs';
 
 export interface GameEvents {
   // Player / stats
@@ -64,6 +65,9 @@ export interface GameEvents {
   // Orientation / lifecycle
   'app:orientation-blocked': { blocked: boolean };
   'app:visibility-hidden': Record<string, never>;
+
+  // Audio: request a one-shot sound effect (handled by the SoundEngine).
+  'sfx:play': { id: SfxId };
 }
 
 type Handler<T> = (payload: T) => void;

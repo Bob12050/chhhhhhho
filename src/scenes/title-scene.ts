@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { applyPendingUpdate } from '@/core/pwa';
 import { bus } from '@/core/event-bus';
 import { FONT } from '@/ui/theme';
+import { soundEngine } from '@/audio/sound-engine';
 
 /**
  * Title screen. Entry point after Boot. A pending PWA update (deferred during
@@ -37,6 +38,14 @@ export class TitleScene extends Phaser.Scene {
 
     this.makeButton(w / 2, h * 0.56, '▶ ゲームをはじめる', () => this.scene.start('SaveSelect'));
 
+    // Sound toggle (device preference, persisted). Tapping it also counts as the
+    // user gesture that unlocks Web Audio, so the confirm blip is audible.
+    const soundBtn = this.makeButton(w / 2, h * 0.56 + 56, this.soundLabel(), () => {
+      const muted = soundEngine.toggleMute();
+      soundBtn.setText(this.soundLabel());
+      if (!muted) bus.emit('sfx:play', { id: 'ui_tap' });
+    });
+
     // If a new app version is waiting, offer to apply it now (safe at title).
     this.updateText = this.add
       .text(w / 2, h - 40, '', {
@@ -54,7 +63,16 @@ export class TitleScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, off);
   }
 
-  private makeButton(x: number, y: number, label: string, onTap: () => void): void {
+  private soundLabel(): string {
+    return soundEngine.isMuted() ? 'サウンド: OFF' : 'サウンド: ON';
+  }
+
+  private makeButton(
+    x: number,
+    y: number,
+    label: string,
+    onTap: () => void,
+  ): Phaser.GameObjects.Text {
     const t = this.add
       .text(x, y, label, {
         fontFamily: FONT,
@@ -66,5 +84,6 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
     t.on('pointerup', onTap);
+    return t;
   }
 }
