@@ -21,6 +21,7 @@ import { getMap, spawnPoint, type MapDef } from '@/maps/map-def';
 import { buildMap, type BuiltPortal } from '@/maps/map-builder';
 import type { UIScene } from '@/scenes/ui-scene';
 import type { Direction } from '@/config/layers';
+import { FONT } from '@/ui/theme';
 
 interface BuiltNpc {
   x: number;
@@ -173,7 +174,7 @@ export class WorldScene extends Phaser.Scene {
   private showMapName(name: string): void {
     const t = this.add
       .text(this.scale.width / 2, 70, name, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#ffffff',
         backgroundColor: '#00000066',
@@ -252,7 +253,7 @@ export class WorldScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(8001);
     const label = this.add
-      .text(w / 2, 30, name, { fontFamily: 'system-ui, sans-serif', fontSize: '10px', color: '#fff' })
+      .text(w / 2, 30, name, { fontFamily: FONT, fontSize: '10px', color: '#fff' })
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(8002);
@@ -270,7 +271,7 @@ export class WorldScene extends Phaser.Scene {
     sprite.setDepth(Math.round(y));
     this.add
       .text(x, y - 58, label, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '11px',
         color: '#ffe',
       })
@@ -675,7 +676,7 @@ export class WorldScene extends Phaser.Scene {
     const y = this.player.y - 52;
     const t = this.add
       .text(x, y, `Lv UP! ${level}`, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#ffe06b',
         fontStyle: 'bold',
@@ -706,7 +707,7 @@ export class WorldScene extends Phaser.Scene {
   private floatText(x: number, y: number, msg: string, color = '#ffe9a8'): void {
     const t = this.add
       .text(x, y, msg, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '11px',
         color,
       })

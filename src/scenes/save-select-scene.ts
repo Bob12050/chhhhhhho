@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { saveManager, SLOT_COUNT, type SlotSummary } from '@/save/save-manager';
 import { beginGame } from '@/core/game-flow';
+import { FONT } from '@/ui/theme';
 
 /**
  * Save-slot selection. Shows each slot's summary; an empty slot starts a new
@@ -17,7 +18,7 @@ export class SaveSelectScene extends Phaser.Scene {
 
     this.add
       .text(w / 2, 40, 'セーブを選択', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '20px',
         color: '#ffffff',
       })
@@ -25,7 +26,7 @@ export class SaveSelectScene extends Phaser.Scene {
 
     this.add
       .text(w / 2, 70, '読み込み中…', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '12px',
         color: '#9aa0b5',
       })
@@ -54,7 +55,7 @@ export class SaveSelectScene extends Phaser.Scene {
 
     this.add
       .text(28, y, `スロット ${slot + 1}`, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: '#cfd3e6',
       })
@@ -64,7 +65,7 @@ export class SaveSelectScene extends Phaser.Scene {
       const when = summary.savedAt ? new Date(summary.savedAt).toLocaleString('ja-JP') : '';
       this.add
         .text(28, y + 22, `Lv ${summary.level ?? '?'}  ${summary.mapId ?? ''}\n${when}`, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '12px',
           color: '#9fd0ff',
           lineSpacing: 2,
@@ -75,7 +76,7 @@ export class SaveSelectScene extends Phaser.Scene {
     } else {
       this.add
         .text(28, y + 26, '（空き）', {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '13px',
           color: '#7e8499',
         })
@@ -89,7 +90,7 @@ export class SaveSelectScene extends Phaser.Scene {
     let armed = false;
     const t = this.add
       .text(x, y, '削除', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: '#e58a8a',
         backgroundColor: '#2a2d44',
@@ -117,7 +118,7 @@ export class SaveSelectScene extends Phaser.Scene {
     let armed = false;
     const t = this.add
       .text(x, y, '全初期化', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '13px',
         color: '#e58a8a',
         backgroundColor: '#2a2d44',
@@ -142,7 +143,7 @@ export class SaveSelectScene extends Phaser.Scene {
   private makeButton(x: number, y: number, label: string, onTap: () => void): void {
     const t = this.add
       .text(x, y, label, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '14px',
         color: '#ffffff',
         backgroundColor: '#2a2d44',

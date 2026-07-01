@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { FONT } from '@/ui/theme';
 
 /**
  * Pooled floating damage numbers. Reuses Text objects (per mobile-perf budget:
@@ -48,7 +49,7 @@ export class DamageNumbers {
       return t;
     }
     return this.scene.add
-      .text(0, 0, '', { fontFamily: 'system-ui, sans-serif', fontStyle: 'bold' })
+      .text(0, 0, '', { fontFamily: FONT, fontStyle: 'bold' })
       .setOrigin(0.5)
       .setDepth(this.depth);
   }

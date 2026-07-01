@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { getDialogue, type DialogueDef } from '@/dialogue/dialogue-defs';
 import { bus } from '@/core/event-bus';
+import { FONT } from '@/ui/theme';
 
 /**
  * Simple conversation overlay. Shows a speaker + lines (tap to advance), then
@@ -45,14 +46,14 @@ export class DialogueScene extends Phaser.Scene {
 
     this.add
       .text(16, h - boxH + 12, this.def.speaker, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '14px',
         color: '#9fd0ff',
       })
       .setDepth(2);
     this.bodyText = this.add
       .text(16, h - boxH + 38, '', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '15px',
         color: '#ffffff',
         wordWrap: { width: w - 32 },
@@ -61,7 +62,7 @@ export class DialogueScene extends Phaser.Scene {
       .setDepth(2);
     this.hint = this.add
       .text(w - 16, h - 18, '▼ タップで進む', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '11px',
         color: '#9aa0b5',
       })
@@ -102,7 +103,7 @@ export class DialogueScene extends Phaser.Scene {
     this.def.choices.forEach((c, i) => {
       const t = this.add
         .text(w / 2, h - 150 + 70 + i * 26, `▶ ${c.text}`, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '15px',
           color: '#ffe9a8',
         })

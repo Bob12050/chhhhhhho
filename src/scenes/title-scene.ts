@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { applyPendingUpdate } from '@/core/pwa';
 import { bus } from '@/core/event-bus';
+import { FONT } from '@/ui/theme';
 
 /**
  * Title screen. Entry point after Boot. A pending PWA update (deferred during
@@ -20,7 +21,7 @@ export class TitleScene extends Phaser.Scene {
 
     this.add
       .text(w / 2, h * 0.32, 'Pixel Action RPG', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '24px',
         color: '#ffffff',
       })
@@ -28,7 +29,7 @@ export class TitleScene extends Phaser.Scene {
 
     this.add
       .text(w / 2, h * 0.32 + 30, '〜 仮タイトル 〜', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '12px',
         color: '#9aa0b5',
       })
@@ -39,7 +40,7 @@ export class TitleScene extends Phaser.Scene {
     // If a new app version is waiting, offer to apply it now (safe at title).
     this.updateText = this.add
       .text(w / 2, h - 40, '', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '12px',
         color: '#ffd86b',
       })
@@ -56,7 +57,7 @@ export class TitleScene extends Phaser.Scene {
   private makeButton(x: number, y: number, label: string, onTap: () => void): void {
     const t = this.add
       .text(x, y, label, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '18px',
         color: '#ffffff',
         backgroundColor: '#2a2d44',

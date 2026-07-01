@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
+import { FONT } from '@/ui/theme';
 
 /**
  * Phase 1 walkthrough checklist (debug aid). Reads live progress flags from
@@ -43,7 +44,7 @@ export class ChecklistScene extends Phaser.Scene {
     this.add.rectangle(0, 0, w, h, 0x0e0f1a, 0.96).setOrigin(0).setDepth(0);
     this.add
       .text(16, 18, '通し確認チェックリスト', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#fff',
       })
@@ -52,7 +53,7 @@ export class ChecklistScene extends Phaser.Scene {
     const doneCount = steps.filter((s) => s.done()).length;
     this.add
       .text(w - 16, 22, `${doneCount}/${steps.length}`, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '14px',
         color: doneCount === steps.length ? '#9fe3a0' : '#ffd86b',
       })
@@ -64,7 +65,7 @@ export class ChecklistScene extends Phaser.Scene {
       const ok = s.done();
       this.add
         .text(16, y, `${ok ? '✓' : '☐'}  ${s.label}`, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '14px',
           color: ok ? '#9fe3a0' : '#9aa0b5',
         })
@@ -74,7 +75,7 @@ export class ChecklistScene extends Phaser.Scene {
 
     this.add
       .text(16, y + 8, '再起動後もこのチェックが残れば「全状態維持」OK', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '11px',
         color: '#9aa0b5',
       })
@@ -82,7 +83,7 @@ export class ChecklistScene extends Phaser.Scene {
 
     const close = this.add
       .text(w / 2, h - 40, '[ とじる ]', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
       })

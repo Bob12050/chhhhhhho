@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { TEX } from '@/assets/gen/textures';
 import { gameState } from '@/player/game-state';
 import type { MapDef, GroundKind, BorderKind } from '@/maps/map-def';
+import { FONT } from '@/ui/theme';
 
 const GROUND_TEX: Record<GroundKind, string> = {
   grass: TEX.tileGrass,
@@ -122,7 +123,7 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     const exitUp = cy < h / 2;
     const arrow = scene.add
       .text(cx, exitUp ? cy + ph : cy - ph, exitUp ? '▲' : '▼', {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: FONT,
         fontSize: '16px',
         color: '#bfeaff',
       })
@@ -140,7 +141,7 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     if (p.label) {
       scene.add
         .text(cx, exitUp ? cy + ph + 16 : cy - ph - 16, locked ? `🔒 ${p.label}` : p.label, {
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: FONT,
           fontSize: '10px',
           color: locked ? '#ffd0d0' : '#eaf7ff',
           backgroundColor: '#00000055',

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { FONT } from '@/ui/theme';
 
 /**
  * Round touch button. Handles multi-touch correctly: it binds to the specific
@@ -30,7 +31,7 @@ export class TouchButton {
     this.circle = scene.add.circle(x, y, this.radius, color, 0.35).setDepth(depth);
     this.circle.setStrokeStyle(2, 0xffffff, 0.4);
     this.label = scene.add
-      .text(x, y, text, { fontFamily: 'system-ui, sans-serif', fontSize: '13px', color: '#ffffff' })
+      .text(x, y, text, { fontFamily: FONT, fontSize: '13px', color: '#ffffff' })
       .setOrigin(0.5)
       .setDepth(depth + 1);
 

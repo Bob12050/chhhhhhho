@@ -77,8 +77,20 @@ const config: Phaser.Types.Core.GameConfig = {
   ],
 };
 
-const game = new Phaser.Game(config);
+function startGame(): void {
+  const game = new Phaser.Game(config);
+  installOrientationGuard(game);
+  installLifecycle(game);
+  void registerServiceWorker();
+}
 
-installOrientationGuard(game);
-installLifecycle(game);
-void registerServiceWorker();
+// Load the pixel UI font (DotGothic16, self-hosted subset) BEFORE the game
+// starts: Phaser bakes text to canvas and won't reflow once the font arrives,
+// so scenes must be created with it already available. Base-prefixed so it
+// resolves under the GitHub Pages sub-path. Falls back after a short timeout.
+const fontUrl = import.meta.env.BASE_URL + 'assets/fonts/dotgothic16-subset.woff2';
+const fontStyle = document.createElement('style');
+fontStyle.textContent = `@font-face{font-family:'DotGothic16';font-style:normal;font-weight:400;font-display:swap;src:url('${fontUrl}') format('woff2');}`;
+document.head.appendChild(fontStyle);
+const fontReady = (document.fonts?.load('16px "DotGothic16"') ?? Promise.resolve()).catch(() => {});
+Promise.race([fontReady, new Promise((r) => setTimeout(r, 1500))]).finally(startGame);

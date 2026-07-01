@@ -6,7 +6,8 @@ import Phaser from 'phaser';
  * future tweaks happen in a single file. Scenes import from here instead of
  * hardcoding `'system-ui, sans-serif'` and scattered hex values.
  */
-export const FONT = 'system-ui, sans-serif';
+/** Pixel UI font (self-hosted DotGothic16 subset), with graceful fallbacks. */
+export const FONT = "'DotGothic16', system-ui, sans-serif";
 
 /** Shared palette. Numbers are for Phaser fills; strings for text colors. */
 export const UI = {
