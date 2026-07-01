@@ -32,6 +32,6 @@ export class BootScene extends Phaser.Scene {
 
   create(): void {
     ensureGeneratedTextures(this); // fills only the keys no real asset provided
-    this.scene.start('Title');
+    this.scene.start('Notice');
   }
 }

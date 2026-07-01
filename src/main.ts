@@ -4,6 +4,7 @@ import {
   computeLogicalHeight,
 } from '@/config/resolution';
 import { BootScene } from '@/scenes/boot-scene';
+import { NoticeScene } from '@/scenes/notice-scene';
 import { TitleScene } from '@/scenes/title-scene';
 import { SaveSelectScene } from '@/scenes/save-select-scene';
 import { WorldScene } from '@/scenes/world-scene';
@@ -61,6 +62,7 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   scene: [
     BootScene,
+    NoticeScene,
     TitleScene,
     SaveSelectScene,
     WorldScene,
