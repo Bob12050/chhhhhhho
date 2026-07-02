@@ -13,7 +13,8 @@
   "ground": "stone",
   "path": {
     "axis": "v",
-    "thickness": 46
+    "thickness": 46,
+    "wind": 12
   },
   "border": "walls",
   "obstacles": [
@@ -87,5 +88,12 @@
   "ambient": {
     "color": "#7a2210",
     "alpha": 0.13
-  }
+  },
+  "landmarks": [
+    {
+      "x": 270,
+      "y": 500,
+      "kind": "ruin"
+    }
+  ]
 }

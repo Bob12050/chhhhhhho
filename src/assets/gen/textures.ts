@@ -42,6 +42,7 @@ export const TEX = {
   tilePath: 'gen.tile.path',
   tileStone: 'gen.tile.stone',
   tileFloor: 'gen.tile.floor',
+  tileWater: 'gen.tile.water',
   obstacle: 'gen.obstacle',
   obstacleBush: 'gen.obstacle.bush',
   obstaclePine: 'gen.obstacle.pine',
@@ -52,6 +53,11 @@ export const TEX = {
   decorFlowerB: 'gen.decor.flower_b',
   decorPebble: 'gen.decor.pebble',
   decorCrack: 'gen.decor.crack',
+  iconSword: 'gen.icon.sword',
+  iconRoll: 'gen.icon.roll',
+  iconFlask: 'gen.icon.flask',
+  iconBag: 'gen.icon.bag',
+  iconMap: 'gen.icon.map',
 } as const;
 
 const SPECS: Record<string, LayerSpec> = {
@@ -172,6 +178,24 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     ctx.fillRect(0, 0, 1, 32);
   });
 
+  make(TEX.tileWater, (ctx) => {
+    // Deep water with light wave dashes (the tileSprite drifts to sell flow).
+    ctx.fillStyle = '#2a5a8a';
+    ctx.fillRect(0, 0, 32, 32);
+    ctx.fillStyle = '#356a9c';
+    for (let i = 0; i < 10; i++) {
+      ctx.fillRect((i * 13 + 4) % 32, (i * 7 + 3) % 32, 5, 2);
+    }
+    ctx.fillStyle = '#7ab8e0';
+    ctx.fillRect(3, 6, 8, 1);
+    ctx.fillRect(18, 14, 9, 1);
+    ctx.fillRect(8, 24, 7, 1);
+    ctx.fillStyle = '#1f4a75';
+    for (let i = 0; i < 8; i++) {
+      ctx.fillRect((i * 11 + 7) % 32, (i * 17 + 9) % 32, 4, 1);
+    }
+  });
+
   make(TEX.tileFloor, (ctx) => {
     ctx.fillStyle = '#241f33';
     ctx.fillRect(0, 0, 32, 32);
@@ -268,6 +292,54 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     ctx.fillStyle = '#7a7e8a';
     ctx.fillRect(5, 9, 5, 2);
   }, 16, 16);
+  // 16x16 UI icons for the touch buttons (white; buttons tint via alpha bg).
+  make(TEX.iconSword, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    // Diagonal blade
+    for (let i = 0; i < 8; i++) ctx.fillRect(11 - i, 2 + i, 2, 2);
+    // Guard + grip
+    ctx.fillRect(3, 9, 5, 2);
+    ctx.fillRect(2, 12, 3, 3);
+    ctx.fillStyle = '#ffd86b';
+    ctx.fillRect(5, 10, 2, 2);
+  }, 16, 16);
+  make(TEX.iconRoll, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    // Double chevron (dash direction)
+    for (let i = 0; i < 4; i++) {
+      ctx.fillRect(3 + i, 4 + i, 2, 2);
+      ctx.fillRect(3 + i, 10 - i, 2, 2);
+      ctx.fillRect(8 + i, 4 + i, 2, 2);
+      ctx.fillRect(8 + i, 10 - i, 2, 2);
+    }
+  }, 16, 16);
+  make(TEX.iconFlask, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(6, 2, 4, 3); // neck
+    ctx.fillRect(4, 5, 8, 8); // body
+    ctx.fillStyle = '#ff8a9a';
+    ctx.fillRect(5, 8, 6, 4); // liquid
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(5, 1, 6, 1); // cork line
+  }, 16, 16);
+  make(TEX.iconBag, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(3, 6, 10, 8);
+    ctx.fillRect(5, 3, 6, 3);
+    ctx.fillStyle = '#c0a060';
+    ctx.fillRect(3, 8, 10, 2);
+  }, 16, 16);
+  make(TEX.iconMap, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(2, 3, 12, 10);
+    ctx.fillStyle = '#5a9ad0';
+    ctx.fillRect(3, 4, 4, 8);
+    ctx.fillStyle = '#9fe3a0';
+    ctx.fillRect(8, 4, 5, 8);
+    ctx.fillStyle = '#d05a6e';
+    ctx.fillRect(9, 6, 2, 2); // pin
+  }, 16, 16);
+
   make(TEX.decorCrack, (ctx) => {
     ctx.fillStyle = '#1a1c24';
     ctx.fillRect(3, 7, 6, 1);

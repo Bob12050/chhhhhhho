@@ -247,6 +247,9 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
     enemies?: { type: string }[];
     npcs?: { dialogueId?: string }[];
     buildings?: { x: number; y: number; w: number; h: number; style: string }[];
+    water?: [number, number, number, number][];
+    landmarks?: { x: number; y: number; kind: string }[];
+    path?: { axis: string; thickness: number; wind?: number };
     travel?: { order?: number; hidden?: boolean; unlockFlag?: string; note?: string };
   };
   const BUILDING_STYLES = new Set(['wood', 'stone', 'plaster']);
@@ -279,6 +282,20 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
       if (n.dialogueId && !dialogueIds.has(n.dialogueId)) {
         err(`Map ${m.id}: npc references unknown dialogue "${n.dialogueId}"`);
       }
+    }
+    const LANDMARKS = new Set(['big_tree', 'ruin', 'stone_circle', 'campfire']);
+    if (m.path?.wind != null && !(m.path.wind >= 0 && m.path.wind <= 40))
+      err(`Map ${m.id}: path.wind out of [0,40] (road could leave the map)`);
+    for (const [i, r] of (m.water ?? []).entries()) {
+      const [x, y, ww, wh] = r;
+      if (!(ww > 0) || !(wh > 0)) err(`Map ${m.id}: water[${i}] non-positive size`);
+      if (x < 0 || y < 0 || x + ww > m.size.w || y + wh > m.size.h)
+        err(`Map ${m.id}: water[${i}] out of bounds`);
+    }
+    for (const [i, lm] of (m.landmarks ?? []).entries()) {
+      if (!LANDMARKS.has(lm.kind)) err(`Map ${m.id}: landmark[${i}] unknown kind "${lm.kind}"`);
+      if (lm.x < 0 || lm.y < 0 || lm.x > m.size.w || lm.y > m.size.h)
+        err(`Map ${m.id}: landmark[${i}] out of bounds`);
     }
     for (const [i, b] of (m.buildings ?? []).entries()) {
       if (!BUILDING_STYLES.has(b.style))

@@ -12,6 +12,7 @@ import { isComplete, objectiveProgress } from '@/quests/quests';
 import { getEnemyDef } from '@/enemies/enemy-defs';
 import { expToNext } from '@/stats/leveling';
 import { FONT, UI } from '@/ui/theme';
+import { TEX } from '@/assets/gen/textures';
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
@@ -63,7 +64,7 @@ export class UIScene extends Phaser.Scene {
     const baseX = w - insets.right - 44;
     const baseY = h - bottomPad - 44;
 
-    const attackBtn = new TouchButton(this, baseX, baseY, 32, 'A', 0xcc4444, depth);
+    const attackBtn = new TouchButton(this, baseX, baseY, 32, '', 0xcc4444, depth, TEX.iconSword);
     attackBtn.onChange = (d) => input.setButton('attack', d);
 
     const skillBtn = new TouchButton(this, baseX - 76, baseY + 6, 28, 'S1', 0x4466cc, depth);
@@ -72,13 +73,13 @@ export class UIScene extends Phaser.Scene {
     const skill2Btn = new TouchButton(this, baseX - 60, baseY - 58, 26, 'S2', 0x5a4abf, depth);
     skill2Btn.onChange = (d) => input.setButton('skill2', d);
 
-    const dodgeBtn = new TouchButton(this, baseX + 2, baseY - 76, 26, '回避', 0x3f9a6e, depth);
+    const dodgeBtn = new TouchButton(this, baseX + 2, baseY - 76, 26, '回避', 0x3f9a6e, depth, TEX.iconRoll);
     dodgeBtn.onChange = (d) => input.setButton('dodge', d);
 
     // Potion quick-slot: one tap heals mid-fight (no menu). Uses the smallest
     // HP potion first; greys out at zero; short cooldown against panic-chugs.
     const POTION_IDS = ['potion_hp', 'potion_hp_l'];
-    const potBtn = new TouchButton(this, baseX - 64, baseY - 122, 24, '薬', 0xc04a5a, depth);
+    const potBtn = new TouchButton(this, baseX - 64, baseY - 122, 24, '', 0xc04a5a, depth, TEX.iconFlask);
     const potCount = this.add
       .text(baseX - 44, baseY - 138, '', { fontFamily: FONT, fontSize: '11px', color: '#ffffff' })
       .setOrigin(0.5)
@@ -151,7 +152,7 @@ export class UIScene extends Phaser.Scene {
         .rectangle(hudX, y, BAR_W, BAR_H, UI.panel, 0.7)
         .setOrigin(0, 0)
         .setDepth(depth)
-        .setStrokeStyle(1, 0xffffff, 0.25);
+        .setStrokeStyle(1, 0xf5c542, 0.45);
       return this.add
         .rectangle(hudX + 1, y + 1, BAR_W - 2, BAR_H - 2, color, 1)
         .setOrigin(0, 0)
@@ -215,7 +216,7 @@ export class UIScene extends Phaser.Scene {
       .rectangle(hudX, lvY, BAR_W, BAR_H, UI.panel, 0.7)
       .setOrigin(0, 0)
       .setDepth(depth)
-      .setStrokeStyle(1, 0xffffff, 0.25);
+      .setStrokeStyle(1, 0xf5c542, 0.45);
     this.jobText = this.add
       .text(hudX + 5, lvY + 2, '', {
         fontFamily: FONT,
@@ -336,13 +337,13 @@ export class UIScene extends Phaser.Scene {
     this.busOff.push(bus.on('quest:changed', refreshTracker));
 
     // Bag button (top-right) opens the inventory/menu.
-    const bag = new TouchButton(this, w - insets.right - 24, insets.top + 26, 22, '袋', 0x6a4ea0, depth);
+    const bag = new TouchButton(this, w - insets.right - 24, insets.top + 26, 22, '', 0x6a4ea0, depth, TEX.iconBag);
     bag.onChange = (down) => {
       if (down) bus.emit('ui:open-inventory', {});
     };
 
     // Map button (below the bag) opens the fast-travel list.
-    const mapBtn = new TouchButton(this, w - insets.right - 24, insets.top + 74, 22, '地', 0x4e7aa0, depth);
+    const mapBtn = new TouchButton(this, w - insets.right - 24, insets.top + 74, 22, '', 0x4e7aa0, depth, TEX.iconMap);
     mapBtn.onChange = (down) => {
       if (down) bus.emit('ui:open-map', {});
     };

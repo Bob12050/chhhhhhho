@@ -41,5 +41,12 @@
   "ambient": {
     "color": "#eaffd0",
     "alpha": 0.04
-  }
+  },
+  "landmarks": [
+    {
+      "x": 280,
+      "y": 180,
+      "kind": "big_tree"
+    }
+  ]
 }

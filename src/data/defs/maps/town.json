@@ -135,5 +135,12 @@
   "ambient": {
     "color": "#ffdf9a",
     "alpha": 0.05
-  }
+  },
+  "landmarks": [
+    {
+      "x": 262,
+      "y": 508,
+      "kind": "campfire"
+    }
+  ]
 }

@@ -41,5 +41,17 @@
   "ambient": {
     "color": "#3a3050",
     "alpha": 0.14
-  }
+  },
+  "landmarks": [
+    {
+      "x": 80,
+      "y": 200,
+      "kind": "ruin"
+    },
+    {
+      "x": 280,
+      "y": 460,
+      "kind": "ruin"
+    }
+  ]
 }

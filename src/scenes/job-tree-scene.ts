@@ -49,10 +49,12 @@ export class JobTreeScene extends Phaser.Scene {
     this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, UI.overlay, 1).setOrigin(0).setDepth(2);
 
     const close = this.add
-      .text(w / 2, h - 30, '[ とじる ]', {
+      .text(w / 2, h - 30, 'とじる', {
         fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
+        backgroundColor: '#2a3050',
+        padding: { x: 10, y: 5 },
       })
       .setOrigin(0.5)
       .setDepth(3)

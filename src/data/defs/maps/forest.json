@@ -12,7 +12,8 @@
   "ground": "grass",
   "path": {
     "axis": "v",
-    "thickness": 44
+    "thickness": 44,
+    "wind": 26
   },
   "border": "trees",
   "obstacles": [
@@ -91,5 +92,30 @@
   "ambient": {
     "color": "#0f3a22",
     "alpha": 0.12
-  }
+  },
+  "water": [
+    [
+      36,
+      560,
+      76,
+      56
+    ]
+  ],
+  "landmarks": [
+    {
+      "x": 270,
+      "y": 300,
+      "kind": "stone_circle"
+    },
+    {
+      "x": 80,
+      "y": 180,
+      "kind": "big_tree"
+    },
+    {
+      "x": 280,
+      "y": 820,
+      "kind": "big_tree"
+    }
+  ]
 }

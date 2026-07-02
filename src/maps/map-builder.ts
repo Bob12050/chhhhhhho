@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { TEX } from '@/assets/gen/textures';
 import { gameState } from '@/player/game-state';
 import { Rng } from '@/core/rng';
-import type { MapDef, GroundKind, BorderKind, BuildingDef } from '@/maps/map-def';
+import type { MapDef, GroundKind, BorderKind, BuildingDef, LandmarkKind } from '@/maps/map-def';
 import { FONT } from '@/ui/theme';
 
 const GROUND_TEX: Record<GroundKind, string> = {
@@ -38,21 +38,28 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
 
   scene.add.tileSprite(0, 0, w, h, GROUND_TEX[map.ground]).setOrigin(0).setDepth(-1000);
 
+  const pathOff = pathOffsetFn(map, w, h);
   if (map.path) {
+    const t = map.path.thickness;
     if (map.path.axis === 'v') {
-      scene.add
-        .tileSprite(w / 2 - map.path.thickness / 2, 0, map.path.thickness, h, TEX.tilePath)
-        .setOrigin(0)
-        .setDepth(-999);
+      // 16px strips following the meander (visual only; grass is walkable too).
+      for (let y = 0; y < h; y += 16) {
+        scene.add
+          .tileSprite(Math.round(w / 2 + pathOff(y) - t / 2), y, t, 16, TEX.tilePath)
+          .setOrigin(0)
+          .setDepth(-999);
+      }
     } else {
-      scene.add
-        .tileSprite(0, h / 2 - map.path.thickness / 2, w, map.path.thickness, TEX.tilePath)
-        .setOrigin(0)
-        .setDepth(-999);
+      for (let x = 0; x < w; x += 16) {
+        scene.add
+          .tileSprite(x, Math.round(h / 2 + pathOff(x) - t / 2), 16, t, TEX.tilePath)
+          .setOrigin(0)
+          .setDepth(-999);
+      }
     }
-    drawPathEdges(scene, map, w, h);
+    drawPathEdges(scene, map, w, h, pathOff);
   }
-  scatterDecor(scene, map, w, h);
+  scatterDecor(scene, map, w, h, pathOff);
 
   // Portal rects (resolved up front so the border can leave openings for them).
   const portals: BuiltPortal[] = (map.portals ?? []).map((p) => ({
@@ -125,6 +132,8 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
   }
 
   for (const b of map.buildings ?? []) drawBuilding(scene, obstacles, b);
+  for (const [wx, wy, ww, wh] of map.water ?? []) drawWater(scene, obstacles, wx, wy, ww, wh);
+  for (const lm of map.landmarks ?? []) drawLandmark(scene, obstacles, lm);
 
   // Portal gate markers: pulsing gate + a direction arrow + label, so they
   // read clearly as "walk here to travel".
@@ -165,6 +174,23 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
       repeat: -1,
       ease: 'Sine.InOut',
     });
+
+    // Rising sparkles sell "this is a magic gate", not a grey box.
+    for (let i = 0; i < 3; i++) {
+      const sp = scene.add
+        .circle(Math.round(cx - pw / 3 + (i * pw) / 3), Math.round(cy + ph / 2), 2, locked ? 0xffb0b0 : 0xbfeaff, 0.9)
+        .setDepth(6)
+        .setAlpha(0);
+      scene.tweens.add({
+        targets: sp,
+        y: cy - ph - 6,
+        alpha: { from: 0.9, to: 0 },
+        duration: 1500,
+        delay: i * 500,
+        repeat: -1,
+        ease: 'Sine.Out',
+      });
+    }
 
     if (p.label) {
       const label = scene.add
@@ -261,7 +287,7 @@ function drawBuilding(
  * a per-map seeded RNG, skipping the path strip and portal rects. Breaks the
  * "one endless tile" look for roughly zero cost (static images).
  */
-function scatterDecor(scene: Phaser.Scene, map: MapDef, w: number, h: number): void {
+function scatterDecor(scene: Phaser.Scene, map: MapDef, w: number, h: number, pathOff: (a: number) => number): void {
   const POOL: Record<GroundKind, string[]> = {
     grass: [TEX.decorTuft, TEX.decorTuft, TEX.decorTuft, TEX.decorFlowerA, TEX.decorFlowerB, TEX.decorPebble],
     stone: [TEX.decorPebble, TEX.decorPebble, TEX.decorCrack],
@@ -278,10 +304,12 @@ function scatterDecor(scene: Phaser.Scene, map: MapDef, w: number, h: number): v
     if (map.path) {
       const onPath =
         map.path.axis === 'v'
-          ? Math.abs(x - w / 2) < map.path.thickness / 2 + 8
-          : Math.abs(y - h / 2) < map.path.thickness / 2 + 8;
+          ? Math.abs(x - (w / 2 + pathOff(y))) < map.path.thickness / 2 + 8
+          : Math.abs(y - (h / 2 + pathOff(x))) < map.path.thickness / 2 + 8;
       if (onPath) continue;
     }
+    // Keep decor out of the water too.
+    if ((map.water ?? []).some(([rx, ry, rw, rh]) => x > rx - 10 && x < rx + rw + 10 && y > ry - 10 && y < ry + rh + 10)) continue;
     if ((map.portals ?? []).some((p) => Phaser.Geom.Rectangle.Contains(
       new Phaser.Geom.Rectangle(p.rect[0] - 16, p.rect[1] - 16, p.rect[2] + 32, p.rect[3] + 32), x, y,
     ))) continue;
@@ -293,7 +321,7 @@ function scatterDecor(scene: Phaser.Scene, map: MapDef, w: number, h: number): v
  * Rough up the ruler-straight path edges with small offset nubs (flat rects in
  * the path's palette) so the road reads hand-worn instead of drawn.
  */
-function drawPathEdges(scene: Phaser.Scene, map: MapDef, w: number, h: number): void {
+function drawPathEdges(scene: Phaser.Scene, map: MapDef, w: number, h: number, pathOff: (a: number) => number): void {
   if (!map.path) return;
   const g = scene.add.graphics().setDepth(-998);
   const colors = [0x6b5a3c, 0x5f5136];
@@ -304,8 +332,8 @@ function drawPathEdges(scene: Phaser.Scene, map: MapDef, w: number, h: number): 
     return v;
   };
   if (map.path.axis === 'v') {
-    const cx = w / 2;
     for (let y = 8; y < h; y += 24) {
+      const cx = w / 2 + pathOff(y);
       const nL = hashN(y);
       const nR = hashN(y + 7777);
       g.fillStyle(colors[nL % 2], 1);
@@ -314,14 +342,122 @@ function drawPathEdges(scene: Phaser.Scene, map: MapDef, w: number, h: number): 
       g.fillRect(Math.round(cx + half - 4), y + 12, 6 + (nR % 6), 10);
     }
   } else {
-    const cy = h / 2;
     for (let x = 8; x < w; x += 24) {
+      const cy = h / 2 + pathOff(x);
       const nT = hashN(x);
       const nB = hashN(x + 7777);
       g.fillStyle(colors[nT % 2], 1);
       g.fillRect(x, Math.round(cy - half - 2 - (nT % 6)), 10, 6 + (nT % 6));
       g.fillStyle(colors[nB % 2], 1);
       g.fillRect(x + 12, Math.round(cy + half - 4), 10, 6 + (nB % 6));
+    }
+  }
+}
+
+/**
+ * Deterministic meander for the map's path: two low-frequency sine waves
+ * seeded by the map id, tapered flat near both map ends so portals stay
+ * centered on the road. Returns the centreline offset (px, 2px-quantised).
+ */
+function pathOffsetFn(map: MapDef, w: number, h: number): (a: number) => number {
+  const wind = map.path?.wind ?? 0;
+  if (!map.path || wind <= 0) return () => 0;
+  let seed = 0;
+  for (const ch of map.id) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+  const p1 = (seed % 628) / 100;
+  const p2 = ((seed >> 5) % 628) / 100;
+  const span = map.path.axis === 'v' ? h : w;
+  return (a: number): number => {
+    const taper = Math.min(1, Math.min(a, span - a) / 140);
+    const raw = Math.sin(a * 0.011 + p1) * wind + Math.sin(a * 0.0042 + p2) * wind * 0.6;
+    return Math.round((raw * Math.max(0, taper)) / 2) * 2;
+  };
+  void w;
+}
+
+/** Animated, collidable water (pond/river piece) with a light rim. */
+function drawWater(
+  scene: Phaser.Scene,
+  obstacles: Phaser.Physics.Arcade.StaticGroup,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+): void {
+  const tile = scene.add.tileSprite(x, y, w, h, TEX.tileWater).setOrigin(0).setDepth(-996);
+  // Slow drift sells "liquid" without any per-frame cost worth mentioning.
+  scene.tweens.add({ targets: tile, tilePositionX: 32, duration: 5000, repeat: -1 });
+  scene.add
+    .rectangle(x, y, w, h)
+    .setOrigin(0)
+    .setStrokeStyle(2, 0xbfe8ff, 0.35)
+    .setDepth(-995)
+    .setFillStyle(0, 0);
+  const body = scene.add.rectangle(x + w / 2, y + h / 2, w, h).setVisible(false);
+  scene.physics.add.existing(body, true);
+  obstacles.add(body);
+}
+
+/** Scenic set-pieces so zones stop being empty corridors. */
+function drawLandmark(
+  scene: Phaser.Scene,
+  obstacles: Phaser.Physics.Arcade.StaticGroup,
+  lm: { x: number; y: number; kind: LandmarkKind },
+): void {
+  const { x, y } = lm;
+  const solid = (cx: number, cy: number, sw: number, sh: number): void => {
+    const b = scene.add.rectangle(cx, cy, sw, sh).setVisible(false);
+    scene.physics.add.existing(b, true);
+    obstacles.add(b);
+  };
+  switch (lm.kind) {
+    case 'big_tree': {
+      // Integer 2x keeps pixels square (rule 3).
+      scene.add.image(x, y, TEX.obstaclePine).setScale(2).setDepth(y + 28);
+      scene.add.ellipse(x, y + 30, 40, 14, 0x000000, 0.2).setDepth(4);
+      solid(x, y + 22, 22, 16);
+      break;
+    }
+    case 'ruin': {
+      const g = scene.add.graphics().setDepth(y + 20);
+      // Broken column + slab in weathered greys.
+      g.fillStyle(0x6a6f7c, 1);
+      g.fillRect(x - 26, y + 6, 52, 14); // base slab
+      g.fillStyle(0x7c8290, 1);
+      g.fillRect(x - 18, y - 26, 14, 32); // standing stump
+      g.fillStyle(0x8c93a2, 1);
+      g.fillRect(x - 18, y - 26, 14, 4);
+      g.fillStyle(0x5a5f6c, 1);
+      g.fillRect(x + 4, y - 2, 16, 10); // fallen block
+      g.fillRect(x - 30, y + 2, 8, 6); // rubble
+      scene.add.ellipse(x, y + 22, 56, 14, 0x000000, 0.18).setDepth(4);
+      solid(x, y + 8, 56, 18);
+      break;
+    }
+    case 'stone_circle': {
+      for (let i = 0; i < 6; i++) {
+        const ang = (Math.PI * 2 * i) / 6;
+        const sx = Math.round(x + Math.cos(ang) * 34);
+        const sy = Math.round(y + Math.sin(ang) * 22);
+        scene.add.image(sx, sy, TEX.decorPebble).setScale(2).setDepth(sy);
+      }
+      // Faint mystic glow in the middle.
+      const glow = scene.add.ellipse(x, y, 40, 22, 0xb0d0ff, 0.1).setDepth(3);
+      scene.tweens.add({ targets: glow, alpha: 0.22, duration: 1600, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+      break;
+    }
+    case 'campfire': {
+      const g = scene.add.graphics().setDepth(y);
+      g.fillStyle(0x4a3220, 1);
+      g.fillRect(x - 10, y - 2, 20, 4); // logs
+      g.fillRect(x - 2, y - 8, 4, 12);
+      const glow = scene.add.ellipse(x, y - 4, 64, 34, 0xffa050, 0.13).setDepth(3);
+      const flameA = scene.add.circle(x, y - 8, 6, 0xff8a3a, 0.9).setDepth(y + 1);
+      const flameB = scene.add.circle(x, y - 11, 3, 0xffd24a, 0.95).setDepth(y + 2);
+      scene.tweens.add({ targets: [flameA, flameB], alpha: 0.55, duration: 260, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+      scene.tweens.add({ targets: glow, alpha: 0.2, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+      solid(x, y, 22, 10);
+      break;
     }
   }
 }

@@ -12,7 +12,8 @@
   "ground": "grass",
   "path": {
     "axis": "v",
-    "thickness": 48
+    "thickness": 48,
+    "wind": 20
   },
   "border": "trees",
   "obstacles": [
@@ -117,5 +118,25 @@
   "ambient": {
     "color": "#eaffd0",
     "alpha": 0.04
-  }
+  },
+  "water": [
+    [
+      248,
+      480,
+      84,
+      64
+    ]
+  ],
+  "landmarks": [
+    {
+      "x": 70,
+      "y": 250,
+      "kind": "big_tree"
+    },
+    {
+      "x": 286,
+      "y": 720,
+      "kind": "campfire"
+    }
+  ]
 }

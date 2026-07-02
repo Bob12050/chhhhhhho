@@ -41,5 +41,12 @@
   "ambient": {
     "color": "#8ac0e0",
     "alpha": 0.12
-  }
+  },
+  "landmarks": [
+    {
+      "x": 270,
+      "y": 200,
+      "kind": "stone_circle"
+    }
+  ]
 }

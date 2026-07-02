@@ -81,10 +81,12 @@ export class QuestBoardScene extends Phaser.Scene {
     this.setupScroll();
 
     const close = this.add
-      .text(w / 2, h - 40, '[ とじる ]', {
+      .text(w / 2, h - 40, 'とじる', {
         fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
+        backgroundColor: '#2a3050',
+        padding: { x: 10, y: 5 },
       })
       .setOrigin(0.5)
       .setDepth(3)
@@ -356,7 +358,13 @@ export class QuestBoardScene extends Phaser.Scene {
 
   private actionButton(x: number, y: number, label: string, color: string, fn: () => void): void {
     const btn = this.add
-      .text(x, y, label, { fontFamily: FONT, fontSize: '14px', color })
+      .text(x, y, label.replace(/^\[ | \]$/g, ''), {
+        fontFamily: FONT,
+        fontSize: '13px',
+        color,
+        backgroundColor: '#2a3050',
+        padding: { x: 9, y: 5 },
+      })
       .setOrigin(1, 0)
       .setInteractive({ useHandCursor: true });
     btn.on('pointerup', fn);

@@ -24,16 +24,28 @@ export class TouchButton {
     text: string,
     color: number,
     depth: number,
+    iconTex?: string,
   ) {
     this.cx = x;
     this.cy = y;
     this.radius = Math.max(radius, 24); // 48px diameter minimum
     this.circle = scene.add.circle(x, y, this.radius, color, 0.35).setDepth(depth);
     this.circle.setStrokeStyle(2, 0xffffff, 0.4);
-    this.label = scene.add
-      .text(x, y, text, { fontFamily: FONT, fontSize: '13px', color: '#ffffff' })
-      .setOrigin(0.5)
-      .setDepth(depth + 1);
+    // Icon + smaller caption reads better than a bare letter; integer scale
+    // only (pixel-art rule).
+    if (iconTex && scene.textures.exists(iconTex)) {
+      const scale = this.radius >= 30 ? 2 : 1;
+      scene.add.image(x, text ? y - 5 : y, iconTex).setScale(scale).setDepth(depth + 1);
+      this.label = scene.add
+        .text(x, y + this.radius - 12, text, { fontFamily: FONT, fontSize: '9px', color: '#ffffff' })
+        .setOrigin(0.5)
+        .setDepth(depth + 1);
+    } else {
+      this.label = scene.add
+        .text(x, y, text, { fontFamily: FONT, fontSize: '13px', color: '#ffffff' })
+        .setOrigin(0.5)
+        .setDepth(depth + 1);
+    }
 
     this.circle.setInteractive(
       new Phaser.Geom.Circle(this.radius, this.radius, this.radius),

@@ -62,6 +62,7 @@ export class WorldScene extends Phaser.Scene {
   private map!: MapDef;
   private portals: BuiltPortal[] = [];
   private npcs: BuiltNpc[] = [];
+  private npcSprites: Phaser.Physics.Arcade.Image[] = [];
   private activeNpc: BuiltNpc | null = null;
 
   private playerInvuln = 0;
@@ -73,6 +74,7 @@ export class WorldScene extends Phaser.Scene {
   private portalLock = 0; // ms; blocks portal re-trigger right after arrival
   private portalHintCd = 0; // ms; throttles the "defeat the boss" hint
   private transitioning = false;
+  private npcBob = false;
   private busOff: Array<() => void> = [];
   private rng = new Rng();
   private pet: Pet | null = null;
@@ -101,6 +103,7 @@ export class WorldScene extends Phaser.Scene {
     this.enemies = [];
     this.portals = [];
     this.npcs = [];
+    this.npcSprites = [];
     this.activeNpc = null;
     this.playerInvuln = 0;
     this.playerDead = false;
@@ -182,6 +185,39 @@ export class WorldScene extends Phaser.Scene {
     this.spawnHuntTargets();
     for (const n of this.map.npcs ?? []) this.spawnNpc(n.x, n.y, n.label, n.action, n.dialogueId);
     this.spawnPetIfAny();
+
+    // Idle bob: NPCs shift 1px every ~700ms (integer steps only — rule 3).
+    // A static crowd reads as mannequins; this tiny motion reads as "people".
+    this.time.addEvent({
+      delay: 700,
+      loop: true,
+      callback: () => {
+        this.npcBob = !this.npcBob;
+        for (const [i, s] of this.npcSprites.entries()) {
+          if (!s.active) continue;
+          s.setY(s.y + ((i + (this.npcBob ? 1 : 0)) % 2 === 0 ? -1 : 1));
+        }
+      },
+    });
+
+    // Wind streaks drifting across grass maps (subtle life for the meadow).
+    if (this.map.ground === 'grass') {
+      for (let i = 0; i < 4; i++) {
+        const sy = Math.round((this.map.size.h / 5) * (i + 1));
+        const streak = this.add
+          .rectangle(-30, sy, 14, 2, 0xd8f0c0, 0.16)
+          .setDepth(3);
+        this.tweens.add({
+          targets: streak,
+          x: this.map.size.w + 30,
+          y: sy + 20,
+          duration: 5200 + i * 900,
+          delay: i * 1300,
+          repeat: -1,
+          ease: 'Sine.InOut',
+        });
+      }
+    }
 
     // Listeners (unsubscribed on shutdown to avoid accumulation on re-entry).
     this.busOff.push(
@@ -479,6 +515,7 @@ export class WorldScene extends Phaser.Scene {
     const sprite = this.physics.add.staticImage(x, y, TEX.npc).setOrigin(0.5, 0.875);
     sprite.setDepth(Math.round(y));
     this.add.ellipse(x, y + 2, 22, 8, 0x000000, 0.22).setDepth(4);
+    this.npcSprites.push(sprite);
     // Role-coloured robes so the shopkeeper/guild master/etc. stop being
     // identical sextuplets (placeholder until each gets real art).
     const NPC_TINTS = [0xffffff, 0xffd0a0, 0xa0d0ff, 0xb0ffb8, 0xffb0c8, 0xd8c0ff, 0xfff0a0];

@@ -60,7 +60,7 @@ export class DebugScene extends Phaser.Scene {
     });
     y += 48;
 
-    this.btn(w / 2 - 44, y, '[ とじる ]', () => this.close(), 0xffd86b);
+    this.btn(w / 2 - 44, y, 'とじる', () => this.close(), 0xffd86b);
     this.input.keyboard?.on('keydown-ESC', () => this.close());
   }
 

@@ -53,6 +53,8 @@ export interface MapNpc {
   dialogueId?: string;
 }
 
+export type LandmarkKind = 'big_tree' | 'ruin' | 'stone_circle' | 'campfire';
+
 /** Procedurally drawn building (top-left px + size + wall style). */
 export interface BuildingDef {
   x: number;
@@ -67,13 +69,22 @@ export interface MapDef {
   name: string;
   size: { w: number; h: number };
   ground: GroundKind;
-  path?: { axis: 'v' | 'h'; thickness: number };
+  path?: {
+    axis: 'v' | 'h';
+    thickness: number;
+    /** Meander amplitude in px (0/omitted = ruler-straight). */
+    wind?: number;
+  };
   border: BorderKind;
   obstacles?: [number, number][];
   /** Procedural buildings (collidable, drawn by the map builder). */
   buildings?: BuildingDef[];
   /** Ambient colour grade: screen tint (hex) + alpha. Sets the zone's mood. */
   ambient?: { color: string; alpha: number };
+  /** Water rects [x, y, w, h] (animated, collidable). */
+  water?: [number, number, number, number][];
+  /** Scenic landmarks (procedurally drawn; some collide). */
+  landmarks?: { x: number; y: number; kind: LandmarkKind }[];
   spawns: Record<string, [number, number]>;
   portals?: PortalDef[];
   enemies?: MapEnemy[];

@@ -82,10 +82,12 @@ export class ChecklistScene extends Phaser.Scene {
       .setDepth(1);
 
     const close = this.add
-      .text(w / 2, h - 40, '[ とじる ]', {
+      .text(w / 2, h - 40, 'とじる', {
         fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
+        backgroundColor: '#2a3050',
+        padding: { x: 10, y: 5 },
       })
       .setOrigin(0.5)
       .setDepth(1)

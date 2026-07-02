@@ -122,10 +122,12 @@ export class InventoryScene extends Phaser.Scene {
 
     // Close + return-to-title.
     const close = this.add
-      .text(w / 2, h - 44, '[ とじる ]', {
+      .text(w / 2, h - 44, 'とじる', {
         fontFamily: FONT,
         fontSize: '16px',
         color: '#ffd86b',
+        backgroundColor: '#2a3050',
+        padding: { x: 10, y: 5 },
       })
       .setOrigin(0.5)
       .setDepth(3)
@@ -306,10 +308,12 @@ export class InventoryScene extends Phaser.Scene {
         );
       }
       const use = this.add
-        .text(w - 16, y + 6, '[ つかう ]', {
+        .text(w - 16, y + 6, 'つかう', {
           fontFamily: FONT,
           fontSize: '13px',
           color: '#9fe3a0',
+          backgroundColor: '#2a3050',
+          padding: { x: 10, y: 5 },
         })
         .setOrigin(1, 0)
         .setInteractive({ useHandCursor: true });
@@ -382,10 +386,12 @@ export class InventoryScene extends Phaser.Scene {
       }
       if (canEq) {
         const btn = this.add
-          .text(w - 16, y, equipped ? '[ はずす ]' : '[ そうび ]', {
+          .text(w - 16, y, equipped ? 'はずす' : 'そうび', {
             fontFamily: FONT,
             fontSize: '13px',
             color: '#9fd0ff',
+            backgroundColor: '#2a3050',
+            padding: { x: 10, y: 5 },
           })
           .setOrigin(1, 0)
           .setInteractive({ useHandCursor: true });
