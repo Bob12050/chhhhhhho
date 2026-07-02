@@ -513,23 +513,35 @@ export class InventoryScene extends Phaser.Scene {
       { key: 'DEX', label: '器 DEX' },
       { key: 'LUK', label: '運 LUK' },
     ];
-    let y = 150;
+    let y = 148;
+    let band = 0;
     for (const s of stats) {
+      this.content.add(rowBand(this, y, 30, band++));
       this.content.add(
-        this.add.text(16, y, `${s.label}  ${gs.base[s.key]}`, {
-          fontFamily: 'system-ui, monospace',
-          fontSize: '14px',
+        this.add.text(16, y + 15, `${s.label}`, {
+          fontFamily: FONT,
+          fontSize: '13px',
+          color: '#cfd3e6',
+        }).setOrigin(0, 0.5),
+      );
+      this.content.add(
+        this.add.text(gs.statPoints > 0 ? w - 70 : w - 16, y + 15, `${gs.base[s.key]}`, {
+          fontFamily: FONT,
+          fontSize: '15px',
           color: '#fff',
-        }),
+          fontStyle: 'bold',
+        }).setOrigin(1, 0.5),
       );
       if (gs.statPoints > 0) {
         const plus = this.add
-          .text(w - 16, y - 2, '[ ＋ ]', {
+          .text(w - 16, y + 15, '＋', {
             fontFamily: FONT,
-            fontSize: '15px',
-            color: '#9fe3a0',
+            fontSize: '13px',
+            color: '#bfffce',
+            backgroundColor: '#274a30',
+            padding: { x: 9, y: 4 },
           })
-          .setOrigin(1, 0)
+          .setOrigin(1, 0.5)
           .setInteractive({ useHandCursor: true });
         plus.on('pointerup', () => {
           if (this.dragged) return;
@@ -538,10 +550,18 @@ export class InventoryScene extends Phaser.Scene {
         });
         this.content.add(plus);
       }
-      y += 30;
+      y += 34;
     }
 
+    // Derived stats in a framed panel (reads as a "sheet", not loose text).
     const d = gs.derived;
+    const panelY = y + 10;
+    this.content.add(
+      this.add.rectangle(8, panelY, w - 16, 96, 0x14172a, 0.9).setOrigin(0, 0).setStrokeStyle(1, 0x333a5a, 0.8),
+    );
+    this.content.add(
+      this.add.text(16, panelY + 6, '派生ステータス', { fontFamily: FONT, fontSize: '11px', color: '#c9b27a' }),
+    );
     const lines = [
       `最大HP ${d.maxHp}   最大MP ${d.maxMp}`,
       `物攻 ${d.physAtk}   魔攻 ${d.magAtk}   防御 ${d.def}`,
@@ -549,11 +569,11 @@ export class InventoryScene extends Phaser.Scene {
       `攻速 ${d.atkSpeed.toFixed(2)}   移動 ${d.moveSpeed}`,
     ];
     this.content.add(
-      this.add.text(16, y + 8, lines.join('\n'), {
-        fontFamily: 'system-ui, monospace',
+      this.add.text(16, panelY + 24, lines.join('\n'), {
+        fontFamily: FONT,
         fontSize: '12px',
         color: '#cfe',
-        lineSpacing: 3,
+        lineSpacing: 4,
       }),
     );
   }

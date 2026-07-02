@@ -2,7 +2,17 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { allJobs, getJob, type JobDef } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
-import { FONT, UI, addPanelChrome } from '@/ui/theme';
+import { FONT, addPanelChrome, rowBand } from '@/ui/theme';
+import { TEX } from '@/assets/gen/textures';
+
+/** Emblem (icon + colour) per class family for the job list. */
+const FAMILY_EMBLEM: Record<string, { tex: string; color: number }> = {
+  warrior: { tex: TEX.iconSword, color: 0xcc5a5a },
+  mage: { tex: TEX.iconStaff, color: 0x5a9ad0 },
+  cleric: { tex: TEX.iconShield, color: 0xf5c542 },
+  thief: { tex: TEX.iconBow, color: 0x6db06a },
+  tamer: { tex: TEX.iconRing, color: 0xb07ad0 },
+};
 
 /**
  * Job-change overlay (opened by the guild NPC). Lists jobs with their unlock
@@ -29,10 +39,12 @@ export class JobChangeScene extends Phaser.Scene {
       .setDepth(3);
 
     const treeBtn = this.add
-      .text(w - 16, 26, '[ ツリーを見る ]', {
+      .text(w - 16, 24, 'ツリーを見る', {
         fontFamily: FONT,
-        fontSize: '13px',
+        fontSize: '12px',
         color: '#c8b6ff',
+        backgroundColor: '#2a3050',
+        padding: { x: 10, y: 5 },
       })
       .setOrigin(1, 0)
       .setDepth(3)
@@ -80,10 +92,11 @@ export class JobChangeScene extends Phaser.Scene {
       }),
     );
 
-    let y = this.viewTop + 36;
+    let y = this.viewTop + 30;
+    let band = 0;
     for (const job of this.relevantJobs()) {
-      this.renderJob(job, y, w);
-      y += 76;
+      this.renderJob(job, y, w, band++);
+      y += 64;
     }
     this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
     this.scrollTo(this.scrollY);
@@ -130,23 +143,41 @@ export class JobChangeScene extends Phaser.Scene {
       .sort((a, b) => a.tier - b.tier);
   }
 
-  private renderJob(job: JobDef, y: number, w: number): void {
+  private renderJob(job: JobDef, y: number, w: number, band: number): void {
+    const rowH = 60;
+    const cy = y + rowH / 2;
+    this.content.add(rowBand(this, y, rowH, band));
     const isCurrent = gameState.jobId === job.id;
     const block = gameState.jobChangeBlock(job.id);
-    // Per-job level: the active job uses the live level; others show their
-    // stored job level (0 if never played). Helps plan multi-job leveling.
     const lvl = gameState.jobLevelOf(job.id);
+    // Family emblem cell (icon + colour), gold ring when it's the active job.
+    const em = FAMILY_EMBLEM[job.family ?? ''] ?? { tex: TEX.iconGem, color: 0x888ea0 };
     this.content.add(
-      this.add.text(16, y, `${job.name}  Lv${lvl}  (Tier ${job.tier})${isCurrent ? '  ★現在' : ''}`, {
+      this.add.rectangle(26, cy, 32, 32, 0x1c2036, 1).setStrokeStyle(2, isCurrent ? 0xf5c542 : em.color, 0.95),
+    );
+    this.content.add(this.add.image(26, cy, em.tex).setTint(em.color));
+    this.content.add(
+      this.add.text(50, y + 8, `${job.name}  Lv${lvl}${isCurrent ? '  ★現在' : ''}`, {
         fontFamily: FONT,
         fontSize: '15px',
         color: isCurrent ? '#9fe3a0' : '#fff',
       }),
     );
+    // Tier chip.
     this.content.add(
-      this.add.text(16, y + 20, job.description, {
+      this.add
+        .text(50, y + 30, `Tier ${job.tier}`, {
+          fontFamily: FONT,
+          fontSize: '10px',
+          color: '#cfd3e6',
+          backgroundColor: '#2a2d44',
+          padding: { x: 5, y: 1 },
+        }),
+    );
+    this.content.add(
+      this.add.text(96, y + 31, job.description, {
         fontFamily: FONT,
-        fontSize: '11px',
+        fontSize: '10px',
         color: '#9aa0b5',
       }),
     );
@@ -154,16 +185,19 @@ export class JobChangeScene extends Phaser.Scene {
     if (!isCurrent) {
       if (block === null) {
         const btn = this.add
-          .text(w - 16, y + 6, '[ 転職する ]', {
+          .text(w - 16, cy, '転職する', {
             fontFamily: FONT,
-            fontSize: '14px',
-            color: '#9fd0ff',
+            fontSize: '13px',
+            color: '#bfffce',
+            backgroundColor: '#274a30',
+            padding: { x: 10, y: 5 },
           })
-          .setOrigin(1, 0)
+          .setOrigin(1, 0.5)
           .setInteractive({ useHandCursor: true });
         btn.on('pointerup', () => {
           if (this.dragged) return;
           gameState.changeJob(job.id);
+          bus.emit('sfx:play', { id: 'level_up' });
           this.render();
         });
         this.content.add(btn);
@@ -171,16 +205,11 @@ export class JobChangeScene extends Phaser.Scene {
         const note = job.unlockConditions.length > 0 ? `要: ${this.conditionsText(job)}` : '条件未達';
         this.content.add(
           this.add
-            .text(w - 16, y + 6, note, {
-              fontFamily: FONT,
-              fontSize: '11px',
-              color: '#7e8499',
-            })
-            .setOrigin(1, 0),
+            .text(w - 16, cy, note, { fontFamily: FONT, fontSize: '10px', color: '#7e8499' })
+            .setOrigin(1, 0.5),
         );
       }
     }
-    this.content.add(this.add.rectangle(w / 2, y + 62, w - 32, 1, UI.divider).setOrigin(0.5));
   }
 
   /** Human-readable transfer requirements built from data-driven conditions. */

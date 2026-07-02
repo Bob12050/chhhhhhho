@@ -1,11 +1,12 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
-import { getEquipment, getMaterial, itemDisplayName } from '@/data/items';
-import { rarityColorHex } from '@/data/rarity';
+import { getEquipment, getMaterial, getConsumable, itemDisplayName } from '@/data/items';
+import { rarityColorHex, rarityColor } from '@/data/rarity';
 import { allRecipes, type Recipe } from '@/crafting/recipes';
 import { craft, craftBlock } from '@/crafting/crafting';
 import { bus } from '@/core/event-bus';
-import { FONT, UI, addPanelChrome } from '@/ui/theme';
+import { FONT, UI, addPanelChrome, rowBand } from '@/ui/theme';
+import { TEX } from '@/assets/gen/textures';
 
 /**
  * Crafting overlay (opened by the craft NPC). Lists recipes with their
@@ -40,12 +41,15 @@ export class CraftingScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
+    this.add.rectangle(0, 0, w, 46, 0x10121c, 1).setOrigin(0).setDepth(2);
     this.add
-      .text(16, 24, 'クラフト', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
+      .text(16, 23, 'クラフト', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
+      .setOrigin(0, 0.5)
       .setDepth(3);
+    this.add.circle(w - 62, 23, 6, 0xf5c542).setStrokeStyle(1.5, 0x8a6a1a, 1).setDepth(3);
     this.goldText = this.add
-      .text(w - 16, 26, '', { fontFamily: FONT, fontSize: '14px', color: '#ffd86b' })
-      .setOrigin(1, 0)
+      .text(w - 52, 23, '', { fontFamily: FONT, fontSize: '14px', color: '#ffd86b' })
+      .setOrigin(0, 0.5)
       .setDepth(3);
 
     // Tabs: weapons / armour / tools.
@@ -126,7 +130,7 @@ export class CraftingScene extends Phaser.Scene {
 
   private render(): void {
     this.content.removeAll(true);
-    this.goldText.setText(`${gameState.gold} Gold`);
+    this.goldText.setText(`${gameState.gold}`);
     for (const tb of this.tabButtons) {
       tb.text.setBackgroundColor(tb.id === this.tab ? UI.tabActiveBg : UI.tabIdleBg);
     }
@@ -143,66 +147,113 @@ export class CraftingScene extends Phaser.Scene {
       );
       y += 28;
     }
+    let band = 0;
     for (const r of list) {
-      this.renderRecipe(r, y, w);
-      y += 78;
+      this.renderRecipe(r, y, w, band++);
+      y += 76;
     }
     this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
     this.scrollTo(this.scrollY);
   }
 
-  private renderRecipe(r: Recipe, y: number, w: number): void {
+  /** Icon for a recipe result (weapon type / armour slot / consumable / gem). */
+  private resultIcon(id: string): string {
+    const eq = getEquipment(id);
+    if (eq) {
+      if (eq.slot === 'main_hand') {
+        const tag = eq.weaponTags?.[0];
+        if (tag === 'staff' || tag === 'wand') return TEX.iconStaff;
+        if (tag === 'bow' || tag === 'shuriken') return TEX.iconBow;
+        if (tag === 'shield') return TEX.iconShield;
+        return TEX.iconSword;
+      }
+      if (eq.slot === 'head') return TEX.iconHelm;
+      if (eq.slot.startsWith('accessory')) return TEX.iconRing;
+      return TEX.iconArmor;
+    }
+    if (getConsumable(id)) return TEX.iconFlask;
+    return TEX.iconGem;
+  }
+
+  private renderRecipe(r: Recipe, y: number, w: number, band: number): void {
+    const rowH = 72;
+    this.content.add(rowBand(this, y, rowH, band));
     const block = craftBlock(gameState, r);
     const resultRarity =
       getEquipment(r.resultItemId)?.rarity ?? getMaterial(r.resultItemId)?.rarity;
+    // Result icon cell (rarity border), dimmed when unaffordable.
+    const border = block ? 0x4a4f5c : rarityColor(resultRarity);
+    const cy = y + rowH / 2;
     this.content.add(
-      this.add.text(16, y, `${itemDisplayName(r.resultItemId)} ×${r.resultQty}`, {
+      this.add.rectangle(26, cy, 32, 32, 0x1c2036, 1).setStrokeStyle(2, border, 0.95),
+    );
+    this.content.add(
+      this.add.image(26, cy, this.resultIcon(r.resultItemId)).setTint(block ? 0x888ea0 : rarityColor(resultRarity)),
+    );
+    this.content.add(
+      this.add.text(50, y + 6, `${itemDisplayName(r.resultItemId)} ×${r.resultQty}`, {
         fontFamily: FONT,
         fontSize: '15px',
         color: rarityColorHex(resultRarity),
       }),
     );
 
-    const parts = Object.entries(r.materials).map(([id, qty]) => {
+    // Per-cost chips: green when satisfied, red when short (a wall of red text
+    // was unreadable; colour each requirement individually).
+    const costs: { label: string; ok: boolean }[] = [];
+    for (const [id, qty] of Object.entries(r.materials)) {
       const have = gameState.materials[id] ?? 0;
-      return `${itemDisplayName(id)} ${have}/${qty}`;
-    });
-    // Upgrade recipes also consume a lower-tier piece (下位装備 → 上位装備).
+      costs.push({ label: `${itemDisplayName(id)} ${have}/${qty}`, ok: have >= qty });
+    }
     for (const eq of r.consumeEquipment ?? []) {
       const have = gameState.ownedEquipmentCount(eq);
-      parts.push(`${itemDisplayName(eq)}(装備) ${have}/1`);
+      costs.push({ label: `${itemDisplayName(eq)}(装) ${have}/1`, ok: have >= 1 });
     }
-    parts.push(`${gameState.gold}/${r.gold} Gold`);
-    this.content.add(
-      this.add.text(16, y + 20, parts.join('   '), {
+    costs.push({ label: `${r.gold}G`, ok: gameState.gold >= r.gold });
+    let lineX = 50;
+    let lineY = y + 28;
+    for (const c of costs) {
+      const t = this.add.text(lineX, lineY, c.label, {
         fontFamily: FONT,
         fontSize: '11px',
-        color: block ? '#e58a8a' : '#9fd0a0',
-        // Wrap long upgrade-recipe cost lines instead of running off the right
-        // edge; keep clear of the make button (top-right ~90px).
-        wordWrap: { width: w - 104 },
-      }),
-    );
+        color: c.ok ? '#9fd0a0' : '#e58a8a',
+      });
+      this.content.add(t);
+      lineX = t.x + t.width + 10;
+      // Wrap long upgrade-recipe cost lists to a second row.
+      if (lineX > w - 96 && lineY === y + 28) {
+        lineX = 50;
+        lineY = y + 46;
+      }
+    }
 
-    const btn = this.add
-      .text(w - 16, y + 8, block ? '不足' : '[ 作る ]', {
-        fontFamily: FONT,
-        fontSize: '14px',
-        color: block ? '#7e8499' : '#9fe3a0',
-      })
-      .setOrigin(1, 0);
-    if (!block) {
-      btn.setInteractive({ useHandCursor: true });
+    if (block) {
+      this.content.add(
+        this.add
+          .text(w - 16, cy, '不足', { fontFamily: FONT, fontSize: '13px', color: '#7e8499' })
+          .setOrigin(1, 0.5),
+      );
+    } else {
+      const btn = this.add
+        .text(w - 16, cy, '作る', {
+          fontFamily: FONT,
+          fontSize: '14px',
+          color: '#bfffce',
+          backgroundColor: '#274a30',
+          padding: { x: 12, y: 6 },
+        })
+        .setOrigin(1, 0.5)
+        .setInteractive({ useHandCursor: true });
       btn.on('pointerup', () => {
         if (this.dragged) return;
-        if (craft(gameState, r)) this.flash(`${itemDisplayName(r.resultItemId)} を作った！`);
+        if (craft(gameState, r)) {
+          this.flash(`${itemDisplayName(r.resultItemId)} を作った！`);
+          bus.emit('sfx:play', { id: 'craft' });
+        }
         this.render();
       });
+      this.content.add(btn);
     }
-    this.content.add(btn);
-    this.content.add(
-      this.add.rectangle(w / 2, y + 64, w - 32, 1, UI.divider).setOrigin(0.5),
-    );
   }
 
   private flash(msg: string): void {
