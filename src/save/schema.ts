@@ -80,7 +80,9 @@ export function createDefaultSave(slot: number): SaveData {
       equipmentOwned: ['wood_sword', 'leather_cap', 'cloth_vest'],
     },
     flags: {},
-    quests: { active: [], completed: [], progress: {} },
+    // New games start with the intro quest already accepted so the HUD tracker
+    // gives an immediate goal (onboarding: kill slimes -> report at the board).
+    quests: { active: ['q_apprentice'], completed: [], progress: { q_apprentice: {} } },
     settings: { sfx: true, bgm: true },
   };
 }

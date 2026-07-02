@@ -65,6 +65,7 @@ export class WorldScene extends Phaser.Scene {
   private playerInvuln = 0;
   private playerDead = false;
   private skillCd: number[] = [0, 0];
+  private dodgeCd = 0;
   private autoSaveTimer = 0;
   private mpRegenTimer = 0;
   private portalLock = 0; // ms; blocks portal re-trigger right after arrival
@@ -566,6 +567,26 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
+  /** Dust puffs trailing the roll (no rotation allowed, so dust sells motion). */
+  private spawnRollDust(): void {
+    for (let i = 0; i < 3; i++) {
+      this.time.delayedCall(i * 70, () => {
+        if (this.playerDead) return;
+        const puff = this.add
+          .circle(Math.round(this.player.x), Math.round(this.player.y - 4), 5, 0xd8d0c0, 0.55)
+          .setDepth(Math.round(this.player.y) - 1);
+        this.tweens.add({
+          targets: puff,
+          alpha: 0,
+          scale: 1.9,
+          duration: 240,
+          ease: 'Quad.easeOut',
+          onComplete: () => puff.destroy(),
+        });
+      });
+    }
+  }
+
   /** Quick beam from a ranged enemy to the player (attack-strike feedback). */
   private spawnZap(x1: number, y1: number, x2: number, y2: number): void {
     const g = this.add.graphics().setDepth(9000);
@@ -816,10 +837,56 @@ export class WorldScene extends Phaser.Scene {
       const q = getQuest(qid);
       if (!q?.huntMap || !q.objectives.some((o) => o.enemyId === def.id)) continue;
       if (isComplete(gameState, qid)) {
-        this.showMapName(`クエスト達成！「${q.name}」\n町の掲示板で報酬を受取ろう`);
+        this.showQuestClearBanner(q.name);
         break;
       }
     }
+  }
+
+  /** MH-style quest-clear ceremony: banner band + fanfare, then fades out. */
+  private showQuestClearBanner(questName: string): void {
+    const cam = this.cameras.main;
+    const cx = cam.width / 2;
+    const cy = Math.round(cam.height * 0.34);
+    const band = this.add
+      .rectangle(cx, cy, cam.width, 92, 0x0e0f1a, 0.85)
+      .setScrollFactor(0)
+      .setDepth(8600)
+      .setScale(1, 0.06);
+    const edge = (dy: number): Phaser.GameObjects.Rectangle =>
+      this.add
+        .rectangle(cx, cy + dy, cam.width, 2, 0xffd86b, 0.9)
+        .setScrollFactor(0)
+        .setDepth(8601)
+        .setAlpha(0);
+    const top = edge(-46);
+    const bottom = edge(46);
+    const mk = (dy: number, msg: string, size: string, color: string, bold = false): Phaser.GameObjects.Text =>
+      this.add
+        .text(cx, cy + dy, msg, {
+          fontFamily: FONT,
+          fontSize: size,
+          color,
+          fontStyle: bold ? 'bold' : 'normal',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0)
+        .setDepth(8601)
+        .setAlpha(0);
+    const l1 = mk(-20, 'クエスト達成！', '24px', '#ffd86b', true);
+    const l2 = mk(10, `「${questName}」`, '14px', '#ffffff');
+    const l3 = mk(30, '町の掲示板で報酬を受取ろう', '10px', '#9aa0b5');
+    bus.emit('sfx:play', { id: 'fanfare' });
+    this.tweens.add({ targets: band, scaleY: 1, duration: 200, ease: 'Back.easeOut' });
+    this.tweens.add({ targets: [top, bottom, l1, l2, l3], alpha: 1, duration: 220, delay: 140 });
+    this.time.delayedCall(2700, () => {
+      this.tweens.add({
+        targets: [band, top, bottom, l1, l2, l3],
+        alpha: 0,
+        duration: 420,
+        onComplete: () => [band, top, bottom, l1, l2, l3].forEach((o) => o.destroy()),
+      });
+    });
   }
 
   private spawnLoot(x: number, y: number, itemId: string, qty: number): void {
@@ -1002,6 +1069,14 @@ export class WorldScene extends Phaser.Scene {
     const v = this.ui.getStickVector();
     this.player.setMovement(v.x, v.y);
 
+    if (input.dodge.justPressed && this.dodgeCd <= 0 && this.player.roll(v.x, v.y)) {
+      // Short i-frames so a well-timed roll beats blasts/bullets/contact.
+      this.dodgeCd = 900;
+      this.playerInvuln = Math.max(this.playerInvuln, 340);
+      bus.emit('skill:cooldown', { slot: 2, duration: this.dodgeCd });
+      bus.emit('sfx:play', { id: 'dodge' });
+      this.spawnRollDust();
+    }
     if (input.attack.justPressed || (input.attack.down && !this.player.isAttacking())) {
       this.player.attack(this.facingFromStick(v));
     }
@@ -1028,6 +1103,7 @@ export class WorldScene extends Phaser.Scene {
     for (let i = 0; i < this.skillCd.length; i++) {
       if (this.skillCd[i] > 0) this.skillCd[i] -= delta;
     }
+    if (this.dodgeCd > 0) this.dodgeCd -= delta;
     if (this.portalLock > 0) this.portalLock -= delta;
     if (this.portalHintCd > 0) this.portalHintCd -= delta;
 

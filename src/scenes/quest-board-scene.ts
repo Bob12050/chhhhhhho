@@ -324,8 +324,8 @@ export class QuestBoardScene extends Phaser.Scene {
       if (isComplete(gameState, q.id)) {
         this.actionButton(w - 16, y + 10, '[ 報酬を受取る ]', '#ffd86b', () => {
           if (this.dragged) return;
-          if (turnInQuest(gameState, q.id)) this.flash(`「${q.name}」達成！`);
-          this.render();
+          if (turnInQuest(gameState, q.id)) this.showResult(q);
+          else this.render();
         });
       } else {
         this.content.add(
@@ -363,16 +363,75 @@ export class QuestBoardScene extends Phaser.Scene {
     this.content.add(btn);
   }
 
-  private flash(msg: string): void {
-    const t = this.add
-      .text(this.scale.width / 2, this.scale.height - 70, msg, {
+  /**
+   * Reward ceremony after turn-in: rewards pop in one by one over a dimmed
+   * panel (MH-style result). Tap to dismiss, then the list re-renders.
+   */
+  private showResult(q: QuestDef): void {
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const rows: { label: string; color: string }[] = [];
+    if (q.rewards.exp) rows.push({ label: `EXP +${q.rewards.exp}`, color: '#9fe3a0' });
+    if (q.rewards.gold) rows.push({ label: `ゴールド +${q.rewards.gold}`, color: '#ffd86b' });
+    for (const [id, qty] of Object.entries(q.rewards.items ?? {})) {
+      rows.push({ label: `${itemDisplayName(id)} ×${qty}`, color: '#cfd3e6' });
+    }
+    const panelH = 150 + rows.length * 30;
+    const cy = Math.round(h * 0.42);
+    const c = this.add.container(0, 0).setDepth(60);
+    const dim = this.add.rectangle(0, 0, w, h, 0x000000, 0.62).setOrigin(0).setInteractive();
+    const panel = this.add
+      .rectangle(w / 2, cy, w - 44, panelH, UI.panel, 1)
+      .setStrokeStyle(2, 0xffd86b, 0.85);
+    const title = this.add
+      .text(w / 2, cy - panelH / 2 + 26, 'クエストクリア！', {
+        fontFamily: FONT,
+        fontSize: '20px',
+        color: '#ffd86b',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    const name = this.add
+      .text(w / 2, cy - panelH / 2 + 50, `「${q.name}」`, {
         fontFamily: FONT,
         fontSize: '13px',
-        color: '#ffe9a8',
+        color: '#ffffff',
+      })
+      .setOrigin(0.5);
+    c.add([dim, panel, title, name]);
+    bus.emit('sfx:play', { id: 'fanfare' });
+
+    rows.forEach((r, i) => {
+      this.time.delayedCall(420 + i * 240, () => {
+        const t = this.add
+          .text(w / 2, cy - panelH / 2 + 84 + i * 30, r.label, {
+            fontFamily: FONT,
+            fontSize: '15px',
+            color: r.color,
+          })
+          .setOrigin(0.5)
+          .setScale(1.6)
+          .setAlpha(0);
+        c.add(t);
+        this.tweens.add({ targets: t, scale: 1, alpha: 1, duration: 170, ease: 'Back.easeOut' });
+        bus.emit('sfx:play', { id: 'pickup' });
+      });
+    });
+
+    const hint = this.add
+      .text(w / 2, cy + panelH / 2 - 22, '- タップで閉じる -', {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#9aa0b5',
       })
       .setOrigin(0.5)
-      .setDepth(2);
-    this.tweens.add({ targets: t, alpha: 0, delay: 800, duration: 500, onComplete: () => t.destroy() });
+      .setAlpha(0);
+    c.add(hint);
+    this.time.delayedCall(420 + rows.length * 240 + 150, () => hint.setAlpha(1));
+    dim.on('pointerup', () => {
+      c.destroy(true);
+      this.render();
+    });
   }
 
   /** Warp to a hunt arena (mirrors fast-travel) and close the board. */

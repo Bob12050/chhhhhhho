@@ -48,7 +48,9 @@ export type SfxId =
   | 'coin'
   | 'ui_tap'
   | 'boom'
-  | 'roar';
+  | 'roar'
+  | 'dodge'
+  | 'fanfare';
 
 export const SFX: Record<SfxId, SfxDef> = {
   // Whoosh of a swing: a short noise swish plus a low body.
@@ -163,6 +165,27 @@ export const SFX: Record<SfxId, SfxDef> = {
     steps: [
       { freq: 120, freqEnd: 45, type: 'square', delay: 0, attack: 0.004, decay: 0.24, gain: 0.6 },
       { freq: 0, noise: true, delay: 0, attack: 0.002, decay: 0.18, gain: 0.45 },
+    ],
+  },
+  // Dodge roll: short airy whoosh.
+  dodge: {
+    gain: 0.4,
+    minGapMs: 200,
+    steps: [
+      { freq: 0, noise: true, delay: 0, attack: 0.01, decay: 0.12, gain: 0.5 },
+      { freq: 320, freqEnd: 170, type: 'triangle', delay: 0, attack: 0.006, decay: 0.1, gain: 0.3 },
+    ],
+  },
+  // Quest clear fanfare: short rising four-note flourish (C-E-G-C + fifth cap).
+  fanfare: {
+    gain: 0.55,
+    minGapMs: 800,
+    steps: [
+      { freq: 523, type: 'square', delay: 0, attack: 0.004, decay: 0.16, gain: 0.45 },
+      { freq: 659, type: 'square', delay: 0.13, attack: 0.004, decay: 0.16, gain: 0.45 },
+      { freq: 784, type: 'square', delay: 0.26, attack: 0.004, decay: 0.2, gain: 0.45 },
+      { freq: 1047, type: 'square', delay: 0.42, attack: 0.004, decay: 0.34, gain: 0.5 },
+      { freq: 1568, type: 'triangle', delay: 0.42, attack: 0.004, decay: 0.4, gain: 0.35 },
     ],
   },
   // Boss enrage roar: long falling saw growl with a noise bed.

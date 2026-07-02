@@ -7,6 +7,9 @@ import { bus } from '@/core/event-bus';
 import { isDebugEnabled } from '@/core/debug';
 import { gameState } from '@/player/game-state';
 import { getJob } from '@/jobs/job-defs';
+import { getQuest } from '@/quests/quest-defs';
+import { isComplete, objectiveProgress } from '@/quests/quests';
+import { getEnemyDef } from '@/enemies/enemy-defs';
 import { expToNext } from '@/stats/leveling';
 import { FONT, UI } from '@/ui/theme';
 
@@ -66,10 +69,14 @@ export class UIScene extends Phaser.Scene {
     const skill2Btn = new TouchButton(this, baseX - 60, baseY - 58, 26, 'S2', 0x5a4abf, depth);
     skill2Btn.onChange = (d) => input.setButton('skill2', d);
 
+    const dodgeBtn = new TouchButton(this, baseX + 2, baseY - 76, 26, '回避', 0x3f9a6e, depth);
+    dodgeBtn.onChange = (d) => input.setButton('dodge', d);
+
     // Cooldown sweep overlays for the two skill buttons (slot 0 = S1, 1 = S2).
     const cdGeom = [
       { x: baseX - 76, y: baseY + 6, r: 28 },
       { x: baseX - 60, y: baseY - 58, r: 26 },
+      { x: baseX + 2, y: baseY - 76, r: 26 }, // dodge (slot 2)
     ];
     const cdGfx = cdGeom.map(() => this.add.graphics().setDepth(depth + 1));
     this.busOff.push(
@@ -225,6 +232,60 @@ export class UIScene extends Phaser.Scene {
       bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current}`)),
     );
 
+    // Quest tracker: current goal pinned under the HUD block so the player
+    // always knows what to do next ("game tells, player does, game rewards").
+    const trY = insets.top + 106;
+    const trTitle = this.add
+      .text(hudX, trY, '', {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#ffe9a8',
+        backgroundColor: '#00000066',
+        padding: { x: 4, y: 2 },
+      })
+      .setDepth(depth);
+    const trObj = this.add
+      .text(hudX, trY + 19, '', {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#cfd3e6',
+        backgroundColor: '#00000066',
+        padding: { x: 4, y: 2 },
+      })
+      .setDepth(depth);
+    const refreshTracker = (): void => {
+      // First incomplete active quest; if everything is done, prompt to report.
+      const active = gameState.activeQuests
+        .map((id) => getQuest(id))
+        .filter((q): q is NonNullable<typeof q> => !!q);
+      const current = active.find((q) => !isComplete(gameState, q.id)) ?? active[0];
+      if (!current) {
+        trTitle.setText('').setVisible(false);
+        trObj.setText('').setVisible(false);
+        return;
+      }
+      trTitle.setVisible(true);
+      trObj.setVisible(true);
+      if (isComplete(gameState, current.id)) {
+        trTitle.setText(`▶ ${current.name}`);
+        trObj.setText('達成！ 掲示板で報告しよう');
+        trObj.setColor('#ffd86b');
+      } else {
+        trTitle.setText(`▶ ${current.name}`);
+        trObj.setColor('#cfd3e6');
+        trObj.setText(
+          current.objectives
+            .map((o) => {
+              const name = getEnemyDef(o.enemyId)?.name ?? o.enemyId;
+              return `${name} ${objectiveProgress(gameState, current.id, o.enemyId)}/${o.count}`;
+            })
+            .join('・'),
+        );
+      }
+    };
+    refreshTracker();
+    this.busOff.push(bus.on('quest:changed', refreshTracker));
+
     // Bag button (top-right) opens the inventory/menu.
     const bag = new TouchButton(this, w - insets.right - 24, insets.top + 26, 22, '袋', 0x6a4ea0, depth);
     bag.onChange = (down) => {
@@ -299,7 +360,7 @@ export class UIScene extends Phaser.Scene {
   private installKeyboardDev(): void {
     const kb = this.input.keyboard;
     if (!kb) return;
-    const keys = kb.addKeys('W,A,S,D,J,K,L,E,UP,DOWN,LEFT,RIGHT') as Record<
+    const keys = kb.addKeys('W,A,S,D,J,K,L,E,SPACE,UP,DOWN,LEFT,RIGHT') as Record<
       string,
       Phaser.Input.Keyboard.Key
     >;
@@ -319,6 +380,7 @@ export class UIScene extends Phaser.Scene {
       input.setButton('skill1', keys.K.isDown);
       input.setButton('skill2', keys.L.isDown);
       input.setButton('interact', keys.E.isDown);
+      input.setButton('dodge', keys.SPACE.isDown);
     };
     this.events.on('update', onUpdate);
     this.busOff.push(() => this.events.off('update', onUpdate));

@@ -24,6 +24,7 @@ export class Player {
   private readonly scene: Phaser.Scene;
   private dir: Direction = 'down';
   private moveSpeed = 90; // logical px/sec (Phase 0 fixed; later from stats)
+  private rollMs = 0;
   private attacking = false;
 
   /** Called when an attack's hit frame lands. */
@@ -77,6 +78,7 @@ export class Player {
 
   /** Apply a normalized-ish movement vector (components in [-1, 1]). */
   setMovement(vx: number, vy: number): void {
+    if (this.rollMs > 0) return; // roll keeps its own velocity
     if (this.attacking) {
       this.body.setVelocity(0, 0);
       return;
@@ -100,9 +102,39 @@ export class Player {
     }
   }
 
+  /**
+   * Dodge roll: burst of speed in the stick direction (or facing when
+   * neutral). The scene grants the i-frames/cooldown; this only moves.
+   * Returns false while attacking/already rolling.
+   */
+  roll(vx: number, vy: number, ms = 260, speedMult = 2.4): boolean {
+    if (this.attacking || this.rollMs > 0) return false;
+    const len = Math.hypot(vx, vy);
+    let nx: number;
+    let ny: number;
+    if (len > 0.001) {
+      nx = vx / len;
+      ny = vy / len;
+    } else {
+      nx = this.dir === 'left' ? -1 : this.dir === 'right' ? 1 : 0;
+      ny = this.dir === 'up' ? -1 : this.dir === 'down' ? 1 : 0;
+    }
+    this.rollMs = ms;
+    this.body.setVelocity(nx * this.moveSpeed * speedMult, ny * this.moveSpeed * speedMult);
+    if (Math.abs(nx) > Math.abs(ny)) this.dir = nx > 0 ? 'right' : 'left';
+    else this.dir = ny > 0 ? 'down' : 'up';
+    this.doll.setDirection(this.dir);
+    this.doll.play('walk', { force: true });
+    return true;
+  }
+
+  isRolling(): boolean {
+    return this.rollMs > 0;
+  }
+
   /** Trigger a melee attack toward the given direction (or current facing). */
   attack(dir?: Direction): void {
-    if (this.attacking) return;
+    if (this.attacking || this.rollMs > 0) return;
     this.attacking = true;
     if (dir) {
       this.dir = dir;
@@ -153,6 +185,10 @@ export class Player {
   }
 
   update(dtMs: number): void {
+    if (this.rollMs > 0) {
+      this.rollMs -= dtMs;
+      if (this.rollMs <= 0) this.body.setVelocity(0, 0);
+    }
     this.doll.setPosition(this.body.x, this.body.y);
     this.doll.setDepth(Math.round(this.body.y));
     this.doll.update(dtMs);
