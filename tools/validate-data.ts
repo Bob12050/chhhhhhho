@@ -547,9 +547,11 @@ function validateTutorial(): void {
   const file = readJson<{
     introVersion: number;
     steps: { id: string; title: string; body: string; anchor: string; advanceOn?: string }[];
+    npcHints?: { action: string; text: string }[];
   }>('src/data/defs/tutorial.json');
   const ANCHORS = new Set(['none', 'stick', 'attack', 'bag']);
   const ADVANCE = new Set(['enemy:died', 'ui:open-inventory']);
+  const NPC_ACTIONS = new Set(['quest', 'craft', 'equip', 'job']);
   if (!(file.introVersion >= 1)) err('Tutorial: introVersion must be >= 1');
   if (!file.steps?.length) err('Tutorial: needs at least one step');
   const seen = new Set<string>();
@@ -561,6 +563,13 @@ function validateTutorial(): void {
     if (!ANCHORS.has(s.anchor)) err(`Tutorial step ${s.id}: invalid anchor "${s.anchor}"`);
     if (s.advanceOn && !ADVANCE.has(s.advanceOn))
       err(`Tutorial step ${s.id}: invalid advanceOn "${s.advanceOn}"`);
+  }
+  const hintSeen = new Set<string>();
+  for (const hn of file.npcHints ?? []) {
+    if (!NPC_ACTIONS.has(hn.action)) err(`Tutorial npcHint: invalid action "${hn.action}"`);
+    if (hintSeen.has(hn.action)) err(`Tutorial npcHint: duplicate action "${hn.action}"`);
+    hintSeen.add(hn.action);
+    if (!hn.text) err(`Tutorial npcHint ${hn.action}: text is required`);
   }
 }
 

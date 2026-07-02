@@ -22,7 +22,8 @@ import { getMap, spawnPoint, type MapDef } from '@/maps/map-def';
 import { buildMap, type BuiltPortal } from '@/maps/map-builder';
 import type { UIScene } from '@/scenes/ui-scene';
 import type { Direction } from '@/config/layers';
-import { FONT } from '@/ui/theme';
+import { FONT, ninePanel } from '@/ui/theme';
+import { npcHintFor, npcHintFlag } from '@/tutorial/tutorial-defs';
 import { bgm, bgmForMap } from '@/audio/bgm-engine';
 import {
   elementMultiplier,
@@ -1344,7 +1345,37 @@ export class WorldScene extends Phaser.Scene {
     if (nearest !== this.activeNpc) {
       this.activeNpc = nearest;
       this.ui.showInteract(nearest !== null);
+      if (nearest) this.maybeShowNpcHint(nearest);
     }
+  }
+
+  /**
+   * First-contact hint: the first time the player nears an NPC of a given kind,
+   * float a small speech bubble ("ここでクエストを受注！" etc). Recorded per
+   * action in the save so it never repeats. Complements the intro tutorial.
+   */
+  private maybeShowNpcHint(npc: BuiltNpc): void {
+    if (!npc.action) return;
+    const text = npcHintFor(npc.action);
+    if (!text) return;
+    const flag = npcHintFlag(npc.action);
+    if (gameState.flags[flag]) return;
+    gameState.flags[flag] = true;
+    bus.emit('save:written', { slot: -1 });
+
+    const y = npc.y - 40;
+    const label = this.add
+      .text(0, 0, text, { fontFamily: FONT, fontSize: '10px', color: '#fff5d8' })
+      .setOrigin(0.5)
+      .setDepth(9002);
+    const bubble = ninePanel(this, npc.x, y, label.width + 20, 26).setDepth(9001);
+    label.setPosition(npc.x, y);
+    const kill = (): void => {
+      label.destroy();
+      bubble.destroy();
+    };
+    this.tweens.add({ targets: [label, bubble], y: y - 6, duration: 260, ease: 'Cubic.Out' });
+    this.tweens.add({ targets: [label, bubble], alpha: 0, delay: 2600, duration: 500, onComplete: kill });
   }
 
   private checkPortals(): void {

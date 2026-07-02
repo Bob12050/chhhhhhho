@@ -25,12 +25,29 @@ export interface TutorialStep {
   advanceOn?: TutorialAdvanceEvent;
 }
 
+/** One-time bubble shown the first time the player nears an NPC of this action. */
+export interface NpcHint {
+  action: string;
+  text: string;
+}
+
 interface TutorialFile {
   introVersion: number;
   steps: TutorialStep[];
+  npcHints: NpcHint[];
 }
 
 const data = tutorialJson as TutorialFile;
+
+/** Save-flag key for an NPC first-contact hint (so each shows only once). */
+export function npcHintFlag(action: string): string {
+  return `tutorial.npc.${action}`;
+}
+
+/** Hint text for an NPC action, or undefined if that action has no hint. */
+export function npcHintFor(action: string): string | undefined {
+  return data.npcHints.find((h) => h.action === action)?.text;
+}
 
 /** Save flag marking the intro tutorial as seen (so it plays only once). */
 export const TUTORIAL_DONE_FLAG = 'tutorial.intro.done';
