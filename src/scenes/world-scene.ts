@@ -137,6 +137,24 @@ export class WorldScene extends Phaser.Scene {
     this.obstacles = built.obstacles;
     this.portals = built.portals;
 
+    // Ambient colour grade + corner vignette: cheap screen-space mood so zones
+    // stop looking like the same flat-lit lawn (the title screen trick).
+    if (this.map.ambient) {
+      const c = Phaser.Display.Color.HexStringToColor(this.map.ambient.color).color;
+      this.add
+        .rectangle(0, 0, this.scale.width, this.scale.height, c, this.map.ambient.alpha)
+        .setOrigin(0)
+        .setScrollFactor(0)
+        .setDepth(7000);
+    }
+    const vg = this.add.graphics().setScrollFactor(0).setDepth(7001);
+    const vw = this.scale.width;
+    const vh = this.scale.height;
+    for (let i = 0; i < 10; i++) {
+      vg.lineStyle(3, 0x0e0f1a, 0.055 * (1 - i / 10));
+      vg.strokeRect(i * 3, i * 3, vw - i * 6, vh - i * 6);
+    }
+
     // Map title flash.
     this.showMapName(this.map.name);
 
@@ -460,6 +478,13 @@ export class WorldScene extends Phaser.Scene {
   private spawnNpc(x: number, y: number, label: string, action?: string, dialogueId?: string): void {
     const sprite = this.physics.add.staticImage(x, y, TEX.npc).setOrigin(0.5, 0.875);
     sprite.setDepth(Math.round(y));
+    this.add.ellipse(x, y + 2, 22, 8, 0x000000, 0.22).setDepth(4);
+    // Role-coloured robes so the shopkeeper/guild master/etc. stop being
+    // identical sextuplets (placeholder until each gets real art).
+    const NPC_TINTS = [0xffffff, 0xffd0a0, 0xa0d0ff, 0xb0ffb8, 0xffb0c8, 0xd8c0ff, 0xfff0a0];
+    let h = 0;
+    for (const ch of label) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    sprite.setTint(NPC_TINTS[h % NPC_TINTS.length]);
     this.add
       .text(x, y - 58, label, {
         fontFamily: FONT,

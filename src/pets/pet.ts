@@ -7,6 +7,7 @@ import type { PetDef } from '@/pets/pet-defs';
  * computeDerived. Positions snap to integer pixels.
  */
 export class Pet {
+  private readonly shadow: Phaser.GameObjects.Ellipse;
   readonly sprite: Phaser.GameObjects.Image;
   private readonly speed = 120;
 
@@ -14,10 +15,14 @@ export class Pet {
     this.sprite = scene.add.image(Math.round(x), Math.round(y), def.textureKey, 0).setOrigin(0.5, 0.875);
     if (def.scale) this.sprite.setScale(def.scale);
     if (def.tint) this.sprite.setTint(Phaser.Display.Color.HexStringToColor(def.tint).color);
+    this.shadow = scene.add
+      .ellipse(Math.round(x), Math.round(y) + 2, 16, 6, 0x000000, 0.2)
+      .setDepth(4);
   }
 
   /** Trail toward the target, keeping a small follow distance. */
   update(dtMs: number, tx: number, ty: number): void {
+    this.shadow.setPosition(Math.round(this.sprite.x), Math.round(this.sprite.y) + 2);
     const dx = tx - this.sprite.x;
     const dy = ty - this.sprite.y;
     const d = Math.hypot(dx, dy);
@@ -30,6 +35,7 @@ export class Pet {
   }
 
   destroy(): void {
+    this.shadow.destroy();
     this.sprite.destroy();
   }
 }

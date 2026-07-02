@@ -8,7 +8,7 @@ import { expToNext } from '@/stats/leveling';
 import { allSkills } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
-import { FONT, UI, addPanelChrome } from '@/ui/theme';
+import { FONT, UI, addPanelChrome, rowBand } from '@/ui/theme';
 import { returnToTitle } from '@/core/game-flow';
 import { ELEMENT_LABEL, ELEMENT_COLOR, isElement } from '@/combat/elements';
 
@@ -260,7 +260,9 @@ export class InventoryScene extends Phaser.Scene {
     const entries = Object.entries(gameState.materials).filter(([, q]) => q > 0);
     if (entries.length === 0) return this.emptyNote();
     let y = 100;
+    let band = 0;
     for (const [id, qty] of entries) {
+      this.content.add(rowBand(this, y, 26, band++));
       this.addRow(
         y,
         this.add.text(16, y, itemDisplayName(id), {
@@ -331,7 +333,9 @@ export class InventoryScene extends Phaser.Scene {
     const w = this.scale.width;
     let y = 100;
     if (counts.size === 0) this.emptyNote();
+    let band = 0;
     for (const [id, count] of counts) {
+      this.content.add(rowBand(this, y, 34, band++));
       const def = getEquipment(id)!;
       const slot = def.slot as EquipSlot;
       const equipped = gameState.equipment[slot] === id;

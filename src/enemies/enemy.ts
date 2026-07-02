@@ -37,6 +37,8 @@ export class Enemy {
   /** Visible sprite, pixel-snapped to integers (rule 3) to avoid sub-pixel
    *  rendering that clips flipped frames in half on some mobile GPUs. */
   readonly visual: Phaser.GameObjects.Sprite;
+  /** Soft ground shadow; grounds the sprite (no more floating on the grass). */
+  private readonly shadow: Phaser.GameObjects.Ellipse;
   state: EnemyState = 'idle';
   hp: number;
   readonly cfg: EnemyConfig;
@@ -94,6 +96,10 @@ export class Enemy {
     this.visual.setOrigin(0.5, 0.875);
     if (cfg.scale) this.visual.setScale(cfg.scale);
     if (cfg.tint !== undefined) this.visual.setTint(cfg.tint);
+    const sc = cfg.scale ?? 1;
+    this.shadow = scene.add
+      .ellipse(x, y + 2, Math.round(22 * sc), Math.round(8 * sc), 0x000000, 0.22)
+      .setDepth(4);
   }
 
   get x(): number {
@@ -135,12 +141,13 @@ export class Enemy {
     const dy = this.y;
     // Brief death fade then notify.
     this.scene.tweens.add({
-      targets: this.visual,
+      targets: [this.visual, this.shadow],
       alpha: 0,
       duration: 250,
       onComplete: () => {
         this.onDeath?.(dx, dy);
         this.visual.destroy();
+        this.shadow.destroy();
         this.sprite.destroy();
       },
     });
@@ -386,5 +393,6 @@ export class Enemy {
     this.visual.setFlipX(this.dir === 'right');
     this.visual.setPosition(Math.round(this.sprite.x), Math.round(this.sprite.y));
     this.visual.setDepth(Math.round(this.sprite.y));
+    this.shadow.setPosition(Math.round(this.sprite.x), Math.round(this.sprite.y) + 2);
   }
 }

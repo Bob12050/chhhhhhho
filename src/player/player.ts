@@ -30,6 +30,7 @@ export class Player {
   /** Attack-rate multiplier from derived stats (1 = base). */
   private atkSpeedMult = 1;
   private attackCdMs = 0;
+  private shadow!: Phaser.GameObjects.Ellipse;
   private attacking = false;
 
   /** Called when an attack's hit frame lands. */
@@ -50,6 +51,7 @@ export class Player {
     this.body.setCollideWorldBounds(true);
 
     this.doll = new PaperDollAnimator(scene, x, y);
+    this.shadow = scene.add.ellipse(x, y + 2, 22, 8, 0x000000, 0.22).setDepth(4);
     this.doll.setLayer('shadow', TEX.shadow);
     this.setJobAppearance(gameState.jobId);
     this.doll.play('idle');
@@ -188,7 +190,7 @@ export class Player {
     this.doll.play('death', { force: true });
     this.doll.flashWhite(120);
     this.scene.tweens.add({
-      targets: this.doll.container,
+      targets: [this.doll.container, this.shadow],
       alpha: 0,
       duration: 450,
       delay: 150,
@@ -197,6 +199,7 @@ export class Player {
 
   update(dtMs: number): void {
     if (this.attackCdMs > 0) this.attackCdMs -= dtMs;
+    this.shadow.setPosition(Math.round(this.body.x), Math.round(this.body.y) + 2);
     if (this.rollMs > 0) {
       this.rollMs -= dtMs;
       if (this.rollMs <= 0) this.body.setVelocity(0, 0);
@@ -208,6 +211,7 @@ export class Player {
 
   destroy(): void {
     this.doll.destroy();
+    this.shadow.destroy();
     this.body.destroy();
   }
 }

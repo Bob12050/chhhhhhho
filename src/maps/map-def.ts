@@ -72,6 +72,8 @@ export interface MapDef {
   obstacles?: [number, number][];
   /** Procedural buildings (collidable, drawn by the map builder). */
   buildings?: BuildingDef[];
+  /** Ambient colour grade: screen tint (hex) + alpha. Sets the zone's mood. */
+  ambient?: { color: string; alpha: number };
   spawns: Record<string, [number, number]>;
   portals?: PortalDef[];
   enemies?: MapEnemy[];

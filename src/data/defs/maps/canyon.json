@@ -103,5 +103,9 @@
       "y": 300
     }
   ],
-  "npcs": []
+  "npcs": [],
+  "ambient": {
+    "color": "#7a4a1a",
+    "alpha": 0.1
+  }
 }

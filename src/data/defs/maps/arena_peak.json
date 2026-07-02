@@ -37,5 +37,9 @@
     }
   ],
   "enemies": [],
-  "npcs": []
+  "npcs": [],
+  "ambient": {
+    "color": "#4a5a7a",
+    "alpha": 0.1
+  }
 }

@@ -116,29 +116,46 @@ function generateEnvTextures(scene: Phaser.Scene): void {
   };
 
   make(TEX.tileGrass, (ctx) => {
-    ctx.fillStyle = '#27502f';
+    // Dense multi-tone grass so the repeat reads as texture, not a flat lawn.
+    ctx.fillStyle = '#2a5330';
     ctx.fillRect(0, 0, 32, 32);
-    ctx.fillStyle = '#2f6038';
-    for (let i = 0; i < 18; i++) {
-      const x = (i * 7 + 3) % 32;
-      const y = (i * 11 + 5) % 32;
-      ctx.fillRect(x, y, 2, 2);
+    ctx.fillStyle = '#255030';
+    for (let i = 0; i < 10; i++) {
+      ctx.fillRect((i * 13 + 5) % 32, (i * 7 + 2) % 32, 4, 3);
     }
-    ctx.fillStyle = '#1f4226';
-    ctx.fillRect(0, 30, 32, 2);
+    ctx.fillStyle = '#316238';
+    for (let i = 0; i < 26; i++) {
+      ctx.fillRect((i * 7 + 3) % 32, (i * 11 + 5) % 32, 2, 2);
+    }
+    ctx.fillStyle = '#3b7243';
+    for (let i = 0; i < 14; i++) {
+      ctx.fillRect((i * 17 + 6) % 32, (i * 5 + 9) % 31, 1, 3);
+    }
+    ctx.fillStyle = '#1e4426';
+    for (let i = 0; i < 12; i++) {
+      ctx.fillRect((i * 19 + 11) % 32, (i * 13 + 3) % 32, 2, 1);
+    }
   });
 
   make(TEX.tilePath, (ctx) => {
+    // Trodden dirt: base + pebbles in three tones + faint wheel-rut lines.
     ctx.fillStyle = '#6b5a3c';
     ctx.fillRect(0, 0, 32, 32);
-    ctx.fillStyle = '#7d6a48';
-    for (let i = 0; i < 22; i++) {
-      const x = (i * 5 + 2) % 32;
-      const y = (i * 13 + 7) % 32;
-      ctx.fillRect(x, y, 2, 2);
+    ctx.fillStyle = '#786547';
+    for (let i = 0; i < 20; i++) {
+      ctx.fillRect((i * 5 + 2) % 32, (i * 13 + 7) % 32, 2, 2);
     }
-    ctx.fillStyle = '#564a30';
-    ctx.fillRect(0, 0, 32, 1);
+    ctx.fillStyle = '#84714e';
+    for (let i = 0; i < 8; i++) {
+      ctx.fillRect((i * 11 + 4) % 31, (i * 17 + 3) % 31, 3, 2);
+    }
+    ctx.fillStyle = '#5c4d31';
+    for (let i = 0; i < 12; i++) {
+      ctx.fillRect((i * 9 + 6) % 32, (i * 7 + 11) % 32, 2, 1);
+    }
+    ctx.fillStyle = '#63533a';
+    ctx.fillRect(0, 9, 32, 1);
+    ctx.fillRect(0, 23, 32, 1);
   });
 
   make(TEX.tileStone, (ctx) => {

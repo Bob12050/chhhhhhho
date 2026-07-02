@@ -55,4 +55,24 @@ export function addPanelChrome(scene: Phaser.Scene, viewTop: number, viewBottom:
   scene.add.rectangle(0, 0, w, h, UI.overlay, 1).setOrigin(0).setDepth(0);
   scene.add.rectangle(0, 0, w, viewTop, UI.overlay, 1).setOrigin(0).setDepth(2);
   scene.add.rectangle(0, viewBottom, w, h - viewBottom, UI.overlay, 1).setOrigin(0).setDepth(2);
+  // Gold rules along the header/footer edges: carries the title screen's
+  // visual language (navy + gold) through every menu.
+  scene.add.rectangle(0, viewTop - 1, w, 1, 0xf5c542, 0.55).setOrigin(0).setDepth(3);
+  scene.add.rectangle(0, viewBottom, w, 1, 0xf5c542, 0.35).setOrigin(0).setDepth(3);
+}
+
+/**
+ * Subtle row band behind a list entry (alternating tint keeps long lists
+ * scannable without icons). Returns the rect so callers can add it to a
+ * scrolling container.
+ */
+export function rowBand(
+  scene: Phaser.Scene,
+  y: number,
+  height: number,
+  index: number,
+): Phaser.GameObjects.Rectangle {
+  return scene.add
+    .rectangle(8, y - 4, scene.scale.width - 16, height, index % 2 ? 0x191c2c : 0x14172a, 0.9)
+    .setOrigin(0, 0);
 }

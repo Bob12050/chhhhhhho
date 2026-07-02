@@ -27,7 +27,8 @@
       "keepDistance": 46,
       "expReward": 12,
       "goldReward": 3,
-      "dropTableId": "bat_basic"
+      "dropTableId": "bat_basic",
+      "scale": 1.25
     },
     {
       "id": "golem",
@@ -212,7 +213,7 @@
       "name": "洞窟コウモリ",
       "textureKey": "gen.enemy.bat",
       "tint": "#7a6a9a",
-      "scale": 0.9,
+      "scale": 1.15,
       "maxHp": 70,
       "moveSpeed": 70,
       "contactDamage": 12,
