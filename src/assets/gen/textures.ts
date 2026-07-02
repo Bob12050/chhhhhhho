@@ -58,6 +58,13 @@ export const TEX = {
   iconFlask: 'gen.icon.flask',
   iconBag: 'gen.icon.bag',
   iconMap: 'gen.icon.map',
+  iconGem: 'gen.icon.gem',
+  iconStaff: 'gen.icon.staff',
+  iconBow: 'gen.icon.bow',
+  iconShield: 'gen.icon.shield',
+  iconHelm: 'gen.icon.helm',
+  iconArmor: 'gen.icon.armor',
+  iconRing: 'gen.icon.ring',
 } as const;
 
 const SPECS: Record<string, LayerSpec> = {
@@ -338,6 +345,79 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     ctx.fillRect(8, 4, 5, 8);
     ctx.fillStyle = '#d05a6e';
     ctx.fillRect(9, 6, 2, 2); // pin
+  }, 16, 16);
+
+  // Inventory item icons (16x16, white so the cell can tint by rarity/type).
+  make(TEX.iconGem, (ctx) => {
+    // Faceted diamond.
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(6, 2, 4, 1);
+    ctx.fillRect(4, 3, 8, 2);
+    ctx.fillRect(3, 5, 10, 2);
+    ctx.fillRect(4, 7, 8, 2);
+    ctx.fillRect(6, 9, 4, 2);
+    ctx.fillRect(7, 11, 2, 1);
+    ctx.fillStyle = '#c8d4ff';
+    ctx.fillRect(5, 4, 2, 4); // facet shade
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(9, 4, 1, 3); // highlight
+  }, 16, 16);
+  make(TEX.iconStaff, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(8, 4, 2, 10); // shaft
+    ctx.fillStyle = '#7ad0ff';
+    ctx.fillRect(6, 2, 5, 3); // orb
+    ctx.fillRect(7, 1, 3, 1);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(7, 2, 1, 1);
+  }, 16, 16);
+  make(TEX.iconBow, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < 10; i++) {
+      const dx = Math.round(3 + 3 * Math.sin((i / 9) * Math.PI));
+      ctx.fillRect(4 + dx - 1, 2 + i, 2, 1);
+    }
+    ctx.fillStyle = '#c0a060';
+    ctx.fillRect(4, 3, 1, 10); // string
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(4, 7, 9, 1); // arrow
+    ctx.fillRect(11, 6, 2, 3);
+  }, 16, 16);
+  make(TEX.iconShield, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(4, 2, 8, 2);
+    ctx.fillRect(3, 4, 10, 5);
+    ctx.fillRect(4, 9, 8, 2);
+    ctx.fillRect(6, 11, 4, 2);
+    ctx.fillStyle = '#ffd86b';
+    ctx.fillRect(7, 5, 2, 5); // emblem stripe
+    ctx.fillRect(5, 6, 6, 2);
+  }, 16, 16);
+  make(TEX.iconHelm, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(4, 4, 8, 6); // dome
+    ctx.fillRect(3, 5, 10, 3);
+    ctx.fillRect(4, 10, 8, 2); // rim
+    ctx.fillStyle = '#5a9ad0';
+    ctx.fillRect(6, 6, 4, 2); // visor slit
+  }, 16, 16);
+  make(TEX.iconArmor, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(4, 3, 8, 2); // shoulders
+    ctx.fillRect(3, 5, 10, 7); // chest
+    ctx.fillRect(5, 12, 6, 1);
+    ctx.fillStyle = '#c8d4ff';
+    ctx.fillRect(7, 5, 2, 7); // center seam
+  }, 16, 16);
+  make(TEX.iconRing, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(5, 6, 6, 2);
+    ctx.fillRect(4, 8, 2, 4);
+    ctx.fillRect(10, 8, 2, 4);
+    ctx.fillRect(5, 12, 6, 2);
+    ctx.fillStyle = '#ff8ad0';
+    ctx.fillRect(7, 3, 2, 3); // gem
+    ctx.fillRect(6, 4, 4, 1);
   }, 16, 16);
 
   make(TEX.decorCrack, (ctx) => {

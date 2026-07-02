@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { getEquipment, getConsumable, getMaterial, itemDisplayName } from '@/data/items';
-import { rarityColorHex, rarityLabel } from '@/data/rarity';
+import { rarityColorHex, rarityColor, rarityLabel } from '@/data/rarity';
+import { TEX } from '@/assets/gen/textures';
 import type { EquipSlot } from '@/equipment/slots';
 import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
@@ -79,15 +80,20 @@ export class InventoryScene extends Phaser.Scene {
     const h = this.scale.height;
     this.tabButtons = [];
 
+    // Header band with a bag icon, title, and a coin+gold readout.
+    this.add.rectangle(0, 0, w, 50, 0x10121c, 1).setOrigin(0).setDepth(2);
+    this.add.image(20, 25, TEX.iconBag).setScale(1.6).setDepth(3);
     this.add
-      .text(16, 24, 'もちもの', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
+      .text(38, 24, 'もちもの', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
+      .setOrigin(0, 0.5)
       .setDepth(3);
+    this.add.circle(w - 60, 25, 6, 0xf5c542).setStrokeStyle(1.5, 0x8a6a1a, 1).setDepth(3);
     this.goldText = this.add
-      .text(w - 16, 26, '', { fontFamily: FONT, fontSize: '14px', color: '#ffd86b' })
-      .setOrigin(1, 0)
+      .text(w - 50, 25, '', { fontFamily: FONT, fontSize: '14px', color: '#ffd86b' })
+      .setOrigin(0, 0.5)
       .setDepth(3);
 
-    // Tabs.
+    // Tabs — wider, taller pills with a lit underline on the active one.
     const tabs: { id: Tab; label: string }[] = [
       { id: 'items', label: '素材' },
       { id: 'consumables', label: '消耗' },
@@ -95,15 +101,19 @@ export class InventoryScene extends Phaser.Scene {
       { id: 'status', label: '能力' },
       { id: 'skill', label: '技' },
     ];
+    const tabW = Math.floor((w - 16) / tabs.length);
     tabs.forEach((t, i) => {
       const tb = this.add
-        .text(10 + i * 70, 58, t.label, {
+        .text(8 + i * tabW + tabW / 2, 66, t.label, {
           fontFamily: FONT,
           fontSize: '13px',
           color: '#fff',
           backgroundColor: UI.tabIdleBg,
-          padding: { x: 10, y: 8 },
+          padding: { x: 12, y: 9 },
+          fixedWidth: tabW - 4,
+          align: 'center',
         })
+        .setOrigin(0.5)
         .setDepth(3)
         .setInteractive({ useHandCursor: true });
       tb.on('pointerup', () => {
@@ -243,10 +253,6 @@ export class InventoryScene extends Phaser.Scene {
     this.updateScrollBounds();
   }
 
-  private addRow(y: number, ...objs: Phaser.GameObjects.GameObject[]): void {
-    this.content.add(objs);
-    void y;
-  }
 
   private emptyNote(): void {
     this.content.add(
@@ -258,29 +264,61 @@ export class InventoryScene extends Phaser.Scene {
     );
   }
 
+  /** Framed icon cell (rarity-coloured border) at the left of a row. */
+  private iconCell(rowY: number, height: number, tex: string, iconTint: number, border: number): void {
+    const cx = 26;
+    const cy = rowY + height / 2;
+    this.content.add(
+      this.add
+        .rectangle(cx, cy, 30, 30, 0x1c2036, 1)
+        .setStrokeStyle(2, border, 0.95),
+    );
+    if (this.textures.exists(tex)) {
+      this.content.add(this.add.image(cx, cy, tex).setTint(iconTint));
+    }
+  }
+
+  /** Icon + tint for an equipment piece (by weapon tag / slot). */
+  private equipIcon(def: NonNullable<ReturnType<typeof getEquipment>>): string {
+    if (def.slot === 'main_hand') {
+      const tag = def.weaponTags?.[0];
+      if (tag === 'staff' || tag === 'wand') return TEX.iconStaff;
+      if (tag === 'bow' || tag === 'shuriken') return TEX.iconBow;
+      if (tag === 'shield') return TEX.iconShield;
+      return TEX.iconSword;
+    }
+    if (def.slot === 'head') return TEX.iconHelm;
+    if (def.slot.startsWith('accessory')) return TEX.iconRing;
+    return TEX.iconArmor;
+  }
+
   private renderItems(): void {
     const entries = Object.entries(gameState.materials).filter(([, q]) => q > 0);
     if (entries.length === 0) return this.emptyNote();
     let y = 100;
     let band = 0;
+    const rowH = 40;
     for (const [id, qty] of entries) {
-      this.content.add(rowBand(this, y, 26, band++));
-      this.addRow(
-        y,
-        this.add.text(16, y, itemDisplayName(id), {
+      this.content.add(rowBand(this, y, rowH, band++));
+      const rarity = getMaterial(id)?.rarity;
+      this.iconCell(y, rowH, TEX.iconGem, rarityColor(rarity), rarityColor(rarity));
+      this.content.add(
+        this.add.text(48, y + rowH / 2, itemDisplayName(id), {
           fontFamily: FONT,
           fontSize: '14px',
-          color: rarityColorHex(getMaterial(id)?.rarity),
-        }),
+          color: rarityColorHex(rarity),
+        }).setOrigin(0, 0.5),
+      );
+      this.content.add(
         this.add
-          .text(this.scale.width - 16, y, `×${qty}`, {
+          .text(this.scale.width - 16, y + rowH / 2, `×${qty}`, {
             fontFamily: FONT,
             fontSize: '14px',
             color: '#cfd3e6',
           })
-          .setOrigin(1, 0),
+          .setOrigin(1, 0.5),
       );
-      y += 32;
+      y += rowH + 4;
     }
   }
 
@@ -288,11 +326,19 @@ export class InventoryScene extends Phaser.Scene {
     const entries = Object.entries(gameState.consumables).filter(([, q]) => q > 0);
     if (entries.length === 0) return this.emptyNote();
     let y = 100;
+    let band = 0;
+    const rowH = 46;
     const w = this.scale.width;
     for (const [id, qty] of entries) {
       const def = getConsumable(id);
+      this.content.add(rowBand(this, y, rowH, band++));
+      // Flask tinted by what it restores (HP red / MP blue / both gold).
+      const hp = def?.effect.hp ?? 0;
+      const mp = def?.effect.mp ?? 0;
+      const tint = hp && mp ? 0xffd86b : mp ? 0x7ad0ff : 0xff8a9a;
+      this.iconCell(y, rowH, TEX.iconFlask, tint, 0x3f9a6e);
       this.content.add(
-        this.add.text(16, y, `${itemDisplayName(id)}  ×${qty}`, {
+        this.add.text(48, y + 8, `${itemDisplayName(id)}  ×${qty}`, {
           fontFamily: FONT,
           fontSize: '14px',
           color: '#fff',
@@ -300,7 +346,7 @@ export class InventoryScene extends Phaser.Scene {
       );
       if (def) {
         this.content.add(
-          this.add.text(16, y + 17, def.description, {
+          this.add.text(48, y + 26, def.description, {
             fontFamily: FONT,
             fontSize: '11px',
             color: '#9aa0b5',
@@ -308,14 +354,14 @@ export class InventoryScene extends Phaser.Scene {
         );
       }
       const use = this.add
-        .text(w - 16, y + 6, 'つかう', {
+        .text(w - 16, y + rowH / 2, 'つかう', {
           fontFamily: FONT,
           fontSize: '13px',
           color: '#9fe3a0',
           backgroundColor: '#2a3050',
           padding: { x: 10, y: 5 },
         })
-        .setOrigin(1, 0)
+        .setOrigin(1, 0.5)
         .setInteractive({ useHandCursor: true });
       use.on('pointerup', () => {
         if (this.dragged) return;
@@ -323,7 +369,7 @@ export class InventoryScene extends Phaser.Scene {
         this.renderTab();
       });
       this.content.add(use);
-      y += 52;
+      y += rowH + 4;
     }
   }
 
@@ -338,22 +384,28 @@ export class InventoryScene extends Phaser.Scene {
     let y = 100;
     if (counts.size === 0) this.emptyNote();
     let band = 0;
+    const rowH = 40;
     for (const [id, count] of counts) {
-      this.content.add(rowBand(this, y, 34, band++));
+      this.content.add(rowBand(this, y, rowH, band++));
       const def = getEquipment(id)!;
       const slot = def.slot as EquipSlot;
       const equipped = gameState.equipment[slot] === id;
       const canEq = equipped || gameState.canEquip(id);
       const qty = count > 1 ? ` ×${count}` : '';
+      // Icon cell: greyed border when the piece can't be equipped, else rarity.
+      const border = canEq ? rarityColor(def.rarity) : 0x4a4f5c;
+      this.iconCell(y, rowH, this.equipIcon(def), canEq ? rarityColor(def.rarity) : 0x666a78, border);
+      // Equipped pieces get a small green corner tick.
+      if (equipped) this.content.add(this.add.circle(38, y + 4, 4, 0x9fe3a0).setDepth(1));
       this.content.add(
-        this.add.text(16, y, `${SLOT_LABEL[slot] ?? slot}: ${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
+        this.add.text(48, y + 3, `${SLOT_LABEL[slot] ?? slot}: ${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
           fontFamily: FONT,
           fontSize: '14px',
           color: equipped ? '#9fe3a0' : canEq ? rarityColorHex(def.rarity) : '#666a78',
         }),
       );
       // Rarity label (R-number + band name), coloured by rank.
-      const rarityText = this.add.text(16, y + 17, rarityLabel(def.rarity), {
+      const rarityText = this.add.text(48, y + 21, rarityLabel(def.rarity), {
         fontFamily: FONT,
         fontSize: '11px',
         color: rarityColorHex(def.rarity),
@@ -363,7 +415,7 @@ export class InventoryScene extends Phaser.Scene {
       let lineX = rarityText.x + rarityText.width + 8;
       if (isElement(def.element) && def.element !== 'none') {
         const hex = `#${ELEMENT_COLOR[def.element].toString(16).padStart(6, '0')}`;
-        const badge = this.add.text(lineX, y + 17, `属性:${ELEMENT_LABEL[def.element]}`, {
+        const badge = this.add.text(lineX, y + 21, `属性:${ELEMENT_LABEL[def.element]}`, {
           fontFamily: FONT,
           fontSize: '11px',
           color: hex,
@@ -375,7 +427,7 @@ export class InventoryScene extends Phaser.Scene {
       // "should I switch?" is answerable without doing mental math.
       if (!equipped) {
         for (const seg of this.equipDiff(def)) {
-          const t = this.add.text(lineX, y + 17, seg.text, {
+          const t = this.add.text(lineX, y + 21, seg.text, {
             fontFamily: FONT,
             fontSize: '11px',
             color: seg.up ? '#9fe3a0' : '#e07a7a',
@@ -386,14 +438,14 @@ export class InventoryScene extends Phaser.Scene {
       }
       if (canEq) {
         const btn = this.add
-          .text(w - 16, y, equipped ? 'はずす' : 'そうび', {
+          .text(w - 16, y + rowH / 2, equipped ? 'はずす' : 'そうび', {
             fontFamily: FONT,
             fontSize: '13px',
             color: '#9fd0ff',
             backgroundColor: '#2a3050',
             padding: { x: 10, y: 5 },
           })
-          .setOrigin(1, 0)
+          .setOrigin(1, 0.5)
           .setInteractive({ useHandCursor: true });
         btn.on('pointerup', () => {
           if (this.dragged) return;
@@ -408,15 +460,15 @@ export class InventoryScene extends Phaser.Scene {
         const label = reason === 'tier' ? '段階不足' : '職業不可';
         this.content.add(
           this.add
-            .text(w - 16, y, label, {
+            .text(w - 16, y + rowH / 2, label, {
               fontFamily: FONT,
               fontSize: '12px',
               color: '#a86a6a',
             })
-            .setOrigin(1, 0),
+            .setOrigin(1, 0.5),
         );
       }
-      y += 34;
+      y += rowH + 4;
     }
 
     const d = gameState.derived;
