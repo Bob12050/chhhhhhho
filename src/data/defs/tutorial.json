@@ -1,0 +1,37 @@
+{
+  "introVersion": 1,
+  "steps": [
+    {
+      "id": "welcome",
+      "title": "ようこそ！",
+      "body": "小さな冒険者の物語をはじめよう。まずは操作を覚えるよ。",
+      "anchor": "none"
+    },
+    {
+      "id": "move",
+      "title": "① うごく",
+      "body": "画面の左半分をドラッグして歩いてみよう。",
+      "anchor": "stick"
+    },
+    {
+      "id": "attack",
+      "title": "② たたかう",
+      "body": "敵に近づいて、右下の⚔ボタンで攻撃！ まず1体たおそう。",
+      "anchor": "attack",
+      "advanceOn": "enemy:died"
+    },
+    {
+      "id": "bag",
+      "title": "③ そうび",
+      "body": "右上のカバンから装備やアイテムを確認・変更できるよ。",
+      "anchor": "bag",
+      "advanceOn": "ui:open-inventory"
+    },
+    {
+      "id": "goal",
+      "title": "④ もくひょう",
+      "body": "町の掲示板でクエストを受注！ 狩って素材を集め、武器を作ろう。左上の▶が今の目標だよ。",
+      "anchor": "none"
+    }
+  ]
+}

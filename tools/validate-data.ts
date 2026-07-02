@@ -543,6 +543,27 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set
   }
 }
 
+function validateTutorial(): void {
+  const file = readJson<{
+    introVersion: number;
+    steps: { id: string; title: string; body: string; anchor: string; advanceOn?: string }[];
+  }>('src/data/defs/tutorial.json');
+  const ANCHORS = new Set(['none', 'stick', 'attack', 'bag']);
+  const ADVANCE = new Set(['enemy:died', 'ui:open-inventory']);
+  if (!(file.introVersion >= 1)) err('Tutorial: introVersion must be >= 1');
+  if (!file.steps?.length) err('Tutorial: needs at least one step');
+  const seen = new Set<string>();
+  for (const s of file.steps ?? []) {
+    if (!s.id) err('Tutorial: a step is missing its id');
+    if (seen.has(s.id)) err(`Tutorial: duplicate step id "${s.id}"`);
+    seen.add(s.id);
+    if (!s.title || !s.body) err(`Tutorial step ${s.id}: title and body are required`);
+    if (!ANCHORS.has(s.anchor)) err(`Tutorial step ${s.id}: invalid anchor "${s.anchor}"`);
+    if (s.advanceOn && !ADVANCE.has(s.advanceOn))
+      err(`Tutorial step ${s.id}: invalid advanceOn "${s.advanceOn}"`);
+  }
+}
+
 const itemIds = collectItemIds();
 const dropTableIds = validateDrops(itemIds);
 const enemyIds = validateEnemies(itemIds, dropTableIds);
@@ -553,6 +574,7 @@ const skillIds = validateSkills();
 validateJobs(skillIds);
 validatePets();
 validateQuests(itemIds, enemyIds, mapIds);
+validateTutorial();
 
 if (errors.length > 0) {
   console.error(`Data validation FAILED with ${errors.length} error(s):`);

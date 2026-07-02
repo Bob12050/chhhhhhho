@@ -13,6 +13,7 @@ import { getEnemyDef } from '@/enemies/enemy-defs';
 import { expToNext } from '@/stats/leveling';
 import { FONT, UI } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
+import { TutorialCoach } from '@/ui/tutorial-coach';
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
@@ -38,6 +39,7 @@ export class UIScene extends Phaser.Scene {
   private potionReadyAt = 0;
   private qWasDown = false;
   private usePotionByKey: (() => void) | null = null;
+  private coach: TutorialCoach | null = null;
 
   constructor() {
     super('UI');
@@ -369,9 +371,26 @@ export class UIScene extends Phaser.Scene {
 
     this.installKeyboardDev();
 
+    // First-run guided tutorial (move → attack → bag → goal). Only for a save
+    // that hasn't seen it; the coach persists the flag itself on finish/skip.
+    if (TutorialCoach.shouldShow()) {
+      this.coach = new TutorialCoach(
+        this,
+        {
+          stick: { x: insets.left + 60, y: baseY },
+          attack: { x: baseX, y: baseY },
+          bag: { x: w - insets.right - 24, y: insets.top + 26 },
+        },
+        depth + 20,
+      );
+      this.coach.start();
+    }
+
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.busOff) off();
       this.busOff = [];
+      this.coach?.destroy();
+      this.coach = null;
     });
   }
 
