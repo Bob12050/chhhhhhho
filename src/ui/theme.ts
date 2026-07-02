@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { TEX } from '@/assets/gen/textures';
 
 /**
  * Central UI theme (B: 統一感). One place for the font, palette, text-style
@@ -40,6 +41,58 @@ export const TEXT = {
 /** Full-screen opaque backdrop (depth 0). For simple, non-scrolling menus. */
 export function addBackdrop(scene: Phaser.Scene): void {
   scene.add.rectangle(0, 0, scene.scale.width, scene.scale.height, UI.overlay, 1).setOrigin(0).setDepth(0);
+}
+
+/**
+ * Themed full-screen backdrop shared by front-end menus (title / save-select):
+ * the grass world under a heavy navy gradient + corner vignette, so menus feel
+ * like part of the game world rather than flat black panels. `dim` (0..1)
+ * controls how dark the top reads (higher = more readable text over it).
+ */
+export function addSceneBackdrop(scene: Phaser.Scene, dim = 0.72): void {
+  const w = scene.scale.width;
+  const h = scene.scale.height;
+  if (scene.textures.exists(TEX.tileGrass)) {
+    scene.add.tileSprite(0, 0, w, h, TEX.tileGrass).setOrigin(0).setDepth(-100);
+  } else {
+    scene.add.rectangle(0, 0, w, h, UI.overlay, 1).setOrigin(0).setDepth(-100);
+  }
+  // Vertical navy gradient (fine bands read as a smooth wash, not stripes).
+  const g = scene.add.graphics().setDepth(-99);
+  const bands = 48;
+  for (let i = 0; i < bands; i++) {
+    g.fillStyle(0x0e0f1a, dim * (1 - (i / bands) * 0.55));
+    g.fillRect(0, Math.floor((i * h) / bands), w, Math.ceil(h / bands) + 1);
+  }
+  // Corner vignette.
+  const vg = scene.add.graphics().setDepth(-98);
+  for (let i = 0; i < 10; i++) {
+    vg.lineStyle(3, 0x0e0f1a, 0.06 * (1 - i / 10));
+    vg.strokeRect(i * 3, i * 3, w - i * 6, h - i * 6);
+  }
+}
+
+/** Framed pill button (shared menu style). Returns the text object. */
+export function pillButton(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  label: string,
+  onTap: () => void,
+  opts?: { color?: string; bg?: string; size?: number },
+): Phaser.GameObjects.Text {
+  const t = scene.add
+    .text(x, y, label, {
+      fontFamily: FONT,
+      fontSize: `${opts?.size ?? 14}px`,
+      color: opts?.color ?? '#ffffff',
+      backgroundColor: opts?.bg ?? '#2a3050',
+      padding: { x: 12, y: 7 },
+    })
+    .setOrigin(0.5)
+    .setInteractive({ useHandCursor: true });
+  t.on('pointerup', onTap);
+  return t;
 }
 
 /**

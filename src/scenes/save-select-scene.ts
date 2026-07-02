@@ -1,12 +1,13 @@
 import Phaser from 'phaser';
 import { saveManager, SLOT_COUNT, type SlotSummary } from '@/save/save-manager';
 import { beginGame } from '@/core/game-flow';
-import { FONT } from '@/ui/theme';
+import { getMap } from '@/maps/map-def';
+import { FONT, addSceneBackdrop, pillButton } from '@/ui/theme';
 
 /**
  * Save-slot selection. Shows each slot's summary; an empty slot starts a new
- * game, a filled slot continues. Overwrite/delete is intentionally deferred
- * (later save-management UI) to keep this safe and simple.
+ * game, a filled slot continues. Themed to match the title screen (grass world
+ * + navy wash) so the front-end feels like one piece.
  */
 export class SaveSelectScene extends Phaser.Scene {
   constructor() {
@@ -15,26 +16,31 @@ export class SaveSelectScene extends Phaser.Scene {
 
   create(): void {
     const w = this.scale.width;
+    const h = this.scale.height;
+    addSceneBackdrop(this, 0.8);
 
+    // Title + gold rule (title-screen language).
     this.add
-      .text(w / 2, 40, 'セーブを選択', {
+      .text(w / 2, 42, 'セーブを選択', {
         fontFamily: FONT,
-        fontSize: '20px',
+        fontSize: '22px',
         color: '#ffffff',
-      })
-      .setOrigin(0.5);
-
-    this.add
-      .text(w / 2, 70, '読み込み中…', {
-        fontFamily: FONT,
-        fontSize: '12px',
-        color: '#9aa0b5',
+        fontStyle: 'bold',
+        stroke: '#1a1030',
+        strokeThickness: 5,
       })
       .setOrigin(0.5)
+      .setDepth(2);
+    this.add.rectangle(w / 2, 64, 150, 2, 0xf5c542, 0.7).setDepth(2);
+
+    this.add
+      .text(w / 2, 80, '読み込み中…', { fontFamily: FONT, fontSize: '12px', color: '#9aa0b5' })
+      .setOrigin(0.5)
+      .setDepth(2)
       .setName('loading');
 
-    this.makeButton(w / 2 - 70, this.scale.height - 44, '◀ もどる', () => this.scene.start('Title'));
-    this.makeResetAllButton(w / 2 + 70, this.scale.height - 44);
+    pillButton(this, w / 2 - 72, h - 40, '◀ もどる', () => this.scene.start('Title')).setDepth(2);
+    this.makeResetAllButton(w / 2 + 74, h - 40);
 
     void this.populate();
   }
@@ -43,45 +49,67 @@ export class SaveSelectScene extends Phaser.Scene {
     const summaries = await saveManager.summaries();
     this.children.getByName('loading')?.destroy();
     const w = this.scale.width;
-    let y = 120;
+    let y = 116;
     for (let slot = 0; slot < SLOT_COUNT; slot++) {
       this.buildRow(summaries[slot], slot, y, w);
-      y += 92;
+      y += 96;
     }
   }
 
   private buildRow(summary: SlotSummary, slot: number, y: number, w: number): void {
-    this.add.rectangle(w / 2, y + 18, w - 32, 76, 0x1b1e30, 0.9).setStrokeStyle(1, 0x3a3f5e);
-
+    const cardH = 80;
+    const cy = y + cardH / 2;
+    // Card panel + gold left-edge accent + slot chip.
     this.add
-      .text(28, y, `スロット ${slot + 1}`, {
+      .rectangle(w / 2, cy, w - 32, cardH, 0x141726, 0.94)
+      .setStrokeStyle(2, summary.exists ? 0x46508a : 0x333a5a, 0.9)
+      .setDepth(1);
+    this.add.rectangle(17, cy, 4, cardH, summary.exists ? 0xf5c542 : 0x555a78, 1).setOrigin(0, 0.5).setDepth(2);
+    this.add
+      .text(28, y + 10, `スロット ${slot + 1}`, {
         fontFamily: FONT,
         fontSize: '13px',
         color: '#cfd3e6',
+        fontStyle: 'bold',
       })
-      .setOrigin(0, 0);
+      .setDepth(2);
 
     if (summary.exists) {
+      // Character emblem (round chip) — reads as "a save with a hero in it".
+      this.add.circle(w - 118, cy, 15, 0x2a2d44).setStrokeStyle(2, 0x46508a, 1).setDepth(2);
+      this.add.circle(w - 118, cy - 3, 6, 0xf0c8a0).setDepth(3); // head
+      this.add.rectangle(w - 118, cy + 8, 14, 8, 0x6a4ea0).setDepth(3); // body
+      const mapName = summary.mapId ? getMap(summary.mapId)?.name ?? summary.mapId : '';
+      this.add
+        .text(28, y + 32, `Lv ${summary.level ?? '?'}`, {
+          fontFamily: FONT,
+          fontSize: '16px',
+          color: '#9fd0ff',
+          fontStyle: 'bold',
+        })
+        .setDepth(2);
+      this.add
+        .text(78, y + 36, mapName, { fontFamily: FONT, fontSize: '12px', color: '#cfd3e6' })
+        .setDepth(2);
       const when = summary.savedAt ? new Date(summary.savedAt).toLocaleString('ja-JP') : '';
       this.add
-        .text(28, y + 22, `Lv ${summary.level ?? '?'}  ${summary.mapId ?? ''}\n${when}`, {
-          fontFamily: FONT,
-          fontSize: '12px',
-          color: '#9fd0ff',
-          lineSpacing: 2,
-        })
-        .setOrigin(0, 0);
-      this.makeButton(w - 78, y + 8, 'つづき', () => void beginGame(this, slot, 'load'));
-      this.makeDeleteButton(slot, w - 78, y + 44);
+        .text(28, y + 56, when, { fontFamily: FONT, fontSize: '10px', color: '#7e8499' })
+        .setDepth(2);
+      pillButton(this, w - 62, y + 20, 'つづき', () => void beginGame(this, slot, 'load'), {
+        color: '#bfffce',
+        bg: '#274a30',
+        size: 13,
+      }).setDepth(3);
+      this.makeDeleteButton(slot, w - 62, y + 56);
     } else {
       this.add
-        .text(28, y + 26, '（空き）', {
-          fontFamily: FONT,
-          fontSize: '13px',
-          color: '#7e8499',
-        })
-        .setOrigin(0, 0);
-      this.makeButton(w - 96, y + 26, '＋ はじめる', () => void beginGame(this, slot, 'new'));
+        .text(28, y + 38, '（空き）', { fontFamily: FONT, fontSize: '13px', color: '#7e8499' })
+        .setDepth(2);
+      pillButton(this, w - 66, cy, '＋ はじめる', () => void beginGame(this, slot, 'new'), {
+        color: '#ffe9a8',
+        bg: '#3a3050',
+        size: 14,
+      }).setDepth(3);
     }
   }
 
@@ -91,13 +119,13 @@ export class SaveSelectScene extends Phaser.Scene {
     const t = this.add
       .text(x, y, '削除', {
         fontFamily: FONT,
-        fontSize: '13px',
+        fontSize: '12px',
         color: '#e58a8a',
         backgroundColor: '#2a2d44',
-        padding: { x: 12, y: 6 },
+        padding: { x: 10, y: 4 },
       })
       .setOrigin(0.5)
-      .setDepth(1)
+      .setDepth(3)
       .setInteractive({ useHandCursor: true });
     t.on('pointerup', () => {
       if (!armed) {
@@ -122,9 +150,10 @@ export class SaveSelectScene extends Phaser.Scene {
         fontSize: '13px',
         color: '#e58a8a',
         backgroundColor: '#2a2d44',
-        padding: { x: 12, y: 8 },
+        padding: { x: 12, y: 7 },
       })
       .setOrigin(0.5)
+      .setDepth(2)
       .setInteractive({ useHandCursor: true });
     t.on('pointerup', () => {
       if (!armed) {
@@ -138,19 +167,5 @@ export class SaveSelectScene extends Phaser.Scene {
       }
       void saveManager.deleteAll().then(() => this.scene.restart());
     });
-  }
-
-  private makeButton(x: number, y: number, label: string, onTap: () => void): void {
-    const t = this.add
-      .text(x, y, label, {
-        fontFamily: FONT,
-        fontSize: '14px',
-        color: '#ffffff',
-        backgroundColor: '#2a2d44',
-        padding: { x: 12, y: 8 },
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
-    t.on('pointerup', onTap);
   }
 }
