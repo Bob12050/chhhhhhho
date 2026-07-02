@@ -23,6 +23,7 @@ import { buildMap, type BuiltPortal } from '@/maps/map-builder';
 import type { UIScene } from '@/scenes/ui-scene';
 import type { Direction } from '@/config/layers';
 import { FONT } from '@/ui/theme';
+import { bgm, bgmForMap } from '@/audio/bgm-engine';
 import {
   elementMultiplier,
   statusFromElement,
@@ -117,6 +118,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.map = getMap(gameState.mapId) ?? getMap('town')!;
     gameState.flags[`visited_${this.map.id}`] = true;
+    bgm.play(bgmForMap(this.map.id));
 
     this.ui = this.scene.get('UI') as UIScene;
     this.ui.showInteract(false);

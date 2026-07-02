@@ -60,6 +60,11 @@ class SoundEngine {
     return this.muted;
   }
 
+  /** Shared AudioContext (null until the first user-gesture unlock). */
+  getContext(): AudioContext | null {
+    return this.ctx;
+  }
+
   /** Toggle mute, persist the choice, and return the new state. */
   toggleMute(): boolean {
     this.muted = !this.muted;

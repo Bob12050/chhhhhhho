@@ -26,6 +26,21 @@ const SLOT_LABEL: Record<string, string> = {
   accessory_2: '装飾2',
 };
 
+/** Short stat labels for the equip-diff display. */
+const DIFF_LABEL: Record<string, string> = {
+  maxHp: 'HP',
+  maxMp: 'MP',
+  physAtk: '物攻',
+  magAtk: '魔攻',
+  def: '防御',
+  magDef: '魔防',
+  accuracy: '命中',
+  evasion: '回避',
+  critRate: '会心',
+  atkSpeed: '攻速',
+  moveSpeed: '移動',
+};
+
 /** Japanese labels for class families (skill tab grouping). */
 const FAMILY_LABEL: Record<string, string> = {
   warrior: '戦士系',
@@ -181,6 +196,36 @@ export class InventoryScene extends Phaser.Scene {
     this.goldText.setText(`${gameState.gold} Gold`);
   }
 
+  /**
+   * Stat difference between an item and whatever occupies its slot right now
+   * (raw item stats — contributions are additive so this equals the real
+   * derived-stat change). Top 3 by magnitude, "…" when more differ.
+   */
+  private equipDiff(def: NonNullable<ReturnType<typeof getEquipment>>): { text: string; up: boolean }[] {
+    const curId = gameState.equipment[def.slot as EquipSlot];
+    const curD = (curId ? getEquipment(curId)?.derived : undefined) ?? {};
+    const newD = def.derived ?? {};
+    const keys = new Set([...Object.keys(newD), ...Object.keys(curD)]);
+    const diffs: { key: string; d: number }[] = [];
+    for (const k of keys) {
+      const d =
+        ((newD as Record<string, number>)[k] ?? 0) - ((curD as Record<string, number>)[k] ?? 0);
+      if (d !== 0) diffs.push({ key: k, d });
+    }
+    diffs.sort((a, b) => Math.abs(b.d) - Math.abs(a.d));
+    const out = diffs.slice(0, 3).map(({ key, d }) => {
+      const val =
+        key === 'critRate'
+          ? `${Math.round(d * 100)}%`
+          : key === 'atkSpeed'
+            ? d.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
+            : `${Math.round(d)}`;
+      return { text: `${DIFF_LABEL[key] ?? key}${d > 0 ? '+' : ''}${val}`, up: d > 0 };
+    });
+    if (diffs.length > 3) out.push({ text: '…', up: true });
+    return out;
+  }
+
   private renderTab(): void {
     this.content.removeAll(true);
     this.scrollY = 0;
@@ -307,15 +352,29 @@ export class InventoryScene extends Phaser.Scene {
       });
       this.content.add(rarityText);
       // Element badge for elemental weapons (e.g. 属性:火), coloured to match.
+      let lineX = rarityText.x + rarityText.width + 8;
       if (isElement(def.element) && def.element !== 'none') {
         const hex = `#${ELEMENT_COLOR[def.element].toString(16).padStart(6, '0')}`;
-        this.content.add(
-          this.add.text(rarityText.x + rarityText.width + 8, y + 17, `属性:${ELEMENT_LABEL[def.element]}`, {
+        const badge = this.add.text(lineX, y + 17, `属性:${ELEMENT_LABEL[def.element]}`, {
+          fontFamily: FONT,
+          fontSize: '11px',
+          color: hex,
+        });
+        this.content.add(badge);
+        lineX = badge.x + badge.width + 8;
+      }
+      // Stat diff vs the currently equipped piece (green up / red down), so
+      // "should I switch?" is answerable without doing mental math.
+      if (!equipped) {
+        for (const seg of this.equipDiff(def)) {
+          const t = this.add.text(lineX, y + 17, seg.text, {
             fontFamily: FONT,
             fontSize: '11px',
-            color: hex,
-          }),
-        );
+            color: seg.up ? '#9fe3a0' : '#e07a7a',
+          });
+          this.content.add(t);
+          lineX = t.x + t.width + 6;
+        }
       }
       if (canEq) {
         const btn = this.add

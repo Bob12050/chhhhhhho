@@ -3,6 +3,7 @@ import { applyPendingUpdate } from '@/core/pwa';
 import { bus } from '@/core/event-bus';
 import { FONT } from '@/ui/theme';
 import { soundEngine } from '@/audio/sound-engine';
+import { bgm } from '@/audio/bgm-engine';
 import { TEX } from '@/assets/gen/textures';
 import { frameIndex } from '@/paperdoll/pose-atlas';
 
@@ -48,6 +49,7 @@ export class TitleScene extends Phaser.Scene {
     this.walkers = [];
     this.nextTex = 0;
 
+    bgm.play('town');
     this.buildBackdrop(w, h);
     this.buildParade(w, h);
     this.buildFireflies(w, h);
