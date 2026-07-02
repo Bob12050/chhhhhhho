@@ -14,6 +14,13 @@ export type SkillType = 'active' | 'passive';
 /** Which stat an active skill scales off. Defaults to 'phys'. */
 export type SkillScaling = 'phys' | 'mag';
 
+/**
+ * What an active skill actually does. 'damage' (default) = melee-range strike;
+ * 'projectile' = flying bolt(s); 'heal' = restore own HP; 'buff' = temporary
+ * derived-stat boost. Gives each class family a distinct combat verb.
+ */
+export type SkillEffect = 'damage' | 'projectile' | 'heal' | 'buff';
+
 export interface SkillDef {
   id: string;
   name: string;
@@ -30,6 +37,14 @@ export interface SkillDef {
   scaling?: SkillScaling;
   /** Visual style for the cast effect ('slash' | 'impact' | 'magic'). */
   fx?: string;
+  /** Behaviour kind (default 'damage'). */
+  effect?: SkillEffect;
+  /** projectile: bolt speed px/s (default 220) and count (default 1). */
+  projSpeed?: number;
+  projCount?: number;
+  /** buff: temporary derived bonuses for buffMs milliseconds. */
+  buffStats?: Partial<DerivedStats>;
+  buffMs?: number;
   /**
    * Element carried by this skill's damage (see elements.ts). Omitted/`none`
    * falls back to the equipped weapon's element so martial skills still riding

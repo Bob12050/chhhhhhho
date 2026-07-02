@@ -116,3 +116,29 @@ describe('skills', () => {
     }
   });
 });
+
+describe('skill effect verbs', () => {
+  it('each family gained a distinct verb (heal/buff/projectile)', () => {
+    expect(getSkill('c_holylight')!.effect).toBe('heal');
+    expect(getSkill('w_warcry')!.effect).toBe('buff');
+    expect(getSkill('w_warcry')!.buffStats?.physAtk).toBeGreaterThan(0);
+    expect(getSkill('m_firebolt')!.effect).toBe('projectile');
+    expect(getSkill('b_volley')!.effect).toBe('projectile');
+    expect(getSkill('b_volley')!.projCount).toBe(3);
+  });
+
+  it('effects only appear on active skills with sane params', () => {
+    for (const s of allSkills()) {
+      if (s.effect === undefined) continue;
+      expect(s.type, s.id).toBe('active');
+      if (s.effect === 'buff') {
+        expect(s.buffMs, s.id).toBeGreaterThan(0);
+        expect(Object.keys(s.buffStats ?? {}).length, s.id).toBeGreaterThan(0);
+      }
+      if (s.effect === 'projectile' && s.projSpeed !== undefined) {
+        expect(s.projSpeed, s.id).toBeGreaterThan(0);
+      }
+    }
+  });
+});
+

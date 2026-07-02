@@ -51,3 +51,30 @@ describe('GameState leveling', () => {
     expect(gs.statPoints).toBeGreaterThan(0);
   });
 });
+
+describe('temporary skill buffs', () => {
+  it('addBuff raises derived stats and expireBuffs reverts them', () => {
+    const gs = new GameState();
+    gs.recompute(false);
+    const base = gs.derived.physAtk;
+    gs.addBuff({ physAtk: 14 }, 10000, 1000);
+    expect(gs.derived.physAtk).toBe(base + 14);
+    expect(gs.expireBuffs(5000)).toBe(false); // still running
+    expect(gs.derived.physAtk).toBe(base + 14);
+    expect(gs.expireBuffs(11001)).toBe(true); // expired
+    expect(gs.derived.physAtk).toBe(base);
+    expect(gs.tempBuffs.length).toBe(0);
+  });
+
+  it('buffs stack and expire independently', () => {
+    const gs = new GameState();
+    gs.recompute(false);
+    const base = gs.derived.physAtk;
+    gs.addBuff({ physAtk: 10 }, 1000, 0);
+    gs.addBuff({ physAtk: 5 }, 5000, 0);
+    expect(gs.derived.physAtk).toBe(base + 15);
+    gs.expireBuffs(2000);
+    expect(gs.derived.physAtk).toBe(base + 5);
+  });
+});
+

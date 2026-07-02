@@ -27,6 +27,7 @@ import { bgm, bgmForMap } from '@/audio/bgm-engine';
 import {
   elementMultiplier,
   statusFromElement,
+  elementColorHex,
   ELEMENT_COLOR,
   STATUS_CATEGORY,
   STATUS_PROC_CHANCE,
@@ -80,6 +81,9 @@ export class WorldScene extends Phaser.Scene {
   /** Pooled enemy projectiles (mobile-perf rule: projectiles use a pool). */
   private bullets: { obj: Phaser.GameObjects.Arc; vx: number; vy: number; ttl: number; damage: number }[] = [];
   private bulletPool: Phaser.GameObjects.Arc[] = [];
+  /** Player skill projectiles (pooled). */
+  private pBolts: { obj: Phaser.GameObjects.Arc; vx: number; vy: number; ttl: number; atk: number; mult: number; element: Element }[] = [];
+  private pBoltPool: Phaser.GameObjects.Arc[] = [];
   private minions: Enemy[] = [];
   private bossMaxHp = 0;
   private bossBar: {
@@ -114,6 +118,8 @@ export class WorldScene extends Phaser.Scene {
     this.bossBrain = null;
     this.bullets = [];
     this.bulletPool = [];
+    this.pBolts = [];
+    this.pBoltPool = [];
     this.minions = [];
 
     this.map = getMap(gameState.mapId) ?? getMap('town')!;
@@ -508,6 +514,38 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
+  /**
+   * Apply one player hit to an enemy: crit roll, element multiplier, damage
+   * number, spark, status proc. Shared by melee strikes and projectiles.
+   */
+  private hitEnemy(
+    e: Enemy,
+    atk: number,
+    mult: number,
+    knockback: number,
+    element: Element,
+  ): { killed: boolean; crit: boolean } {
+    const crit = Math.random() < gameState.derived.critRate;
+    const elemMult = elementMultiplier(element, e.cfg.weakness, e.cfg.resist);
+    const weak = elemMult > 1;
+    const amount = Math.max(1, Math.round(atk * mult * (crit ? 1.6 : 1) * elemMult));
+    const killed = e.takeDamage(amount, this.player.x, this.player.y, knockback);
+    // Elemental hits color the number; a super-effective hit reads red.
+    const color = element !== 'none' ? elementColorHex(element) : undefined;
+    this.dmg.show(e.x, e.y - 42, amount, crit, weak ? '#ff5a5a' : color);
+    this.spawnHitSpark(e.x, e.y - 22, crit);
+    bus.emit('combat:damage-dealt', { x: e.x, y: e.y, amount, crit });
+    // On-hit status proc (only on a live enemy; weakness improves the odds).
+    if (!killed && element !== 'none') {
+      const st = statusFromElement(element);
+      if (st && Math.random() < STATUS_PROC_CHANCE * (weak ? 1.5 : 1)) {
+        if (STATUS_CATEGORY[st] === 'stun') e.applyStatus(st, 900, 0);
+        else e.applyStatus(st, 3000, Math.max(1, Math.round(atk * 0.25)));
+      }
+    }
+    return { killed, crit };
+  }
+
   /** Melee/skill hit resolution in front of the player. */
   private resolveMelee(
     dir: Direction,
@@ -526,28 +564,7 @@ export class WorldScene extends Phaser.Scene {
     for (const e of this.enemies) {
       if (e.isDead()) continue;
       if (Phaser.Math.Distance.Between(hx, hy, e.x, e.y) <= half) {
-        const base = atk;
-        const crit = Math.random() < gameState.derived.critRate;
-        const elemMult = elementMultiplier(element, e.cfg.weakness, e.cfg.resist);
-        const weak = elemMult > 1;
-        const amount = Math.max(1, Math.round(base * mult * (crit ? 1.6 : 1) * elemMult));
-        const killed = e.takeDamage(amount, this.player.x, this.player.y, knockback);
-        // Elemental hits color the number; a super-effective hit reads red.
-        const color =
-          element !== 'none'
-            ? `#${ELEMENT_COLOR[element].toString(16).padStart(6, '0')}`
-            : undefined;
-        this.dmg.show(e.x, e.y - 42, amount, crit, weak ? '#ff5a5a' : color);
-        this.spawnHitSpark(e.x, e.y - 22, crit);
-        bus.emit('combat:damage-dealt', { x: e.x, y: e.y, amount, crit });
-        // On-hit status proc (only on a live enemy; weakness improves the odds).
-        if (!killed && element !== 'none') {
-          const st = statusFromElement(element);
-          if (st && Math.random() < STATUS_PROC_CHANCE * (weak ? 1.5 : 1)) {
-            if (STATUS_CATEGORY[st] === 'stun') e.applyStatus(st, 900, 0);
-            else e.applyStatus(st, 3000, Math.max(1, Math.round(atk * 0.25)));
-          }
-        }
+        const { crit } = this.hitEnemy(e, atk, mult, knockback, element);
         hitStop = true;
         anyCrit = anyCrit || crit;
       }
@@ -708,6 +725,38 @@ export class WorldScene extends Phaser.Scene {
     // Skill element overrides the weapon's; otherwise the weapon's element rides along.
     const skillEl: Element = isElement(def.element) ? def.element : 'none';
     const element = skillEl !== 'none' ? skillEl : this.weaponElement();
+
+    // Effect kinds: heal / buff / projectile give each family its own verb;
+    // 'damage' (default) is the classic forward strike.
+    const effect = def.effect ?? 'damage';
+    if (effect === 'heal') {
+      const amount = Math.max(1, Math.round(atk * (def.powerMult ?? 1.5)));
+      gameState.hp = Math.min(gameState.derived.maxHp, gameState.hp + amount);
+      bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
+      this.dmg.show(this.player.x, this.player.y - 48, amount, false, '#9fe3a0');
+      this.spawnHealGlow();
+      bus.emit('sfx:play', { id: 'heal' });
+      return;
+    }
+    if (effect === 'buff') {
+      gameState.addBuff(def.buffStats ?? {}, def.buffMs ?? 8000, this.time.now);
+      this.floatText(this.player.x, this.player.y - 56, `${def.name}！`, '#ffd86b');
+      this.spawnBuffRing();
+      return;
+    }
+    if (effect === 'projectile') {
+      const count = def.projCount ?? 1;
+      const speed = def.projSpeed ?? 220;
+      const { ax, ay } = aheadOffset(dir, 1);
+      const baseAng = Math.atan2(ay, ax);
+      this.time.delayedCall(120, () => {
+        for (let i = 0; i < count; i++) {
+          const off = (i - (count - 1) / 2) * 0.16;
+          this.firePlayerBolt(baseAng + off, speed, atk, def.powerMult ?? 1.5, element);
+        }
+      });
+      return;
+    }
     this.time.delayedCall(120, () =>
       this.resolveMelee(
         dir,
@@ -719,6 +768,69 @@ export class WorldScene extends Phaser.Scene {
         element,
       ),
     );
+  }
+
+  /** Soft green glow when a heal lands. */
+  private spawnHealGlow(): void {
+    const cx = Math.round(this.player.x);
+    const cy = Math.round(this.player.y) - 24;
+    const glow = this.add.circle(cx, cy, 22, 0x9fe36a, 0.32).setDepth(9000);
+    const ring = this.add.circle(cx, cy, 8, 0xd8ffb0, 0.7).setDepth(9001);
+    this.tweens.add({ targets: glow, alpha: 0, duration: 420, ease: 'Quad.easeOut', onComplete: () => glow.destroy() });
+    this.tweens.add({ targets: ring, scale: 3, alpha: 0, duration: 380, ease: 'Cubic.Out', onComplete: () => ring.destroy() });
+  }
+
+  /** Gold ring burst when a buff activates. */
+  private spawnBuffRing(): void {
+    const cx = Math.round(this.player.x);
+    const cy = Math.round(this.player.y) - 20;
+    const ring = this.add.circle(cx, cy, 10, 0xffd86b, 0).setStrokeStyle(3, 0xffd86b, 0.9).setDepth(9001);
+    this.tweens.add({ targets: ring, scale: 3.2, alpha: 0, duration: 420, ease: 'Cubic.Out', onComplete: () => ring.destroy() });
+  }
+
+  /** Fire one player projectile (pooled; hits the first enemy in its path). */
+  private firePlayerBolt(angle: number, speed: number, atk: number, mult: number, element: Element): void {
+    const color = element !== 'none' ? ELEMENT_COLOR[element] : 0xbfe0ff;
+    const obj =
+      this.pBoltPool.pop() ??
+      this.add.circle(0, 0, 4, color, 1).setDepth(9000);
+    obj.setFillStyle(color, 1).setStrokeStyle(1, 0xffffff, 0.8);
+    obj.setPosition(Math.round(this.player.x), Math.round(this.player.y) - 24).setVisible(true);
+    this.pBolts.push({
+      obj,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      ttl: 1100,
+      atk,
+      mult,
+      element,
+    });
+  }
+
+  private updatePlayerBolts(dtMs: number): void {
+    const dt = dtMs / 1000;
+    for (let i = this.pBolts.length - 1; i >= 0; i--) {
+      const b = this.pBolts[i];
+      b.ttl -= dtMs;
+      b.obj.x += b.vx * dt;
+      b.obj.y += b.vy * dt;
+      let hit = false;
+      for (const e of this.enemies) {
+        if (e.isDead()) continue;
+        if (Phaser.Math.Distance.Between(b.obj.x, b.obj.y, e.x, e.y - 16) < 18) {
+          this.hitEnemy(e, b.atk, b.mult, 14, b.element);
+          hit = true;
+          break;
+        }
+      }
+      const out =
+        b.obj.x < -20 || b.obj.y < -20 || b.obj.x > this.map.size.w + 20 || b.obj.y > this.map.size.h + 20;
+      if (hit || out || b.ttl <= 0) {
+        b.obj.setVisible(false);
+        this.pBoltPool.push(b.obj);
+        this.pBolts.splice(i, 1);
+      }
+    }
   }
 
   /** The active weapon's element (falls back to 'none' when unarmed/neutral). */
@@ -1101,6 +1213,8 @@ export class WorldScene extends Phaser.Scene {
     for (const e of this.enemies) e.update(delta, this.player.x, this.player.y);
     if (this.boss && !this.boss.isDead()) this.bossBrain?.update(delta);
     this.updateBullets(delta);
+    this.updatePlayerBolts(delta);
+    if (gameState.tempBuffs.length > 0) gameState.expireBuffs(this.time.now);
 
     const lead = 28;
     this.cameras.main.setFollowOffset(-v.x * lead, -v.y * lead);

@@ -366,6 +366,11 @@ function validateSkills(): Set<string> {
       scaling?: string;
       minTier?: number;
       element?: string;
+      effect?: string;
+      projSpeed?: number;
+      projCount?: number;
+      buffStats?: Record<string, number>;
+      buffMs?: number;
     }[];
   }>('src/data/defs/skills.json');
   const FX_STYLES = new Set(['slash', 'impact', 'magic']);
@@ -390,6 +395,26 @@ function validateSkills(): Set<string> {
       err(`Skill ${s.id}: unknown element "${s.element}"`);
     if (s.element !== undefined && s.type === 'passive')
       err(`Skill ${s.id}: passive skill should not set element`);
+    // Effect kinds + their required params.
+    const EFFECTS = new Set(['damage', 'projectile', 'heal', 'buff']);
+    if (s.effect !== undefined) {
+      if (!EFFECTS.has(s.effect)) err(`Skill ${s.id}: unknown effect "${s.effect}"`);
+      if (s.type === 'passive') err(`Skill ${s.id}: passive skill should not set effect`);
+    }
+    if (s.effect === 'projectile') {
+      if (s.projSpeed !== undefined && !(s.projSpeed > 0)) err(`Skill ${s.id}: projSpeed must be > 0`);
+      if (s.projCount !== undefined && !(s.projCount >= 1)) err(`Skill ${s.id}: projCount must be >= 1`);
+    }
+    if (s.effect === 'buff') {
+      if (!s.buffStats || Object.keys(s.buffStats).length === 0)
+        err(`Skill ${s.id}: buff needs buffStats`);
+      if (!(s.buffMs !== undefined && s.buffMs > 0)) err(`Skill ${s.id}: buff needs buffMs > 0`);
+      for (const k of Object.keys(s.buffStats ?? {})) {
+        if (!DERIVED_KEYS.has(k)) err(`Skill ${s.id}: invalid buff stat "${k}"`);
+      }
+    }
+    if (s.effect === 'heal' && s.element !== undefined)
+      err(`Skill ${s.id}: heals should not carry an attack element`);
     for (const k of Object.keys(s.derived ?? {})) {
       if (!DERIVED_KEYS.has(k)) err(`Skill ${s.id}: invalid derived stat "${k}"`);
     }

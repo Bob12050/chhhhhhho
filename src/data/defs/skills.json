@@ -75,6 +75,26 @@
       "minTier": 1
     },
     {
+      "id": "w_warcry",
+      "name": "雄叫び",
+      "type": "active",
+      "description": "雄叫びで自らを鼓舞し、しばらく物理攻撃が上がる。",
+      "mpCost": 10,
+      "cooldown": 14000,
+      "fx": "impact",
+      "effect": "buff",
+      "buffMs": 10000,
+      "buffStats": {
+        "physAtk": 14
+      },
+      "requiredLevel": 18,
+      "requires": [
+        "w_cleave"
+      ],
+      "family": "warrior",
+      "minTier": 2
+    },
+    {
       "id": "w_whirl",
       "name": "旋風斬",
       "type": "active",
@@ -165,7 +185,7 @@
       "id": "m_firebolt",
       "name": "火球",
       "type": "active",
-      "description": "火の弾を放ち前方を焼く。",
+      "description": "飛んでいく火の弾を放つ。当たると火傷することがある。",
       "mpCost": 8,
       "cooldown": 1000,
       "powerMult": 2.0,
@@ -177,7 +197,9 @@
       "element": "fire",
       "requiredLevel": 6,
       "family": "mage",
-      "minTier": 1
+      "minTier": 1,
+      "effect": "projectile",
+      "projSpeed": 240
     },
     {
       "id": "m_focus",
@@ -317,22 +339,22 @@
       "id": "c_holylight",
       "name": "聖光",
       "type": "active",
-      "description": "清浄の光で前方を浄化する。",
+      "description": "清浄の光で自らのHPを回復する。",
       "mpCost": 16,
       "cooldown": 1800,
-      "powerMult": 2.4,
+      "powerMult": 1.8,
       "reach": 36,
       "radius": 52,
       "knockback": 0,
       "fx": "magic",
       "scaling": "mag",
       "requiredLevel": 16,
-      "element": "holy",
       "requires": [
         "c_smite"
       ],
       "family": "cleric",
-      "minTier": 2
+      "minTier": 2,
+      "effect": "heal"
     },
     {
       "id": "c_aegis",
@@ -556,10 +578,10 @@
       "id": "b_volley",
       "name": "連弾",
       "type": "active",
-      "description": "遠くまで届く連撃を放つ。",
+      "description": "3連の魔弾を扇状に放つ。",
       "mpCost": 14,
       "cooldown": 1500,
-      "powerMult": 2.4,
+      "powerMult": 1.0,
       "reach": 46,
       "radius": 46,
       "knockback": 0,
@@ -570,7 +592,10 @@
         "b_beastclaw"
       ],
       "family": "tamer",
-      "minTier": 2
+      "minTier": 2,
+      "effect": "projectile",
+      "projSpeed": 210,
+      "projCount": 3
     },
     {
       "id": "b_wild",

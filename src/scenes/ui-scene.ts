@@ -266,6 +266,21 @@ export class UIScene extends Phaser.Scene {
       bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current}`)),
     );
 
+    // Buff indicator: shows while a temporary skill buff is active.
+    const buffChip = this.add
+      .text(hudX + 64, goldY, '▲強化中', {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#ffd86b',
+        backgroundColor: '#00000066',
+        padding: { x: 3, y: 1 },
+      })
+      .setDepth(depth)
+      .setVisible(false);
+    this.busOff.push(
+      bus.on('player:stats-recomputed', () => buffChip.setVisible(gameState.tempBuffs.length > 0)),
+    );
+
     // Quest tracker: current goal pinned under the HUD block so the player
     // always knows what to do next ("game tells, player does, game rewards").
     const trY = insets.top + 106;

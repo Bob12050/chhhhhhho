@@ -19,6 +19,11 @@ export const ELEMENT_COLOR: Record<Element, number> = {
   poison: 0x9fe36a, holy: 0xfff2a8, dark: 0xb07adf,
 };
 
+/** CSS hex string for an element's color (damage numbers / badges). */
+export function elementColorHex(el: Element): string {
+  return `#${ELEMENT_COLOR[el].toString(16).padStart(6, '0')}`;
+}
+
 export function isElement(v: unknown): v is Element {
   return typeof v === 'string' && (ELEMENTS as readonly string[]).includes(v);
 }

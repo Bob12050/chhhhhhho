@@ -48,6 +48,8 @@ export class GameState {
 
   /** Quest state: accepted ids, turned-in ids, and per-quest kill progress. */
   activeQuests: string[] = [];
+  /** Temporary skill buffs (runtime-only, not saved). */
+  tempBuffs: { stats: Partial<DerivedStats>; expiresAt: number }[] = [];
   completedQuests: string[] = [];
   questProgress: Record<string, Record<string, number>> = {};
 
@@ -98,6 +100,8 @@ export class GameState {
     // Active pet passive.
     const pet = this.activePetId ? getPet(this.activePetId) : undefined;
     if (pet?.passive) mods.push({ derived: pet.passive });
+    // Temporary skill buffs (雄叫び etc.); expiry is ticked by the scene.
+    for (const b of this.tempBuffs) mods.push({ derived: b.stats });
     const prev = this.derived;
     const hpRatio = prev.maxHp > 0 ? this.hp / prev.maxHp : 1;
     const mpRatio = prev.maxMp > 0 ? this.mp / prev.maxMp : 1;
@@ -224,6 +228,22 @@ export class GameState {
   }
 
   /** Use one consumable, applying its effect. Returns false if none/no effect. */
+  /** Apply a temporary derived-stat buff for durationMs (skill effect). */
+  addBuff(stats: Partial<DerivedStats>, durationMs: number, now: number): void {
+    this.tempBuffs.push({ stats, expiresAt: now + durationMs });
+    this.recompute();
+  }
+
+  /** Drop expired buffs; returns true (and recomputes) if any ended. */
+  expireBuffs(now: number): boolean {
+    const before = this.tempBuffs.length;
+    if (before === 0) return false;
+    this.tempBuffs = this.tempBuffs.filter((b) => b.expiresAt > now);
+    if (this.tempBuffs.length === before) return false;
+    this.recompute();
+    return true;
+  }
+
   useConsumable(id: string): boolean {
     if ((this.consumables[id] ?? 0) < 1) return false;
     const def = getConsumable(id);
@@ -420,6 +440,7 @@ export class GameState {
 
   loadFrom(data: SaveData): void {
     this.slot = data.slot;
+    this.tempBuffs = []; // runtime-only; never carried across loads
     this.level = data.player.level;
     this.exp = data.player.exp;
     this.statPoints = data.player.statPoints;
