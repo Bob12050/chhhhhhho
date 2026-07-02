@@ -34,6 +34,9 @@ export class UIScene extends Phaser.Scene {
   private lowHpVignette!: Phaser.GameObjects.Graphics;
   private lowHpTween: Phaser.Tweens.Tween | null = null;
   private busOff: Array<() => void> = [];
+  private potionReadyAt = 0;
+  private qWasDown = false;
+  private usePotionByKey: (() => void) | null = null;
 
   constructor() {
     super('UI');
@@ -72,11 +75,42 @@ export class UIScene extends Phaser.Scene {
     const dodgeBtn = new TouchButton(this, baseX + 2, baseY - 76, 26, '回避', 0x3f9a6e, depth);
     dodgeBtn.onChange = (d) => input.setButton('dodge', d);
 
+    // Potion quick-slot: one tap heals mid-fight (no menu). Uses the smallest
+    // HP potion first; greys out at zero; short cooldown against panic-chugs.
+    const POTION_IDS = ['potion_hp', 'potion_hp_l'];
+    const potBtn = new TouchButton(this, baseX - 64, baseY - 122, 24, '薬', 0xc04a5a, depth);
+    const potCount = this.add
+      .text(baseX - 44, baseY - 138, '', { fontFamily: FONT, fontSize: '11px', color: '#ffffff' })
+      .setOrigin(0.5)
+      .setDepth(depth + 2);
+    const refreshPotions = (): void => {
+      const n = POTION_IDS.reduce((sum, id) => sum + (gameState.consumables[id] ?? 0), 0);
+      potCount.setText(`${n}`).setColor(n > 0 ? '#ffffff' : '#e07a7a');
+    };
+    const usePotion = (): void => {
+      if (this.time.now < this.potionReadyAt) return;
+      const id = POTION_IDS.find((pid) => (gameState.consumables[pid] ?? 0) > 0);
+      if (!id) return;
+      if (gameState.useConsumable(id)) {
+        this.potionReadyAt = this.time.now + 1200;
+        bus.emit('sfx:play', { id: 'heal' });
+        bus.emit('skill:cooldown', { slot: 3, duration: 1200 });
+      }
+    };
+    potBtn.onChange = (d) => {
+      if (d) usePotion();
+    };
+    refreshPotions();
+    this.busOff.push(bus.on('inventory:changed', refreshPotions));
+    this.busOff.push(bus.on('game:load', refreshPotions));
+    this.usePotionByKey = usePotion;
+
     // Cooldown sweep overlays for the two skill buttons (slot 0 = S1, 1 = S2).
     const cdGeom = [
       { x: baseX - 76, y: baseY + 6, r: 28 },
       { x: baseX - 60, y: baseY - 58, r: 26 },
       { x: baseX + 2, y: baseY - 76, r: 26 }, // dodge (slot 2)
+      { x: baseX - 64, y: baseY - 122, r: 24 }, // potion (slot 3)
     ];
     const cdGfx = cdGeom.map(() => this.add.graphics().setDepth(depth + 1));
     this.busOff.push(
@@ -360,7 +394,7 @@ export class UIScene extends Phaser.Scene {
   private installKeyboardDev(): void {
     const kb = this.input.keyboard;
     if (!kb) return;
-    const keys = kb.addKeys('W,A,S,D,J,K,L,E,SPACE,UP,DOWN,LEFT,RIGHT') as Record<
+    const keys = kb.addKeys('W,A,S,D,J,K,L,E,Q,SPACE,UP,DOWN,LEFT,RIGHT') as Record<
       string,
       Phaser.Input.Keyboard.Key
     >;
@@ -381,6 +415,8 @@ export class UIScene extends Phaser.Scene {
       input.setButton('skill2', keys.L.isDown);
       input.setButton('interact', keys.E.isDown);
       input.setButton('dodge', keys.SPACE.isDown);
+      if (keys.Q.isDown && !this.qWasDown) this.usePotionByKey?.();
+      this.qWasDown = keys.Q.isDown;
     };
     this.events.on('update', onUpdate);
     this.busOff.push(() => this.events.off('update', onUpdate));

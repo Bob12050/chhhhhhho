@@ -19,12 +19,17 @@ import { gameState } from '@/player/game-state';
  */
 
 export class Player {
+  /** ms between attacks at atkSpeed 1.0 (anim is ~286ms; a hair above it). */
+  private static readonly BASE_ATTACK_MS = 360;
   readonly body: Phaser.Physics.Arcade.Image;
   readonly doll: PaperDollAnimator;
   private readonly scene: Phaser.Scene;
   private dir: Direction = 'down';
   private moveSpeed = 90; // logical px/sec (Phase 0 fixed; later from stats)
   private rollMs = 0;
+  /** Attack-rate multiplier from derived stats (1 = base). */
+  private atkSpeedMult = 1;
+  private attackCdMs = 0;
   private attacking = false;
 
   /** Called when an attack's hit frame lands. */
@@ -74,6 +79,11 @@ export class Player {
 
   setMoveSpeed(v: number): void {
     this.moveSpeed = v;
+  }
+
+  /** Attack cadence = BASE_ATTACK_MS / mult, so 攻速 gear actually matters. */
+  setAtkSpeed(mult: number): void {
+    this.atkSpeedMult = Math.max(0.25, mult);
   }
 
   /** Apply a normalized-ish movement vector (components in [-1, 1]). */
@@ -134,7 +144,8 @@ export class Player {
 
   /** Trigger a melee attack toward the given direction (or current facing). */
   attack(dir?: Direction): void {
-    if (this.attacking || this.rollMs > 0) return;
+    if (this.attacking || this.rollMs > 0 || this.attackCdMs > 0) return;
+    this.attackCdMs = Player.BASE_ATTACK_MS / this.atkSpeedMult;
     this.attacking = true;
     if (dir) {
       this.dir = dir;
@@ -185,6 +196,7 @@ export class Player {
   }
 
   update(dtMs: number): void {
+    if (this.attackCdMs > 0) this.attackCdMs -= dtMs;
     if (this.rollMs > 0) {
       this.rollMs -= dtMs;
       if (this.rollMs <= 0) this.body.setVelocity(0, 0);

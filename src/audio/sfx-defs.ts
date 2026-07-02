@@ -50,7 +50,8 @@ export type SfxId =
   | 'boom'
   | 'roar'
   | 'dodge'
-  | 'fanfare';
+  | 'fanfare'
+  | 'heal';
 
 export const SFX: Record<SfxId, SfxDef> = {
   // Whoosh of a swing: a short noise swish plus a low body.
@@ -174,6 +175,16 @@ export const SFX: Record<SfxId, SfxDef> = {
     steps: [
       { freq: 0, noise: true, delay: 0, attack: 0.01, decay: 0.12, gain: 0.5 },
       { freq: 320, freqEnd: 170, type: 'triangle', delay: 0, attack: 0.006, decay: 0.1, gain: 0.3 },
+    ],
+  },
+  // Potion glug + soft chime.
+  heal: {
+    gain: 0.5,
+    minGapMs: 300,
+    steps: [
+      { freq: 220, freqEnd: 140, type: 'sine', delay: 0, attack: 0.01, decay: 0.09, gain: 0.4 },
+      { freq: 523, type: 'triangle', delay: 0.1, attack: 0.005, decay: 0.14, gain: 0.45 },
+      { freq: 784, type: 'triangle', delay: 0.2, attack: 0.005, decay: 0.2, gain: 0.4 },
     ],
   },
   // Quest clear fanfare: short rising four-note flourish (C-E-G-C + fifth cap).

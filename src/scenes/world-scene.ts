@@ -138,6 +138,7 @@ export class WorldScene extends Phaser.Scene {
     this.player = new Player(this, gameState.x, gameState.y);
     this.player.setJobAppearance(gameState.jobId);
     this.player.setMoveSpeed(gameState.derived.moveSpeed);
+    this.player.setAtkSpeed(gameState.derived.atkSpeed);
     this.player.onAttackHit = (dir) => {
       this.spawnSlash(dir);
       bus.emit('sfx:play', { id: 'attack' });
@@ -161,14 +162,23 @@ export class WorldScene extends Phaser.Scene {
     // Listeners (unsubscribed on shutdown to avoid accumulation on re-entry).
     this.busOff.push(
       bus.on('equipment:changed', () => {
-        // Equipment changes stats only (look is job-fixed); just refresh speed.
+        // Equipment changes stats only (look is job-fixed); refresh speeds.
         this.player.setMoveSpeed(gameState.derived.moveSpeed);
+        this.player.setAtkSpeed(gameState.derived.atkSpeed);
       }),
     );
     this.busOff.push(
       bus.on('job:changed', () => {
         this.player.setJobAppearance(gameState.jobId);
         this.player.setMoveSpeed(gameState.derived.moveSpeed);
+        this.player.setAtkSpeed(gameState.derived.atkSpeed);
+      }),
+    );
+    this.busOff.push(
+      bus.on('player:stats-recomputed', () => {
+        // Stat allocation (DEX) can change move/attack speed mid-session.
+        this.player.setMoveSpeed(gameState.derived.moveSpeed);
+        this.player.setAtkSpeed(gameState.derived.atkSpeed);
       }),
     );
     this.busOff.push(bus.on('app:visibility-hidden', () => void this.save()));
