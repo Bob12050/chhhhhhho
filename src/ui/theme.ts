@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { TEX } from '@/assets/gen/textures';
+import { TEX, UI_FRAME_SLICE } from '@/assets/gen/textures';
 
 /**
  * Central UI theme (B: 統一感). One place for the font, palette, text-style
@@ -70,6 +70,50 @@ export function addSceneBackdrop(scene: Phaser.Scene, dim = 0.72): void {
     vg.lineStyle(3, 0x0e0f1a, 0.06 * (1 - i / 10));
     vg.strokeRect(i * 3, i * 3, w - i * 6, h - i * 6);
   }
+}
+
+/**
+ * 9-slice framed panel (centre-anchored, like a Rectangle). Draws from the
+ * `TEX.uiFrame` texture so a single `assets/ui/frame.png` restyles every menu
+ * panel at once. The corners stay fixed while the edges/centre stretch, so one
+ * small frame fits any card size. Falls back to a rectangle+stroke (the prior
+ * look) only if the frame texture is somehow absent.
+ *
+ * `active` picks the accent: `true` keeps the frame's gold tone, `false`
+ * desaturates it (empty/disabled cards). Returns the game object so callers can
+ * set depth / add it to a container.
+ */
+export function ninePanel(
+  scene: Phaser.Scene,
+  cx: number,
+  cy: number,
+  width: number,
+  height: number,
+  opts?: { active?: boolean; alpha?: number; tint?: number },
+): Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Depth {
+  if (scene.textures.exists(TEX.uiFrame)) {
+    const n = scene.add.nineslice(
+      cx,
+      cy,
+      TEX.uiFrame,
+      undefined,
+      width,
+      height,
+      UI_FRAME_SLICE,
+      UI_FRAME_SLICE,
+      UI_FRAME_SLICE,
+      UI_FRAME_SLICE,
+    );
+    const tint = opts?.tint ?? (opts?.active === false ? 0x6a7090 : undefined);
+    if (tint !== undefined) n.setTint(tint);
+    if (opts?.alpha !== undefined) n.setAlpha(opts.alpha);
+    return n;
+  }
+  // Fallback: the original flat card so menus still render without a frame tex.
+  const r = scene.add
+    .rectangle(cx, cy, width, height, 0x141726, opts?.alpha ?? 0.94)
+    .setStrokeStyle(2, opts?.active === false ? 0x333a5a : 0x46508a, 0.9);
+  return r;
 }
 
 /** Framed pill button (shared menu style). Returns the text object. */

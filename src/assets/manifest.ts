@@ -53,4 +53,6 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.obstacle, 'assets/env/obstacle.png'),
   img(TEX.wall, 'assets/env/wall.png'),
   img(TEX.npc, 'assets/env/npc.png'),
+  // UI: one 9-slice frame drives every menu panel (48x48, ~16px corners).
+  img(TEX.uiFrame, 'assets/ui/frame.png'),
 ];

@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { saveManager, SLOT_COUNT, type SlotSummary } from '@/save/save-manager';
 import { beginGame } from '@/core/game-flow';
 import { getMap } from '@/maps/map-def';
-import { FONT, addSceneBackdrop, pillButton } from '@/ui/theme';
+import { FONT, addSceneBackdrop, pillButton, ninePanel } from '@/ui/theme';
 
 /**
  * Save-slot selection. Shows each slot's summary; an empty slot starts a new
@@ -59,11 +59,8 @@ export class SaveSelectScene extends Phaser.Scene {
   private buildRow(summary: SlotSummary, slot: number, y: number, w: number): void {
     const cardH = 80;
     const cy = y + cardH / 2;
-    // Card panel + gold left-edge accent + slot chip.
-    this.add
-      .rectangle(w / 2, cy, w - 32, cardH, 0x141726, 0.94)
-      .setStrokeStyle(2, summary.exists ? 0x46508a : 0x333a5a, 0.9)
-      .setDepth(1);
+    // Card panel (9-slice frame) + gold left-edge accent + slot chip.
+    ninePanel(this, w / 2, cy, w - 32, cardH, { active: summary.exists }).setDepth(1);
     this.add.rectangle(17, cy, 4, cardH, summary.exists ? 0xf5c542 : 0x555a78, 1).setOrigin(0, 0.5).setDepth(2);
     this.add
       .text(28, y + 10, `スロット ${slot + 1}`, {
