@@ -47,6 +47,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   sheet(TEX.slime, 'assets/enemy/slime.png'),
   // Environment (single images).
   img(TEX.tileGrass, 'assets/tiles/grass.png'),
+  img(TEX.tileGrass2, 'assets/tiles/grass2.png'),
   img(TEX.tilePath, 'assets/tiles/path.png'),
   img(TEX.tileStone, 'assets/tiles/stone.png'),
   img(TEX.tileFloor, 'assets/tiles/floor.png'),

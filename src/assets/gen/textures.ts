@@ -39,6 +39,7 @@ export const TEX = {
   treant: 'gen.enemy.treant',
   dragon: 'gen.enemy.dragon',
   tileGrass: 'gen.tile.grass',
+  tileGrass2: 'gen.tile.grass2',
   tilePath: 'gen.tile.path',
   tileStone: 'gen.tile.stone',
   tileFloor: 'gen.tile.floor',
@@ -144,24 +145,40 @@ function generateEnvTextures(scene: Phaser.Scene): void {
   };
 
   make(TEX.tileGrass, (ctx) => {
-    // Dense multi-tone grass so the repeat reads as texture, not a flat lawn.
-    ctx.fillStyle = '#2a5330';
+    // Calm, low-contrast lawn so characters/buildings read on top (the old tile
+    // was too busy). A soft base + a few gentle mottles, tight tonal range.
+    ctx.fillStyle = '#3a6a40';
     ctx.fillRect(0, 0, 32, 32);
-    ctx.fillStyle = '#255030';
-    for (let i = 0; i < 10; i++) {
-      ctx.fillRect((i * 13 + 5) % 32, (i * 7 + 2) % 32, 4, 3);
+    ctx.fillStyle = '#376740'; // barely-there darker patches (large, soft)
+    for (let i = 0; i < 5; i++) {
+      ctx.fillRect((i * 13 + 4) % 30, (i * 17 + 6) % 30, 5, 4);
     }
-    ctx.fillStyle = '#316238';
-    for (let i = 0; i < 26; i++) {
-      ctx.fillRect((i * 7 + 3) % 32, (i * 11 + 5) % 32, 2, 2);
+    ctx.fillStyle = '#40724a'; // sparse light blades
+    for (let i = 0; i < 7; i++) {
+      ctx.fillRect((i * 19 + 6) % 31, (i * 11 + 9) % 30, 1, 2);
     }
-    ctx.fillStyle = '#3b7243';
-    for (let i = 0; i < 14; i++) {
-      ctx.fillRect((i * 17 + 6) % 32, (i * 5 + 9) % 31, 1, 3);
+    ctx.fillStyle = '#33613b'; // a few dark specks for grain
+    for (let i = 0; i < 5; i++) {
+      ctx.fillRect((i * 23 + 11) % 32, (i * 13 + 4) % 32, 2, 1);
     }
-    ctx.fillStyle = '#1e4426';
-    for (let i = 0; i < 12; i++) {
-      ctx.fillRect((i * 19 + 11) % 32, (i * 13 + 3) % 32, 2, 1);
+  });
+
+  // Second grass tile: a slightly different mottle so large lawns can alternate
+  // (broken up by the map builder) without reading as one stamped texture.
+  make(TEX.tileGrass2, (ctx) => {
+    ctx.fillStyle = '#3d6d43';
+    ctx.fillRect(0, 0, 32, 32);
+    ctx.fillStyle = '#396a42';
+    for (let i = 0; i < 4; i++) {
+      ctx.fillRect((i * 17 + 9) % 29, (i * 13 + 3) % 29, 6, 4);
+    }
+    ctx.fillStyle = '#43764d';
+    for (let i = 0; i < 6; i++) {
+      ctx.fillRect((i * 21 + 4) % 31, (i * 9 + 12) % 30, 1, 2);
+    }
+    ctx.fillStyle = '#356239';
+    for (let i = 0; i < 4; i++) {
+      ctx.fillRect((i * 25 + 7) % 32, (i * 15 + 8) % 32, 2, 1);
     }
   });
 

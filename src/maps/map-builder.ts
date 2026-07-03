@@ -38,6 +38,25 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
 
   scene.add.tileSprite(0, 0, w, h, GROUND_TEX[map.ground]).setOrigin(0).setDepth(-1000);
 
+  // Break the single-tile lawn repeat with a few large, near-tone meadow patches
+  // (grass2 is intentionally close in hue → seams are near-invisible, but the
+  // large-scale variation stops the ground reading as one stamped texture).
+  if (map.ground === 'grass') {
+    let gseed = 7;
+    for (const ch of map.id) gseed = (gseed * 31 + ch.charCodeAt(0)) >>> 0;
+    const grng = new Rng(gseed || 3);
+    const patches = Math.max(4, Math.round((w * h) / 90000));
+    for (let i = 0; i < patches; i++) {
+      const pw = grng.intRange(96, 200);
+      const ph = grng.intRange(96, 200);
+      scene.add
+        .tileSprite(grng.intRange(0, Math.max(0, w - pw)), grng.intRange(0, Math.max(0, h - ph)), pw, ph, TEX.tileGrass2)
+        .setOrigin(0)
+        .setDepth(-1000)
+        .setAlpha(0.7);
+    }
+  }
+
   const pathOff = pathOffsetFn(map, w, h);
   if (map.path) {
     const t = map.path.thickness;
@@ -108,6 +127,10 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     if (tex === TEX.obstacle) o.setTint(TREE_TINTS[(hash2(x, y) >> 12) % TREE_TINTS.length]);
     o.setDepth(Math.round(py));
     o.refreshBody();
+    // Ground contact shadow (trees only; walls read as flush structure).
+    if (tex === TEX.obstacle) {
+      scene.add.ellipse(px, py + 14, 26, 9, 0x000000, 0.2).setDepth(Math.round(py) - 1);
+    }
   };
 
   // Border. Leave the central path opening (vertical path) and any portal
@@ -241,6 +264,10 @@ function drawBuilding(
 ): void {
   const s = BUILDING_STYLES[b.style] ?? BUILDING_STYLES.wood;
   const roofH = Math.round(b.h * 0.4);
+  // Ground contact shadow, cast down-right (light rule: sun from top-left).
+  scene.add
+    .ellipse(b.x + b.w / 2 + 4, b.y + b.h + 3, b.w * 0.96, 16, 0x000000, 0.18)
+    .setDepth(b.y + b.h - 1);
   const g = scene.add.graphics().setDepth(b.y + b.h);
 
   // Wall + subtle bottom shadow + side trim.
@@ -252,6 +279,11 @@ function drawBuilding(
   g.fillRect(b.x, b.y + roofH, 2, b.h - roofH);
   g.fillRect(b.x + b.w - 2, b.y + roofH, 2, b.h - roofH);
   g.fillRect(b.x, b.y + b.h - 3, b.w, 3);
+  // Light rule (sun top-left): faint highlight down the left wall, shade right.
+  g.fillStyle(0xffffff, 0.06);
+  g.fillRect(b.x + 2, b.y + roofH, 5, b.h - roofH);
+  g.fillStyle(0x000000, 0.14);
+  g.fillRect(b.x + b.w - 7, b.y + roofH, 5, b.h - roofH);
 
   // Roof: overhanging slab + ridge highlight + eave shadow.
   g.fillStyle(s.roof, 1);
