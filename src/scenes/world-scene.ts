@@ -129,6 +129,8 @@ export class WorldScene extends Phaser.Scene {
     this.map = getMap(gameState.mapId) ?? getMap('town')!;
     gameState.flags[`visited_${this.map.id}`] = true;
     bgm.play(bgmForMap(this.map.id));
+    // Tell the (persistent) HUD whether this is a safe zone (town → dim combat UI).
+    bus.emit('world:map-ready', { safe: !!this.map.safe });
 
     this.ui = this.scene.get('UI') as UIScene;
     this.ui.showInteract(false);

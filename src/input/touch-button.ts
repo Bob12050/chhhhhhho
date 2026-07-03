@@ -9,6 +9,8 @@ import { FONT } from '@/ui/theme';
 export class TouchButton {
   private readonly circle: Phaser.GameObjects.Arc;
   private readonly label: Phaser.GameObjects.Text;
+  private icon?: Phaser.GameObjects.Image;
+  private dimmed = false;
   private pointerId = -1;
   private readonly cx: number;
   private readonly cy: number;
@@ -35,7 +37,7 @@ export class TouchButton {
     // only (pixel-art rule).
     if (iconTex && scene.textures.exists(iconTex)) {
       const scale = this.radius >= 30 ? 2 : 1;
-      scene.add.image(x, text ? y - 5 : y, iconTex).setScale(scale).setDepth(depth + 1);
+      this.icon = scene.add.image(x, text ? y - 5 : y, iconTex).setScale(scale).setDepth(depth + 1);
       this.label = scene.add
         .text(x, y + this.radius - 12, text, { fontFamily: FONT, fontSize: '9px', color: '#ffffff' })
         .setOrigin(0.5)
@@ -74,10 +76,22 @@ export class TouchButton {
   setVisible(v: boolean): void {
     this.circle.setVisible(v);
     this.label.setVisible(v);
+    this.icon?.setVisible(v);
     if (!v && this.pointerId !== -1) {
       this.pointerId = -1;
       this.onChange?.(false);
     }
+  }
+
+  /** Fade + disable (safe zones): dimmed buttons ignore presses and read muted. */
+  setDimmed(v: boolean): void {
+    if (this.dimmed === v) return;
+    this.dimmed = v;
+    const a = v ? 0.4 : 1;
+    this.circle.setAlpha(a);
+    this.label.setAlpha(a);
+    this.icon?.setAlpha(a);
+    if (v && this.pointerId !== -1) this.forceRelease();
   }
 
   private contains(p: Phaser.Input.Pointer): boolean {
@@ -85,7 +99,7 @@ export class TouchButton {
   }
 
   private press(p: Phaser.Input.Pointer): void {
-    if (!this.circle.visible || this.pointerId !== -1) return;
+    if (this.dimmed || !this.circle.visible || this.pointerId !== -1) return;
     this.pointerId = p.id;
     this.circle.setFillStyle(this.circle.fillColor, 0.6);
     this.onChange?.(true);

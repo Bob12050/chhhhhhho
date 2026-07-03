@@ -28,6 +28,8 @@ export interface GameEvents {
   'ui:open-map': Record<string, never>;
   'debug:warp': Record<string, never>;
   'map:travel': Record<string, never>;
+  /** Fired when a map finishes building; `safe` gates town-mode HUD (no combat). */
+  'world:map-ready': { safe: boolean };
 
   // Equipment
   'equipment:changed': { slot: string };

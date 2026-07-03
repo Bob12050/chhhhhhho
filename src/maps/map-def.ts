@@ -88,6 +88,8 @@ export interface MapDef {
     wind?: number;
   };
   border: BorderKind;
+  /** Safe zone (town): no enemies → HUD dims the combat buttons. */
+  safe?: boolean;
   obstacles?: [number, number][];
   /** Procedural buildings (collidable, drawn by the map builder). */
   buildings?: BuildingDef[];

@@ -7,6 +7,7 @@ import { bus } from '@/core/event-bus';
 import { isDebugEnabled } from '@/core/debug';
 import { gameState } from '@/player/game-state';
 import { getJob } from '@/jobs/job-defs';
+import { getMap } from '@/maps/map-def';
 import { getQuest } from '@/quests/quest-defs';
 import { isComplete, objectiveProgress } from '@/quests/quests';
 import { getEnemyDef } from '@/enemies/enemy-defs';
@@ -107,6 +108,12 @@ export class UIScene extends Phaser.Scene {
     this.busOff.push(bus.on('inventory:changed', refreshPotions));
     this.busOff.push(bus.on('game:load', refreshPotions));
     this.usePotionByKey = usePotion;
+
+    // Safe zone (town): dim the combat buttons so the screen isn't "戦闘UI全開".
+    const combatButtons = [attackBtn, skillBtn, skill2Btn, dodgeBtn, potBtn];
+    const setCombatDim = (dim: boolean): void => combatButtons.forEach((b) => b.setDimmed(dim));
+    setCombatDim(!!getMap(gameState.mapId)?.safe);
+    this.busOff.push(bus.on('world:map-ready', ({ safe }) => setCombatDim(safe)));
 
     // Cooldown sweep overlays for the two skill buttons (slot 0 = S1, 1 = S2).
     const cdGeom = [
