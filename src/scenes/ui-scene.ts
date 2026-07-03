@@ -11,8 +11,8 @@ import { getQuest } from '@/quests/quest-defs';
 import { isComplete, objectiveProgress } from '@/quests/quests';
 import { getEnemyDef } from '@/enemies/enemy-defs';
 import { expToNext } from '@/stats/leveling';
-import { FONT } from '@/ui/theme';
-import { TEX } from '@/assets/gen/textures';
+import { FONT, HUD_DEPTH } from '@/ui/theme';
+import { TEX, UI_FRAME_SLICE } from '@/assets/gen/textures';
 import { TutorialCoach } from '@/ui/tutorial-coach';
 
 /**
@@ -53,7 +53,7 @@ export class UIScene extends Phaser.Scene {
     const insets = readInsets(cssPerLogical || 1);
     const bottomPad = Math.max(insets.bottom, 12) + 8;
 
-    const depth = 1000;
+    const depth = HUD_DEPTH;
 
     // Virtual stick on the lower-left half.
     this.stick = new VirtualStick(
@@ -144,60 +144,124 @@ export class UIScene extends Phaser.Scene {
     this.interactBtn.onChange = (d) => input.setButton('interact', d);
     this.interactBtn.setVisible(false);
 
-    // HUD (top, clear of the notch). HP/MP as labelled, framed bars with the
-    // value right-aligned inside (a common RPG layout, our own styling).
-    const hudX = insets.left + 8;
-    const BAR_W = 152;
-    const BAR_H = 16;
-    const makeBar = (y: number, color: number): Phaser.GameObjects.Rectangle => {
-      // Rounded, soft track (drop line + dark inset) — no gold hairline.
-      const g = this.add.graphics().setDepth(depth);
-      g.fillStyle(0x000000, 0.3);
-      g.fillRoundedRect(hudX, y + 1.5, BAR_W, BAR_H, 6);
-      g.fillStyle(0x0e1220, 0.92);
-      g.fillRoundedRect(hudX, y, BAR_W, BAR_H, 6);
-      g.lineStyle(1, 0xffffff, 0.08);
-      g.strokeRoundedRect(hudX, y, BAR_W, BAR_H, 6);
-      // Fill (scaleX-animated from the left).
-      return this.add
-        .rectangle(hudX + 2, y + 2, BAR_W - 4, BAR_H - 4, color, 1)
-        .setOrigin(0, 0)
-        .setDepth(depth);
-    };
-    const barLabel = (y: number, t: string): void => {
+    // ── statusPanel: HP/MP/EXP/Lv/職業/所持金 を1コンテナに統合（個別配置しない）
+    const px = insets.left + 8;
+    const py = insets.top + 8;
+    const PW = 206;
+    const PH = 100;
+    const panel = this.add.container(px, py).setDepth(depth); // statusPanel
+    const sl = UI_FRAME_SLICE;
+    panel.add(
       this.add
-        .text(hudX + 5, y + 2, t, {
-          fontFamily: FONT,
-          fontSize: '11px',
-          color: '#ffffff',
-          fontStyle: 'bold',
-        })
-        .setDepth(depth + 1);
-    };
-    const barValue = (y: number): Phaser.GameObjects.Text =>
-      this.add
-        .text(hudX + BAR_W - 5, y + 2, '', {
-          fontFamily: FONT,
-          fontSize: '12px',
-          color: '#ffffff',
-        })
-        .setOrigin(1, 0)
-        .setDepth(depth + 1);
+        .nineslice(PW / 2, PH / 2 + 4, TEX.uiFrame, undefined, PW, PH, sl, sl, sl, sl)
+        .setTint(0x000000)
+        .setAlpha(0.28),
+    );
+    panel.add(this.add.nineslice(PW / 2, PH / 2, TEX.uiFrame, undefined, PW, PH, sl, sl, sl, sl));
 
-    // Low-HP danger vignette: red glow hugging the screen edges, pulsing while
-    // HP is critical. Drawn as nested fading border bands (pixel-art friendly,
-    // no blur). Sits just under the HUD/controls.
+    // Low-HP danger vignette (full screen, just under the HUD).
     this.lowHpVignette = this.add.graphics().setDepth(depth - 1).setScrollFactor(0).setVisible(false);
-    const bands = 9;
-    for (let i = 0; i < bands; i++) {
-      const a = 0.22 * (1 - i / bands);
-      this.lowHpVignette.lineStyle(2, 0xff2030, a);
+    for (let i = 0; i < 9; i++) {
+      this.lowHpVignette.lineStyle(2, 0xff2030, 0.22 * (1 - i / 9));
       this.lowHpVignette.strokeRect(i, i, w - i * 2, h - i * 2);
     }
 
-    this.hpBar = makeBar(insets.top + 4, 0xef8a3c);
-    barLabel(insets.top + 4, 'HP');
-    this.hpText = barValue(insets.top + 4);
+    // Left: job/family emblem cell.
+    const emblemFor = (): { tex: string; color: number } => {
+      const fam = getJob(gameState.jobId)?.family ?? '';
+      const m: Record<string, { tex: string; color: number }> = {
+        warrior: { tex: TEX.iconSword, color: 0xcc5a5a },
+        mage: { tex: TEX.iconStaff, color: 0x5a9ad0 },
+        cleric: { tex: TEX.iconShield, color: 0xf5c542 },
+        thief: { tex: TEX.iconBow, color: 0x6db06a },
+        tamer: { tex: TEX.iconRing, color: 0xb07ad0 },
+      };
+      return m[fam] ?? { tex: TEX.iconGem, color: 0x9fd0ff };
+    };
+    const em0 = emblemFor();
+    const cell = this.add.graphics();
+    cell.fillStyle(0x1c2036, 1);
+    cell.fillRoundedRect(8, 12, 44, 44, 8);
+    cell.lineStyle(1.5, 0x46508a, 0.9);
+    cell.strokeRoundedRect(8, 12, 44, 44, 8);
+    panel.add(cell);
+    const jobIcon = this.add.image(30, 34, em0.tex).setScale(2).setTint(em0.color);
+    panel.add(jobIcon);
+
+    // Right column: Lv/職業 + HP/MP/EXP bars.
+    const rx = 58;
+    const rw = PW - rx - 10; // 138
+    this.jobText = this.add.text(rx, 6, '', {
+      fontFamily: FONT,
+      fontSize: '12px',
+      color: '#ffe9a8',
+      fontStyle: 'bold',
+    });
+    panel.add(this.jobText);
+    const refreshJob = (): void => {
+      this.jobText.setText(`Lv ${gameState.level}  ${getJob(gameState.jobId)?.name ?? gameState.jobId}`);
+      const em = emblemFor();
+      jobIcon.setTexture(em.tex).setTint(em.color);
+    };
+
+    const makeBar = (by: number, bh: number, color: number): Phaser.GameObjects.Rectangle => {
+      const g = this.add.graphics();
+      g.fillStyle(0x000000, 0.3);
+      g.fillRoundedRect(rx, by + 1.5, rw, bh, bh / 2);
+      g.fillStyle(0x0e1220, 0.95);
+      g.fillRoundedRect(rx, by, rw, bh, bh / 2);
+      g.lineStyle(1, 0xffffff, 0.08);
+      g.strokeRoundedRect(rx, by, rw, bh, bh / 2);
+      panel.add(g);
+      const fill = this.add.rectangle(rx + 2, by + 2, rw - 4, bh - 4, color, 1).setOrigin(0, 0);
+      panel.add(fill);
+      return fill;
+    };
+    const barText = (by: number, bh: number, label: string): Phaser.GameObjects.Text => {
+      const lab = this.add
+        .text(rx + 5, by + bh / 2, label, { fontFamily: FONT, fontSize: '9px', color: '#ffffff' })
+        .setOrigin(0, 0.5)
+        .setAlpha(0.7);
+      lab.setShadow(0, 1, '#000000', 2);
+      panel.add(lab);
+      const val = this.add
+        .text(rx + rw - 4, by + bh / 2, '', { fontFamily: FONT, fontSize: '10px', color: '#ffffff' })
+        .setOrigin(1, 0.5);
+      val.setShadow(0, 1, '#000000', 2);
+      panel.add(val);
+      return val;
+    };
+
+    this.hpBar = makeBar(28, 12, 0xef8a3c);
+    this.hpText = barText(28, 12, 'HP');
+    this.mpBar = makeBar(46, 12, 0x3aa0e0);
+    this.mpText = barText(46, 12, 'MP');
+    this.expBar = makeBar(64, 8, 0xf5c542);
+    this.expText = barText(64, 8, 'EXP');
+
+    // Gold at panel bottom (coin + amount).
+    panel.add(this.add.circle(rx + 6, 88, 5, 0xf5c542).setStrokeStyle(1.5, 0x8a6a1a, 1));
+    this.goldText = this.add.text(rx + 16, 82, '', { fontFamily: FONT, fontSize: '12px', color: '#ffd86b' });
+    panel.add(this.goldText);
+
+    // Buff indicator (panel bottom-right; shows while a temp buff is active).
+    const buffChip = this.add
+      .text(150, 84, '▲強化', { fontFamily: FONT, fontSize: '10px', color: '#ffd86b' })
+      .setVisible(false);
+    panel.add(buffChip);
+
+    // Initial values (bars need a fill before the first bus event).
+    const d0 = gameState.derived;
+    this.hpText.setText(`${gameState.hp}/${d0.maxHp}`);
+    this.hpBar.scaleX = d0.maxHp > 0 ? Phaser.Math.Clamp(gameState.hp / d0.maxHp, 0, 1) : 0;
+    this.mpText.setText(`${gameState.mp}/${d0.maxMp}`);
+    this.mpBar.scaleX = d0.maxMp > 0 ? Phaser.Math.Clamp(gameState.mp / d0.maxMp, 0, 1) : 0;
+    this.goldText.setText(`${gameState.gold}`);
+    refreshJob();
+
+    // Bus wiring.
+    this.busOff.push(bus.on('job:changed', refreshJob));
+    this.busOff.push(bus.on('player:level-up', refreshJob));
     this.busOff.push(
       bus.on('player:hp-changed', ({ current, max }) => {
         this.hpText.setText(`${current}/${max}`);
@@ -205,85 +269,20 @@ export class UIScene extends Phaser.Scene {
         this.updateLowHpVignette(max > 0 ? current / max : 0);
       }),
     );
-
-    this.mpBar = makeBar(insets.top + 24, 0x3aa0e0);
-    barLabel(insets.top + 24, 'MP');
-    this.mpText = barValue(insets.top + 24);
     this.busOff.push(
       bus.on('player:mp-changed', ({ current, max }) => {
         this.mpText.setText(`${current}/${max}`);
         this.mpBar.scaleX = max > 0 ? Phaser.Math.Clamp(current / max, 0, 1) : 0;
       }),
     );
-
-    // Level + job in a matching framed box, directly under the MP bar.
-    const lvY = insets.top + 44;
-    const lvG = this.add.graphics().setDepth(depth);
-    lvG.fillStyle(0x0e1220, 0.92);
-    lvG.fillRoundedRect(hudX, lvY, BAR_W, BAR_H, 6);
-    lvG.lineStyle(1, 0xffffff, 0.08);
-    lvG.strokeRoundedRect(hudX, lvY, BAR_W, BAR_H, 6);
-    this.jobText = this.add
-      .text(hudX + 5, lvY + 2, '', {
-        fontFamily: FONT,
-        fontSize: '11px',
-        color: '#ffe9a8',
-        fontStyle: 'bold',
-      })
-      .setDepth(depth + 1);
-    const refreshJob = (): void => {
-      const name = getJob(gameState.jobId)?.name ?? gameState.jobId;
-      this.jobText.setText(`Lv ${gameState.level}  ${name}`);
-    };
-    refreshJob();
-    this.busOff.push(bus.on('job:changed', refreshJob));
-    this.busOff.push(bus.on('player:level-up', refreshJob));
-
-    // EXP as a labelled bar under the level box (value = current/toNext),
-    // kept in sync with exp gains and level-ups.
-    const expY = insets.top + 64;
-    this.expBar = makeBar(expY, 0xf5c542);
-    barLabel(expY, 'EXP');
-    this.expText = barValue(expY);
     const setExp = (cur: number, toNext: number): void => {
       this.expText.setText(`${cur}/${toNext}`);
       this.expBar.scaleX = toNext > 0 ? Phaser.Math.Clamp(cur / toNext, 0, 1) : 0;
     };
     setExp(gameState.exp, expToNext(gameState.level));
     this.busOff.push(bus.on('player:exp-changed', ({ current, toNext }) => setExp(current, toNext)));
-    this.busOff.push(
-      bus.on('player:level-up', () => setExp(gameState.exp, expToNext(gameState.level))),
-    );
-
-    // Gold under the EXP bar. Coin icon + amount — a bare "G" suffix reads as
-    // "6" at this size in the dot font.
-    const goldY = insets.top + 86;
-    this.add
-      .circle(insets.left + 13, goldY + 8, 5, 0xf5c542)
-      .setStrokeStyle(1.5, 0x8a6a1a, 1)
-      .setDepth(depth);
-    this.goldText = this.add
-      .text(insets.left + 22, goldY, '', {
-        fontFamily: FONT,
-        fontSize: '12px',
-        color: '#ffd86b',
-      })
-      .setDepth(depth);
-    this.busOff.push(
-      bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current}`)),
-    );
-
-    // Buff indicator: shows while a temporary skill buff is active.
-    const buffChip = this.add
-      .text(hudX + 64, goldY, '▲強化中', {
-        fontFamily: FONT,
-        fontSize: '11px',
-        color: '#ffd86b',
-        backgroundColor: '#00000066',
-        padding: { x: 3, y: 1 },
-      })
-      .setDepth(depth)
-      .setVisible(false);
+    this.busOff.push(bus.on('player:level-up', () => setExp(gameState.exp, expToNext(gameState.level))));
+    this.busOff.push(bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current}`)));
     this.busOff.push(
       bus.on('player:stats-recomputed', () => buffChip.setVisible(gameState.tempBuffs.length > 0)),
     );
@@ -291,9 +290,10 @@ export class UIScene extends Phaser.Scene {
     // Quest tracker: current goal pinned under the HUD block so the player
     // always knows what to do next ("game tells, player does, game rewards").
     // A small rounded card with a gold quest marker — not a debug text box.
-    const trY = insets.top + 106;
+    const hudX = insets.left + 8;
+    const trY = insets.top + 8 + 100 + 8; // just below the statusPanel
     const trW = 176;
-    const trPanel = this.add.graphics().setDepth(depth - 1);
+    const trPanel = this.add.graphics().setDepth(depth);
     trPanel.fillStyle(0x141726, 0.82);
     trPanel.fillRoundedRect(hudX - 2, trY - 4, trW, 42, 7);
     trPanel.fillStyle(0xf5c542, 0.9);

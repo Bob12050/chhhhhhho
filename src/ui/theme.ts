@@ -19,6 +19,13 @@ export const FONT =
 /** Pixel display font (self-hosted DotGothic16 subset) — title/logo only. */
 export const FONT_PIXEL = "'DotGothic16', system-ui, sans-serif";
 
+/**
+ * HUD render depth floor. World objects Y-sort at `round(y)` (at most a few
+ * thousand), so pinning every HUD element at/above this guarantees the overlay
+ * never interleaves with the world. Use `HUD_DEPTH + n` for small in-HUD layers.
+ */
+export const HUD_DEPTH = 100000;
+
 /** Shared palette. Numbers are for Phaser fills; strings for text colors. */
 export const UI = {
   // Fills (numbers)
