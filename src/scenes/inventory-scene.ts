@@ -9,7 +9,7 @@ import { expToNext } from '@/stats/leveling';
 import { allSkills } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
-import { FONT, UI, addPanelChrome, rowBand } from '@/ui/theme';
+import { FONT, addPanelChrome, rowBand, tabChip, pillButton, type TabHandle } from '@/ui/theme';
 import { returnToTitle } from '@/core/game-flow';
 import { ELEMENT_LABEL, ELEMENT_COLOR, isElement } from '@/combat/elements';
 
@@ -60,7 +60,7 @@ export class InventoryScene extends Phaser.Scene {
   private tab: Tab = 'items';
   private content!: Phaser.GameObjects.Container;
   private goldText!: Phaser.GameObjects.Text;
-  private tabButtons: { id: Tab; text: Phaser.GameObjects.Text }[] = [];
+  private tabButtons: { id: Tab; tab: TabHandle }[] = [];
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
@@ -103,24 +103,12 @@ export class InventoryScene extends Phaser.Scene {
     ];
     const tabW = Math.floor((w - 16) / tabs.length);
     tabs.forEach((t, i) => {
-      const tb = this.add
-        .text(8 + i * tabW + tabW / 2, 66, t.label, {
-          fontFamily: FONT,
-          fontSize: '13px',
-          color: '#fff',
-          backgroundColor: UI.tabIdleBg,
-          padding: { x: 12, y: 9 },
-          fixedWidth: tabW - 4,
-          align: 'center',
-        })
-        .setOrigin(0.5)
-        .setDepth(3)
-        .setInteractive({ useHandCursor: true });
-      tb.on('pointerup', () => {
+      const tab = tabChip(this, 8 + i * tabW + tabW / 2, 66, tabW, t.label, () => {
         this.tab = t.id;
         this.renderTab();
       });
-      this.tabButtons.push({ id: t.id, text: tb });
+      tab.root.setDepth(3);
+      this.tabButtons.push({ id: t.id, tab });
     });
 
     this.content = this.add.container(0, 0).setDepth(1);
@@ -131,18 +119,11 @@ export class InventoryScene extends Phaser.Scene {
     this.setupScroll();
 
     // Close + return-to-title.
-    const close = this.add
-      .text(w / 2, h - 44, 'とじる', {
-        fontFamily: FONT,
-        fontSize: '16px',
-        color: '#ffd86b',
-        backgroundColor: '#2a3050',
-        padding: { x: 10, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    close.on('pointerup', () => this.close());
+    pillButton(this, w / 2, h - 44, 'とじる', () => this.close(), {
+      color: '#ffe9a8',
+      bg: '#39406a',
+      size: 15,
+    }).setDepth(3);
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
     const toTitle = this.add
@@ -243,7 +224,7 @@ export class InventoryScene extends Phaser.Scene {
     this.scrollY = 0;
     this.content.y = 0;
     for (const tb of this.tabButtons) {
-      tb.text.setBackgroundColor(tb.id === this.tab ? UI.tabActiveBg : UI.tabIdleBg);
+      tb.tab.setActive(tb.id === this.tab);
     }
     if (this.tab === 'items') this.renderItems();
     else if (this.tab === 'consumables') this.renderConsumables();

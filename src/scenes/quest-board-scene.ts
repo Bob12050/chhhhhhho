@@ -12,7 +12,7 @@ import {
 } from '@/quests/quests';
 import { getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
-import { FONT, UI, addPanelChrome } from '@/ui/theme';
+import { FONT, UI, addPanelChrome, tabChip, pillButton, type TabHandle } from '@/ui/theme';
 
 /**
  * Quest Board overlay (opened by the town board NPC). Lists active quests (with
@@ -27,7 +27,7 @@ export class QuestBoardScene extends Phaser.Scene {
   private viewTop = 92;
   private viewBottom = 0;
   private tab: 'normal' | 'hunt' = 'normal';
-  private tabButtons: { id: 'normal' | 'hunt'; text: Phaser.GameObjects.Text }[] = [];
+  private tabButtons: { id: 'normal' | 'hunt'; tab: TabHandle }[] = [];
   /** In the 大型狩猟 tab: null = show the ★rank list, else the picked rank's quests. */
   private selectedRank: number | null = null;
 
@@ -54,24 +54,15 @@ export class QuestBoardScene extends Phaser.Scene {
       { id: 'hunt', label: '大型狩猟' },
     ];
     tabs.forEach((t, i) => {
-      const tb = this.add
-        .text(16 + i * 130, 56, t.label, {
-          fontFamily: FONT,
-          fontSize: '13px',
-          color: '#fff',
-          backgroundColor: UI.tabIdleBg,
-          padding: { x: 12, y: 8 },
-        })
-        .setDepth(3)
-        .setInteractive({ useHandCursor: true });
-      tb.on('pointerup', () => {
+      const tab = tabChip(this, 78 + i * 130, 56, 124, t.label, () => {
         if (this.dragged) return;
         this.tab = t.id;
         this.selectedRank = null;
         this.scrollY = 0;
         this.render();
       });
-      this.tabButtons.push({ id: t.id, text: tb });
+      tab.root.setDepth(3);
+      this.tabButtons.push({ id: t.id, tab });
     });
 
     this.content = this.add.container(0, 0).setDepth(1);
@@ -80,18 +71,11 @@ export class QuestBoardScene extends Phaser.Scene {
     addPanelChrome(this, this.viewTop, this.viewBottom);
     this.setupScroll();
 
-    const close = this.add
-      .text(w / 2, h - 40, 'とじる', {
-        fontFamily: FONT,
-        fontSize: '16px',
-        color: '#ffd86b',
-        backgroundColor: '#2a3050',
-        padding: { x: 10, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    close.on('pointerup', () => this.close());
+    pillButton(this, w / 2, h - 40, 'とじる', () => this.close(), {
+      color: '#ffe9a8',
+      bg: '#39406a',
+      size: 15,
+    }).setDepth(3);
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
     this.render();
@@ -141,8 +125,7 @@ export class QuestBoardScene extends Phaser.Scene {
   private render(): void {
     this.content.removeAll(true);
     const w = this.scale.width;
-    for (const tb of this.tabButtons)
-      tb.text.setBackgroundColor(tb.id === this.tab ? UI.tabActiveBg : UI.tabIdleBg);
+    for (const tb of this.tabButtons) tb.tab.setActive(tb.id === this.tab);
 
     let y = this.viewTop + 8;
     // 大型狩猟 tab, no rank picked yet: show the ★rank menu (drill-down).

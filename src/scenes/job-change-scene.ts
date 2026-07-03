@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { allJobs, getJob, type JobDef } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
-import { FONT, addPanelChrome, rowBand } from '@/ui/theme';
+import { FONT, addPanelChrome, rowBand, pillButton } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
 
 /** Emblem (icon + colour) per class family for the job list. */
@@ -38,43 +38,21 @@ export class JobChangeScene extends Phaser.Scene {
       .text(16, 24, '転職', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
       .setDepth(3);
 
-    const treeBtn = this.add
-      .text(w - 16, 24, 'ツリーを見る', {
-        fontFamily: FONT,
-        fontSize: '12px',
-        color: '#c8b6ff',
-        backgroundColor: '#2a3050',
-        padding: { x: 10, y: 5 },
-      })
-      .setOrigin(1, 0)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    treeBtn.on('pointerup', () => {
+    pillButton(this, w - 58, 30, 'ツリーを見る', () => {
       if (this.dragged) return;
       this.scene.pause();
       this.scene.launch('JobTree');
-    });
+    }, { color: '#d8ccff', bg: '#39406a', size: 12 }).setDepth(3);
 
     this.content = this.add.container(0, 0).setDepth(1);
     // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1).
     addPanelChrome(this, this.viewTop, this.viewBottom);
     this.setupScroll();
 
-    const close = this.add
-      .text(w / 2, h - 36, 'とじる', {
-        fontFamily: FONT,
-        fontSize: '16px',
-        color: '#ffd86b',
-        backgroundColor: '#2a3050',
-        padding: { x: 10, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    close.on('pointerup', () => {
+    pillButton(this, w / 2, h - 36, 'とじる', () => {
       if (this.dragged) return;
       this.close();
-    });
+    }, { color: '#ffe9a8', bg: '#39406a', size: 15 }).setDepth(3);
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
     this.render();

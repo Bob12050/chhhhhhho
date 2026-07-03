@@ -5,7 +5,7 @@ import { rarityColorHex, rarityColor } from '@/data/rarity';
 import { allRecipes, type Recipe } from '@/crafting/recipes';
 import { craft, craftBlock } from '@/crafting/crafting';
 import { bus } from '@/core/event-bus';
-import { FONT, UI, addPanelChrome, rowBand } from '@/ui/theme';
+import { FONT, addPanelChrome, rowBand, tabChip, pillButton, type TabHandle } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
 
 /**
@@ -24,7 +24,7 @@ export class CraftingScene extends Phaser.Scene {
   private viewTop = 88;
   private viewBottom = 0;
   private tab: CraftTab = 'weapon';
-  private tabButtons: { id: CraftTab; text: Phaser.GameObjects.Text }[] = [];
+  private tabButtons: { id: CraftTab; tab: TabHandle }[] = [];
 
   constructor() {
     super('Crafting');
@@ -60,23 +60,14 @@ export class CraftingScene extends Phaser.Scene {
       { id: 'tool', label: 'どうぐ' },
     ];
     tabs.forEach((t, i) => {
-      const tb = this.add
-        .text(12 + i * 78, 54, t.label, {
-          fontFamily: FONT,
-          fontSize: '13px',
-          color: '#fff',
-          backgroundColor: UI.tabIdleBg,
-          padding: { x: 12, y: 8 },
-        })
-        .setDepth(3)
-        .setInteractive({ useHandCursor: true });
-      tb.on('pointerup', () => {
+      const tab = tabChip(this, 46 + i * 78, 60, 74, t.label, () => {
         if (this.dragged) return;
         this.tab = t.id;
         this.scrollY = 0;
         this.render();
       });
-      this.tabButtons.push({ id: t.id, text: tb });
+      tab.root.setDepth(3);
+      this.tabButtons.push({ id: t.id, tab });
     });
 
     this.content = this.add.container(0, 0).setDepth(1);
@@ -84,18 +75,11 @@ export class CraftingScene extends Phaser.Scene {
     addPanelChrome(this, this.viewTop, this.viewBottom);
     this.setupScroll();
 
-    const close = this.add
-      .text(w / 2, h - 40, 'とじる', {
-        fontFamily: FONT,
-        fontSize: '16px',
-        color: '#ffd86b',
-        backgroundColor: '#2a3050',
-        padding: { x: 10, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    close.on('pointerup', () => this.close());
+    pillButton(this, w / 2, h - 40, 'とじる', () => this.close(), {
+      color: '#ffe9a8',
+      bg: '#39406a',
+      size: 15,
+    }).setDepth(3);
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
     this.render();
@@ -131,9 +115,7 @@ export class CraftingScene extends Phaser.Scene {
   private render(): void {
     this.content.removeAll(true);
     this.goldText.setText(`${gameState.gold}`);
-    for (const tb of this.tabButtons) {
-      tb.text.setBackgroundColor(tb.id === this.tab ? UI.tabActiveBg : UI.tabIdleBg);
-    }
+    for (const tb of this.tabButtons) tb.tab.setActive(tb.id === this.tab);
     const w = this.scale.width;
     let y = this.viewTop + 8;
     const list = allRecipes().filter((r) => this.recipeCategory(r) === this.tab);

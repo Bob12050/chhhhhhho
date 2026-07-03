@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { travelMaps, getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
-import { FONT, addPanelChrome } from '@/ui/theme';
+import { FONT, addPanelChrome, pillButton } from '@/ui/theme';
 
 /**
  * Fast-travel map list. Opened from the HUD map button anywhere. Picking a
@@ -41,21 +41,10 @@ export class MapSelectScene extends Phaser.Scene {
     addPanelChrome(this, this.viewTop, this.viewBottom);
     this.setupScroll();
 
-    const close = this.add
-      .text(w / 2, h - 36, 'とじる', {
-        fontFamily: FONT,
-        fontSize: '16px',
-        color: '#ffd86b',
-        backgroundColor: '#2a3050',
-        padding: { x: 10, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    close.on('pointerup', () => {
+    pillButton(this, w / 2, h - 36, 'とじる', () => {
       if (this.dragged) return;
       this.close();
-    });
+    }, { color: '#ffe9a8', bg: '#39406a', size: 15 }).setDepth(3);
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
     this.render();

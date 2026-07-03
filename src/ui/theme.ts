@@ -146,6 +146,53 @@ function hexNum(s: string): number {
   return parseInt(s.replace('#', ''), 16);
 }
 
+/** A rounded tab chip with a toggleable active state. */
+export interface TabHandle {
+  root: Phaser.GameObjects.Container;
+  setActive(active: boolean): void;
+}
+
+/**
+ * Rounded, modern tab chip (replaces the flat text-background tabs). Active =
+ * lighter fill + a gold underline accent + white label; idle = dark + muted.
+ * `width` is the chip's box width (callers usually pass an equal-share width).
+ */
+export function tabChip(
+  scene: Phaser.Scene,
+  cx: number,
+  cy: number,
+  width: number,
+  label: string,
+  onTap: () => void,
+): TabHandle {
+  const h = 30;
+  const bw = width - 4;
+  const txt = scene.add
+    .text(0, 0, label, { fontFamily: FONT, fontSize: '13px', color: '#fff' })
+    .setOrigin(0.5);
+  const g = scene.add.graphics();
+  const root = scene.add.container(cx, cy, [g, txt]);
+  root
+    .setSize(bw, h)
+    .setInteractive(new Phaser.Geom.Rectangle(-bw / 2, -h / 2, bw, h), Phaser.Geom.Rectangle.Contains);
+  root.on('pointerup', onTap);
+  const draw = (active: boolean): void => {
+    g.clear();
+    const r = 9;
+    g.fillStyle(active ? 0x37406a : 0x191d30, active ? 1 : 0.8);
+    g.fillRoundedRect(-bw / 2, -h / 2, bw, h, { tl: r, tr: r, bl: 4, br: 4 });
+    if (active) {
+      g.fillStyle(0xf5c542, 0.95);
+      g.fillRoundedRect(-bw / 2 + 7, h / 2 - 5, bw - 14, 3, 2);
+    }
+    g.lineStyle(1, 0xffffff, active ? 0.18 : 0.06);
+    g.strokeRoundedRect(-bw / 2, -h / 2, bw, h, { tl: r, tr: r, bl: 4, br: 4 });
+    txt.setColor(active ? '#ffffff' : '#a7adc2');
+  };
+  draw(false);
+  return { root, setActive: draw };
+}
+
 /**
  * Rounded, soft menu button. Draws a rounded-rect backing (fill + top sheen +
  * subtle border + a 1px drop line) with the label centred on top, wrapped in a
