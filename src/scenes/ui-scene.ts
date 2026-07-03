@@ -290,25 +290,27 @@ export class UIScene extends Phaser.Scene {
 
     // Quest tracker: current goal pinned under the HUD block so the player
     // always knows what to do next ("game tells, player does, game rewards").
+    // A small rounded card with a gold quest marker — not a debug text box.
     const trY = insets.top + 106;
+    const trW = 176;
+    const trPanel = this.add.graphics().setDepth(depth - 1);
+    trPanel.fillStyle(0x141726, 0.82);
+    trPanel.fillRoundedRect(hudX - 2, trY - 4, trW, 42, 7);
+    trPanel.fillStyle(0xf5c542, 0.9);
+    trPanel.fillRoundedRect(hudX - 2, trY - 4, 3, 42, { tl: 7, bl: 7, tr: 0, br: 0 });
+    trPanel.lineStyle(1, 0xffffff, 0.07);
+    trPanel.strokeRoundedRect(hudX - 2, trY - 4, trW, 42, 7);
     const trTitle = this.add
-      .text(hudX, trY, '', {
-        fontFamily: FONT,
-        fontSize: '11px',
-        color: '#ffe9a8',
-        backgroundColor: '#00000066',
-        padding: { x: 4, y: 2 },
-      })
+      .text(hudX + 8, trY, '', { fontFamily: FONT, fontSize: '11px', color: '#ffe9a8' })
       .setDepth(depth);
     const trObj = this.add
-      .text(hudX, trY + 19, '', {
-        fontFamily: FONT,
-        fontSize: '10px',
-        color: '#cfd3e6',
-        backgroundColor: '#00000066',
-        padding: { x: 4, y: 2 },
-      })
+      .text(hudX + 8, trY + 19, '', { fontFamily: FONT, fontSize: '10px', color: '#cfd3e6' })
       .setDepth(depth);
+    const setTrackerVisible = (v: boolean): void => {
+      trPanel.setVisible(v);
+      trTitle.setVisible(v);
+      trObj.setVisible(v);
+    };
     const refreshTracker = (): void => {
       // First incomplete active quest; if everything is done, prompt to report.
       const active = gameState.activeQuests
@@ -316,12 +318,12 @@ export class UIScene extends Phaser.Scene {
         .filter((q): q is NonNullable<typeof q> => !!q);
       const current = active.find((q) => !isComplete(gameState, q.id)) ?? active[0];
       if (!current) {
-        trTitle.setText('').setVisible(false);
-        trObj.setText('').setVisible(false);
+        trTitle.setText('');
+        trObj.setText('');
+        setTrackerVisible(false);
         return;
       }
-      trTitle.setVisible(true);
-      trObj.setVisible(true);
+      setTrackerVisible(true);
       if (isComplete(gameState, current.id)) {
         trTitle.setText(`▶ ${current.name}`);
         trObj.setText('達成！ 掲示板で報告しよう');

@@ -53,6 +53,13 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.obstacle, 'assets/env/obstacle.png'),
   img(TEX.wall, 'assets/env/wall.png'),
   img(TEX.npc, 'assets/env/npc.png'),
+  // Role-specific town NPCs (drop real art to replace the placeholders).
+  img(TEX.npcMerchant, 'assets/env/npc_merchant.png'),
+  img(TEX.npcSmith, 'assets/env/npc_smith.png'),
+  img(TEX.npcGuild, 'assets/env/npc_guild.png'),
+  img(TEX.npcElder, 'assets/env/npc_elder.png'),
+  img(TEX.npcVillager, 'assets/env/npc_villager.png'),
+  img(TEX.sign, 'assets/env/sign.png'),
   // UI: one 9-slice frame drives every menu panel (48x48, ~16px corners).
   img(TEX.uiFrame, 'assets/ui/frame.png'),
 ];

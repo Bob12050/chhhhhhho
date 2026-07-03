@@ -193,20 +193,26 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     }
 
     if (p.label) {
+      const ly = exitUp ? cy + ph + 16 : cy - ph - 16;
       const label = scene.add
-        .text(cx, exitUp ? cy + ph + 16 : cy - ph - 16, locked ? `🔒 ${p.label}` : p.label, {
+        .text(cx, ly, locked ? `🔒 ${p.label}` : p.label, {
           fontFamily: FONT,
           fontSize: '10px',
           color: locked ? '#ffd0d0' : '#eaf7ff',
-          backgroundColor: '#00000055',
-          padding: { x: 4, y: 2 },
         })
         .setOrigin(0.5)
-        .setDepth(6);
+        .setDepth(7);
       // Edge portals: keep the label fully inside the map so the camera
       // (clamped to map bounds) can never crop it.
-      label.setX(Phaser.Math.Clamp(label.x, label.width / 2 + 2, w - label.width / 2 - 2));
-      label.setY(Phaser.Math.Clamp(label.y, label.height / 2 + 2, h - label.height / 2 - 2));
+      label.setX(Phaser.Math.Clamp(label.x, label.width / 2 + 6, w - label.width / 2 - 6));
+      label.setY(Phaser.Math.Clamp(label.y, 10, h - 10));
+      // Rounded pill behind the label (matches the menu chrome, not a hard box).
+      const pillW = label.width + 16;
+      const pill = scene.add.graphics().setDepth(6);
+      pill.fillStyle(0x0e1220, 0.72);
+      pill.fillRoundedRect(label.x - pillW / 2, label.y - 9, pillW, 18, 9);
+      pill.lineStyle(1, locked ? 0xffb0b0 : 0x8fd8ff, 0.35);
+      pill.strokeRoundedRect(label.x - pillW / 2, label.y - 9, pillW, 18, 9);
     }
   }
 

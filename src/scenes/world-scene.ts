@@ -513,26 +513,35 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private spawnNpc(x: number, y: number, label: string, action?: string, dialogueId?: string): void {
-    const sprite = this.physics.add.staticImage(x, y, TEX.npc).setOrigin(0.5, 0.875);
+    // Distinct look per role so the shopkeeper / smith / guild clerk / elder
+    // read as different characters instead of tinted clones.
+    const byAction: Record<string, string> = {
+      equip: TEX.npcMerchant,
+      craft: TEX.npcSmith,
+      job: TEX.npcGuild,
+      quest: TEX.npcElder,
+    };
+    const tex = byAction[action ?? ''] ?? TEX.npcVillager;
+    const sprite = this.physics.add.staticImage(x, y, tex).setOrigin(0.5, 0.875);
     sprite.setDepth(Math.round(y));
     this.add.ellipse(x, y + 2, 22, 8, 0x000000, 0.22).setDepth(4);
     this.npcSprites.push(sprite);
-    // Role-coloured robes so the shopkeeper/guild master/etc. stop being
-    // identical sextuplets (placeholder until each gets real art).
-    const NPC_TINTS = [0xffffff, 0xffd0a0, 0xa0d0ff, 0xb0ffb8, 0xffb0c8, 0xd8c0ff, 0xfff0a0];
-    let h = 0;
-    for (const ch of label) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-    sprite.setTint(NPC_TINTS[h % NPC_TINTS.length]);
-    this.add
-      .text(x, y - 58, label, {
-        fontFamily: FONT,
-        fontSize: '11px',
-        color: '#ffe',
-        // Dark backing keeps labels readable over bright building walls.
-        backgroundColor: '#00000066',
-        padding: { x: 3, y: 1 },
-      })
+    // Subtle per-villager tint variety (generic townsfolk only).
+    if (tex === TEX.npcVillager) {
+      let h = 0;
+      for (const ch of label + (dialogueId ?? '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+      sprite.setTint([0xffffff, 0xffe0c8, 0xd8e4ff, 0xd8ffe0, 0xffe0f0][h % 5]);
+    }
+    // Hanging wooden signboard above the head (replaces floating debug-y text).
+    const signY = y - 80;
+    const txt = this.add
+      .text(x, signY, label, { fontFamily: FONT, fontSize: '11px', color: '#fbe7c2' })
       .setOrigin(0.5)
+      .setDepth(Math.round(y) + 2);
+    const signW = Math.ceil(txt.width) + 18;
+    this.add
+      .image(x, signY, TEX.sign)
+      .setDisplaySize(signW, 20)
       .setDepth(Math.round(y) + 1);
     this.npcs.push({ x, y, action, dialogueId });
   }
