@@ -38,28 +38,11 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
 
   scene.add.tileSprite(0, 0, w, h, GROUND_TEX[map.ground]).setOrigin(0).setDepth(-1000);
 
-  // Break the single-tile lawn repeat with per-tile mottling: scatter individual
-  // 32px grass2 tiles on the grid (grass2 is near-tone, so a single grid-aligned
-  // tile blends with no visible seam). NO large rectangles — those read as debug
-  // blocks. Deterministic per-map so revisits look identical.
-  if (map.ground === 'grass') {
-    let gseed = 7;
-    for (const ch of map.id) gseed = (gseed * 31 + ch.charCodeAt(0)) >>> 0;
-    const grng = new Rng(gseed || 3);
-    const cols = Math.ceil(w / 32);
-    const rows = Math.ceil(h / 32);
-    for (let cy = 0; cy < rows; cy++) {
-      for (let cx = 0; cx < cols; cx++) {
-        if (grng.intRange(0, 99) < 22) {
-          scene.add
-            .image(cx * 32, cy * 32, TEX.tileGrass2)
-            .setOrigin(0)
-            .setDepth(-1000)
-            .setAlpha(0.6);
-        }
-      }
-    }
-  }
+  // NOTE: grass2 tile scatter was removed — even per-tile random placement forms
+  // adjacent 2×2+ clusters that read as dark square "debug blocks". Lawn variety
+  // now comes only from the base tile's internal mottle + scattered decor
+  // (tufts/flowers/pebbles), which never forms rectangles. Do NOT re-add grid
+  // tile scatter for colour variation (see VISUAL_GUIDE §9).
 
   const pathOff = pathOffsetFn(map, w, h);
   if (map.path) {
