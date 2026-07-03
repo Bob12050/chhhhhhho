@@ -51,6 +51,8 @@ export interface MapNpc {
   action?: string;
   /** Dialogue shown on interact (talk NPCs). */
   dialogueId?: string;
+  /** Nameplate Y offset from the NPC's feet (px, negative = up). Default -66. */
+  nameplateOffsetY?: number;
 }
 
 export type LandmarkKind = 'big_tree' | 'ruin' | 'stone_circle' | 'campfire';
@@ -66,6 +68,12 @@ export interface BuildingDef {
   shop?: 'equip' | 'craft' | 'guild' | 'house';
   /** Ground contact shadow style (see VISUAL_GUIDE §6). Default 'soft'. */
   shadowType?: 'soft' | 'hard' | 'none';
+  /** Companion NPC look key (metadata; NPCs are still placed as map.npcs). */
+  npcType?: 'merchant' | 'smith' | 'guild' | 'elder' | 'villager';
+  /** Override the hanging-sign icon (else derived from `shop`). */
+  signIcon?: 'sword' | 'hammer' | 'shield' | 'potion' | 'scroll' | 'coin';
+  /** Storefront props placed at building-relative px (feet-shadowed, Y-sorted). */
+  props?: Array<{ kind: 'barrel' | 'crate' | 'signpost' | 'lantern' | 'banner'; dx: number; dy: number }>;
 }
 
 export interface MapDef {

@@ -102,7 +102,26 @@
    "w": 104,
    "h": 84,
    "style": "plaster",
-   "shop": "equip"
+   "shop": "equip",
+   "npcType": "merchant",
+   "signIcon": "sword",
+   "props": [
+    {
+     "kind": "barrel",
+     "dx": 14,
+     "dy": 92
+    },
+    {
+     "kind": "crate",
+     "dx": 30,
+     "dy": 94
+    },
+    {
+     "kind": "lantern",
+     "dx": 98,
+     "dy": 90
+    }
+   ]
   },
   {
    "x": 220,
@@ -110,7 +129,21 @@
    "w": 104,
    "h": 84,
    "style": "wood",
-   "shop": "guild"
+   "shop": "guild",
+   "npcType": "guild",
+   "signIcon": "shield",
+   "props": [
+    {
+     "kind": "banner",
+     "dx": 10,
+     "dy": 92
+    },
+    {
+     "kind": "signpost",
+     "dx": 96,
+     "dy": 94
+    }
+   ]
   },
   {
    "x": 36,
@@ -118,7 +151,21 @@
    "w": 104,
    "h": 84,
    "style": "stone",
-   "shop": "craft"
+   "shop": "craft",
+   "npcType": "smith",
+   "signIcon": "hammer",
+   "props": [
+    {
+     "kind": "barrel",
+     "dx": 16,
+     "dy": 92
+    },
+    {
+     "kind": "crate",
+     "dx": 92,
+     "dy": 94
+    }
+   ]
   },
   {
    "x": 232,
@@ -126,7 +173,14 @@
    "w": 92,
    "h": 76,
    "style": "wood",
-   "shop": "house"
+   "shop": "house",
+   "props": [
+    {
+     "kind": "barrel",
+     "dx": 12,
+     "dy": 84
+    }
+   ]
   },
   {
    "x": 40,
@@ -134,7 +188,14 @@
    "w": 92,
    "h": 76,
    "style": "plaster",
-   "shop": "house"
+   "shop": "house",
+   "props": [
+    {
+     "kind": "crate",
+     "dx": 80,
+     "dy": 84
+    }
+   ]
   }
  ],
  "ambient": {

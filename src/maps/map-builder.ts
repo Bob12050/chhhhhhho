@@ -320,6 +320,7 @@ function drawBuilding(
   }
 
   if (b.shop && b.shop !== 'house') drawShopFront(g, b, roofH);
+  drawProps(scene, b);
 
   // Collision over the wall (roof top stays walk-behind-able for depth feel).
   const solidY = b.y + roofH - 6;
@@ -375,7 +376,7 @@ function drawShopFront(g: Phaser.GameObjects.Graphics, b: BuildingDef, roofH: nu
   g.fillRect(sx - 11, sy - 8, 22, 17); // board border
   g.fillStyle(f.board, 1);
   g.fillRect(sx - 9, sy - 6, 18, 13);
-  drawShopIcon(g, sx, sy, f.icon);
+  drawShopIcon(g, sx, sy, b.signIcon ?? f.icon);
 }
 
 /** Tiny role icon centred at (cx,cy) on a hanging sign. */
@@ -390,13 +391,80 @@ function drawShopIcon(g: Phaser.GameObjects.Graphics, cx: number, cy: number, ic
     g.fillRect(cx - 5, cy - 5, 10, 5); // head
     g.fillStyle(0x8a5a30, 1);
     g.fillRect(cx - 1, cy - 5, 2, 11); // handle
-  } else {
+  } else if (icon === 'shield') {
     g.fillStyle(0xf5c542, 1);
     g.fillRect(cx - 5, cy - 5, 10, 6); // shield top
     g.fillRect(cx - 4, cy + 1, 8, 3);
     g.fillRect(cx - 2, cy + 4, 4, 2);
     g.fillStyle(0xffffff, 0.4);
     g.fillRect(cx - 3, cy - 4, 2, 5);
+  } else if (icon === 'potion') {
+    g.fillStyle(0xd8dce6, 1);
+    g.fillRect(cx - 2, cy - 6, 4, 3); // neck
+    g.fillRect(cx - 4, cy - 3, 8, 8); // flask
+    g.fillStyle(0xe0587a, 1);
+    g.fillRect(cx - 3, cy, 6, 4); // liquid
+  } else if (icon === 'scroll') {
+    g.fillStyle(0xe8dcb0, 1);
+    g.fillRect(cx - 5, cy - 5, 10, 10);
+    g.fillStyle(0x9a7038, 1);
+    g.fillRect(cx - 5, cy - 5, 10, 2);
+    g.fillRect(cx - 5, cy + 3, 10, 2);
+    g.fillStyle(0x8a5a2a, 1);
+    g.fillRect(cx - 3, cy - 1, 6, 1);
+    g.fillRect(cx - 3, cy + 1, 5, 1);
+  } else {
+    g.fillStyle(0xf5c542, 1); // coin
+    g.fillRect(cx - 4, cy - 5, 8, 10);
+    g.fillRect(cx - 5, cy - 4, 10, 8);
+    g.fillStyle(0xc79a2a, 1);
+    g.fillRect(cx - 1, cy - 3, 2, 6);
+  }
+}
+
+/** Storefront props (barrels/crates/signposts/lanterns/banners), Y-sorted with
+ * their own ground shadow. `dx/dy` are relative to the building's top-left. */
+function drawProps(scene: Phaser.Scene, b: BuildingDef): void {
+  for (const p of b.props ?? []) {
+    const fx = Math.round(b.x + p.dx);
+    const fy = Math.round(b.y + p.dy); // foot line of the prop
+    scene.add.image(fx, fy + 2, TEX.groundShadow).setDisplaySize(16, 7).setDepth(Math.round(fy) - 1);
+    const g = scene.add.graphics().setDepth(Math.round(fy));
+    drawProp(g, p.kind, fx, fy);
+  }
+}
+
+/** One prop, drawn with its foot centred at (cx, fy). */
+function drawProp(g: Phaser.GameObjects.Graphics, kind: string, cx: number, fy: number): void {
+  if (kind === 'barrel') {
+    g.fillStyle(0x2a1c12, 1); g.fillRect(cx - 8, fy - 18, 16, 18);
+    g.fillStyle(0x7a5636, 1); g.fillRect(cx - 7, fy - 17, 14, 16);
+    g.fillStyle(0x8a6642, 1); g.fillRect(cx - 7, fy - 17, 14, 3);
+    g.fillStyle(0x5a3f28, 1); g.fillRect(cx - 7, fy - 11, 14, 2); g.fillRect(cx - 7, fy - 6, 14, 2);
+    g.fillStyle(0x63472c, 1); g.fillRect(cx - 6, fy - 18, 12, 2);
+  } else if (kind === 'crate') {
+    g.fillStyle(0x3a2a1a, 1); g.fillRect(cx - 8, fy - 16, 16, 16);
+    g.fillStyle(0x9a7038, 1); g.fillRect(cx - 7, fy - 15, 14, 14);
+    g.fillStyle(0x7a5628, 1);
+    g.fillRect(cx - 7, fy - 15, 14, 2); g.fillRect(cx - 7, fy - 3, 14, 2);
+    g.fillRect(cx - 7, fy - 15, 2, 14); g.fillRect(cx + 5, fy - 15, 2, 14);
+    for (let i = 0; i < 12; i++) g.fillRect(cx - 6 + i, fy - 14 + i, 2, 1);
+  } else if (kind === 'signpost') {
+    g.fillStyle(0x5a3f28, 1); g.fillRect(cx - 1, fy - 22, 3, 22);
+    g.fillStyle(0x241812, 1); g.fillRect(cx - 9, fy - 22, 18, 10);
+    g.fillStyle(0x7a5636, 1); g.fillRect(cx - 8, fy - 21, 16, 8);
+    g.fillStyle(0x8a6642, 1); g.fillRect(cx - 8, fy - 21, 16, 2);
+  } else if (kind === 'lantern') {
+    g.fillStyle(0x2a2018, 1); g.fillRect(cx - 1, fy - 24, 2, 24);
+    g.fillRect(cx - 5, fy - 24, 10, 2);
+    g.fillStyle(0x241812, 1); g.fillRect(cx + 2, fy - 22, 8, 9);
+    g.fillStyle(0xffd86b, 1); g.fillRect(cx + 3, fy - 21, 6, 7);
+    g.fillStyle(0xfff2c0, 1); g.fillRect(cx + 4, fy - 20, 2, 5);
+  } else { // banner
+    g.fillStyle(0x5a3f28, 1); g.fillRect(cx - 1, fy - 26, 2, 26);
+    g.fillStyle(0x9a3a3a, 1); g.fillRect(cx + 1, fy - 26, 12, 17);
+    g.fillStyle(0x7a2a2a, 1); g.fillRect(cx + 1, fy - 11, 12, 2);
+    g.fillStyle(0xf5c542, 1); g.fillRect(cx + 4, fy - 21, 6, 6);
   }
 }
 

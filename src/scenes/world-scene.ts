@@ -184,7 +184,8 @@ export class WorldScene extends Phaser.Scene {
 
     for (const e of this.map.enemies ?? []) this.spawnEnemy(e.type, e.x, e.y);
     this.spawnHuntTargets();
-    for (const n of this.map.npcs ?? []) this.spawnNpc(n.x, n.y, n.label, n.action, n.dialogueId);
+    for (const n of this.map.npcs ?? [])
+      this.spawnNpc(n.x, n.y, n.label, n.action, n.dialogueId, n.nameplateOffsetY);
     this.spawnPetIfAny();
 
     // Idle bob: NPCs shift 1px every ~700ms (integer steps only — rule 3).
@@ -512,7 +513,14 @@ export class WorldScene extends Phaser.Scene {
     if (def) this.pet = new Pet(this, this.player.x - 18, this.player.y + 8, def);
   }
 
-  private spawnNpc(x: number, y: number, label: string, action?: string, dialogueId?: string): void {
+  private spawnNpc(
+    x: number,
+    y: number,
+    label: string,
+    action?: string,
+    dialogueId?: string,
+    nameplateOffsetY?: number,
+  ): void {
     // Distinct look per role so the shopkeeper / smith / guild clerk / elder
     // read as different characters instead of tinted clones.
     const byAction: Record<string, string> = {
@@ -532,8 +540,11 @@ export class WorldScene extends Phaser.Scene {
       for (const ch of label + (dialogueId ?? '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
       sprite.setTint([0xffffff, 0xffe0c8, 0xd8e4ff, 0xd8ffe0, 0xffe0f0][h % 5]);
     }
-    // Hanging wooden signboard above the head (replaces floating debug-y text).
-    const signY = y - 80;
+    // Hanging wooden signboard above the head. Derived from the feet (spawn y),
+    // not a hard y-80: the 96×96 NPC art's head top sits ~52px above the feet,
+    // so the default -66 places the sign just above it. Data can override via
+    // nameplateOffsetY (e.g. taller/shorter future art).
+    const signY = y + (nameplateOffsetY ?? -66);
     const txt = this.add
       .text(x, signY, label, { fontFamily: FONT, fontSize: '11px', color: '#fbe7c2' })
       .setOrigin(0.5)

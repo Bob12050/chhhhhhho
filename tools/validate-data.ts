@@ -246,7 +246,11 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
     portals?: { to: string; toSpawn: string }[];
     enemies?: { type: string }[];
     npcs?: { dialogueId?: string }[];
-    buildings?: { x: number; y: number; w: number; h: number; style: string; shop?: string }[];
+    buildings?: {
+      x: number; y: number; w: number; h: number; style: string; shop?: string;
+      shadowType?: string; npcType?: string; signIcon?: string;
+      props?: { kind: string; dx: number; dy: number }[];
+    }[];
     water?: [number, number, number, number][];
     landmarks?: { x: number; y: number; kind: string }[];
     path?: { axis: string; thickness: number; wind?: number };
@@ -305,6 +309,16 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
         err(`Map ${m.id}: building[${i}] out of map bounds`);
       if (b.shop && !['equip', 'craft', 'guild', 'house'].includes(b.shop))
         err(`Map ${m.id}: building[${i}] unknown shop "${b.shop}"`);
+      if (b.shadowType && !['soft', 'hard', 'none'].includes(b.shadowType))
+        err(`Map ${m.id}: building[${i}] unknown shadowType "${b.shadowType}"`);
+      if (b.npcType && !['merchant', 'smith', 'guild', 'elder', 'villager'].includes(b.npcType))
+        err(`Map ${m.id}: building[${i}] unknown npcType "${b.npcType}"`);
+      if (b.signIcon && !['sword', 'hammer', 'shield', 'potion', 'scroll', 'coin'].includes(b.signIcon))
+        err(`Map ${m.id}: building[${i}] unknown signIcon "${b.signIcon}"`);
+      for (const [j, pr] of (b.props ?? []).entries()) {
+        if (!['barrel', 'crate', 'signpost', 'lantern', 'banner'].includes(pr.kind))
+          err(`Map ${m.id}: building[${i}].props[${j}] unknown kind "${pr.kind}"`);
+      }
     }
   }
   return new Set(maps.keys());

@@ -549,9 +549,7 @@ function generateEnvTextures(scene: Phaser.Scene): void {
       ctx.fillStyle = c;
       ctx.fillRect(x, y, w, h);
     };
-    // Ground contact shadow.
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.fillRect(21, 68, 22, 4);
+    // (Ground shadow is a separate texture placed in-world; not baked here.)
     // Silhouette outline (draw the body area 1px larger in dark first).
     rect(19, 21, 26, 50, OUTLINE);
     // Legs + boots.
@@ -630,11 +628,14 @@ function generateEnvTextures(scene: Phaser.Scene): void {
       trim: '#e0b070',
     },
   };
+  // Frame is 96×96 (matches CHAR_FRAME so real art drops in). The chibi body is
+  // ~64px wide, centred (+16x) with feet on the standard anchor line (+14y → feet
+  // ≈ y84, i.e. origin 0.875), so the external ground shadow sits under the feet.
   for (const [key, look] of Object.entries(NPC_LOOKS)) {
-    make(key, (ctx) => drawNpc(ctx, look), 64, 96);
+    make(key, (ctx) => { ctx.translate(16, 14); drawNpc(ctx, look); }, 96, 96);
   }
   // Back-compat generic NPC = villager look.
-  make(TEX.npc, (ctx) => drawNpc(ctx, NPC_LOOKS[TEX.npcVillager]), 64, 96);
+  make(TEX.npc, (ctx) => { ctx.translate(16, 14); drawNpc(ctx, NPC_LOOKS[TEX.npcVillager]); }, 96, 96);
 
   // Hanging wooden signboard (used behind an NPC's name). 9-sliceable-ish but we
   // just stretch a plaque; posts/rope drawn within the fixed ends.
