@@ -78,6 +78,8 @@ export const TEX = {
   npcVillager: 'gen.npc.villager',
   // Hanging wooden signboard behind an NPC's name (kills the floating text).
   sign: 'gen.sign',
+  // Soft ground contact shadow (one texture, scaled per object via displaySize).
+  groundShadow: 'gen.ground.shadow',
 } as const;
 
 /** Corner inset (px) used when slicing TEX.uiFrame. Match this in the PNG. */
@@ -143,6 +145,30 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     draw(ctx);
     scene.textures.addCanvas(key, c);
   };
+
+  // Soft elliptical ground shadow (baked alpha falloff). Placed as an Image and
+  // scaled per object with setDisplaySize — one texture for every shadow. Not
+  // pixel-art (a soft blob), so scaling it causes no shimmer. `env/shadow.png`
+  // overrides it.
+  make(
+    TEX.groundShadow,
+    (ctx) => {
+      ctx.save();
+      ctx.translate(24, 10);
+      ctx.scale(1, 0.42); // squash the circle into an ellipse
+      const grad = ctx.createRadialGradient(0, 0, 2, 0, 0, 23);
+      grad.addColorStop(0, 'rgba(0,0,0,0.45)');
+      grad.addColorStop(0.6, 'rgba(0,0,0,0.24)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, 23, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    },
+    48,
+    20,
+  );
 
   make(TEX.tileGrass, (ctx) => {
     // Calm, low-contrast lawn so characters/buildings read on top (the old tile

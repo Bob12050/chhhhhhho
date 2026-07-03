@@ -524,7 +524,7 @@ export class WorldScene extends Phaser.Scene {
     const tex = byAction[action ?? ''] ?? TEX.npcVillager;
     const sprite = this.physics.add.staticImage(x, y, tex).setOrigin(0.5, 0.875);
     sprite.setDepth(Math.round(y));
-    this.add.ellipse(x, y + 2, 22, 8, 0x000000, 0.22).setDepth(4);
+    this.add.image(x, y + 2, TEX.groundShadow).setDisplaySize(24, 9).setDepth(Math.round(y) - 1);
     this.npcSprites.push(sprite);
     // Subtle per-villager tint variety (generic townsfolk only).
     if (tex === TEX.npcVillager) {

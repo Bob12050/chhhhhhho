@@ -129,7 +129,10 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     o.refreshBody();
     // Ground contact shadow (trees only; walls read as flush structure).
     if (tex === TEX.obstacle) {
-      scene.add.ellipse(px, py + 14, 26, 9, 0x000000, 0.2).setDepth(Math.round(py) - 1);
+      scene.add
+        .image(px, py + 14, TEX.groundShadow)
+        .setDisplaySize(28, 11)
+        .setDepth(Math.round(py) - 1);
     }
   };
 
@@ -265,9 +268,15 @@ function drawBuilding(
   const s = BUILDING_STYLES[b.style] ?? BUILDING_STYLES.wood;
   const roofH = Math.round(b.h * 0.4);
   // Ground contact shadow, cast down-right (light rule: sun from top-left).
-  scene.add
-    .ellipse(b.x + b.w / 2 + 4, b.y + b.h + 3, b.w * 0.96, 16, 0x000000, 0.18)
-    .setDepth(b.y + b.h - 1);
+  const shType = b.shadowType ?? 'soft';
+  if (shType !== 'none') {
+    const sw = shType === 'hard' ? b.w * 0.8 : b.w * 1.0;
+    const sh = shType === 'hard' ? 13 : 18;
+    scene.add
+      .image(b.x + b.w / 2 + 4, b.y + b.h + 3, TEX.groundShadow)
+      .setDisplaySize(Math.round(sw), sh)
+      .setDepth(b.y + b.h - 1);
+  }
   const g = scene.add.graphics().setDepth(b.y + b.h);
 
   // Wall + subtle bottom shadow + side trim.

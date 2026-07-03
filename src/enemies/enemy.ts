@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { frameIndex, ANIMATIONS, type AnimName } from '@/paperdoll/pose-atlas';
+import { TEX } from '@/assets/gen/textures';
 import type { Direction } from '@/config/layers';
 import { STATUS_CATEGORY, STATUS_COLOR, type Element, type StatusType } from '@/combat/elements';
 
@@ -38,7 +39,7 @@ export class Enemy {
    *  rendering that clips flipped frames in half on some mobile GPUs. */
   readonly visual: Phaser.GameObjects.Sprite;
   /** Soft ground shadow; grounds the sprite (no more floating on the grass). */
-  private readonly shadow: Phaser.GameObjects.Ellipse;
+  private readonly shadow: Phaser.GameObjects.Image;
   state: EnemyState = 'idle';
   hp: number;
   readonly cfg: EnemyConfig;
@@ -98,7 +99,8 @@ export class Enemy {
     if (cfg.tint !== undefined) this.visual.setTint(cfg.tint);
     const sc = cfg.scale ?? 1;
     this.shadow = scene.add
-      .ellipse(x, y + 2, Math.round(22 * sc), Math.round(8 * sc), 0x000000, 0.22)
+      .image(x, y + 2, TEX.groundShadow)
+      .setDisplaySize(Math.round(24 * sc), Math.round(9 * sc))
       .setDepth(4);
   }
 

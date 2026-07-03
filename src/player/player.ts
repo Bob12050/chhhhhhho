@@ -30,7 +30,7 @@ export class Player {
   /** Attack-rate multiplier from derived stats (1 = base). */
   private atkSpeedMult = 1;
   private attackCdMs = 0;
-  private shadow!: Phaser.GameObjects.Ellipse;
+  private shadow!: Phaser.GameObjects.Image;
   private attacking = false;
 
   /** Called when an attack's hit frame lands. */
@@ -51,7 +51,7 @@ export class Player {
     this.body.setCollideWorldBounds(true);
 
     this.doll = new PaperDollAnimator(scene, x, y);
-    this.shadow = scene.add.ellipse(x, y + 2, 22, 8, 0x000000, 0.22).setDepth(4);
+    this.shadow = scene.add.image(x, y + 2, TEX.groundShadow).setDisplaySize(24, 9).setDepth(4);
     this.doll.setLayer('shadow', TEX.shadow);
     this.setJobAppearance(gameState.jobId);
     this.doll.play('idle');
