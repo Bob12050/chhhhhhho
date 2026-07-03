@@ -310,6 +310,8 @@ function drawBuilding(
     g.fillRect(wx + 5, winY, 2, 12);
   }
 
+  if (b.shop && b.shop !== 'house') drawShopFront(g, b, roofH);
+
   // Collision over the wall (roof top stays walk-behind-able for depth feel).
   const solidY = b.y + roofH - 6;
   const solidH = b.h - roofH + 6;
@@ -318,6 +320,75 @@ function drawBuilding(
     .setVisible(false);
   scene.physics.add.existing(body, true);
   obstacles.add(body);
+}
+
+/** Awning + hanging icon sign palette + icon per shop role. */
+const SHOP_FRONTS: Record<
+  Exclude<NonNullable<BuildingDef['shop']>, 'house'>,
+  { stripe: number; cream: number; board: number; icon: 'sword' | 'hammer' | 'shield' }
+> = {
+  equip: { stripe: 0xb34a3a, cream: 0xe8d8b0, board: 0x7a5636, icon: 'sword' },
+  craft: { stripe: 0x8a5a30, cream: 0xd8b878, board: 0x6a4a2c, icon: 'hammer' },
+  guild: { stripe: 0x3a5aa0, cream: 0xe4dcc0, board: 0x7a5636, icon: 'shield' },
+};
+
+/**
+ * Facility dressing: a striped scalloped awning under the eave + a hanging
+ * wooden sign with a role icon (sword / hammer / shield). Turns identical houses
+ * into a readable "shop / smithy / guild" at a glance. Drawn on the building's
+ * own graphics so it y-sorts with the wall.
+ */
+function drawShopFront(g: Phaser.GameObjects.Graphics, b: BuildingDef, roofH: number): void {
+  const f = SHOP_FRONTS[b.shop as Exclude<NonNullable<BuildingDef['shop']>, 'house'>];
+  const ay = b.y + roofH; // awning top sits at the eave line
+  const aw = b.w + 4;
+  const ax = b.x - 2;
+  // Striped awning band.
+  const stripeW = 8;
+  for (let i = 0; i * stripeW < aw; i++) {
+    g.fillStyle(i % 2 ? f.cream : f.stripe, 1);
+    g.fillRect(ax + i * stripeW, ay, Math.min(stripeW, aw - i * stripeW), 9);
+  }
+  // Scalloped bottom edge (little triangles) → reads as fabric.
+  for (let i = 0; i * stripeW < aw; i++) {
+    g.fillStyle(i % 2 ? f.cream : f.stripe, 1);
+    g.fillRect(ax + i * stripeW + 1, ay + 9, stripeW - 2, 2);
+  }
+  g.fillStyle(0x000000, 0.18);
+  g.fillRect(ax, ay + 9, aw, 1); // under-awning shadow
+
+  // Hanging sign near the door: rope + board + icon.
+  const sx = b.x + b.w / 2 + 18;
+  const sy = ay + 20;
+  g.fillStyle(0x6a5236, 1);
+  g.fillRect(sx - 1, ay + 11, 2, 8); // rope
+  g.fillStyle(0x241812, 1);
+  g.fillRect(sx - 11, sy - 8, 22, 17); // board border
+  g.fillStyle(f.board, 1);
+  g.fillRect(sx - 9, sy - 6, 18, 13);
+  drawShopIcon(g, sx, sy, f.icon);
+}
+
+/** Tiny role icon centred at (cx,cy) on a hanging sign. */
+function drawShopIcon(g: Phaser.GameObjects.Graphics, cx: number, cy: number, icon: string): void {
+  if (icon === 'sword') {
+    g.fillStyle(0xd8dce6, 1);
+    for (let i = 0; i < 6; i++) g.fillRect(cx - 3 + i, cy + 3 - i, 2, 2); // blade
+    g.fillStyle(0xf5c542, 1);
+    g.fillRect(cx - 5, cy + 1, 5, 2); // guard
+  } else if (icon === 'hammer') {
+    g.fillStyle(0x9aa0ac, 1);
+    g.fillRect(cx - 5, cy - 5, 10, 5); // head
+    g.fillStyle(0x8a5a30, 1);
+    g.fillRect(cx - 1, cy - 5, 2, 11); // handle
+  } else {
+    g.fillStyle(0xf5c542, 1);
+    g.fillRect(cx - 5, cy - 5, 10, 6); // shield top
+    g.fillRect(cx - 4, cy + 1, 8, 3);
+    g.fillRect(cx - 2, cy + 4, 4, 2);
+    g.fillStyle(0xffffff, 0.4);
+    g.fillRect(cx - 3, cy - 4, 2, 5);
+  }
 }
 
 /**

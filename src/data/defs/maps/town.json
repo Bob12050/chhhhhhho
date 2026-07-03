@@ -1,146 +1,151 @@
 {
-  "id": "town",
-  "name": "はじまりの町",
-  "travel": {
-    "order": 0,
-    "note": "拠点。装備・鍛冶・ギルド"
-  },
-  "size": {
-    "w": 360,
-    "h": 960
-  },
-  "ground": "grass",
-  "path": {
-    "axis": "v",
-    "thickness": 64
-  },
-  "border": "trees",
-  "obstacles": [
-    [
-      300,
-      340
-    ],
-    [
-      250,
-      480
-    ],
-    [
-      60,
-      500
-    ],
-    [
-      312,
-      760
-    ]
+ "id": "town",
+ "name": "はじまりの町",
+ "travel": {
+  "order": 0,
+  "note": "拠点。装備・鍛冶・ギルド"
+ },
+ "size": {
+  "w": 360,
+  "h": 960
+ },
+ "ground": "grass",
+ "path": {
+  "axis": "v",
+  "thickness": 64
+ },
+ "border": "trees",
+ "obstacles": [
+  [
+   300,
+   340
   ],
-  "spawns": {
-    "default": [
-      180,
-      820
-    ],
-    "from_field": [
-      180,
-      150
-    ]
-  },
-  "portals": [
-    {
-      "rect": [
-        148,
-        32,
-        64,
-        32
-      ],
-      "to": "field",
-      "toSpawn": "from_town",
-      "label": "そうげんへ"
-    }
+  [
+   250,
+   480
   ],
-  "enemies": [],
-  "npcs": [
-    {
-      "x": 88,
-      "y": 240,
-      "label": "装備屋",
-      "action": "equip"
-    },
-    {
-      "x": 88,
-      "y": 452,
-      "label": "鍛冶屋",
-      "action": "craft"
-    },
-    {
-      "x": 272,
-      "y": 240,
-      "label": "ギルド",
-      "action": "job"
-    },
-    {
-      "x": 86,
-      "y": 704,
-      "label": "むらおさ",
-      "dialogueId": "elder_intro"
-    },
-    {
-      "x": 278,
-      "y": 704,
-      "label": "むらびと",
-      "dialogueId": "villager_hint"
-    },
-    {
-      "x": 180,
-      "y": 430,
-      "label": "クエスト掲示板",
-      "action": "quest"
-    }
+  [
+   60,
+   500
   ],
-  "buildings": [
-    {
-      "x": 36,
-      "y": 128,
-      "w": 104,
-      "h": 84,
-      "style": "plaster"
-    },
-    {
-      "x": 220,
-      "y": 128,
-      "w": 104,
-      "h": 84,
-      "style": "wood"
-    },
-    {
-      "x": 36,
-      "y": 340,
-      "w": 104,
-      "h": 84,
-      "style": "stone"
-    },
-    {
-      "x": 232,
-      "y": 600,
-      "w": 92,
-      "h": 76,
-      "style": "wood"
-    },
-    {
-      "x": 40,
-      "y": 600,
-      "w": 92,
-      "h": 76,
-      "style": "plaster"
-    }
-  ],
-  "ambient": {
-    "color": "#ffdf9a",
-    "alpha": 0.05
-  },
-  "landmarks": [
-    {
-      "x": 262,
-      "y": 508,
-      "kind": "campfire"
-    }
+  [
+   312,
+   760
   ]
+ ],
+ "spawns": {
+  "default": [
+   180,
+   820
+  ],
+  "from_field": [
+   180,
+   150
+  ]
+ },
+ "portals": [
+  {
+   "rect": [
+    148,
+    32,
+    64,
+    32
+   ],
+   "to": "field",
+   "toSpawn": "from_town",
+   "label": "そうげんへ"
+  }
+ ],
+ "enemies": [],
+ "npcs": [
+  {
+   "x": 88,
+   "y": 240,
+   "label": "装備屋",
+   "action": "equip"
+  },
+  {
+   "x": 88,
+   "y": 452,
+   "label": "鍛冶屋",
+   "action": "craft"
+  },
+  {
+   "x": 272,
+   "y": 240,
+   "label": "ギルド",
+   "action": "job"
+  },
+  {
+   "x": 86,
+   "y": 704,
+   "label": "むらおさ",
+   "dialogueId": "elder_intro"
+  },
+  {
+   "x": 278,
+   "y": 704,
+   "label": "むらびと",
+   "dialogueId": "villager_hint"
+  },
+  {
+   "x": 180,
+   "y": 430,
+   "label": "クエスト掲示板",
+   "action": "quest"
+  }
+ ],
+ "buildings": [
+  {
+   "x": 36,
+   "y": 128,
+   "w": 104,
+   "h": 84,
+   "style": "plaster",
+   "shop": "equip"
+  },
+  {
+   "x": 220,
+   "y": 128,
+   "w": 104,
+   "h": 84,
+   "style": "wood",
+   "shop": "guild"
+  },
+  {
+   "x": 36,
+   "y": 340,
+   "w": 104,
+   "h": 84,
+   "style": "stone",
+   "shop": "craft"
+  },
+  {
+   "x": 232,
+   "y": 600,
+   "w": 92,
+   "h": 76,
+   "style": "wood",
+   "shop": "house"
+  },
+  {
+   "x": 40,
+   "y": 600,
+   "w": 92,
+   "h": 76,
+   "style": "plaster",
+   "shop": "house"
+  }
+ ],
+ "ambient": {
+  "color": "#ffdf9a",
+  "alpha": 0.05
+ },
+ "landmarks": [
+  {
+   "x": 262,
+   "y": 508,
+   "kind": "campfire"
+  }
+ ]
 }

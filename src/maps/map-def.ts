@@ -62,6 +62,8 @@ export interface BuildingDef {
   w: number;
   h: number;
   style: 'wood' | 'stone' | 'plaster';
+  /** Facility role: adds a striped awning + hanging icon sign out front. */
+  shop?: 'equip' | 'craft' | 'guild' | 'house';
 }
 
 export interface MapDef {

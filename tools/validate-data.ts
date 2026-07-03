@@ -246,7 +246,7 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
     portals?: { to: string; toSpawn: string }[];
     enemies?: { type: string }[];
     npcs?: { dialogueId?: string }[];
-    buildings?: { x: number; y: number; w: number; h: number; style: string }[];
+    buildings?: { x: number; y: number; w: number; h: number; style: string; shop?: string }[];
     water?: [number, number, number, number][];
     landmarks?: { x: number; y: number; kind: string }[];
     path?: { axis: string; thickness: number; wind?: number };
@@ -303,6 +303,8 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
       if (!(b.w > 0) || !(b.h > 0)) err(`Map ${m.id}: building[${i}] non-positive size`);
       if (b.x < 0 || b.y < 0 || b.x + b.w > m.size.w || b.y + b.h > m.size.h)
         err(`Map ${m.id}: building[${i}] out of map bounds`);
+      if (b.shop && !['equip', 'craft', 'guild', 'house'].includes(b.shop))
+        err(`Map ${m.id}: building[${i}] unknown shop "${b.shop}"`);
     }
   }
   return new Set(maps.keys());
