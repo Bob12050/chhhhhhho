@@ -38,22 +38,26 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
 
   scene.add.tileSprite(0, 0, w, h, GROUND_TEX[map.ground]).setOrigin(0).setDepth(-1000);
 
-  // Break the single-tile lawn repeat with a few large, near-tone meadow patches
-  // (grass2 is intentionally close in hue → seams are near-invisible, but the
-  // large-scale variation stops the ground reading as one stamped texture).
+  // Break the single-tile lawn repeat with per-tile mottling: scatter individual
+  // 32px grass2 tiles on the grid (grass2 is near-tone, so a single grid-aligned
+  // tile blends with no visible seam). NO large rectangles — those read as debug
+  // blocks. Deterministic per-map so revisits look identical.
   if (map.ground === 'grass') {
     let gseed = 7;
     for (const ch of map.id) gseed = (gseed * 31 + ch.charCodeAt(0)) >>> 0;
     const grng = new Rng(gseed || 3);
-    const patches = Math.max(4, Math.round((w * h) / 90000));
-    for (let i = 0; i < patches; i++) {
-      const pw = grng.intRange(96, 200);
-      const ph = grng.intRange(96, 200);
-      scene.add
-        .tileSprite(grng.intRange(0, Math.max(0, w - pw)), grng.intRange(0, Math.max(0, h - ph)), pw, ph, TEX.tileGrass2)
-        .setOrigin(0)
-        .setDepth(-1000)
-        .setAlpha(0.7);
+    const cols = Math.ceil(w / 32);
+    const rows = Math.ceil(h / 32);
+    for (let cy = 0; cy < rows; cy++) {
+      for (let cx = 0; cx < cols; cx++) {
+        if (grng.intRange(0, 99) < 22) {
+          scene.add
+            .image(cx * 32, cy * 32, TEX.tileGrass2)
+            .setOrigin(0)
+            .setDepth(-1000)
+            .setAlpha(0.6);
+        }
+      }
     }
   }
 

@@ -157,7 +157,7 @@ interface BuildingDef {
 ## 9. タイル（`textures.ts`）
 
 - 草 `TEX.tileGrass`: 低コントラストの落ち着いた芝 `#3a6a40`。
-- 草2 `TEX.tileGrass2`: 近似色 `#3d6d43`。`buildMap` が大パッチ(96–200px,α0.7)をシード配置し反復緩和。
+- 草2 `TEX.tileGrass2`: 近似色 `#3d6d43`。`buildMap` が**1タイル単位（32px・グリッド整列）**でシード散布し反復緩和。**大きな矩形パッチは禁止**（デバッグ領域に見える）。
 - 道 `TEX.tilePath`: 踏み固めた土＋小石＋轍。追加時も「低コントラスト・整数・ニアレスト」厳守。
 
 ---
