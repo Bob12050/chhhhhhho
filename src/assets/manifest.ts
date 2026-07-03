@@ -56,7 +56,9 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.npc, 'assets/env/npc.png'),
   // Role-specific town NPCs (drop real art to replace the placeholders).
   img(TEX.npcMerchant, 'assets/env/npc_merchant.png'),
-  img(TEX.npcSmith, 'assets/env/npc_smith.png'),
+  // 鍛冶屋(craft) NPC: AI生成PNG差し替えテスト対象。public/assets/env/npc_craft.png
+  // があればそれを優先、無ければコード生成のチビにフォールバック（96×96・透明）。
+  img(TEX.npcSmith, 'assets/env/npc_craft.png'),
   img(TEX.npcGuild, 'assets/env/npc_guild.png'),
   img(TEX.npcElder, 'assets/env/npc_elder.png'),
   img(TEX.npcVillager, 'assets/env/npc_villager.png'),
