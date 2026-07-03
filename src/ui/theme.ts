@@ -7,8 +7,17 @@ import { TEX, UI_FRAME_SLICE } from '@/assets/gen/textures';
  * future tweaks happen in a single file. Scenes import from here instead of
  * hardcoding `'system-ui, sans-serif'` and scattered hex values.
  */
-/** Pixel UI font (self-hosted DotGothic16 subset), with graceful fallbacks. */
-export const FONT = "'DotGothic16', system-ui, sans-serif";
+/**
+ * UI body font. A clean device-native gothic (Hiragino on iOS, Noto/Yu on
+ * Android/desktop) — this is what pulls the menus out of the "retro doujin"
+ * look while the pixel-art world stays crisp. No web-font download (CDN禁止);
+ * we ride the OS font, which on the target devices is a polished rounded gothic.
+ */
+export const FONT =
+  "'Hiragino Maru Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', 'YuGothic', system-ui, sans-serif";
+
+/** Pixel display font (self-hosted DotGothic16 subset) — title/logo only. */
+export const FONT_PIXEL = "'DotGothic16', system-ui, sans-serif";
 
 /** Shared palette. Numbers are for Phaser fills; strings for text colors. */
 export const UI = {
@@ -92,6 +101,20 @@ export function ninePanel(
   opts?: { active?: boolean; alpha?: number; tint?: number },
 ): Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Depth {
   if (scene.textures.exists(TEX.uiFrame)) {
+    // Soft drop shadow behind the panel (same frame, dark + offset) for depth.
+    const shadow = scene.add.nineslice(
+      cx,
+      cy + 4,
+      TEX.uiFrame,
+      undefined,
+      width,
+      height,
+      UI_FRAME_SLICE,
+      UI_FRAME_SLICE,
+      UI_FRAME_SLICE,
+      UI_FRAME_SLICE,
+    );
+    shadow.setTint(0x000000).setAlpha(0.28 * (opts?.alpha ?? 1));
     const n = scene.add.nineslice(
       cx,
       cy,
@@ -104,9 +127,11 @@ export function ninePanel(
       UI_FRAME_SLICE,
       UI_FRAME_SLICE,
     );
-    const tint = opts?.tint ?? (opts?.active === false ? 0x6a7090 : undefined);
+    const tint = opts?.tint ?? (opts?.active === false ? 0x8890a8 : undefined);
     if (tint !== undefined) n.setTint(tint);
     if (opts?.alpha !== undefined) n.setAlpha(opts.alpha);
+    // Keep the shadow pinned just under the panel (depth set by the caller).
+    n.on('destroy', () => shadow.destroy());
     return n;
   }
   // Fallback: the original flat card so menus still render without a frame tex.
@@ -116,7 +141,17 @@ export function ninePanel(
   return r;
 }
 
-/** Framed pill button (shared menu style). Returns the text object. */
+/** Parse a #rrggbb string to a Phaser fill number. */
+function hexNum(s: string): number {
+  return parseInt(s.replace('#', ''), 16);
+}
+
+/**
+ * Rounded, soft menu button. Draws a rounded-rect backing (fill + top sheen +
+ * subtle border + a 1px drop line) with the label centred on top, wrapped in a
+ * Container so callers can `.setDepth()` it. Replaces the old flat text-bg pill,
+ * which was the boxy, dated look. `bg` is the fill colour; `color` the text.
+ */
 export function pillButton(
   scene: Phaser.Scene,
   x: number,
@@ -124,19 +159,38 @@ export function pillButton(
   label: string,
   onTap: () => void,
   opts?: { color?: string; bg?: string; size?: number },
-): Phaser.GameObjects.Text {
-  const t = scene.add
-    .text(x, y, label, {
-      fontFamily: FONT,
-      fontSize: `${opts?.size ?? 14}px`,
-      color: opts?.color ?? '#ffffff',
-      backgroundColor: opts?.bg ?? '#2a3050',
-      padding: { x: 12, y: 7 },
-    })
-    .setOrigin(0.5)
-    .setInteractive({ useHandCursor: true });
-  t.on('pointerup', onTap);
-  return t;
+): Phaser.GameObjects.Container {
+  const size = opts?.size ?? 14;
+  const bg = hexNum(opts?.bg ?? '#2a3050');
+  const txt = scene.add
+    .text(0, 0, label, { fontFamily: FONT, fontSize: `${size}px`, color: opts?.color ?? '#ffffff' })
+    .setOrigin(0.5);
+  const padX = 14;
+  const padY = 9;
+  const w = Math.ceil(txt.width) + padX * 2;
+  const h = Math.ceil(txt.height) + padY * 2;
+  const r = Math.min(h / 2, 12);
+  const g = scene.add.graphics();
+  // Drop line under the button for a little lift.
+  g.fillStyle(0x000000, 0.25);
+  g.fillRoundedRect(-w / 2, -h / 2 + 2, w, h, r);
+  // Body.
+  g.fillStyle(bg, 1);
+  g.fillRoundedRect(-w / 2, -h / 2, w, h, r);
+  // Top sheen.
+  g.fillStyle(0xffffff, 0.1);
+  g.fillRoundedRect(-w / 2 + 2, -h / 2 + 2, w - 4, h / 2 - 2, { tl: r, tr: r, bl: 0, br: 0 });
+  // Border.
+  g.lineStyle(1.5, 0xffffff, 0.16);
+  g.strokeRoundedRect(-w / 2, -h / 2, w, h, r);
+  const c = scene.add.container(x, y, [g, txt]);
+  c.setSize(w, h).setInteractive({ useHandCursor: true });
+  c.on('pointerup', onTap);
+  // Press feedback.
+  c.on('pointerdown', () => c.setScale(0.96));
+  c.on('pointerup', () => c.setScale(1));
+  c.on('pointerout', () => c.setScale(1));
+  return c;
 }
 
 /**
@@ -152,10 +206,10 @@ export function addPanelChrome(scene: Phaser.Scene, viewTop: number, viewBottom:
   scene.add.rectangle(0, 0, w, h, UI.overlay, 1).setOrigin(0).setDepth(0);
   scene.add.rectangle(0, 0, w, viewTop, UI.overlay, 1).setOrigin(0).setDepth(2);
   scene.add.rectangle(0, viewBottom, w, h - viewBottom, UI.overlay, 1).setOrigin(0).setDepth(2);
-  // Gold rules along the header/footer edges: carries the title screen's
-  // visual language (navy + gold) through every menu.
-  scene.add.rectangle(0, viewTop - 1, w, 1, 0xf5c542, 0.55).setOrigin(0).setDepth(3);
-  scene.add.rectangle(0, viewBottom, w, 1, 0xf5c542, 0.35).setOrigin(0).setDepth(3);
+  // Soft light dividers along the header/footer edges (subtle, not a hard gold
+  // hairline — that read as dated).
+  scene.add.rectangle(0, viewTop - 1, w, 1, 0xffffff, 0.1).setOrigin(0).setDepth(3);
+  scene.add.rectangle(0, viewBottom, w, 1, 0xffffff, 0.08).setOrigin(0).setDepth(3);
 }
 
 /**
@@ -168,8 +222,14 @@ export function rowBand(
   y: number,
   height: number,
   index: number,
-): Phaser.GameObjects.Rectangle {
-  return scene.add
-    .rectangle(8, y - 4, scene.scale.width - 16, height, index % 2 ? 0x191c2c : 0x14172a, 0.9)
-    .setOrigin(0, 0);
+): Phaser.GameObjects.Graphics {
+  const w = scene.scale.width - 16;
+  const g = scene.add.graphics();
+  // Soft rounded card per row (alternating tint) — reads far less "spreadsheet"
+  // than hard full-width bands.
+  g.fillStyle(index % 2 ? 0x222741 : 0x1a1e33, 0.92);
+  g.fillRoundedRect(8, y - 4, w, height, 8);
+  g.lineStyle(1, 0xffffff, 0.05);
+  g.strokeRoundedRect(8, y - 4, w, height, 8);
+  return g;
 }

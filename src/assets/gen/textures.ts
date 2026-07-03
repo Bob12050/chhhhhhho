@@ -434,35 +434,44 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     ctx.fillRect(11, 9, 1, 3);
   }, 16, 16);
 
-  // 9-slice UI panel frame (48x48, 16px corners). A real assets/ui/frame.png
-  // drops straight in via the manifest and restyles every ninePanel() at once.
+  // 9-slice UI panel frame (48x48, 16px corners). Soft rounded modern panel:
+  // a real assets/ui/frame.png drops straight in via the manifest and restyles
+  // every ninePanel() at once. Rounded corners live inside the fixed 16px corner
+  // slices so they stay crisp at any stretched size.
   make(
     TEX.uiFrame,
     (ctx) => {
-      // Body fill.
-      ctx.fillStyle = '#141726';
-      ctx.fillRect(0, 0, 48, 48);
-      // Outer 2px steel border.
-      ctx.fillStyle = '#46508a';
-      ctx.fillRect(0, 0, 48, 2);
-      ctx.fillRect(0, 46, 48, 2);
-      ctx.fillRect(0, 0, 2, 48);
-      ctx.fillRect(46, 0, 2, 48);
-      // Inner bevel highlight (top/left) for a little depth.
-      ctx.fillStyle = '#2b3358';
-      ctx.fillRect(2, 2, 44, 1);
-      ctx.fillRect(2, 2, 1, 44);
-      // Gold hairline rectangle inset 5px — the corners of this rectangle sit
-      // inside the fixed 16px corner slices, so they stay crisp at any size.
-      ctx.fillStyle = '#f5c542';
-      ctx.fillRect(5, 5, 38, 1);
-      ctx.fillRect(5, 42, 38, 1);
-      ctx.fillRect(5, 5, 1, 38);
-      ctx.fillRect(42, 5, 1, 38);
-      // Gold corner studs (within the corner regions → never stretched).
-      for (const [cx, cy] of [[3, 3], [43, 3], [3, 43], [43, 43]]) {
-        ctx.fillRect(cx, cy, 2, 2);
-      }
+      const rr = (x: number, y: number, w: number, h: number, r: number): void => {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+      };
+      const rad = 11;
+      // Body: soft vertical gradient (lighter slate → deep navy).
+      const grad = ctx.createLinearGradient(0, 0, 0, 48);
+      grad.addColorStop(0, '#333c5c');
+      grad.addColorStop(1, '#1c2238');
+      ctx.fillStyle = grad;
+      rr(1, 1, 46, 46, rad);
+      ctx.fill();
+      // Top sheen for a gentle glossy lift.
+      ctx.fillStyle = 'rgba(255,255,255,0.07)';
+      rr(3, 3, 42, 15, rad - 3);
+      ctx.fill();
+      // Soft light border (no hard gold hairline → far less retro).
+      ctx.strokeStyle = 'rgba(150,168,220,0.55)';
+      ctx.lineWidth = 1.5;
+      rr(1.5, 1.5, 45, 45, rad);
+      ctx.stroke();
+      // Faint inner keyline for a touch of depth.
+      ctx.strokeStyle = 'rgba(10,12,22,0.5)';
+      ctx.lineWidth = 1;
+      rr(3, 3, 42, 42, rad - 2);
+      ctx.stroke();
     },
     48,
     48,

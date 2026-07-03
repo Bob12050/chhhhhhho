@@ -11,7 +11,7 @@ import { getQuest } from '@/quests/quest-defs';
 import { isComplete, objectiveProgress } from '@/quests/quests';
 import { getEnemyDef } from '@/enemies/enemy-defs';
 import { expToNext } from '@/stats/leveling';
-import { FONT, UI } from '@/ui/theme';
+import { FONT } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
 import { TutorialCoach } from '@/ui/tutorial-coach';
 
@@ -150,13 +150,17 @@ export class UIScene extends Phaser.Scene {
     const BAR_W = 152;
     const BAR_H = 16;
     const makeBar = (y: number, color: number): Phaser.GameObjects.Rectangle => {
-      this.add
-        .rectangle(hudX, y, BAR_W, BAR_H, UI.panel, 0.7)
-        .setOrigin(0, 0)
-        .setDepth(depth)
-        .setStrokeStyle(1, 0xf5c542, 0.45);
+      // Rounded, soft track (drop line + dark inset) — no gold hairline.
+      const g = this.add.graphics().setDepth(depth);
+      g.fillStyle(0x000000, 0.3);
+      g.fillRoundedRect(hudX, y + 1.5, BAR_W, BAR_H, 6);
+      g.fillStyle(0x0e1220, 0.92);
+      g.fillRoundedRect(hudX, y, BAR_W, BAR_H, 6);
+      g.lineStyle(1, 0xffffff, 0.08);
+      g.strokeRoundedRect(hudX, y, BAR_W, BAR_H, 6);
+      // Fill (scaleX-animated from the left).
       return this.add
-        .rectangle(hudX + 1, y + 1, BAR_W - 2, BAR_H - 2, color, 1)
+        .rectangle(hudX + 2, y + 2, BAR_W - 4, BAR_H - 4, color, 1)
         .setOrigin(0, 0)
         .setDepth(depth);
     };
@@ -214,11 +218,11 @@ export class UIScene extends Phaser.Scene {
 
     // Level + job in a matching framed box, directly under the MP bar.
     const lvY = insets.top + 44;
-    this.add
-      .rectangle(hudX, lvY, BAR_W, BAR_H, UI.panel, 0.7)
-      .setOrigin(0, 0)
-      .setDepth(depth)
-      .setStrokeStyle(1, 0xf5c542, 0.45);
+    const lvG = this.add.graphics().setDepth(depth);
+    lvG.fillStyle(0x0e1220, 0.92);
+    lvG.fillRoundedRect(hudX, lvY, BAR_W, BAR_H, 6);
+    lvG.lineStyle(1, 0xffffff, 0.08);
+    lvG.strokeRoundedRect(hudX, lvY, BAR_W, BAR_H, 6);
     this.jobText = this.add
       .text(hudX + 5, lvY + 2, '', {
         fontFamily: FONT,

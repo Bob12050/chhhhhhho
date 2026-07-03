@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { applyPendingUpdate } from '@/core/pwa';
 import { bus } from '@/core/event-bus';
-import { FONT } from '@/ui/theme';
+// Title/logo keeps the pixel display font (the retro look the player liked).
+import { FONT_PIXEL as FONT } from '@/ui/theme';
 import { soundEngine } from '@/audio/sound-engine';
 import { bgm } from '@/audio/bgm-engine';
 import { TEX } from '@/assets/gen/textures';
