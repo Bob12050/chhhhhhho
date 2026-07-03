@@ -529,108 +529,190 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     48,
   );
 
-  // Chibi townsperson, parameterised by role. Drawn with an outline + shading
-  // so NPCs read as designed characters, not tinted blobs. Frame 64x96, feet at
-  // ~y70 (origin 0.5,0.875). Silhouettes differ per role (hat/apron/beard/hood).
+  // Chibi townsperson (~2.5 heads tall), parameterised by role. Big head + big
+  // eyes + hairstyle + job prop + shaded clothes. Drawn crisp (fillRect only) so
+  // it stays pixel-art. Coordinates are pre-translate (centred +16x, feet +14y →
+  // feet ≈ y84 on the 96×96 frame). Ground shadow is the external §6 texture.
   interface NpcLook {
-    skin: string;
-    hair: string;
-    outfit: string;
-    outfitDark: string;
-    trim: string;
-    hat?: string; // brimmed cap crown colour
-    hood?: string; // pointed hood/robe colour (covers hair)
-    apron?: string; // apron panel colour
-    beard?: string; // beard colour
+    skin: string; skinSh: string;
+    hair: string; hairSh: string;
+    hairStyle: 'short' | 'neat' | 'bun' | 'spiky' | 'bald';
+    outfit: string; outfitSh: string; outfitHi: string; trim: string;
+    prop: 'coin' | 'hammer' | 'book' | 'staff' | 'basket' | 'none';
+    cap?: string; bandana?: string; hood?: string; apron?: string; beard?: string;
   }
-  const OUTLINE = '#1a1526';
+  const OUTLINE = '#20182c';
   const drawNpc = (ctx: CanvasRenderingContext2D, o: NpcLook): void => {
-    const rect = (x: number, y: number, w: number, h: number, c: string): void => {
+    const px = (x: number, y: number, w: number, h: number, c: string): void => {
       ctx.fillStyle = c;
       ctx.fillRect(x, y, w, h);
     };
-    // (Ground shadow is a separate texture placed in-world; not baked here.)
-    // Silhouette outline (draw the body area 1px larger in dark first).
-    rect(19, 21, 26, 50, OUTLINE);
-    // Legs + boots.
-    rect(24, 56, 7, 12, o.outfitDark);
-    rect(33, 56, 7, 12, o.outfitDark);
-    rect(23, 66, 8, 4, OUTLINE);
-    rect(33, 66, 8, 4, OUTLINE);
-    // Torso (outfit) with a lighter centre and darker sides for volume.
-    rect(21, 40, 22, 18, o.outfit);
-    rect(21, 40, 4, 18, o.outfitDark);
-    rect(39, 40, 4, 18, o.outfitDark);
-    rect(26, 42, 12, 4, o.trim); // collar/shoulders trim
-    // Arms.
-    rect(19, 42, 5, 14, o.outfitDark);
-    rect(40, 42, 5, 14, o.outfitDark);
-    rect(20, 41, 4, 4, o.skin);
-    rect(40, 41, 4, 4, o.skin);
-    // Apron (smith/merchant) over the torso.
+    // ── Back prop: staff (behind the body).
+    if (o.prop === 'staff') {
+      px(46, 26, 3, 44, '#6a4a2c');
+      px(46, 30, 3, 1, '#8a6444');
+      px(44, 23, 6, 6, OUTLINE);
+      px(45, 24, 4, 4, '#8fe0ff');
+      px(45, 24, 2, 2, '#e8fbff');
+    }
+    // ── Legs + boots.
+    px(25, 55, 6, 12, o.outfitSh);
+    px(33, 55, 6, 12, o.outfitSh);
+    px(24, 66, 7, 4, OUTLINE);
+    px(33, 66, 7, 4, OUTLINE);
+    px(25, 66, 5, 1, '#4a3a2a');
+    // ── Torso (outline → base → light/shade → collar).
+    px(22, 36, 20, 20, OUTLINE);
+    px(23, 37, 18, 18, o.outfit);
+    px(23, 37, 6, 18, o.outfitHi); // top-left light
+    px(37, 37, 4, 18, o.outfitSh); // right shade
+    px(23, 52, 18, 3, o.outfitSh); // bottom shade
+    px(26, 37, 12, 3, o.trim); // collar
+    // ── Arms + hands.
+    px(19, 38, 5, 15, o.outfitSh);
+    px(41, 38, 5, 15, o.outfitSh);
+    px(19, 38, 1, 15, OUTLINE);
+    px(45, 38, 1, 15, OUTLINE);
+    px(19, 51, 5, 4, o.skin);
+    px(41, 51, 5, 4, o.skin);
+    // ── Apron.
     if (o.apron) {
-      rect(27, 44, 10, 14, o.apron);
-      rect(27, 44, 10, 1, '#00000033');
+      px(28, 40, 8, 15, o.apron);
+      px(28, 40, 8, 2, '#ffffff18');
+      px(31, 40, 1, 15, '#00000018');
     }
-    // Head (skin) with outline.
-    rect(23, 22, 18, 18, OUTLINE);
-    rect(24, 23, 16, 16, o.skin);
-    rect(24, 23, 16, 3, '#ffffff22'); // forehead light
-    // Eyes + smile.
-    rect(28, 30, 2, 3, '#1c1230');
-    rect(34, 30, 2, 3, '#1c1230');
-    rect(30, 35, 4, 1, '#a85c4a');
-    // Hair / hood / hat.
+    // ── Head (rounded silhouette via stepped rows: outline then skin inset).
+    px(23, 14, 18, 1, OUTLINE);
+    px(21, 15, 22, 2, OUTLINE);
+    px(20, 17, 24, 16, OUTLINE);
+    px(21, 33, 22, 2, OUTLINE);
+    px(23, 35, 18, 2, OUTLINE);
+    px(24, 15, 16, 1, o.skin);
+    px(22, 16, 20, 2, o.skin);
+    px(21, 18, 22, 15, o.skin);
+    px(22, 33, 20, 2, o.skin);
+    px(24, 35, 16, 1, o.skin);
+    px(22, 17, 5, 3, '#ffffff18'); // forehead highlight
+    px(38, 19, 3, 13, o.skinSh); // right cheek shade
+    px(20, 24, 2, 4, o.skinSh); // ears
+    px(42, 24, 2, 4, o.skinSh);
+    // ── Hair / hood.
     if (o.hood) {
-      rect(21, 18, 22, 14, o.hood); // hood shell
-      rect(24, 24, 16, 8, o.skin); // face opening
-      rect(28, 30, 2, 3, '#1c1230');
-      rect(34, 30, 2, 3, '#1c1230');
-      rect(30, 35, 4, 1, '#a85c4a');
-      rect(21, 18, 22, 3, OUTLINE);
+      px(19, 13, 26, 4, o.hood);
+      px(19, 13, 26, 15, o.hood);
+      px(23, 20, 18, 14, o.skin); // face opening
+      px(38, 20, 3, 13, o.skinSh);
+      px(19, 12, 26, 2, OUTLINE);
+      px(19, 13, 26, 2, '#ffffff10');
     } else {
-      rect(22, 19, 20, 8, o.hair); // hair cap
-      rect(22, 24, 3, 8, o.hair); // side burns
-      rect(39, 24, 3, 8, o.hair);
+      if (o.hairStyle === 'short' || o.hairStyle === 'neat') {
+        px(21, 13, 22, 5, o.hair);
+        px(21, 16, 3, 8, o.hair);
+        px(40, 16, 3, 8, o.hair);
+        px(24, 17, 5, 2, o.hair); // bangs
+        px(35, 17, 5, 2, o.hair);
+        px(24, 13, 15, 2, '#ffffff18');
+        if (o.hairStyle === 'neat') px(31, 13, 2, 4, o.hairSh); // side part
+      } else if (o.hairStyle === 'bun') {
+        px(21, 14, 22, 4, o.hair);
+        px(21, 16, 3, 7, o.hair);
+        px(40, 16, 3, 7, o.hair);
+        px(28, 8, 8, 6, o.hair); // bun
+        px(29, 9, 6, 2, '#ffffff20');
+        px(27, 9, 2, 4, OUTLINE);
+        px(35, 9, 2, 4, OUTLINE);
+      } else if (o.hairStyle === 'spiky') {
+        px(21, 18, 3, 8, o.hair); // side hair (rest hidden by bandana)
+        px(40, 18, 3, 8, o.hair);
+      }
     }
-    if (o.hat) {
-      rect(20, 18, 24, 4, OUTLINE); // brim
-      rect(21, 19, 22, 2, o.hat === OUTLINE ? '#333' : o.hat);
-      rect(24, 12, 16, 8, o.hat); // crown
-      rect(24, 12, 16, 2, '#ffffff22');
-      rect(23, 11, 18, 2, OUTLINE);
+    // ── Cap / bandana (over hair).
+    if (o.cap) {
+      px(20, 13, 24, 4, OUTLINE);
+      px(21, 14, 22, 2, o.cap);
+      px(23, 7, 18, 7, o.cap);
+      px(23, 7, 18, 2, '#ffffff20');
+      px(22, 6, 20, 2, OUTLINE);
     }
+    if (o.bandana) {
+      px(20, 17, 24, 4, o.bandana);
+      px(20, 17, 24, 1, '#ffffff22');
+      px(18, 20, 3, 5, o.bandana); // knot tail
+    }
+    // ── Face: big eyes + blush + mouth.
+    px(26, 26, 4, 6, '#2a2036');
+    px(35, 26, 4, 6, '#2a2036');
+    px(27, 27, 2, 2, '#ffffff');
+    px(36, 27, 2, 2, '#ffffff');
+    px(27, 30, 2, 1, '#6a74a0');
+    px(36, 30, 2, 1, '#6a74a0');
+    px(24, 31, 3, 2, 'rgba(230,150,150,0.45)');
+    px(38, 31, 3, 2, 'rgba(230,150,150,0.45)');
+    px(30, 33, 4, 1, '#b5654a');
+    // ── Beard (over lower face).
     if (o.beard) {
-      rect(25, 36, 14, 6, o.beard);
-      rect(27, 42, 10, 3, o.beard);
+      px(23, 32, 18, 5, o.beard);
+      px(26, 37, 12, 3, o.beard);
+      px(23, 32, 18, 1, '#ffffff18');
+      px(30, 33, 4, 2, '#c9968a'); // mouth gap
+    }
+    // ── Front prop.
+    if (o.prop === 'coin') {
+      px(42, 47, 7, 8, '#a9741f');
+      px(42, 47, 7, 2, '#c08a3a');
+      px(43, 45, 5, 2, '#7a5216');
+      px(44, 44, 3, 3, '#f5c542');
+    } else if (o.prop === 'hammer') {
+      px(44, 40, 3, 14, '#6a4a2c');
+      px(41, 38, 9, 5, '#9aa0ac');
+      px(41, 38, 9, 1, '#c6ccd8');
+      px(41, 42, 9, 1, '#6a7080');
+    } else if (o.prop === 'book') {
+      px(26, 45, 13, 9, OUTLINE);
+      px(27, 46, 11, 7, '#c0492f');
+      px(32, 46, 1, 7, '#e8dcb0');
+      px(28, 48, 4, 1, '#e8dcb0');
+    } else if (o.prop === 'basket') {
+      px(26, 50, 14, 8, OUTLINE);
+      px(27, 51, 12, 6, '#a9741f');
+      px(27, 51, 12, 1, '#c8933f');
+      px(30, 51, 1, 6, '#7a5216');
+      px(34, 51, 1, 6, '#7a5216');
+      px(29, 49, 3, 2, '#d05a5a'); // apple
+      px(34, 49, 2, 2, '#6db06a'); // veg
     }
   };
 
   const NPC_LOOKS: Record<string, NpcLook> = {
     [TEX.npcMerchant]: {
-      skin: '#e6a878', hair: '#5a3a24', outfit: '#3f8f5a', outfitDark: '#2c6b41',
-      trim: '#f0d68a', apron: '#d9c48a',
+      skin: '#e8b088', skinSh: '#cf9468', hair: '#6a4326', hairSh: '#4a2c18',
+      hairStyle: 'bun', outfit: '#3f9a5e', outfitSh: '#2c6b41', outfitHi: '#54b070',
+      trim: '#f0d68a', apron: '#e2cf98', prop: 'coin',
     },
     [TEX.npcSmith]: {
-      skin: '#d68a5b', hair: '#2a1c14', outfit: '#7a4030', outfitDark: '#5a2c22',
-      trim: '#c9722f', apron: '#3a3038', hat: '#8a1f1f',
+      skin: '#d68a5b', skinSh: '#b06a40', hair: '#2a1c14', hairSh: '#160e08',
+      hairStyle: 'spiky', outfit: '#7a4030', outfitSh: '#5a2c22', outfitHi: '#96503a',
+      trim: '#c9722f', apron: '#3a3038', bandana: '#b0342e', prop: 'hammer',
     },
     [TEX.npcGuild]: {
-      skin: '#eab890', hair: '#caa23a', outfit: '#3a5aa0', outfitDark: '#28407a',
-      trim: '#e6c860', hat: '#2a3f78',
+      skin: '#ecbf96', skinSh: '#cf9e6c', hair: '#d8b04a', hairSh: '#a8842c',
+      hairStyle: 'neat', outfit: '#3a5aa0', outfitSh: '#28407a', outfitHi: '#4e72c0',
+      trim: '#e6c860', cap: '#2a3f78', prop: 'book',
     },
     [TEX.npcElder]: {
-      skin: '#e0b48c', hair: '#e8e8ee', outfit: '#6a4ea0', outfitDark: '#4c3778',
-      trim: '#caa8ff', hood: '#5a3f90', beard: '#e8e8ee',
+      skin: '#e2b892', skinSh: '#c69a70', hair: '#eef0f6', hairSh: '#c8c8d2',
+      hairStyle: 'bald', outfit: '#6a4ea0', outfitSh: '#4c3778', outfitHi: '#8264c0',
+      trim: '#caa8ff', hood: '#5a3f90', beard: '#eef0f6', prop: 'staff',
     },
     [TEX.npcVillager]: {
-      skin: '#e6a878', hair: '#8a5a34', outfit: '#b0683a', outfitDark: '#8a4e2a',
-      trim: '#e0b070',
+      skin: '#e8b088', skinSh: '#cf9468', hair: '#8a5a34', hairSh: '#66401f',
+      hairStyle: 'short', outfit: '#b0683a', outfitSh: '#8a4e2a', outfitHi: '#c8824c',
+      trim: '#e0b070', prop: 'basket',
     },
   };
-  // Frame is 96×96 (matches CHAR_FRAME so real art drops in). The chibi body is
-  // ~64px wide, centred (+16x) with feet on the standard anchor line (+14y → feet
-  // ≈ y84, i.e. origin 0.875), so the external ground shadow sits under the feet.
+  // Frame is 96×96 (matches CHAR_FRAME so real art drops in). The chibi is centred
+  // (+16x) with feet on the standard anchor line (+14y → feet ≈ y84, origin 0.875),
+  // so the external ground shadow sits under the feet.
   for (const [key, look] of Object.entries(NPC_LOOKS)) {
     make(key, (ctx) => { ctx.translate(16, 14); drawNpc(ctx, look); }, 96, 96);
   }
