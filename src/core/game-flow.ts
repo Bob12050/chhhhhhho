@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { saveManager } from '@/save/save-manager';
 import { gameState } from '@/player/game-state';
 import { bus } from '@/core/event-bus';
+import { isDebugEnabled } from '@/core/debug';
 
 /**
  * Entry transition from the menu scenes into gameplay. Loads (or creates) the
@@ -19,6 +20,7 @@ export async function beginGame(
   gameState.loadFrom(data);
   bus.emit(mode === 'new' ? 'game:new' : 'game:load', { slot });
   scene.scene.launch('UI');
+  if (isDebugEnabled()) scene.scene.launch('DebugOverlay');
   scene.scene.start('World');
 }
 
@@ -29,6 +31,7 @@ export function returnToTitle(scene: Phaser.Scene): void {
   scene.scene.stop('JobChange');
   scene.scene.stop('Dialogue');
   scene.scene.stop('Debug');
+  scene.scene.stop('DebugOverlay');
   scene.scene.stop('Checklist');
   scene.scene.stop('MapSelect');
   scene.scene.stop('UI');

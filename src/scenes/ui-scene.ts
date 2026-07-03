@@ -4,7 +4,6 @@ import { VirtualStick } from '@/input/virtual-stick';
 import { TouchButton } from '@/input/touch-button';
 import { readInsets } from '@/core/safe-area';
 import { bus } from '@/core/event-bus';
-import { isDebugEnabled } from '@/core/debug';
 import { gameState } from '@/player/game-state';
 import { getJob } from '@/jobs/job-defs';
 import { getMap } from '@/maps/map-def';
@@ -363,12 +362,8 @@ export class UIScene extends Phaser.Scene {
       if (down) bus.emit('ui:open-map', {});
     };
 
-    if (isDebugEnabled()) {
-      const dbg = new TouchButton(this, w - insets.right - 72, insets.top + 26, 20, 'DBG', 0x884444, depth);
-      dbg.onChange = (down) => {
-        if (down) bus.emit('ui:open-debug', {});
-      };
-    }
+    // (Debug entry is a separate dev overlay — see DebugOverlayScene. It is never
+    // shown in normal play, so nothing debug-related is created here.)
 
     // PWA update notice (applied later, never mid-combat).
     this.updateText = this.add

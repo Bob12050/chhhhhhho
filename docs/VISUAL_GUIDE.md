@@ -174,6 +174,7 @@ interface BuildingDef {
 | 5 / 6 / 7 | ポータル門 / 矢印・粒子 / ポータル名 |
 | `round(y)+1 / +2` | NPC看板 / 看板文字 |
 | **`HUD_DEPTH=100000` 以上** | HUD（UIScene） |
+| **`DEBUG_DEPTH=999999`** | 開発オーバーレイ（DebugOverlayScene）。debug時のみ起動。通常/スクショ時は非表示 |
 
 ---
 
