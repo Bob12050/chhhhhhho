@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { applyPendingUpdate } from '@/core/pwa';
+import { applyPendingUpdate, isUpdateReady } from '@/core/pwa';
 import { bus } from '@/core/event-bus';
 // Title/logo keeps the pixel display font (the retro look the player liked).
 import { FONT_PIXEL as FONT } from '@/ui/theme';
@@ -65,9 +65,13 @@ export class TitleScene extends Phaser.Scene {
       .setVisible(false)
       .setInteractive({ useHandCursor: true });
     this.updateText.on('pointerup', () => void applyPendingUpdate());
-    const off = bus.on('pwa:update-available', () => {
+    const showUpdate = (): void => {
       this.updateText?.setText('更新があります（タップで適用）').setVisible(true);
-    });
+    };
+    // Catch an update that became ready before this scene subscribed (during
+    // Boot/Notice), then keep listening for one that arrives while on the title.
+    if (isUpdateReady()) showUpdate();
+    const off = bus.on('pwa:update-available', showUpdate);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, off);
 
     this.input.keyboard?.once('keydown-ENTER', () => this.scene.start('SaveSelect'));

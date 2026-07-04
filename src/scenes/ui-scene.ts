@@ -14,6 +14,7 @@ import { expToNext } from '@/stats/leveling';
 import { FONT, HUD_DEPTH } from '@/ui/theme';
 import { TEX, UI_FRAME_SLICE } from '@/assets/gen/textures';
 import { TutorialCoach } from '@/ui/tutorial-coach';
+import { isUpdateReady } from '@/core/pwa';
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
@@ -374,7 +375,7 @@ export class UIScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0)
       .setDepth(depth)
-      .setVisible(false);
+      .setVisible(isUpdateReady());
     this.busOff.push(bus.on('pwa:update-available', () => this.updateText.setVisible(true)));
 
     this.installKeyboardDev();
