@@ -37,7 +37,7 @@
   "npcHints": [
     { "action": "quest", "text": "ここでクエストを受注！ 目標が決まるよ。" },
     { "action": "craft", "text": "集めた素材で武器・防具を作れるよ。" },
-    { "action": "equip", "text": "装備を着替えて強くなろう。" },
+    { "action": "item", "text": "狩りの前に回復薬などを買っておこう。" },
     { "action": "job", "text": "条件を満たすと転職できるよ。" }
   ]
 }

@@ -15,6 +15,7 @@ import { JobChangeScene } from '@/scenes/job-change-scene';
 import { JobTreeScene } from '@/scenes/job-tree-scene';
 import { QuestBoardScene } from '@/scenes/quest-board-scene';
 import { DialogueScene } from '@/scenes/dialogue-scene';
+import { ShopScene } from '@/scenes/shop-scene';
 import { DebugScene } from '@/scenes/debug-scene';
 import { DebugOverlayScene } from '@/scenes/debug-overlay-scene';
 import { ChecklistScene } from '@/scenes/checklist-scene';
@@ -75,6 +76,7 @@ const config: Phaser.Types.Core.GameConfig = {
     JobTreeScene,
     QuestBoardScene,
     DialogueScene,
+    ShopScene,
     DebugScene,
     DebugOverlayScene,
     ChecklistScene,

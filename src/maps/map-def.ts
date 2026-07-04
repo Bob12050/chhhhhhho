@@ -64,8 +64,9 @@ export interface BuildingDef {
   w: number;
   h: number;
   style: 'wood' | 'stone' | 'plaster';
-  /** Facility role: adds a striped awning + hanging icon sign out front. */
-  shop?: 'equip' | 'craft' | 'guild' | 'house';
+  /** Facility role: adds a striped awning + hanging icon sign out front.
+   *  `general` = 道具屋 (consumables/hunt-prep). Weapons/armor are 鍛冶屋(craft) only. */
+  shop?: 'general' | 'craft' | 'guild' | 'house';
   /** Ground contact shadow style (see VISUAL_GUIDE §6). Default 'soft'. */
   shadowType?: 'soft' | 'hard' | 'none';
   /** Companion NPC look key (metadata; NPCs are still placed as map.npcs). */

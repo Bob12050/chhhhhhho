@@ -322,9 +322,9 @@ function drawBuilding(
 /** Awning + hanging icon sign palette + icon per shop role. */
 const SHOP_FRONTS: Record<
   Exclude<NonNullable<BuildingDef['shop']>, 'house'>,
-  { stripe: number; cream: number; board: number; icon: 'sword' | 'hammer' | 'shield' }
+  { stripe: number; cream: number; board: number; icon: NonNullable<BuildingDef['signIcon']> }
 > = {
-  equip: { stripe: 0xb34a3a, cream: 0xe8d8b0, board: 0x7a5636, icon: 'sword' },
+  general: { stripe: 0x4a8f5a, cream: 0xe8d8b0, board: 0x7a5636, icon: 'potion' },
   craft: { stripe: 0x8a5a30, cream: 0xd8b878, board: 0x6a4a2c, icon: 'hammer' },
   guild: { stripe: 0x3a5aa0, cream: 0xe4dcc0, board: 0x7a5636, icon: 'shield' },
 };

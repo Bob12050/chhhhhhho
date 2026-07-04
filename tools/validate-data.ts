@@ -307,7 +307,7 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
       if (!(b.w > 0) || !(b.h > 0)) err(`Map ${m.id}: building[${i}] non-positive size`);
       if (b.x < 0 || b.y < 0 || b.x + b.w > m.size.w || b.y + b.h > m.size.h)
         err(`Map ${m.id}: building[${i}] out of map bounds`);
-      if (b.shop && !['equip', 'craft', 'guild', 'house'].includes(b.shop))
+      if (b.shop && !['general', 'craft', 'guild', 'house'].includes(b.shop))
         err(`Map ${m.id}: building[${i}] unknown shop "${b.shop}"`);
       if (b.shadowType && !['soft', 'hard', 'none'].includes(b.shadowType))
         err(`Map ${m.id}: building[${i}] unknown shadowType "${b.shadowType}"`);
@@ -567,7 +567,7 @@ function validateTutorial(): void {
   }>('src/data/defs/tutorial.json');
   const ANCHORS = new Set(['none', 'stick', 'attack', 'bag']);
   const ADVANCE = new Set(['enemy:died', 'ui:open-inventory']);
-  const NPC_ACTIONS = new Set(['quest', 'craft', 'equip', 'job']);
+  const NPC_ACTIONS = new Set(['quest', 'craft', 'item', 'job']);
   if (!(file.introVersion >= 1)) err('Tutorial: introVersion must be >= 1');
   if (!file.steps?.length) err('Tutorial: needs at least one step');
   const seen = new Set<string>();
@@ -589,6 +589,23 @@ function validateTutorial(): void {
   }
 }
 
+function validateShops(itemIds: Set<string>): void {
+  const file = readJson<{
+    shops: { id: string; name: string; stock: { itemId: string; price: number }[] }[];
+  }>('src/data/defs/shops.json');
+  const seen = new Set<string>();
+  for (const s of file.shops ?? []) {
+    if (!s.id || !s.name) err('Shop: id and name are required');
+    if (seen.has(s.id)) err(`Shop: duplicate id "${s.id}"`);
+    seen.add(s.id);
+    for (const [i, e] of (s.stock ?? []).entries()) {
+      if (!itemIds.has(e.itemId)) err(`Shop ${s.id}: stock[${i}] unknown item "${e.itemId}"`);
+      if (!(e.price > 0) || !Number.isInteger(e.price))
+        err(`Shop ${s.id}: stock[${i}] price must be a positive integer`);
+    }
+  }
+}
+
 const itemIds = collectItemIds();
 const dropTableIds = validateDrops(itemIds);
 const enemyIds = validateEnemies(itemIds, dropTableIds);
@@ -599,6 +616,7 @@ const skillIds = validateSkills();
 validateJobs(skillIds);
 validatePets();
 validateQuests(itemIds, enemyIds, mapIds);
+validateShops(itemIds);
 validateTutorial();
 
 if (errors.length > 0) {

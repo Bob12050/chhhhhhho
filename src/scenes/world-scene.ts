@@ -526,7 +526,7 @@ export class WorldScene extends Phaser.Scene {
     // Distinct look per role so the shopkeeper / smith / guild clerk / elder
     // read as different characters instead of tinted clones.
     const byAction: Record<string, string> = {
-      equip: TEX.npcMerchant,
+      item: TEX.npcMerchant,
       craft: TEX.npcSmith,
       job: TEX.npcGuild,
       quest: TEX.npcElder,
@@ -1417,7 +1417,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private runNpc(npc: BuiltNpc): void {
-    if (npc.action === 'equip') this.openInventory('equipment');
+    if (npc.action === 'item') this.openMenu('Shop');
     else if (npc.action === 'craft') this.openMenu('Crafting');
     else if (npc.action === 'job') this.openMenu('JobChange');
     else if (npc.action === 'quest') this.openMenu('QuestBoard');

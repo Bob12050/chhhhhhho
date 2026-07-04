@@ -1,0 +1,14 @@
+{
+  "shops": [
+    {
+      "id": "general",
+      "name": "道具屋",
+      "blurb": "狩りの準備に。回復薬や便利な品を扱っています。",
+      "stock": [
+        { "itemId": "potion_hp", "price": 25 },
+        { "itemId": "potion_mp", "price": 30 },
+        { "itemId": "potion_hp_l", "price": 70 }
+      ]
+    }
+  ]
+}

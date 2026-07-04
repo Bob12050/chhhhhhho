@@ -30,6 +30,7 @@ export function returnToTitle(scene: Phaser.Scene): void {
   scene.scene.stop('Crafting');
   scene.scene.stop('JobChange');
   scene.scene.stop('Dialogue');
+  scene.scene.stop('Shop');
   scene.scene.stop('Debug');
   scene.scene.stop('DebugOverlay');
   scene.scene.stop('Checklist');

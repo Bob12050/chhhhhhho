@@ -61,8 +61,8 @@
   {
    "x": 88,
    "y": 240,
-   "label": "装備屋",
-   "action": "equip"
+   "label": "道具屋",
+   "action": "item"
   },
   {
    "x": 88,
@@ -102,9 +102,9 @@
    "w": 104,
    "h": 84,
    "style": "plaster",
-   "shop": "equip",
+   "shop": "general",
    "npcType": "merchant",
-   "signIcon": "sword",
+   "signIcon": "potion",
    "props": [
     {
      "kind": "barrel",
