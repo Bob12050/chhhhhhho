@@ -44,7 +44,18 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   sheet(TEX.plateIron, 'assets/equip/plate_iron.png'),
   sheet(TEX.swordWood, 'assets/equip/sword_wood.png'),
   sheet(TEX.swordIron, 'assets/equip/sword_iron.png'),
+  // Enemies. A single 96×96 PNG drops in as a static sprite (Enemy detects the
+  // single frame and skips frame-cycling); a full pose-atlas sheet animates.
   sheet(TEX.slime, 'assets/enemy/slime.png'),
+  sheet(TEX.bat, 'assets/enemy/bat.png'),
+  sheet(TEX.wolf, 'assets/enemy/wolf.png'),
+  sheet(TEX.mushroom, 'assets/enemy/mushroom.png'),
+  sheet(TEX.golem, 'assets/enemy/golem.png'),
+  sheet(TEX.lizard, 'assets/enemy/lizard.png'),
+  sheet(TEX.wisp, 'assets/enemy/wisp.png'),
+  sheet(TEX.knight, 'assets/enemy/knight.png'),
+  sheet(TEX.treant, 'assets/enemy/treant.png'),
+  sheet(TEX.dragon, 'assets/enemy/dragon.png'),
   // Environment (single images).
   img(TEX.tileGrass, 'assets/tiles/grass.png'),
   img(TEX.tileGrass2, 'assets/tiles/grass2.png'),
