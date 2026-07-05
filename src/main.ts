@@ -16,6 +16,9 @@ import { JobTreeScene } from '@/scenes/job-tree-scene';
 import { QuestBoardScene } from '@/scenes/quest-board-scene';
 import { DialogueScene } from '@/scenes/dialogue-scene';
 import { ShopScene } from '@/scenes/shop-scene';
+import { OptionsScene } from '@/scenes/options-scene';
+import { loadSettings } from '@/core/settings';
+import { bgm } from '@/audio/bgm-engine';
 import { DebugScene } from '@/scenes/debug-scene';
 import { DebugOverlayScene } from '@/scenes/debug-overlay-scene';
 import { ChecklistScene } from '@/scenes/checklist-scene';
@@ -77,6 +80,7 @@ const config: Phaser.Types.Core.GameConfig = {
     QuestBoardScene,
     DialogueScene,
     ShopScene,
+    OptionsScene,
     DebugScene,
     DebugOverlayScene,
     ChecklistScene,
@@ -87,6 +91,10 @@ const config: Phaser.Types.Core.GameConfig = {
 function startGame(): void {
   const game = new Phaser.Game(config);
   soundEngine.install();
+  // Apply persisted user volumes before anything plays.
+  const settings = loadSettings();
+  soundEngine.setVolume(settings.sfxVol);
+  bgm.setVolume(settings.bgmVol);
   installOrientationGuard(game);
   installLifecycle(game);
   void registerServiceWorker();

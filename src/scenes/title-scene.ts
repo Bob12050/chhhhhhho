@@ -3,7 +3,6 @@ import { applyPendingUpdate, isUpdateReady } from '@/core/pwa';
 import { bus } from '@/core/event-bus';
 // Title/logo keeps the pixel display font (the retro look the player liked).
 import { FONT_PIXEL as FONT } from '@/ui/theme';
-import { soundEngine } from '@/audio/sound-engine';
 import { bgm } from '@/audio/bgm-engine';
 import { TEX } from '@/assets/gen/textures';
 import { frameIndex } from '@/paperdoll/pose-atlas';
@@ -236,10 +235,9 @@ export class TitleScene extends Phaser.Scene {
     const startBtn = this.makeButton(w / 2, h * 0.52, '▶ ゲームをはじめる', true, () =>
       this.scene.start('SaveSelect'),
     );
-    const soundBtn = this.makeButton(w / 2, h * 0.52 + 58, this.soundLabel(), false, () => {
-      const muted = soundEngine.toggleMute();
-      soundBtn.label.setText(this.soundLabel());
-      if (!muted) bus.emit('sfx:play', { id: 'ui_tap' });
+    const soundBtn = this.makeButton(w / 2, h * 0.52 + 58, '⚙ 設定', false, () => {
+      this.scene.pause();
+      this.scene.launch('Options', { from: 'Title' });
     });
     const ver = this.add
       .text(8, h - 8, VERSION, { fontFamily: FONT, fontSize: '10px', color: '#9aa0b5' })
@@ -263,10 +261,6 @@ export class TitleScene extends Phaser.Scene {
       repeat: -1,
       ease: 'Sine.InOut',
     });
-  }
-
-  private soundLabel(): string {
-    return soundEngine.isMuted() ? 'サウンド: OFF' : 'サウンド: ON';
   }
 
   private makeButton(

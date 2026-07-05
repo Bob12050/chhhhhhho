@@ -126,6 +126,20 @@ export class InventoryScene extends Phaser.Scene {
     }).setDepth(3);
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
+    const toOptions = this.add
+      .text(16, h - 44, '⚙ 設定', {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#9aa0b5',
+      })
+      .setOrigin(0, 0.5)
+      .setDepth(3)
+      .setInteractive({ useHandCursor: true });
+    toOptions.on('pointerup', () => {
+      this.scene.pause();
+      this.scene.launch('Options', { from: 'Inventory' });
+    });
+
     const toTitle = this.add
       .text(w - 16, h - 44, 'タイトルへ', {
         fontFamily: FONT,

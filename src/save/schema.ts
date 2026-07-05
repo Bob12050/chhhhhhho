@@ -35,6 +35,8 @@ export interface SaveDataV1 {
     materials: Record<string, number>; // itemId -> qty
     consumables: Record<string, number>; // itemId -> qty
     equipmentOwned: string[]; // owned equipment ids (one entry per piece)
+    /** Materials ever obtained (recipe visibility gate). Legacy saves lack it. */
+    seenMaterials?: Record<string, true>;
   };
   flags: Record<string, boolean>; // e.g. boss defeated
   quests: {
@@ -109,6 +111,7 @@ export function migrate(raw: unknown, slot: number): SaveData {
       materials: { ...(data.inventory?.materials ?? {}) },
       consumables: { ...(data.inventory?.consumables ?? {}) },
       equipmentOwned: [...(data.inventory?.equipmentOwned ?? [])],
+      seenMaterials: { ...(data.inventory?.seenMaterials ?? {}) },
     },
     flags: { ...(data.flags ?? {}) },
     quests: {

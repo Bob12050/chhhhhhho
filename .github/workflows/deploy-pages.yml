@@ -58,5 +58,22 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Pages deploys fail transiently ("Deployment failed, try again later")
+      # a few times a week; retry twice with a pause instead of requiring a
+      # manual re-run. First success short-circuits the rest.
       - id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - if: steps.deployment.outcome == 'failure'
+        name: Wait before retry
+        run: sleep 30
+      - id: deployment2
+        if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - if: steps.deployment.outcome == 'failure' && steps.deployment2.outcome == 'failure'
+        name: Wait before final retry
+        run: sleep 60
+      - id: deployment3
+        if: steps.deployment.outcome == 'failure' && steps.deployment2.outcome == 'failure'
         uses: actions/deploy-pages@v4

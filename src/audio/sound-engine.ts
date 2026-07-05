@@ -20,6 +20,8 @@ class SoundEngine {
   private master: GainNode | null = null;
   private noiseBuf: AudioBuffer | null = null;
   private muted = false;
+  /** User volume multiplier (0..1) from the options screen, on top of MASTER. */
+  private userVol = 1;
   private voices = 0;
   private lastAt = new Map<SfxId, number>();
   private installed = false;
@@ -147,9 +149,17 @@ class SoundEngine {
     if (!Ctor) return null;
     this.ctx = new Ctor();
     this.master = this.ctx.createGain();
-    this.master.gain.value = MASTER;
+    this.master.gain.value = MASTER * this.userVol;
     this.master.connect(this.ctx.destination);
     return this.ctx;
+  }
+
+  /** Set the user volume multiplier (0..1); applies immediately. */
+  setVolume(v: number): void {
+    this.userVol = Math.max(0, Math.min(1, v));
+    if (this.master && this.ctx) {
+      this.master.gain.setValueAtTime(MASTER * this.userVol, this.ctx.currentTime);
+    }
   }
 
   private ensureNoise(ctx: AudioContext): AudioBuffer {

@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
-import { getConsumable, itemDisplayName } from '@/data/items';
+import { getConsumable, getMaterial, itemDisplayName } from '@/data/items';
+import { rarityColor } from '@/data/rarity';
 import { getShop, type ShopStockEntry } from '@/shops/shop-defs';
 import { bus } from '@/core/event-bus';
-import { FONT, addPanelChrome, rowBand, pillButton } from '@/ui/theme';
+import { FONT, addPanelChrome, rowBand, pillButton, tabChip, type TabHandle } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
 
 /**
@@ -18,9 +19,11 @@ export class ShopScene extends Phaser.Scene {
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
-  private viewTop = 70;
+  private viewTop = 96;
   private viewBottom = 0;
   private shopId = 'general';
+  private tab: 'buy' | 'sell' = 'buy';
+  private tabButtons: { id: 'buy' | 'sell'; tab: TabHandle }[] = [];
 
   constructor() {
     super('Shop');
@@ -45,6 +48,24 @@ export class ShopScene extends Phaser.Scene {
     this.add
       .text(16, 54, shop?.blurb ?? '狩りの準備に。', { fontFamily: FONT, fontSize: '11px', color: '#9aa0b5' })
       .setDepth(3);
+
+    // 買う / 売る tabs.
+    this.tabButtons = [];
+    (
+      [
+        { id: 'buy', label: '買う' },
+        { id: 'sell', label: '売る' },
+      ] as const
+    ).forEach((t, i) => {
+      const tab = tabChip(this, 50 + i * 82, 80, 78, t.label, () => {
+        if (this.dragged) return;
+        this.tab = t.id;
+        this.scrollY = 0;
+        this.render();
+      });
+      tab.root.setDepth(3);
+      this.tabButtons.push({ id: t.id, tab });
+    });
 
     this.content = this.add.container(0, 0).setDepth(1);
     this.viewBottom = h - 72;
@@ -88,22 +109,119 @@ export class ShopScene extends Phaser.Scene {
   private render(): void {
     this.content.removeAll(true);
     this.goldText.setText(`${gameState.gold}`);
+    for (const tb of this.tabButtons) tb.tab.setActive(tb.id === this.tab);
     const w = this.scale.width;
-    const shop = getShop(this.shopId);
     let y = this.viewTop + 8;
     let band = 0;
-    for (const entry of shop?.stock ?? []) {
-      this.renderRow(entry, y, w, band++);
-      y += 64;
+
+    if (this.tab === 'buy') {
+      const shop = getShop(this.shopId);
+      for (const entry of shop?.stock ?? []) {
+        this.renderRow(entry, y, w, band++);
+        y += 64;
+      }
+      if (!shop?.stock.length) {
+        this.content.add(
+          this.add.text(16, y, '品切れです。', { fontFamily: FONT, fontSize: '13px', color: '#9aa0b4' }),
+        );
+        y += 28;
+      }
+    } else {
+      // Sell: everything sellable the player holds (materials, then potions).
+      // Equipment is deliberately NOT sellable here (protects progression gear).
+      const rows: { id: string; qty: number; price: number; kind: 'mat' | 'cons' }[] = [];
+      for (const [id, qty] of Object.entries(gameState.materials)) {
+        const def = getMaterial(id);
+        if (def && qty > 0) rows.push({ id, qty, price: def.sellPrice, kind: 'mat' });
+      }
+      for (const [id, qty] of Object.entries(gameState.consumables)) {
+        const def = getConsumable(id);
+        if (def && qty > 0) rows.push({ id, qty, price: def.sellPrice, kind: 'cons' });
+      }
+      if (rows.length === 0) {
+        this.content.add(
+          this.add.text(16, y, '売れるものがありません。', { fontFamily: FONT, fontSize: '13px', color: '#9aa0b4' }),
+        );
+        y += 28;
+      }
+      for (const r of rows) {
+        this.renderSellRow(r, y, w, band++);
+        y += 64;
+      }
     }
-    if (!shop?.stock.length) {
-      this.content.add(
-        this.add.text(16, y, '品切れです。', { fontFamily: FONT, fontSize: '13px', color: '#9aa0b4' }),
-      );
-      y += 28;
-    }
+
     this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
     this.scrollTo(this.scrollY);
+  }
+
+  /** One sellable stack: icon + name ×qty + unit price + 売る / 全部売る. */
+  private renderSellRow(
+    r: { id: string; qty: number; price: number; kind: 'mat' | 'cons' },
+    y: number,
+    w: number,
+    band: number,
+  ): void {
+    const rowH = 60;
+    const cy = y + rowH / 2;
+    this.content.add(rowBand(this, y, rowH, band));
+    const tint = r.kind === 'mat' ? rarityColor(getMaterial(r.id)?.rarity) : this.itemTint(r.id);
+    const icon = r.kind === 'mat' ? TEX.iconGem : TEX.iconFlask;
+    this.content.add(this.add.rectangle(26, cy, 32, 32, 0x1c2036, 1).setStrokeStyle(2, 0x46508a, 0.95));
+    this.content.add(this.add.image(26, cy, icon).setTint(tint));
+    this.content.add(
+      this.add.text(50, y + 8, `${itemDisplayName(r.id)} ×${r.qty}`, {
+        fontFamily: FONT,
+        fontSize: '15px',
+        color: '#fff',
+      }),
+    );
+    this.content.add(
+      this.add.text(50, y + 30, `1個 ${r.price}G`, { fontFamily: FONT, fontSize: '11px', color: '#ffd86b' }),
+    );
+    const sellOne = this.add
+      .text(w - 74, cy, '売る', {
+        fontFamily: FONT,
+        fontSize: '13px',
+        color: '#ffe9a8',
+        backgroundColor: '#4a3a20',
+        padding: { x: 10, y: 6 },
+      })
+      .setOrigin(1, 0.5)
+      .setInteractive({ useHandCursor: true });
+    sellOne.on('pointerup', () => {
+      if (this.dragged) return;
+      this.sell(r, 1);
+    });
+    this.content.add(sellOne);
+    const sellAll = this.add
+      .text(w - 16, cy, '全部', {
+        fontFamily: FONT,
+        fontSize: '13px',
+        color: '#ffd0a0',
+        backgroundColor: '#3a2d18',
+        padding: { x: 10, y: 6 },
+      })
+      .setOrigin(1, 0.5)
+      .setInteractive({ useHandCursor: true });
+    sellAll.on('pointerup', () => {
+      if (this.dragged) return;
+      this.sell(r, r.qty);
+    });
+    this.content.add(sellAll);
+  }
+
+  private sell(r: { id: string; qty: number; price: number; kind: 'mat' | 'cons' }, count: number): void {
+    const n = Math.min(count, r.qty);
+    if (n <= 0) return;
+    const ok =
+      r.kind === 'mat'
+        ? gameState.consumeMaterials({ [r.id]: n })
+        : gameState.removeConsumable(r.id, n);
+    if (!ok) return;
+    gameState.addGold(r.price * n);
+    bus.emit('sfx:play', { id: 'coin' });
+    this.flash(`${itemDisplayName(r.id)} ×${n} を ${r.price * n}G で売った`);
+    this.render();
   }
 
   /** Tint the flask by what it restores (HP red / MP blue / both gold). */

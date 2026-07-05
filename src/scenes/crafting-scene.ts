@@ -3,7 +3,7 @@ import { gameState } from '@/player/game-state';
 import { getEquipment, getMaterial, getConsumable, itemDisplayName } from '@/data/items';
 import { rarityColorHex, rarityColor } from '@/data/rarity';
 import { allRecipes, type Recipe } from '@/crafting/recipes';
-import { craft, craftBlock } from '@/crafting/crafting';
+import { craft, craftBlock, visibleRecipes } from '@/crafting/crafting';
 import { bus } from '@/core/event-bus';
 import { FONT, addPanelChrome, rowBand, tabChip, pillButton, type TabHandle } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
@@ -118,10 +118,13 @@ export class CraftingScene extends Phaser.Scene {
     for (const tb of this.tabButtons) tb.tab.setActive(tb.id === this.tab);
     const w = this.scale.width;
     let y = this.viewTop + 8;
-    const list = allRecipes().filter((r) => this.recipeCategory(r) === this.tab);
-    if (list.length === 0) {
+    // MH-style discovery: only recipes whose materials the player has seen,
+    // craftable ones first. Hidden count hints there's more to find.
+    const inTab = allRecipes().filter((r) => this.recipeCategory(r) === this.tab);
+    const { visible, hidden } = visibleRecipes(gameState, inTab);
+    if (visible.length === 0) {
       this.content.add(
-        this.add.text(16, y, '作れるものがありません。', {
+        this.add.text(16, y, '作れるものがありません。素材を集めてこよう。', {
           fontFamily: FONT,
           fontSize: '13px',
           color: '#9aa0b4',
@@ -130,9 +133,21 @@ export class CraftingScene extends Phaser.Scene {
       y += 28;
     }
     let band = 0;
-    for (const r of list) {
+    for (const r of visible) {
       this.renderRecipe(r, y, w, band++);
       y += 76;
+    }
+    if (hidden > 0) {
+      this.content.add(
+        this.add
+          .text(w / 2, y + 10, `？ 未発見のレシピ ${hidden}件（新しい素材を手に入れると増える）`, {
+            fontFamily: FONT,
+            fontSize: '11px',
+            color: '#7e8499',
+          })
+          .setOrigin(0.5, 0),
+      );
+      y += 34;
     }
     this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
     this.scrollTo(this.scrollY);

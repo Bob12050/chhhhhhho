@@ -25,6 +25,23 @@ class BgmEngine {
   private gain: GainNode | null = null;
   private channels: ChannelState[] = [];
   private stepDur = 0;
+  /** User BGM volume multiplier (0..1) from the options screen. */
+  private userVol = 1;
+
+  /** Target gain for the playing track (master × user setting). */
+  private targetGain(): number {
+    return Math.max(0.0001, MASTER_GAIN * this.userVol);
+  }
+
+  /** Set the user BGM volume (0..1); ramps the playing track immediately. */
+  setVolume(v: number): void {
+    this.userVol = Math.max(0, Math.min(1, v));
+    const ctx = soundEngine.getContext();
+    if (this.gain && ctx) {
+      this.gain.gain.setValueAtTime(this.gain.gain.value, ctx.currentTime);
+      this.gain.gain.linearRampToValueAtTime(this.targetGain(), ctx.currentTime + 0.1);
+    }
+  }
 
   /** Start (or switch to) a track. Same id = no-op so scenes can call freely. */
   play(id: BgmId): void {
@@ -72,7 +89,7 @@ class BgmEngine {
     const def = BGM[this.current];
     this.gain = ctx.createGain();
     this.gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-    this.gain.gain.linearRampToValueAtTime(MASTER_GAIN, ctx.currentTime + FADE_S);
+    this.gain.gain.linearRampToValueAtTime(this.targetGain(), ctx.currentTime + FADE_S);
     this.gain.connect(ctx.destination);
     this.stepDur = 60 / (def.bpm * def.stepsPerBeat);
     const t0 = ctx.currentTime + 0.05;
@@ -90,7 +107,7 @@ class BgmEngine {
     }
     this.ensureStarted(ctx);
     if (!this.gain) return;
-    if (this.gain.gain.value === 0) this.gain.gain.value = MASTER_GAIN;
+    if (this.gain.gain.value === 0) this.gain.gain.value = this.targetGain();
 
     const horizon = ctx.currentTime + LOOKAHEAD_S;
     for (const st of this.channels) {

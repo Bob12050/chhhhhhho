@@ -28,6 +28,31 @@ export function canCraft(gs: GameState, r: Recipe): boolean {
   return craftBlock(gs, r) === null;
 }
 
+/**
+ * MH-style recipe discovery: a recipe shows up once the player has SEEN any of
+ * its material inputs (obtained at least once, even if since spent), or owns a
+ * piece of gear the recipe consumes (upgrade recipes), or needs no materials at
+ * all. Keeps the craft list from being a wall of unobtainable spoilers.
+ */
+export function isRecipeVisible(gs: GameState, r: Recipe): boolean {
+  const matIds = Object.keys(r.materials);
+  if (matIds.length === 0 && (r.consumeEquipment ?? []).length === 0) return true;
+  if (matIds.some((id) => gs.seenMaterials[id])) return true;
+  if ((r.consumeEquipment ?? []).some((id) => gs.ownedEquipmentCount(id) > 0)) return true;
+  return false;
+}
+
+/** Visible recipes, craftable-first (stable order within each group). */
+export function visibleRecipes(
+  gs: GameState,
+  all: Recipe[],
+): { visible: Recipe[]; hidden: number } {
+  const visible = all.filter((r) => isRecipeVisible(gs, r));
+  const craftable = visible.filter((r) => craftBlock(gs, r) === null);
+  const rest = visible.filter((r) => craftBlock(gs, r) !== null);
+  return { visible: [...craftable, ...rest], hidden: all.length - visible.length };
+}
+
 /** Consume inputs and grant the result. Returns false if not affordable. */
 export function craft(gs: GameState, r: Recipe): boolean {
   if (!canCraft(gs, r)) return false;

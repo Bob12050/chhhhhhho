@@ -41,6 +41,8 @@ export class GameState {
 
   materials: Record<string, number> = {};
   consumables: Record<string, number> = {};
+  /** Materials ever obtained (survives spending/selling) — gates recipe visibility. */
+  seenMaterials: Record<string, true> = {};
   /** Owned equipment ids (one entry per piece; equipped items are included). */
   equipmentOwned: string[] = [];
 
@@ -218,6 +220,7 @@ export class GameState {
 
   addMaterial(id: string, qty: number): void {
     this.materials[id] = (this.materials[id] ?? 0) + qty;
+    this.seenMaterials[id] = true;
     bus.emit('inventory:changed', {});
     bus.emit('item:picked-up', { itemId: id, quantity: qty });
   }
@@ -225,6 +228,15 @@ export class GameState {
   addConsumable(id: string, qty: number): void {
     this.consumables[id] = (this.consumables[id] ?? 0) + qty;
     bus.emit('inventory:changed', {});
+  }
+
+  /** Remove consumables WITHOUT applying their effect (selling). */
+  removeConsumable(id: string, qty: number): boolean {
+    if ((this.consumables[id] ?? 0) < qty) return false;
+    this.consumables[id] -= qty;
+    if (this.consumables[id] <= 0) delete this.consumables[id];
+    bus.emit('inventory:changed', {});
+    return true;
   }
 
   /** Use one consumable, applying its effect. Returns false if none/no effect. */
@@ -427,6 +439,7 @@ export class GameState {
         materials: { ...this.materials },
         consumables: { ...this.consumables },
         equipmentOwned: [...this.equipmentOwned],
+        seenMaterials: { ...this.seenMaterials },
       },
       flags: { ...this.flags },
       quests: {
@@ -461,6 +474,9 @@ export class GameState {
     this.y = data.player.y;
     this.materials = { ...data.inventory.materials };
     this.consumables = { ...(data.inventory.consumables ?? {}) };
+    // Legacy saves lack seenMaterials: anything currently held counts as seen.
+    this.seenMaterials = { ...(data.inventory.seenMaterials ?? {}) };
+    for (const id of Object.keys(this.materials)) this.seenMaterials[id] = true;
     // Owned equipment: keep only known ids.
     this.equipmentOwned = (data.inventory.equipmentOwned ?? []).filter((id) => !!getEquipment(id));
     this.flags = { ...data.flags };
