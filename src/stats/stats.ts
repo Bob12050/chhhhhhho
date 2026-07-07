@@ -26,6 +26,10 @@ export interface DerivedStats {
   moveSpeed: number; // logical px/sec
   /** Drop-chance bonus (0.15 = +15%). From LUK and charm-type accessories. */
   dropRate: number;
+  /** 吸血: fraction of dealt damage returned as HP (0.05 = 5%). Gear-only. */
+  lifesteal: number;
+  /** 金運: gold-gain bonus (0.2 = +20%). Gear-only. */
+  goldRate: number;
 }
 
 /** Flat additive modifiers, e.g. from equipment / job / passives. */
@@ -74,6 +78,9 @@ export function computeDerived(
     moveSpeed: 90,
     // 運 literally: LUK makes materials drop more (5 LUK ≈ +1.5%).
     dropRate: base.LUK * 0.003,
+    // Boss-gear specials: no base-stat contribution, equipment only.
+    lifesteal: 0,
+    goldRate: 0,
   };
 
   // 3) Additive derived modifiers (equipment etc.).
@@ -86,6 +93,8 @@ export function computeDerived(
 
   // Clamp.
   derived.critRate = Math.max(0, Math.min(1, derived.critRate));
+  derived.lifesteal = Math.max(0, Math.min(0.5, derived.lifesteal));
+  derived.goldRate = Math.max(0, derived.goldRate);
   derived.maxHp = Math.max(1, Math.round(derived.maxHp));
   derived.maxMp = Math.max(0, Math.round(derived.maxMp));
   return derived;

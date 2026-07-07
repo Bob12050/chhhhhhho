@@ -14,7 +14,8 @@ import { Rng } from '@/core/rng';
 import { getDropTable, rollDrops } from '@/loot/drop-table';
 import { getSkill } from '@/skills/skill-defs';
 import { recordKill, isComplete } from '@/quests/quests';
-import { getQuest } from '@/quests/quest-defs';
+import { getQuest, type QuestDef } from '@/quests/quest-defs';
+import { currentWave, concurrentSpawnCount, VETERAN_MODS } from '@/quests/hunt-logic';
 import { input } from '@/input/input-state';
 import { bus } from '@/core/event-bus';
 import { saveManager } from '@/save/save-manager';
@@ -55,6 +56,8 @@ const RESPAWN_MS = 8000;
 export class WorldScene extends Phaser.Scene {
   private player!: Player;
   private enemies: Enemy[] = [];
+  /** Alive hunt-wave spawns → their enemyId (drives 連続狩猟 top-ups). */
+  private huntLive = new Map<Enemy, string>();
   private obstacles!: Phaser.Physics.Arcade.StaticGroup;
   private loot!: Phaser.Physics.Arcade.Group;
   private dmg!: DamageNumbers;
@@ -74,6 +77,7 @@ export class WorldScene extends Phaser.Scene {
   private mpRegenTimer = 0;
   private portalLock = 0; // ms; blocks portal re-trigger right after arrival
   private portalHintCd = 0; // ms; throttles the "defeat the boss" hint
+  private portalGuard = 0; // ms; blocks walk-on portals right after taking a hit
   private transitioning = false;
   private npcBob = false;
   private busOff: Array<() => void> = [];
@@ -102,6 +106,7 @@ export class WorldScene extends Phaser.Scene {
   create(): void {
     // Reset per-session state (Phaser reuses the scene instance on restart).
     this.enemies = [];
+    this.huntLive.clear();
     this.portals = [];
     this.npcs = [];
     this.npcSprites = [];
@@ -113,6 +118,7 @@ export class WorldScene extends Phaser.Scene {
     this.mpRegenTimer = 0;
     this.portalLock = 600;
     this.portalHintCd = 0;
+    this.portalGuard = 0;
     this.transitioning = false;
     this.rng = new Rng((Date.now() ^ 0x9e3779b9) >>> 0);
     this.pet = null;
@@ -285,21 +291,68 @@ export class WorldScene extends Phaser.Scene {
 
   /**
    * Monster-Hunter style hunts: for every active quest whose `huntMap` is the
-   * current map, spawn its (still-unfinished) target enemies. The boss returns
-   * each time you enter while the quest is active, so repeatable hunts let you
-   * farm materials. A central 'boss' spawn point is used if defined.
+   * current map, spawn its CURRENT wave (objectives are hunted in order —
+   * 連続狩猟/露払い). The wave returns each time you enter while the quest is
+   * active, so repeatable hunts let you farm materials.
    */
   private spawnHuntTargets(): void {
-    const seen = new Set<string>();
     for (const qid of gameState.activeQuests) {
       const q = getQuest(qid);
       if (!q || q.huntMap !== this.map.id) continue;
-      for (const obj of q.objectives) {
-        if (seen.has(obj.enemyId)) continue;
-        seen.add(obj.enemyId);
-        const sp = spawnPoint(this.map, 'boss');
-        this.spawnEnemy(obj.enemyId, sp.x, sp.y);
-      }
+      this.spawnHuntWave(q, false);
+    }
+  }
+
+  /**
+   * Spawn (or top up) the current wave of one hunt quest at the 'boss' point.
+   * Bosses come solo; trash waves spawn up to 4 at once, spread out. Idempotent:
+   * only fills the gap between alive hunt spawns and the wave's target count.
+   */
+  private spawnHuntWave(q: QuestDef, announce: boolean): void {
+    const wave = currentWave(q, gameState.questProgress[q.id]);
+    if (!wave) return;
+    const def = getEnemyDef(wave.enemyId);
+    if (!def) return;
+    const want = concurrentSpawnCount(wave.remaining, !!def.isBoss);
+    let alive = 0;
+    for (const [e, id] of this.huntLive) {
+      if (!e.isDead() && id === wave.enemyId) alive++;
+    }
+    if (alive >= want) return;
+    const sp = spawnPoint(this.map, 'boss');
+    const mods = q.veteran
+      ? { hpMult: VETERAN_MODS.hpMult, dmgMult: VETERAN_MODS.dmgMult, veteran: true }
+      : {};
+    // Trash packs fan out around the spawn point so they don't stack.
+    const spread: [number, number][] = [[0, 0], [-52, 26], [52, 26], [0, 58]];
+    for (let i = alive; i < want; i++) {
+      const [ox, oy] = def.isBoss ? [0, 0] : spread[i % spread.length];
+      const e = this.spawnEnemy(wave.enemyId, sp.x + ox, sp.y + oy, { respawn: false, ...mods });
+      if (e) this.huntLive.set(e, wave.enemyId);
+    }
+    if (announce) {
+      const msg = def.isBoss
+        ? `${q.veteran ? '歴戦の' : ''}${def.name} が現れた！`
+        : '敵の群れが現れた！';
+      this.floatText(sp.x, sp.y - 46, msg, '#ffb26b');
+      bus.emit('sfx:play', { id: 'roar' });
+    }
+  }
+
+  /**
+   * After a hunt kill: if the quest's current objective finished but the quest
+   * itself isn't done, spawn the next wave (short delay so the death reads).
+   */
+  private scheduleHuntWaves(): void {
+    for (const qid of gameState.activeQuests) {
+      const q = getQuest(qid);
+      if (!q || q.huntMap !== this.map.id || isComplete(gameState, qid)) continue;
+      this.time.delayedCall(900, () => {
+        if (this.transitioning || !this.scene.isActive() || this.playerDead) return;
+        if (gameState.activeQuests.includes(qid) && !isComplete(gameState, qid)) {
+          this.spawnHuntWave(q, true);
+        }
+      });
     }
   }
 
@@ -307,15 +360,17 @@ export class WorldScene extends Phaser.Scene {
     type: string,
     x: number,
     y: number,
-    opts?: { respawn?: boolean },
+    opts?: { respawn?: boolean; hpMult?: number; dmgMult?: number; veteran?: boolean },
   ): Enemy | undefined {
     const def = getEnemyDef(type);
     if (!def) return undefined;
+    const maxHp = Math.round(def.maxHp * (opts?.hpMult ?? 1));
+    const contactDamage = Math.round(def.contactDamage * (opts?.dmgMult ?? 1));
     const enemy = new Enemy(this, x, y, {
       textureKey: def.textureKey,
-      maxHp: def.maxHp,
+      maxHp,
       moveSpeed: def.moveSpeed,
-      contactDamage: def.contactDamage,
+      contactDamage,
       aggroRange: def.aggroRange,
       attackRange: def.attackRange,
       tint: def.tint ? Phaser.Display.Color.HexStringToColor(def.tint).color : undefined,
@@ -345,7 +400,8 @@ export class WorldScene extends Phaser.Scene {
     this.physics.add.collider(enemy.sprite, this.obstacles);
     this.physics.add.overlap(this.player.body, enemy.sprite, () => this.onContact(enemy));
     enemy.onDeath = (dx, dy) => {
-      this.onEnemyDeath(dx, dy, def);
+      this.huntLive.delete(enemy);
+      this.onEnemyDeath(dx, dy, def, opts?.veteran === true);
       // Normal enemies respawn at their post so zones stay farmable (needed for
       // the time-based progression budget). Bosses only return on re-entry.
       if (!def.isBoss && opts?.respawn !== false) {
@@ -359,13 +415,13 @@ export class WorldScene extends Phaser.Scene {
     this.enemies.push(enemy);
     if (def.isBoss) {
       this.boss = enemy;
-      this.bossMaxHp = def.maxHp;
-      this.buildBossBar(def.name);
+      this.bossMaxHp = maxHp;
+      this.buildBossBar(`${opts?.veteran ? '歴戦の' : ''}${def.name}`);
       if (def.attacks && def.attacks.length > 0) {
         this.bossBrain = new BossBrain(
           this.makeArena(enemy, def),
           def.attacks,
-          def.contactDamage,
+          contactDamage,
           def.enrageAtHpPct,
         );
       }
@@ -501,9 +557,11 @@ export class WorldScene extends Phaser.Scene {
       .setOrigin(0, 0.5)
       .setScrollFactor(0)
       .setDepth(8001);
+    // Right-aligned: the player status panel covers the top-LEFT, so a
+    // centred name was always hidden behind it. The right side stays clear.
     const label = this.add
-      .text(w / 2, 30, name, { fontFamily: FONT, fontSize: '10px', color: '#fff' })
-      .setOrigin(0.5)
+      .text(w - 52, 30, name, { fontFamily: FONT, fontSize: '10px', color: '#fff' })
+      .setOrigin(1, 0.5)
       .setScrollFactor(0)
       .setDepth(8002);
     this.bossBar = { bg, fill, label };
@@ -569,6 +627,9 @@ export class WorldScene extends Phaser.Scene {
   private damagePlayer(amount: number, fromX: number, fromY: number): void {
     if (this.playerInvuln > 0 || this.playerDead) return;
     this.playerInvuln = 700;
+    // Knockback can shove the player onto a walk-on portal mid-fight (boss
+    // charges ejected hunters from the arena). Briefly disarm portals.
+    this.portalGuard = 1500;
     gameState.hp = Math.max(0, gameState.hp - amount);
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
     this.dmg.show(this.player.x, this.player.y - 40, amount, false);
@@ -620,6 +681,14 @@ export class WorldScene extends Phaser.Scene {
     this.dmg.show(e.x, e.y - 42, amount, crit, weak ? '#ff5a5a' : color);
     this.spawnHitSpark(e.x, e.y - 22, crit);
     bus.emit('combat:damage-dealt', { x: e.x, y: e.y, amount, crit });
+    // 吸血 (lifesteal): boss-gear special — heal a fraction of dealt damage.
+    const ls = gameState.derived.lifesteal;
+    if (ls > 0 && gameState.hp < gameState.derived.maxHp && !this.playerDead) {
+      const heal = Math.max(1, Math.round(amount * ls));
+      gameState.hp = Math.min(gameState.derived.maxHp, gameState.hp + heal);
+      bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
+      this.dmg.show(this.player.x, this.player.y - 48, heal, false, '#e36a9f');
+    }
     // On-hit status proc (only on a live enemy; weakness improves the odds).
     if (!killed && element !== 'none') {
       const st = statusFromElement(element);
@@ -1005,7 +1074,7 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
-  private onEnemyDeath(x: number, y: number, def: EnemyDef): void {
+  private onEnemyDeath(x: number, y: number, def: EnemyDef, veteran = false): void {
     this.enemies = this.enemies.filter((e) => !e.isDead());
     const burstColor = def.tint
       ? Phaser.Display.Color.HexStringToColor(def.tint).color
@@ -1015,22 +1084,28 @@ export class WorldScene extends Phaser.Scene {
     gameState.flags['killed_any'] = true;
     recordKill(gameState, def.id); // advance active quest objectives
     this.notifyHuntComplete(def);
+    this.scheduleHuntWaves(); // 連続狩猟: next wave after this kill
     const killFlag = `boss_${def.id}_killed`;
     const firstKill = !!def.isBoss && !gameState.flags[killFlag];
     const table = def.dropTableId ? getDropTable(def.dropTableId) : undefined;
     if (table) {
-      const drops = rollDrops(table, this.rng, { firstKill, dropBonus: gameState.derived.dropRate });
+      // 歴戦 individuals double every drop chance on top of the player's bonus.
+      const dropBonus = gameState.derived.dropRate + (veteran ? VETERAN_MODS.dropBonusAdd : 0);
+      const drops = rollDrops(table, this.rng, { firstKill, dropBonus });
       for (const d of drops) {
         const ox = this.rng.intRange(-12, 12);
         const oy = this.rng.intRange(-6, 10);
         this.spawnLoot(x + ox, y + oy, d.itemId, d.qty);
       }
     }
+    const rewardMult = veteran ? VETERAN_MODS.rewardMult : 1;
     if (def.goldReward) {
-      gameState.addGold(def.goldReward);
-      this.floatText(x + 14, y - 24, `+${def.goldReward}G`);
+      // 金運 (goldRate) scales combat gold; shop sells stay untouched.
+      const gold = Math.round(def.goldReward * rewardMult * (1 + gameState.derived.goldRate));
+      gameState.addGold(gold);
+      this.floatText(x + 14, y - 24, `+${gold}G`);
     }
-    gameState.gainExp(def.expReward);
+    gameState.gainExp(Math.round(def.expReward * rewardMult));
     if (def.isBoss) {
       gameState.flags[killFlag] = true;
       gameState.flags[`${def.id}_defeated`] = true;
@@ -1317,6 +1392,7 @@ export class WorldScene extends Phaser.Scene {
     if (this.dodgeCd > 0) this.dodgeCd -= delta;
     if (this.portalLock > 0) this.portalLock -= delta;
     if (this.portalHintCd > 0) this.portalHintCd -= delta;
+    if (this.portalGuard > 0) this.portalGuard -= delta;
 
     if (gameState.mp < gameState.derived.maxMp) {
       this.mpRegenTimer += delta;
@@ -1404,6 +1480,15 @@ export class WorldScene extends Phaser.Scene {
     if (this.portalLock > 0) return;
     for (const p of this.portals) {
       if (!Phaser.Geom.Rectangle.Contains(p.rect, this.player.x, this.player.y)) continue;
+      if (this.portalGuard > 0) {
+        // Recently hit: don't warp off a knockback. Hint so it doesn't read
+        // as a broken portal when standing on it deliberately.
+        if (this.portalHintCd <= 0) {
+          this.floatText(this.player.x, this.player.y - 44, '被弾直後は移動できない');
+          this.portalHintCd = 1200;
+        }
+        return;
+      }
       if (p.requiresFlag && !gameState.flags[p.requiresFlag]) {
         if (this.portalHintCd <= 0) {
           this.floatText(this.player.x, this.player.y - 44, 'ボスを倒すと進める');

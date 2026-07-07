@@ -88,16 +88,19 @@ export function turnInQuest(gs: GameState, questId: string): boolean {
   if (!q || !gs.activeQuests.includes(questId) || !isComplete(gs, questId)) return false;
 
   const r = q.rewards;
-  if (r.gold) gs.addGold(r.gold);
+  // 金運 (goldRate) boosts quest gold like kill gold; shop sells stay flat.
+  if (r.gold) gs.addGold(Math.round(r.gold * (1 + gs.derived.goldRate)));
   for (const [id, qty] of Object.entries(r.items ?? {})) grantItem(gs, id, qty);
   for (const f of r.setFlags ?? []) gs.flags[f] = true;
   if (r.exp) gs.gainExp(r.exp); // last: may trigger level-up events
 
   gs.activeQuests = gs.activeQuests.filter((id) => id !== questId);
   delete gs.questProgress[questId];
-  if (q.repeatable) {
-    // Repeatable: stays available for re-accept (not marked completed).
-  } else if (!gs.completedQuests.includes(questId)) {
+  // Record completion for ALL quests — repeatable ones too. `availableQuests`
+  // re-offers repeatables regardless, and `require.questDone` chains (歴戦・
+  // 連続狩猟 unlock after the base hunt) need the completion recorded or they
+  // could never unlock behind a repeatable hunt.
+  if (!gs.completedQuests.includes(questId)) {
     gs.completedQuests.push(questId);
   }
   gs.flags['quest_turned_in_any'] = true;

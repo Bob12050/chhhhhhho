@@ -86,10 +86,37 @@ describe('quests', () => {
     recordKill(gs, 'boss_flame');
     expect(isComplete(gs, 'hunt_flame_lord')).toBe(true);
     expect(turnInQuest(gs, 'hunt_flame_lord')).toBe(true);
-    // Repeatable: not marked completed, can be accepted again.
-    expect(gs.completedQuests).not.toContain('hunt_flame_lord');
+    // Repeatable: completion IS recorded (so 歴戦/連続 quests gated on
+    // questDone can unlock) but the hunt stays available and re-acceptable.
+    expect(gs.completedQuests).toContain('hunt_flame_lord');
     expect(availableQuests(gs).map((q) => q.id)).toContain('hunt_flame_lord');
     expect(acceptQuest(gs, 'hunt_flame_lord')).toBe(true);
+  });
+
+  it('questDone gate unlocks a follow-up behind a repeatable hunt (歴戦)', () => {
+    const gs = fresh();
+    gs.level = 60;
+    const vet = getQuest('hunt_r3_10_veteran_flame')!;
+    expect(vet.veteran).toBe(true);
+    // Locked until the base hunt has been turned in at least once.
+    expect(availableQuests(gs).map((q) => q.id)).not.toContain('hunt_r3_10_veteran_flame');
+    acceptQuest(gs, 'hunt_flame_lord');
+    recordKill(gs, 'boss_flame');
+    turnInQuest(gs, 'hunt_flame_lord');
+    expect(availableQuests(gs).map((q) => q.id)).toContain('hunt_r3_10_veteran_flame');
+  });
+
+  it('sequential hunt objectives complete in order (露払い→ボス)', () => {
+    const gs = fresh();
+    gs.level = 60;
+    acceptQuest(gs, 'hunt_bat_lord');
+    recordKill(gs, 'boss_bat_lord');
+    turnInQuest(gs, 'hunt_bat_lord');
+    expect(acceptQuest(gs, 'hunt_r2_09_night_prelude')).toBe(true);
+    for (let i = 0; i < 4; i++) recordKill(gs, 'cave_bat');
+    expect(isComplete(gs, 'hunt_r2_09_night_prelude')).toBe(false);
+    recordKill(gs, 'boss_bat_lord');
+    expect(isComplete(gs, 'hunt_r2_09_night_prelude')).toBe(true);
   });
 
   it('available list excludes active and completed quests', () => {

@@ -41,6 +41,8 @@ const DIFF_LABEL: Record<string, string> = {
   atkSpeed: '攻速',
   moveSpeed: '移動',
   dropRate: 'ドロ率',
+  lifesteal: '吸血',
+  goldRate: '金運',
 };
 
 /** Japanese labels for class families (skill tab grouping). */
@@ -231,7 +233,7 @@ export class InventoryScene extends Phaser.Scene {
     diffs.sort((a, b) => Math.abs(b.d) - Math.abs(a.d));
     const out = diffs.slice(0, 3).map(({ key, d }) => {
       const val =
-        key === 'critRate' || key === 'dropRate'
+        key === 'critRate' || key === 'dropRate' || key === 'lifesteal' || key === 'goldRate'
           ? `${Math.round(d * 100)}%`
           : key === 'atkSpeed'
             ? d.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')

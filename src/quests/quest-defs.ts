@@ -42,8 +42,14 @@ export interface QuestDef {
    * Monster-Hunter style hunt: while this quest is active, its target
    * enemies spawn in `huntMap`. Accepting it departs the player to that map.
    * The target despawns/returns on quest turn-in (re-accept to re-hunt).
+   * Objectives are hunted IN ORDER (連続狩猟/露払い waves).
    */
   huntMap?: string;
+  /**
+   * 歴戦 individual: hunt targets spawn with VETERAN_MODS (more HP/damage,
+   * bigger kill rewards, doubled drop chances). See src/quests/hunt-logic.ts.
+   */
+  veteran?: boolean;
 }
 
 interface QuestsFile {

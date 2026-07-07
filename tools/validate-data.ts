@@ -49,6 +49,8 @@ const DERIVED_KEYS = new Set([
   'atkSpeed',
   'moveSpeed',
   'dropRate',
+  'lifesteal',
+  'goldRate',
 ]);
 
 function err(msg: string): void {
@@ -163,10 +165,12 @@ function validateEnemies(itemIds: Set<string>, dropTableIds: Set<string>): Set<s
       resist?: string;
       attacks?: Record<string, unknown>[];
       enrageAtHpPct?: number;
+      variantOf?: string;
     }[];
   }>('src/data/defs/enemies.json');
   const ids = new Set<string>();
   const summonRefs: [string, string][] = [];
+  const variantRefs: [string, string][] = [];
   for (const e of file.enemies) {
     if (ids.has(e.id)) err(`Duplicate enemy id: ${e.id}`);
     ids.add(e.id);
@@ -181,6 +185,11 @@ function validateEnemies(itemIds: Set<string>, dropTableIds: Set<string>): Set<s
     if (e.resist === 'none') err(`Enemy ${e.id}: resist "none" is meaningless`);
     if (e.weakness != null && e.weakness === e.resist)
       err(`Enemy ${e.id}: weakness and resist are the same element`);
+    // 亜種 (variant) must reference its base species.
+    if (e.variantOf != null) {
+      if (e.variantOf === e.id) err(`Enemy ${e.id}: variantOf references itself`);
+      else variantRefs.push([e.id, e.variantOf]);
+    }
     // Boss attack patterns.
     if (e.attacks && !e.isBoss) err(`Enemy ${e.id}: attacks are boss-only`);
     if (e.enrageAtHpPct != null && !(e.enrageAtHpPct > 0 && e.enrageAtHpPct <= 1))
@@ -220,6 +229,9 @@ function validateEnemies(itemIds: Set<string>, dropTableIds: Set<string>): Set<s
   for (const [at, id] of summonRefs) {
     if (!ids.has(id)) err(`${at}: summon enemyId "${id}" unknown`);
   }
+  for (const [vid, base] of variantRefs) {
+    if (!ids.has(base)) err(`Enemy ${vid}: variantOf "${base}" unknown`);
+  }
   return ids;
 }
 
@@ -232,6 +244,9 @@ function validateDialogue(): Set<string> {
   }
   return ids;
 }
+
+/** Map ids with a 'boss' spawn point (hunt arenas need one). */
+const bossSpawnMaps = new Set<string>();
 
 function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<string> {
   const files = [
@@ -264,6 +279,7 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
     const m = readJson<MapDoc>(`src/data/defs/maps/${f}.json`);
     if (maps.has(m.id)) err(`Duplicate map id: ${m.id}`);
     maps.set(m.id, m);
+    if (m.spawns && 'boss' in m.spawns) bossSpawnMaps.add(m.id);
     const order = m.travel?.order;
     if (order != null && !m.travel?.hidden) {
       const dup = travelOrders.get(order);
@@ -536,6 +552,7 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set
       rewards: { items?: Record<string, number> };
       huntMap?: string;
       rank?: number;
+      veteran?: unknown;
     }[];
   }>('src/data/defs/quests.json');
   const QTYPES = new Set(['subjugation', 'unlock', 'hunt']);
@@ -543,6 +560,12 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set
   for (const q of file.quests) {
     if (q.huntMap && !mapIds.has(q.huntMap))
       err(`Quest ${q.id}: huntMap "${q.huntMap}" is not a known map`);
+    if (q.huntMap && mapIds.has(q.huntMap) && !bossSpawnMaps.has(q.huntMap))
+      err(`Quest ${q.id}: huntMap "${q.huntMap}" has no 'boss' spawn point`);
+    if (q.veteran != null && typeof q.veteran !== 'boolean')
+      err(`Quest ${q.id}: veteran must be a boolean`);
+    if (q.veteran === true && !q.huntMap)
+      err(`Quest ${q.id}: veteran only applies to hunt quests (needs huntMap)`);
     if (q.rank != null && (!Number.isInteger(q.rank) || q.rank < 1 || q.rank > 7))
       err(`Quest ${q.id}: rank must be an integer 1〜7 (got ${q.rank})`);
     if (!QTYPES.has(q.type)) err(`Quest ${q.id}: invalid type "${q.type}"`);

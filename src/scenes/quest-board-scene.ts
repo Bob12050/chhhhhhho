@@ -183,7 +183,7 @@ export class QuestBoardScene extends Phaser.Scene {
   private renderQuestList(y: number, w: number): number {
     if (this.tab === 'hunt' && this.selectedRank !== null) {
       const back = this.add
-        .text(16, y, `← ★${this.selectedRank} 一覧へ戻る`, { fontFamily: FONT, fontSize: '13px', color: '#9fd0ff' })
+        .text(16, y, '← ランク一覧へ戻る', { fontFamily: FONT, fontSize: '13px', color: '#9fd0ff' })
         .setInteractive({ useHandCursor: true });
       back.on('pointerup', () => {
         if (this.dragged) return;
@@ -192,7 +192,24 @@ export class QuestBoardScene extends Phaser.Scene {
         this.render();
       });
       this.content.add(back);
-      y += 30;
+      y += 28;
+      // Direct ★rank switcher so hopping between ranks doesn't need the
+      // drill-down round trip (10 quests per rank makes hopping common).
+      const ranks = [...new Set(allQuests().filter((q) => !!q.huntMap).map((q) => q.rank ?? 1))]
+        .sort((a, b) => a - b);
+      let cx = 14;
+      for (const r of ranks) {
+        const chip = tabChip(this, cx + 23, y + 17, 46, `★${r}`, () => {
+          if (this.dragged) return;
+          this.selectedRank = r;
+          this.scrollY = 0;
+          this.render();
+        });
+        chip.setActive(r === this.selectedRank);
+        this.content.add(chip.root);
+        cx += 49;
+      }
+      y += 44;
     }
 
     const inScope = (q: QuestDef): boolean => {
@@ -204,8 +221,11 @@ export class QuestBoardScene extends Phaser.Scene {
       .filter(inScope)
       .sort(this.byRank);
     const avail = availableQuests(gameState).filter(inScope).sort(this.byRank);
+    // Repeatable quests are recorded as completed AND re-offered; show them
+    // only under 受注できる so the board doesn't list them twice.
+    const shown = new Set([...active, ...avail].map((q) => q.id));
     const done = (gameState.completedQuests.map((id) => getQuest(id)).filter(Boolean) as QuestDef[])
-      .filter(inScope)
+      .filter((q) => inScope(q) && !shown.has(q.id))
       .sort(this.byRank);
 
     if (active.length) {
@@ -274,13 +294,24 @@ export class QuestBoardScene extends Phaser.Scene {
       color: state === 'done' ? '#6b7088' : this.rankColor(rank),
     });
     this.content.add(starTxt);
-    this.content.add(
-      this.add.text(16 + starTxt.width + 6, y, q.name, {
-        fontFamily: FONT,
-        fontSize: '15px',
-        color: titleColor,
-      }),
-    );
+    const nameTxt = this.add.text(16 + starTxt.width + 6, y, q.name, {
+      fontFamily: FONT,
+      fontSize: '15px',
+      color: titleColor,
+    });
+    this.content.add(nameTxt);
+    if (q.veteran) {
+      // 歴戦 badge: stronger target, better rewards — worth calling out.
+      this.content.add(
+        this.add.text(16 + starTxt.width + 6 + nameTxt.width + 6, y + 2, '歴戦', {
+          fontFamily: FONT,
+          fontSize: '10px',
+          color: '#ffb0c0',
+          backgroundColor: '#5a2233',
+          padding: { x: 5, y: 2 },
+        }),
+      );
+    }
     this.content.add(
       this.add.text(16, y + 20, this.objectiveText(q, state === 'active'), {
         fontFamily: FONT,

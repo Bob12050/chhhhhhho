@@ -36,6 +36,8 @@ export interface EnemyDef {
   attacks?: BossAttackDef[];
   /** HP fraction (0..1) at which the boss enrages (faster attacks/moves). */
   enrageAtHpPct?: number;
+  /** 亜種: id of the base species this enemy is a recolored variant of. */
+  variantOf?: string;
 }
 
 /**

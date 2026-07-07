@@ -855,6 +855,68 @@
       },
       "repeatable": true,
       "rank": 7
+    },
+    {
+      "id": "hunt_r2_09_night_prelude",
+      "name": "大型狩猟：常闇の露払い",
+      "type": "hunt",
+      "description": "常闇の祭壇に巣食うコウモリの群れを排除せよ。騒ぎを聞きつけ、夜の王 ノクスが姿を現す。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "cave_bat",
+          "count": 4
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_bat_lord",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 13,
+        "questDone": "hunt_bat_lord"
+      },
+      "huntMap": "arena_night",
+      "rewards": {
+        "gold": 95,
+        "exp": 900,
+        "items": {
+          "night_fang": 2,
+          "mana_stone": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 2
+    },
+    {
+      "id": "hunt_r3_10_veteran_flame",
+      "name": "歴戦：業火の主",
+      "type": "hunt",
+      "description": "数多の狩人を退けてきた歴戦のヴルム。通常個体より遥かに強靭だが、素材は剥ぎ取り放題だ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_flame",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 26,
+        "questDone": "hunt_flame_lord"
+      },
+      "huntMap": "arena_volcano",
+      "veteran": true,
+      "rewards": {
+        "gold": 950,
+        "exp": 3400,
+        "items": {
+          "flame_core": 2,
+          "star_fragment": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 3
     }
   ]
 }
