@@ -5449,6 +5449,262 @@
       },
       "gold": 1377,
       "station": "forge"
+    },
+    {
+      "id": "craft_lord_mace",
+      "resultItemId": "lord_mace",
+      "resultQty": 1,
+      "materials": {
+        "treant_sap": 3,
+        "lord_hardwood": 2,
+        "iron_ore": 2
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_lord_bark_mail",
+      "resultItemId": "lord_bark_mail",
+      "resultQty": 1,
+      "materials": {
+        "treant_sap": 4,
+        "lord_hardwood": 2,
+        "soft_leather": 2
+      },
+      "gold": 50,
+      "station": "forge"
+    },
+    {
+      "id": "craft_lord_root_boots",
+      "resultItemId": "lord_root_boots",
+      "resultQty": 1,
+      "materials": {
+        "treant_sap": 2,
+        "lord_hardwood": 1,
+        "soft_leather": 2
+      },
+      "gold": 40,
+      "station": "forge"
+    },
+    {
+      "id": "craft_guardian_blade",
+      "resultItemId": "guardian_blade",
+      "resultQty": 1,
+      "materials": {
+        "stone_heart": 3,
+        "guardian_keystone": 2,
+        "iron_ore": 3
+      },
+      "gold": 70,
+      "station": "forge"
+    },
+    {
+      "id": "craft_guardian_bulwark",
+      "resultItemId": "guardian_bulwark",
+      "resultQty": 1,
+      "materials": {
+        "stone_heart": 4,
+        "guardian_keystone": 2,
+        "iron_ore": 2
+      },
+      "gold": 70,
+      "station": "forge"
+    },
+    {
+      "id": "craft_guardian_plate",
+      "resultItemId": "guardian_plate",
+      "resultQty": 1,
+      "materials": {
+        "stone_heart": 3,
+        "guardian_keystone": 2,
+        "soft_leather": 2
+      },
+      "gold": 60,
+      "station": "forge"
+    },
+    {
+      "id": "craft_nox_fang_blade",
+      "resultItemId": "nox_fang_blade",
+      "resultQty": 1,
+      "materials": {
+        "night_fang": 4,
+        "lord_wing": 2,
+        "night_ruby": 1,
+        "steel_ingot": 1
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "craft_nox_wing_cloak",
+      "resultItemId": "nox_wing_cloak",
+      "resultQty": 1,
+      "materials": {
+        "night_fang": 2,
+        "lord_wing": 3,
+        "soft_leather": 3
+      },
+      "gold": 120,
+      "station": "forge"
+    },
+    {
+      "id": "craft_nox_mask",
+      "resultItemId": "nox_mask",
+      "resultQty": 1,
+      "materials": {
+        "night_fang": 3,
+        "lord_wing": 2,
+        "mana_stone": 2
+      },
+      "gold": 110,
+      "station": "forge"
+    },
+    {
+      "id": "craft_zephys_gale_bow",
+      "resultItemId": "zephys_gale_bow",
+      "resultQty": 1,
+      "materials": {
+        "gale_feather": 4,
+        "gale_tailfeather": 2,
+        "steel_ingot": 1
+      },
+      "gold": 140,
+      "station": "forge"
+    },
+    {
+      "id": "craft_zephys_boots",
+      "resultItemId": "zephys_boots",
+      "resultQty": 1,
+      "materials": {
+        "gale_feather": 3,
+        "gale_tailfeather": 1,
+        "soft_leather": 3
+      },
+      "gold": 110,
+      "station": "forge"
+    },
+    {
+      "id": "craft_zephys_band",
+      "resultItemId": "zephys_band",
+      "resultQty": 1,
+      "materials": {
+        "gale_feather": 2,
+        "gale_tailfeather": 2,
+        "soft_leather": 2
+      },
+      "gold": 100,
+      "station": "forge"
+    },
+    {
+      "id": "craft_vurm_greatsword",
+      "resultItemId": "vurm_greatsword",
+      "resultQty": 1,
+      "materials": {
+        "flame_core": 3,
+        "flame_talon": 2,
+        "flame_guren": 1,
+        "steel_ingot": 2
+      },
+      "gold": 280,
+      "station": "forge"
+    },
+    {
+      "id": "craft_vurm_gauntlet",
+      "resultItemId": "vurm_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "flame_core": 2,
+        "flame_talon": 2,
+        "steel_ingot": 1
+      },
+      "gold": 220,
+      "station": "forge"
+    },
+    {
+      "id": "craft_vurm_helm",
+      "resultItemId": "vurm_helm",
+      "resultQty": 1,
+      "materials": {
+        "flame_core": 2,
+        "flame_talon": 1,
+        "steel_ingot": 2
+      },
+      "gold": 220,
+      "station": "forge"
+    },
+    {
+      "id": "craft_fenrir_fang_katana",
+      "resultItemId": "fenrir_fang_katana",
+      "resultQty": 1,
+      "materials": {
+        "alpha_pelt": 3,
+        "alpha_fang": 2,
+        "moon_fang": 1,
+        "steel_ingot": 2
+      },
+      "gold": 280,
+      "station": "forge"
+    },
+    {
+      "id": "craft_fenrir_greaves",
+      "resultItemId": "fenrir_greaves",
+      "resultQty": 1,
+      "materials": {
+        "alpha_pelt": 3,
+        "alpha_fang": 1,
+        "soft_leather": 3
+      },
+      "gold": 220,
+      "station": "forge"
+    },
+    {
+      "id": "craft_fenrir_belt",
+      "resultItemId": "fenrir_belt",
+      "resultQty": 1,
+      "materials": {
+        "alpha_pelt": 2,
+        "alpha_fang": 2,
+        "soft_leather": 2
+      },
+      "gold": 210,
+      "station": "forge"
+    },
+    {
+      "id": "craft_king_jelly_rod",
+      "resultItemId": "king_jelly_rod",
+      "resultQty": 1,
+      "materials": {
+        "king_jelly": 2,
+        "royal_ichor": 2,
+        "crown_droplet": 2,
+        "mana_stone": 2
+      },
+      "gold": 280,
+      "station": "forge"
+    },
+    {
+      "id": "craft_golden_crown",
+      "resultItemId": "golden_crown",
+      "resultQty": 1,
+      "materials": {
+        "crown_droplet": 3,
+        "royal_pearl": 1,
+        "mana_stone": 2
+      },
+      "gold": 320,
+      "station": "forge"
+    },
+    {
+      "id": "craft_royal_robe",
+      "resultItemId": "royal_robe",
+      "resultQty": 1,
+      "materials": {
+        "royal_ichor": 3,
+        "crown_droplet": 2,
+        "soft_leather": 3
+      },
+      "gold": 230,
+      "station": "forge"
     }
   ]
 }

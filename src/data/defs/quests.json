@@ -917,6 +917,659 @@
       },
       "repeatable": true,
       "rank": 3
+    },
+    {
+      "id": "hunt_r1_03_grove_prelude",
+      "name": "大型狩猟：木立の露払い",
+      "type": "hunt",
+      "description": "木立に湧いた茸を焼き払え。怒った主が根を鳴らして現れる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "cap_shroom",
+          "count": 3
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_treant",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 5,
+        "questDone": "hunt_treant_again"
+      },
+      "huntMap": "arena_grove",
+      "rewards": {
+        "gold": 60,
+        "exp": 420,
+        "items": {
+          "treant_sap": 2,
+          "herb": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 1
+    },
+    {
+      "id": "hunt_r1_04_cavern_prelude",
+      "name": "大型狩猟：岩窟の露払い",
+      "type": "hunt",
+      "description": "岩窟のゴーレムを砕け。眠っていた番人が目を覚ます。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "golem",
+          "count": 2
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_stone",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 7,
+        "questDone": "hunt_stone_again"
+      },
+      "huntMap": "arena_cavern",
+      "rewards": {
+        "gold": 90,
+        "exp": 700,
+        "items": {
+          "stone_heart": 2,
+          "iron_ore": 3
+        }
+      },
+      "repeatable": true,
+      "rank": 1
+    },
+    {
+      "id": "hunt_r1_05_twin_guardians",
+      "name": "連続狩猟：森と岩の主",
+      "type": "hunt",
+      "description": "もりの主と岩の番人、二体の主を続けて狩る耐久の試練。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_treant",
+          "count": 1
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_stone",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 8,
+        "questDone": "hunt_stone_again"
+      },
+      "huntMap": "arena_grove",
+      "rewards": {
+        "gold": 140,
+        "exp": 1100,
+        "items": {
+          "lord_hardwood": 1,
+          "guardian_keystone": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 1
+    },
+    {
+      "id": "hunt_r1_06_wolf_pack",
+      "name": "討伐：草原の群狼",
+      "type": "hunt",
+      "description": "決闘場に迷い込んだ狼の群れを間引く。囲まれるな。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "green_wolf",
+          "count": 6
+        }
+      ],
+      "require": {
+        "minLevel": 4
+      },
+      "huntMap": "arena_plain",
+      "rewards": {
+        "gold": 45,
+        "exp": 300,
+        "items": {
+          "soft_leather": 3
+        }
+      },
+      "repeatable": true,
+      "rank": 1
+    },
+    {
+      "id": "hunt_r1_07_shroom_bloom",
+      "name": "討伐：胞子大発生",
+      "type": "hunt",
+      "description": "毒沼の窪地で茸が大発生。全て刈り取れ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "cap_shroom",
+          "count": 6
+        }
+      ],
+      "require": {
+        "minLevel": 5
+      },
+      "huntMap": "arena_swamp",
+      "rewards": {
+        "gold": 50,
+        "exp": 340,
+        "items": {
+          "herb": 3,
+          "treant_sap": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 1
+    },
+    {
+      "id": "hunt_r1_08_bat_cull",
+      "name": "討伐：祭壇のコウモリ払い",
+      "type": "hunt",
+      "description": "常闇の祭壇に住み着いたコウモリを追い払え。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "bat",
+          "count": 5
+        }
+      ],
+      "require": {
+        "minLevel": 6
+      },
+      "huntMap": "arena_night",
+      "rewards": {
+        "gold": 50,
+        "exp": 360,
+        "items": {
+          "soft_leather": 2,
+          "mana_stone": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 1
+    },
+    {
+      "id": "hunt_r1_09_veteran_treant",
+      "name": "歴戦：もりの主",
+      "type": "hunt",
+      "description": "数多の斧を折ってきた歴戦の主。並の個体とは硬さが違う。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_treant",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 10,
+        "questDone": "hunt_treant_again"
+      },
+      "huntMap": "arena_grove",
+      "rewards": {
+        "gold": 180,
+        "exp": 900,
+        "items": {
+          "lord_hardwood": 2,
+          "treant_sap": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 1,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r1_10_veteran_stone",
+      "name": "歴戦：岩の番人",
+      "type": "hunt",
+      "description": "風化を知らぬ歴戦の番人。突進の重さは岩雪崩に等しい。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_stone",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 11,
+        "questDone": "hunt_stone_again"
+      },
+      "huntMap": "arena_cavern",
+      "rewards": {
+        "gold": 260,
+        "exp": 1500,
+        "items": {
+          "guardian_keystone": 2,
+          "stone_heart": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 1,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r2_01_zephys",
+      "name": "大型狩猟：風翔の王 ゼフィス",
+      "type": "hunt",
+      "description": "草原の空を統べる巨鳥。急降下は音より速い。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_zephys",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 13
+      },
+      "huntMap": "arena_plain",
+      "rewards": {
+        "gold": 110,
+        "exp": 800,
+        "items": {
+          "gale_feather": 2,
+          "gale_tailfeather": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 2
+    },
+    {
+      "id": "hunt_r2_02_dross",
+      "name": "大型狩猟：腐主 ドロス",
+      "type": "hunt",
+      "description": "毒に堕ちたもうひとつの主。足元の瘴気溜まりに注意。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_dross",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 15,
+        "questDone": "hunt_treant_again"
+      },
+      "huntMap": "arena_grove",
+      "rewards": {
+        "gold": 130,
+        "exp": 900,
+        "items": {
+          "dross_rotwood": 2,
+          "herb": 3
+        }
+      },
+      "repeatable": true,
+      "rank": 2
+    },
+    {
+      "id": "hunt_r2_03_sky_night",
+      "name": "連続狩猟：空と夜",
+      "type": "hunt",
+      "description": "昼を舞うゼフィス、夜を統べるノクス。二王を一息に狩る。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_zephys",
+          "count": 1
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_bat_lord",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 15,
+        "questDone": "hunt_r2_01_zephys"
+      },
+      "huntMap": "arena_night",
+      "rewards": {
+        "gold": 220,
+        "exp": 1600,
+        "items": {
+          "gale_tailfeather": 1,
+          "lord_wing": 1,
+          "mana_stone": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 2
+    },
+    {
+      "id": "hunt_r2_04_dross_prelude",
+      "name": "大型狩猟：瘴気の沼払い",
+      "type": "hunt",
+      "description": "沼の茸を除いて瘴気の源を暴け。ドロスが腐臭とともに現れる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "cap_shroom",
+          "count": 4
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_dross",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 16,
+        "questDone": "hunt_r2_02_dross"
+      },
+      "huntMap": "arena_swamp",
+      "rewards": {
+        "gold": 150,
+        "exp": 1050,
+        "items": {
+          "dross_rotwood": 2,
+          "treant_sap": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 2
+    },
+    {
+      "id": "hunt_r2_05_veteran_nox",
+      "name": "歴戦：夜の王",
+      "type": "hunt",
+      "description": "幾多の夜を生き延びた歴戦のノクス。翼の一打で灯が消える。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_bat_lord",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 18,
+        "questDone": "hunt_bat_lord"
+      },
+      "huntMap": "arena_night",
+      "rewards": {
+        "gold": 260,
+        "exp": 1400,
+        "items": {
+          "lord_wing": 2,
+          "night_fang": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 2,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r2_06_veteran_zephys",
+      "name": "歴戦：風翔の王",
+      "type": "hunt",
+      "description": "嵐を従える歴戦のゼフィス。地に足を付けた瞬間を狙え。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_zephys",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 18,
+        "questDone": "hunt_r2_01_zephys"
+      },
+      "huntMap": "arena_plain",
+      "rewards": {
+        "gold": 280,
+        "exp": 1500,
+        "items": {
+          "gale_tailfeather": 2,
+          "gale_feather": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 2,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r3_01_obsidion",
+      "name": "大型狩猟：黒曜の番人 オブシオン",
+      "type": "hunt",
+      "description": "黒曜と化した番人。聖なる光だけが装甲を貫く。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_obsidion",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 22,
+        "questDone": "hunt_stone_again"
+      },
+      "huntMap": "arena_cavern",
+      "rewards": {
+        "gold": 320,
+        "exp": 1800,
+        "items": {
+          "obsidian_shard": 2,
+          "iron_ore": 3
+        }
+      },
+      "repeatable": true,
+      "rank": 3
+    },
+    {
+      "id": "hunt_r3_02_obsidion_prelude",
+      "name": "大型狩猟：古城の岩払い",
+      "type": "hunt",
+      "description": "古城の広間でゴーレムを砕くと、床下からオブシオンが迫り上がる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "golem",
+          "count": 3
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_obsidion",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 24,
+        "questDone": "hunt_r3_01_obsidion"
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 360,
+        "exp": 2100,
+        "items": {
+          "obsidian_shard": 2,
+          "guardian_keystone": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 3
+    },
+    {
+      "id": "hunt_r3_03_flame_wolf",
+      "name": "連続狩猟：炎と狼",
+      "type": "hunt",
+      "description": "火口でヴルムを討ち、返す刀でフェンリルを狩る。休む暇はない。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_flame",
+          "count": 1
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_wolf_alpha",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 25,
+        "questDone": "hunt_flame_lord"
+      },
+      "huntMap": "arena_volcano",
+      "rewards": {
+        "gold": 450,
+        "exp": 3000,
+        "items": {
+          "flame_talon": 1,
+          "alpha_fang": 1,
+          "star_fragment": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 3
+    },
+    {
+      "id": "hunt_r3_04_dross_visit",
+      "name": "出張狩猟：沼の腐主",
+      "type": "hunt",
+      "description": "縄張りを広げたドロスが沼の闘技場に出現。瘴気が濃い。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_dross",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 20,
+        "questDone": "hunt_r2_02_dross"
+      },
+      "huntMap": "arena_marsh",
+      "rewards": {
+        "gold": 260,
+        "exp": 1500,
+        "items": {
+          "dross_rotwood": 2,
+          "lord_hardwood": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 3
+    },
+    {
+      "id": "hunt_r3_05_veteran_fenrir",
+      "name": "歴戦：群狼の長",
+      "type": "hunt",
+      "description": "群れを百は率いた歴戦のフェンリル。牙の連撃を見切れ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_wolf_alpha",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 28,
+        "questDone": "hunt_wolf_alpha"
+      },
+      "huntMap": "arena_plain",
+      "rewards": {
+        "gold": 520,
+        "exp": 2600,
+        "items": {
+          "alpha_fang": 2,
+          "alpha_pelt": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 3,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r3_06_veteran_king",
+      "name": "歴戦：王の狩り",
+      "type": "hunt",
+      "description": "肥え太った歴戦のキングスライム。分裂した端から潰せ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_slime",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 28,
+        "questDone": "hunt_kingslime"
+      },
+      "huntMap": "arena_marsh",
+      "rewards": {
+        "gold": 600,
+        "exp": 3000,
+        "items": {
+          "crown_droplet": 2,
+          "royal_ichor": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 3,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r2_07_stone_visit",
+      "name": "出張狩猟：断崖の番人",
+      "type": "hunt",
+      "description": "岩の番人が断崖の闘技場に居座った。足場の狭さが牙を剥く。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_stone",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 14,
+        "questDone": "hunt_stone_again"
+      },
+      "huntMap": "arena_canyon",
+      "rewards": {
+        "gold": 120,
+        "exp": 950,
+        "items": {
+          "guardian_keystone": 1,
+          "stone_heart": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 2
+    },
+    {
+      "id": "hunt_r2_08_cave_swarm",
+      "name": "討伐：洞窟コウモリの大群",
+      "type": "hunt",
+      "description": "岩窟に洞窟コウモリが大量発生。狩り尽くして静寂を取り戻せ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "cave_bat",
+          "count": 7
+        }
+      ],
+      "require": {
+        "minLevel": 12
+      },
+      "huntMap": "arena_cavern",
+      "rewards": {
+        "gold": 85,
+        "exp": 700,
+        "items": {
+          "night_fang": 2,
+          "mana_stone": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 2
     }
   ]
 }

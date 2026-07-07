@@ -156,6 +156,125 @@
       "rarity": 4,
       "sellPrice": 48,
       "description": "砦の兜の素材。stoneの討伐で得られる。"
+    },
+    {
+      "id": "lord_hardwood",
+      "name": "主の堅木",
+      "rarity": 5,
+      "sellPrice": 45,
+      "description": "もりの主の芯から取れる硬材。年輪が渦を巻く。"
+    },
+    {
+      "id": "guardian_keystone",
+      "name": "番人の要石",
+      "rarity": 5,
+      "sellPrice": 50,
+      "description": "岩の番人の関節を支えていた要の石。"
+    },
+    {
+      "id": "lord_wing",
+      "name": "王の翼膜",
+      "rarity": 5,
+      "sellPrice": 55,
+      "description": "夜の王の翼から剥いだ丈夫な膜。月光を通す。"
+    },
+    {
+      "id": "crown_droplet",
+      "name": "王冠の雫",
+      "rarity": 6,
+      "sellPrice": 65,
+      "description": "キングスライムの冠に溜まる濃厚な雫。"
+    },
+    {
+      "id": "flame_talon",
+      "name": "業火の剛爪",
+      "rarity": 6,
+      "sellPrice": 70,
+      "description": "ヴルムの前脚の爪。今も熱を帯びる。"
+    },
+    {
+      "id": "alpha_fang",
+      "name": "群狼の長牙",
+      "rarity": 6,
+      "sellPrice": 70,
+      "description": "フェンリルの牙。折れても再生するという。"
+    },
+    {
+      "id": "gale_feather",
+      "name": "風切羽",
+      "rarity": 4,
+      "sellPrice": 30,
+      "description": "ゼフィスの羽。振ると風が鳴く。"
+    },
+    {
+      "id": "gale_tailfeather",
+      "name": "大風切の尾羽",
+      "rarity": 5,
+      "sellPrice": 55,
+      "description": "ゼフィスの尾羽。矢羽に最適。"
+    },
+    {
+      "id": "spirit_amber",
+      "name": "精霊の琥珀",
+      "rarity": 8,
+      "sellPrice": 240,
+      "description": "主の樹液が百年かけて固まった宝石。"
+    },
+    {
+      "id": "earth_coreorb",
+      "name": "大地の核玉",
+      "rarity": 8,
+      "sellPrice": 250,
+      "description": "番人の胸奥に眠る大地の結晶。"
+    },
+    {
+      "id": "night_ruby",
+      "name": "夜王の紅玉",
+      "rarity": 8,
+      "sellPrice": 260,
+      "description": "ノクスの額に輝いていた紅い宝石。"
+    },
+    {
+      "id": "royal_pearl",
+      "name": "王者の心珠",
+      "rarity": 8,
+      "sellPrice": 280,
+      "description": "スライム王の核。虹色に濁る。"
+    },
+    {
+      "id": "flame_guren",
+      "name": "業火の紅蓮珠",
+      "rarity": 8,
+      "sellPrice": 300,
+      "description": "ヴルムの心臓部で燃え続ける珠。"
+    },
+    {
+      "id": "moon_fang",
+      "name": "月魄の牙",
+      "rarity": 8,
+      "sellPrice": 300,
+      "description": "満月の夜のフェンリルだけが持つ蒼い牙。"
+    },
+    {
+      "id": "sky_crown",
+      "name": "天翔の羽冠",
+      "rarity": 8,
+      "sellPrice": 280,
+      "description": "ゼフィスの頭を飾る冠羽。風を統べる証。"
+    },
+    {
+      "id": "dross_rotwood",
+      "name": "腐主の瘴木",
+      "rarity": 6,
+      "sellPrice": 80,
+      "description": "ドロスの体を成す毒気を孕んだ木材。"
+    },
+    {
+      "id": "obsidian_shard",
+      "name": "黒曜の破片",
+      "rarity": 7,
+      "sellPrice": 110,
+      "description": "オブシオンの装甲片。夜より黒い。"
     }
   ],
   "consumables": [
@@ -6248,6 +6367,373 @@
       },
       "sellPrice": 440,
       "description": "天穹の護符。確かな作りの防具。"
+    },
+    {
+      "id": "lord_mace",
+      "name": "主の大槌",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "physAtk": 10,
+        "magAtk": 8,
+        "maxHp": 25,
+        "def": 3
+      },
+      "sellPrice": 80,
+      "description": "もりの主の堅木で作った大槌。命が宿る。"
+    },
+    {
+      "id": "lord_bark_mail",
+      "name": "主の樹鎧",
+      "slot": "torso",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "def": 9,
+        "maxHp": 30,
+        "magDef": 2
+      },
+      "sellPrice": 80,
+      "description": "主の樹皮の鎧。着る者を守るように軋む。"
+    },
+    {
+      "id": "lord_root_boots",
+      "name": "主の根靴",
+      "slot": "feet",
+      "rarity": 4,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 10,
+      "derived": {
+        "def": 6,
+        "maxHp": 20,
+        "moveSpeed": 2
+      },
+      "sellPrice": 70,
+      "description": "主の根で編んだ靴。大地を掴む。"
+    },
+    {
+      "id": "guardian_blade",
+      "name": "番人の石剣",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "sword"
+      ],
+      "element": "none",
+      "levelRequirement": 12,
+      "derived": {
+        "physAtk": 15,
+        "def": 4
+      },
+      "sellPrice": 95,
+      "description": "番人の腕部を打ち直した剣。重く、硬い。"
+    },
+    {
+      "id": "guardian_bulwark",
+      "name": "番人の大盾",
+      "slot": "main_hand",
+      "rarity": 4,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shield"
+      ],
+      "element": "none",
+      "levelRequirement": 12,
+      "derived": {
+        "physAtk": 5,
+        "def": 14,
+        "maxHp": 85,
+        "magDef": 4
+      },
+      "sellPrice": 95,
+      "description": "番人の胸甲そのものの大盾。"
+    },
+    {
+      "id": "guardian_plate",
+      "name": "番人の岩鎧",
+      "slot": "torso",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 12,
+      "derived": {
+        "def": 11,
+        "maxHp": 26,
+        "moveSpeed": -5,
+        "magDef": 3
+      },
+      "sellPrice": 90,
+      "description": "番人の装甲を纏う。重いが頼れる。"
+    },
+    {
+      "id": "nox_fang_blade",
+      "name": "ノクスの吸血刃",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "dagger"
+      ],
+      "element": "none",
+      "levelRequirement": 16,
+      "derived": {
+        "physAtk": 16,
+        "atkSpeed": 3,
+        "lifesteal": 0.06
+      },
+      "sellPrice": 150,
+      "description": "夜王の牙の短剣。斬るたび生気を吸う。"
+    },
+    {
+      "id": "nox_wing_cloak",
+      "name": "ノクスの翼マント",
+      "slot": "back",
+      "rarity": 5,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 16,
+      "derived": {
+        "evasion": 8,
+        "lifesteal": 0.03,
+        "magDef": 3,
+        "maxHp": 12
+      },
+      "sellPrice": 140,
+      "description": "夜王の翼膜のマント。傷を癒す夜気を纏う。"
+    },
+    {
+      "id": "nox_mask",
+      "name": "夜王の仮面",
+      "slot": "head",
+      "rarity": 5,
+      "visualId": "cap_leather",
+      "element": "none",
+      "levelRequirement": 16,
+      "derived": {
+        "def": 9,
+        "critRate": 0.05,
+        "magDef": 4
+      },
+      "sellPrice": 130,
+      "description": "夜王の貌を模した仮面。急所が視える。"
+    },
+    {
+      "id": "zephys_gale_bow",
+      "name": "ゼフィスの風弓",
+      "slot": "main_hand",
+      "rarity": 5,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "bow"
+      ],
+      "element": "none",
+      "levelRequirement": 16,
+      "derived": {
+        "physAtk": 17,
+        "accuracy": 6,
+        "atkSpeed": 2,
+        "moveSpeed": 2
+      },
+      "sellPrice": 150,
+      "description": "風切羽の弓。矢が風に乗る。"
+    },
+    {
+      "id": "zephys_boots",
+      "name": "風翔のブーツ",
+      "slot": "feet",
+      "rarity": 5,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 16,
+      "derived": {
+        "moveSpeed": 5,
+        "evasion": 9,
+        "def": 5
+      },
+      "sellPrice": 130,
+      "description": "ゼフィスの羽をあしらった靴。足が軽い。"
+    },
+    {
+      "id": "zephys_band",
+      "name": "風切の帯",
+      "slot": "waist",
+      "rarity": 5,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 16,
+      "derived": {
+        "evasion": 6,
+        "def": 6,
+        "moveSpeed": 2
+      },
+      "sellPrice": 120,
+      "description": "尾羽を編み込んだ帯。身のこなしが変わる。"
+    },
+    {
+      "id": "vurm_greatsword",
+      "name": "業火の大剣",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "sword"
+      ],
+      "element": "fire",
+      "levelRequirement": 24,
+      "derived": {
+        "physAtk": 24,
+        "critRate": 0.05
+      },
+      "sellPrice": 260,
+      "description": "ヴルムの紅蓮珠を鍔に埋めた大剣。刃が燃える。"
+    },
+    {
+      "id": "vurm_gauntlet",
+      "name": "業火の籠手",
+      "slot": "hands",
+      "rarity": 6,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 24,
+      "derived": {
+        "accuracy": 7,
+        "def": 8,
+        "physAtk": 4,
+        "atkSpeed": 2
+      },
+      "sellPrice": 220,
+      "description": "剛爪の籠手。拳に熱がこもる。"
+    },
+    {
+      "id": "vurm_helm",
+      "name": "業火の兜",
+      "slot": "head",
+      "rarity": 6,
+      "visualId": "cap_leather",
+      "element": "none",
+      "levelRequirement": 24,
+      "derived": {
+        "def": 13,
+        "maxHp": 34,
+        "magDef": 5
+      },
+      "sellPrice": 220,
+      "description": "ヴルムの頭殻の兜。炎を恐れなくなる。"
+    },
+    {
+      "id": "fenrir_fang_katana",
+      "name": "フェンリルの牙刀",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "katana"
+      ],
+      "element": "none",
+      "levelRequirement": 24,
+      "derived": {
+        "physAtk": 22,
+        "critRate": 0.07,
+        "atkSpeed": 4
+      },
+      "sellPrice": 260,
+      "description": "月魄の牙を研いだ刀。太刀筋が残像になる。"
+    },
+    {
+      "id": "fenrir_greaves",
+      "name": "群狼の脚甲",
+      "slot": "feet",
+      "rarity": 6,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 24,
+      "derived": {
+        "moveSpeed": 5,
+        "evasion": 10,
+        "def": 8
+      },
+      "sellPrice": 220,
+      "description": "群狼の毛皮の脚甲。狼の速さを宿す。"
+    },
+    {
+      "id": "fenrir_belt",
+      "name": "狼王の腰帯",
+      "slot": "waist",
+      "rarity": 6,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 24,
+      "derived": {
+        "maxHp": 28,
+        "def": 9,
+        "evasion": 5,
+        "atkSpeed": 1
+      },
+      "sellPrice": 210,
+      "description": "長牙を飾った腰帯。群れの長の証。"
+    },
+    {
+      "id": "king_jelly_rod",
+      "name": "王のゼリーロッド",
+      "slot": "main_hand",
+      "rarity": 6,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "none",
+      "levelRequirement": 25,
+      "derived": {
+        "magAtk": 23,
+        "maxMp": 22,
+        "goldRate": 0.1,
+        "atkSpeed": 2
+      },
+      "sellPrice": 260,
+      "description": "王冠の雫を封じたロッド。振ると金の音がする。"
+    },
+    {
+      "id": "golden_crown",
+      "name": "黄金の王冠",
+      "slot": "accessory_1",
+      "rarity": 6,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 25,
+      "derived": {
+        "goldRate": 0.25,
+        "dropRate": 0.05,
+        "maxHp": 15
+      },
+      "sellPrice": 300,
+      "description": "スライム王の王冠。持ち主に富を呼ぶ。"
+    },
+    {
+      "id": "royal_robe",
+      "name": "王衣のローブ",
+      "slot": "torso",
+      "rarity": 6,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 25,
+      "derived": {
+        "def": 11,
+        "magDef": 8,
+        "maxMp": 20,
+        "maxHp": 24
+      },
+      "sellPrice": 230,
+      "description": "王者の粘液で織ったローブ。魔を弾く。"
     }
   ]
 }

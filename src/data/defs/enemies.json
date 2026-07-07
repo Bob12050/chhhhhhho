@@ -633,6 +633,128 @@
         }
       ],
       "enrageAtHpPct": 0.5
+    },
+    {
+      "id": "boss_dross",
+      "name": "腐主 ドロス",
+      "textureKey": "gen.enemy.treant",
+      "tint": "#a06ad0",
+      "scale": 1.9,
+      "isBoss": true,
+      "variantOf": "boss_treant",
+      "maxHp": 380,
+      "moveSpeed": 30,
+      "contactDamage": 22,
+      "aggroRange": 260,
+      "attackRange": 28,
+      "knockbackResist": 0.75,
+      "expReward": 850,
+      "goldReward": 160,
+      "dropTableId": "boss_dross",
+      "weakness": "fire",
+      "resist": "poison",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 46,
+          "damageMult": 1.0,
+          "telegraphMs": 900,
+          "count": 2,
+          "at": "player"
+        },
+        {
+          "type": "shots",
+          "count": 8,
+          "speed": 100,
+          "damageMult": 0.6,
+          "spread": "radial"
+        }
+      ],
+      "enrageAtHpPct": 0.5
+    },
+    {
+      "id": "boss_zephys",
+      "name": "風翔の王 ゼフィス",
+      "textureKey": "gen.enemy.bat",
+      "tint": "#6ad0c8",
+      "scale": 2.1,
+      "isBoss": true,
+      "maxHp": 330,
+      "moveSpeed": 62,
+      "contactDamage": 21,
+      "aggroRange": 320,
+      "attackRange": 26,
+      "knockbackResist": 0.7,
+      "expReward": 900,
+      "goldReward": 170,
+      "dropTableId": "boss_zephys",
+      "weakness": "ice",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 320,
+          "durationMs": 450,
+          "telegraphMs": 600
+        },
+        {
+          "type": "shots",
+          "count": 3,
+          "speed": 160,
+          "damageMult": 0.7,
+          "spread": "aim"
+        },
+        {
+          "type": "aoe",
+          "radius": 40,
+          "damageMult": 0.9,
+          "telegraphMs": 800,
+          "count": 1
+        }
+      ],
+      "enrageAtHpPct": 0.45
+    },
+    {
+      "id": "boss_obsidion",
+      "name": "黒曜の番人 オブシオン",
+      "textureKey": "gen.enemy.golem",
+      "tint": "#4a4266",
+      "scale": 2.0,
+      "isBoss": true,
+      "variantOf": "boss_stone",
+      "maxHp": 700,
+      "moveSpeed": 24,
+      "contactDamage": 30,
+      "aggroRange": 260,
+      "attackRange": 28,
+      "knockbackResist": 0.92,
+      "expReward": 1600,
+      "goldReward": 340,
+      "dropTableId": "boss_obsidion",
+      "weakness": "holy",
+      "resist": "dark",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 60,
+          "damageMult": 1.2,
+          "telegraphMs": 1000,
+          "count": 1
+        },
+        {
+          "type": "charge",
+          "speed": 240,
+          "durationMs": 650,
+          "telegraphMs": 750
+        },
+        {
+          "type": "shots",
+          "count": 10,
+          "speed": 120,
+          "damageMult": 0.7,
+          "spread": "radial"
+        }
+      ],
+      "enrageAtHpPct": 0.5
     }
   ]
 }
