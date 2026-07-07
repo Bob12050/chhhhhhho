@@ -5141,6 +5141,1113 @@
       },
       "sellPrice": 528,
       "description": "天穹の盾。腕に馴染む一品。"
+    },
+    {
+      "id": "beastbone_helm",
+      "name": "獣骨の兜",
+      "slot": "head",
+      "rarity": 3,
+      "visualId": "helm_iron",
+      "levelRequirement": 8,
+      "derived": {
+        "def": 6,
+        "maxHp": 14,
+        "evasion": -1,
+        "magDef": 2
+      },
+      "sellPrice": 40,
+      "description": "獣骨の兜。確かな作りの防具。"
+    },
+    {
+      "id": "whitesteel_helm",
+      "name": "白鋼の兜",
+      "slot": "head",
+      "rarity": 4,
+      "visualId": "helm_iron",
+      "levelRequirement": 12,
+      "derived": {
+        "def": 8,
+        "maxHp": 18,
+        "evasion": -1,
+        "magDef": 3
+      },
+      "sellPrice": 60,
+      "description": "白鋼の兜。確かな作りの防具。"
+    },
+    {
+      "id": "gale_helm",
+      "name": "疾風の兜",
+      "slot": "head",
+      "rarity": 5,
+      "visualId": "helm_iron",
+      "levelRequirement": 18,
+      "derived": {
+        "def": 10,
+        "maxHp": 25,
+        "evasion": -1,
+        "magDef": 4,
+        "accuracy": 2
+      },
+      "sellPrice": 90,
+      "description": "疾風の兜。確かな作りの防具。"
+    },
+    {
+      "id": "storm_helm",
+      "name": "嵐の兜",
+      "slot": "head",
+      "rarity": 6,
+      "visualId": "helm_iron",
+      "levelRequirement": 24,
+      "derived": {
+        "def": 12,
+        "maxHp": 31,
+        "evasion": -1,
+        "magDef": 6,
+        "accuracy": 2
+      },
+      "sellPrice": 120,
+      "description": "嵐の兜。確かな作りの防具。"
+    },
+    {
+      "id": "moonlit_helm",
+      "name": "月影の兜",
+      "slot": "head",
+      "rarity": 7,
+      "visualId": "helm_iron",
+      "levelRequirement": 32,
+      "derived": {
+        "def": 14,
+        "maxHp": 37,
+        "evasion": -1,
+        "magDef": 8,
+        "accuracy": 2
+      },
+      "sellPrice": 160,
+      "description": "月影の兜。確かな作りの防具。"
+    },
+    {
+      "id": "flarelord_helm",
+      "name": "炎帝の兜",
+      "slot": "head",
+      "rarity": 8,
+      "visualId": "helm_iron",
+      "levelRequirement": 44,
+      "derived": {
+        "def": 18,
+        "maxHp": 48,
+        "evasion": -1,
+        "magDef": 12,
+        "accuracy": 2
+      },
+      "sellPrice": 220,
+      "description": "炎帝の兜。確かな作りの防具。"
+    },
+    {
+      "id": "abysstide_helm",
+      "name": "海淵の兜",
+      "slot": "head",
+      "rarity": 9,
+      "visualId": "helm_iron",
+      "levelRequirement": 52,
+      "derived": {
+        "def": 20,
+        "maxHp": 55,
+        "evasion": -1,
+        "magDef": 14,
+        "accuracy": 2
+      },
+      "sellPrice": 260,
+      "description": "海淵の兜。確かな作りの防具。"
+    },
+    {
+      "id": "thunderpeal_helm",
+      "name": "雷鳴の兜",
+      "slot": "head",
+      "rarity": 9,
+      "visualId": "helm_iron",
+      "levelRequirement": 60,
+      "derived": {
+        "def": 22,
+        "maxHp": 61,
+        "evasion": -1,
+        "magDef": 16,
+        "accuracy": 2
+      },
+      "sellPrice": 300,
+      "description": "雷鳴の兜。確かな作りの防具。"
+    },
+    {
+      "id": "starfrost_helm",
+      "name": "星霜の兜",
+      "slot": "head",
+      "rarity": 10,
+      "visualId": "helm_iron",
+      "levelRequirement": 72,
+      "derived": {
+        "def": 26,
+        "maxHp": 72,
+        "evasion": -1,
+        "magDef": 20,
+        "accuracy": 2
+      },
+      "sellPrice": 360,
+      "description": "星霜の兜。確かな作りの防具。"
+    },
+    {
+      "id": "skyvault_helm",
+      "name": "天穹の兜",
+      "slot": "head",
+      "rarity": 10,
+      "visualId": "helm_iron",
+      "levelRequirement": 88,
+      "derived": {
+        "def": 30,
+        "maxHp": 85,
+        "evasion": -1,
+        "magDef": 24,
+        "accuracy": 2
+      },
+      "sellPrice": 440,
+      "description": "天穹の兜。確かな作りの防具。"
+    },
+    {
+      "id": "beastbone_armor",
+      "name": "獣骨の鎧",
+      "slot": "torso",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "levelRequirement": 8,
+      "derived": {
+        "def": 8,
+        "maxHp": 18,
+        "moveSpeed": -4
+      },
+      "sellPrice": 40,
+      "description": "獣骨の鎧。確かな作りの防具。"
+    },
+    {
+      "id": "whitesteel_armor",
+      "name": "白鋼の鎧",
+      "slot": "torso",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "levelRequirement": 12,
+      "derived": {
+        "def": 9,
+        "maxHp": 21,
+        "moveSpeed": -4
+      },
+      "sellPrice": 60,
+      "description": "白鋼の鎧。確かな作りの防具。"
+    },
+    {
+      "id": "gale_armor",
+      "name": "疾風の鎧",
+      "slot": "torso",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "levelRequirement": 18,
+      "derived": {
+        "def": 12,
+        "maxHp": 28,
+        "moveSpeed": -4,
+        "magDef": 4
+      },
+      "sellPrice": 90,
+      "description": "疾風の鎧。確かな作りの防具。"
+    },
+    {
+      "id": "storm_armor",
+      "name": "嵐の鎧",
+      "slot": "torso",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "levelRequirement": 24,
+      "derived": {
+        "def": 13,
+        "maxHp": 31,
+        "moveSpeed": -5,
+        "magDef": 4
+      },
+      "sellPrice": 120,
+      "description": "嵐の鎧。確かな作りの防具。"
+    },
+    {
+      "id": "moonlit_armor",
+      "name": "月影の鎧",
+      "slot": "torso",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "levelRequirement": 32,
+      "derived": {
+        "def": 16,
+        "maxHp": 36,
+        "moveSpeed": -5,
+        "magDef": 6
+      },
+      "sellPrice": 160,
+      "description": "月影の鎧。確かな作りの防具。"
+    },
+    {
+      "id": "flarelord_armor",
+      "name": "炎帝の鎧",
+      "slot": "torso",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "levelRequirement": 44,
+      "derived": {
+        "def": 22,
+        "maxHp": 48,
+        "moveSpeed": -5,
+        "magDef": 7
+      },
+      "sellPrice": 220,
+      "description": "炎帝の鎧。確かな作りの防具。"
+    },
+    {
+      "id": "abysstide_armor",
+      "name": "海淵の鎧",
+      "slot": "torso",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 52,
+      "derived": {
+        "def": 26,
+        "maxHp": 56,
+        "moveSpeed": -5,
+        "magDef": 8
+      },
+      "sellPrice": 260,
+      "description": "海淵の鎧。確かな作りの防具。"
+    },
+    {
+      "id": "thunderpeal_armor",
+      "name": "雷鳴の鎧",
+      "slot": "torso",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 60,
+      "derived": {
+        "def": 30,
+        "maxHp": 64,
+        "moveSpeed": -5,
+        "magDef": 9
+      },
+      "sellPrice": 300,
+      "description": "雷鳴の鎧。確かな作りの防具。"
+    },
+    {
+      "id": "starfrost_armor",
+      "name": "星霜の鎧",
+      "slot": "torso",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 72,
+      "derived": {
+        "def": 36,
+        "maxHp": 76,
+        "moveSpeed": -5,
+        "magDef": 10
+      },
+      "sellPrice": 360,
+      "description": "星霜の鎧。確かな作りの防具。"
+    },
+    {
+      "id": "skyvault_armor",
+      "name": "天穹の鎧",
+      "slot": "torso",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 88,
+      "derived": {
+        "def": 44,
+        "maxHp": 92,
+        "moveSpeed": -5,
+        "magDef": 12
+      },
+      "sellPrice": 440,
+      "description": "天穹の鎧。確かな作りの防具。"
+    },
+    {
+      "id": "beastbone_gauntlet",
+      "name": "獣骨の手甲",
+      "slot": "hands",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "levelRequirement": 8,
+      "derived": {
+        "accuracy": 6,
+        "def": 3,
+        "atkSpeed": 2
+      },
+      "sellPrice": 40,
+      "description": "獣骨の手甲。確かな作りの防具。"
+    },
+    {
+      "id": "whitesteel_gauntlet",
+      "name": "白鋼の手甲",
+      "slot": "hands",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "levelRequirement": 12,
+      "derived": {
+        "accuracy": 6,
+        "def": 5,
+        "atkSpeed": 2
+      },
+      "sellPrice": 60,
+      "description": "白鋼の手甲。確かな作りの防具。"
+    },
+    {
+      "id": "gale_gauntlet",
+      "name": "疾風の手甲",
+      "slot": "hands",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "levelRequirement": 18,
+      "derived": {
+        "accuracy": 8,
+        "def": 7,
+        "atkSpeed": 2
+      },
+      "sellPrice": 90,
+      "description": "疾風の手甲。確かな作りの防具。"
+    },
+    {
+      "id": "storm_gauntlet",
+      "name": "嵐の手甲",
+      "slot": "hands",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "levelRequirement": 24,
+      "derived": {
+        "accuracy": 8,
+        "def": 9,
+        "atkSpeed": 2
+      },
+      "sellPrice": 120,
+      "description": "嵐の手甲。確かな作りの防具。"
+    },
+    {
+      "id": "moonlit_gauntlet",
+      "name": "月影の手甲",
+      "slot": "hands",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "levelRequirement": 32,
+      "derived": {
+        "accuracy": 10,
+        "def": 12,
+        "atkSpeed": 2
+      },
+      "sellPrice": 160,
+      "description": "月影の手甲。確かな作りの防具。"
+    },
+    {
+      "id": "flarelord_gauntlet",
+      "name": "炎帝の手甲",
+      "slot": "hands",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "levelRequirement": 44,
+      "derived": {
+        "accuracy": 11,
+        "def": 16,
+        "atkSpeed": 4
+      },
+      "sellPrice": 220,
+      "description": "炎帝の手甲。確かな作りの防具。"
+    },
+    {
+      "id": "abysstide_gauntlet",
+      "name": "海淵の手甲",
+      "slot": "hands",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 52,
+      "derived": {
+        "accuracy": 12,
+        "def": 19,
+        "atkSpeed": 5
+      },
+      "sellPrice": 260,
+      "description": "海淵の手甲。確かな作りの防具。"
+    },
+    {
+      "id": "thunderpeal_gauntlet",
+      "name": "雷鳴の手甲",
+      "slot": "hands",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 60,
+      "derived": {
+        "accuracy": 13,
+        "def": 22,
+        "atkSpeed": 6
+      },
+      "sellPrice": 300,
+      "description": "雷鳴の手甲。確かな作りの防具。"
+    },
+    {
+      "id": "starfrost_gauntlet",
+      "name": "星霜の手甲",
+      "slot": "hands",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 72,
+      "derived": {
+        "accuracy": 14,
+        "def": 26,
+        "atkSpeed": 8
+      },
+      "sellPrice": 360,
+      "description": "星霜の手甲。確かな作りの防具。"
+    },
+    {
+      "id": "skyvault_gauntlet",
+      "name": "天穹の手甲",
+      "slot": "hands",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 88,
+      "derived": {
+        "accuracy": 16,
+        "def": 32,
+        "atkSpeed": 10
+      },
+      "sellPrice": 440,
+      "description": "天穹の手甲。確かな作りの防具。"
+    },
+    {
+      "id": "beastbone_belt",
+      "name": "獣骨の帯",
+      "slot": "waist",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "levelRequirement": 8,
+      "derived": {
+        "maxHp": 14,
+        "def": 4,
+        "maxMp": 11,
+        "magDef": 2
+      },
+      "sellPrice": 40,
+      "description": "獣骨の帯。確かな作りの防具。"
+    },
+    {
+      "id": "whitesteel_belt",
+      "name": "白鋼の帯",
+      "slot": "waist",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "levelRequirement": 12,
+      "derived": {
+        "maxHp": 18,
+        "def": 6,
+        "maxMp": 13,
+        "magDef": 2
+      },
+      "sellPrice": 60,
+      "description": "白鋼の帯。確かな作りの防具。"
+    },
+    {
+      "id": "gale_belt",
+      "name": "疾風の帯",
+      "slot": "waist",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "levelRequirement": 18,
+      "derived": {
+        "maxHp": 25,
+        "def": 8,
+        "maxMp": 15,
+        "magDef": 2
+      },
+      "sellPrice": 90,
+      "description": "疾風の帯。確かな作りの防具。"
+    },
+    {
+      "id": "storm_belt",
+      "name": "嵐の帯",
+      "slot": "waist",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "levelRequirement": 24,
+      "derived": {
+        "maxHp": 31,
+        "def": 10,
+        "maxMp": 17,
+        "magDef": 3
+      },
+      "sellPrice": 120,
+      "description": "嵐の帯。確かな作りの防具。"
+    },
+    {
+      "id": "moonlit_belt",
+      "name": "月影の帯",
+      "slot": "waist",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "levelRequirement": 32,
+      "derived": {
+        "maxHp": 38,
+        "def": 12,
+        "maxMp": 19,
+        "magDef": 3
+      },
+      "sellPrice": 160,
+      "description": "月影の帯。確かな作りの防具。"
+    },
+    {
+      "id": "flarelord_belt",
+      "name": "炎帝の帯",
+      "slot": "waist",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "levelRequirement": 44,
+      "derived": {
+        "maxHp": 50,
+        "def": 17,
+        "maxMp": 22,
+        "magDef": 3
+      },
+      "sellPrice": 220,
+      "description": "炎帝の帯。確かな作りの防具。"
+    },
+    {
+      "id": "abysstide_belt",
+      "name": "海淵の帯",
+      "slot": "waist",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 52,
+      "derived": {
+        "maxHp": 58,
+        "def": 20,
+        "maxMp": 24,
+        "magDef": 3
+      },
+      "sellPrice": 260,
+      "description": "海淵の帯。確かな作りの防具。"
+    },
+    {
+      "id": "thunderpeal_belt",
+      "name": "雷鳴の帯",
+      "slot": "waist",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 60,
+      "derived": {
+        "maxHp": 66,
+        "def": 23,
+        "maxMp": 26,
+        "magDef": 3
+      },
+      "sellPrice": 300,
+      "description": "雷鳴の帯。確かな作りの防具。"
+    },
+    {
+      "id": "starfrost_belt",
+      "name": "星霜の帯",
+      "slot": "waist",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 72,
+      "derived": {
+        "maxHp": 78,
+        "def": 28,
+        "maxMp": 29,
+        "magDef": 3
+      },
+      "sellPrice": 360,
+      "description": "星霜の帯。確かな作りの防具。"
+    },
+    {
+      "id": "skyvault_belt",
+      "name": "天穹の帯",
+      "slot": "waist",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 88,
+      "derived": {
+        "maxHp": 94,
+        "def": 34,
+        "maxMp": 33,
+        "magDef": 3
+      },
+      "sellPrice": 440,
+      "description": "天穹の帯。確かな作りの防具。"
+    },
+    {
+      "id": "beastbone_boots",
+      "name": "獣骨の靴",
+      "slot": "feet",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "levelRequirement": 8,
+      "derived": {
+        "moveSpeed": 2,
+        "evasion": 6,
+        "def": 3
+      },
+      "sellPrice": 40,
+      "description": "獣骨の靴。確かな作りの防具。"
+    },
+    {
+      "id": "whitesteel_boots",
+      "name": "白鋼の靴",
+      "slot": "feet",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "levelRequirement": 12,
+      "derived": {
+        "moveSpeed": 3,
+        "evasion": 7,
+        "def": 5
+      },
+      "sellPrice": 60,
+      "description": "白鋼の靴。確かな作りの防具。"
+    },
+    {
+      "id": "gale_boots",
+      "name": "疾風の靴",
+      "slot": "feet",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "levelRequirement": 18,
+      "derived": {
+        "moveSpeed": 4,
+        "evasion": 8,
+        "def": 7
+      },
+      "sellPrice": 90,
+      "description": "疾風の靴。確かな作りの防具。"
+    },
+    {
+      "id": "storm_boots",
+      "name": "嵐の靴",
+      "slot": "feet",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "levelRequirement": 24,
+      "derived": {
+        "moveSpeed": 4,
+        "evasion": 9,
+        "def": 9
+      },
+      "sellPrice": 120,
+      "description": "嵐の靴。確かな作りの防具。"
+    },
+    {
+      "id": "moonlit_boots",
+      "name": "月影の靴",
+      "slot": "feet",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "levelRequirement": 32,
+      "derived": {
+        "moveSpeed": 4,
+        "evasion": 10,
+        "def": 12
+      },
+      "sellPrice": 160,
+      "description": "月影の靴。確かな作りの防具。"
+    },
+    {
+      "id": "flarelord_boots",
+      "name": "炎帝の靴",
+      "slot": "feet",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "levelRequirement": 44,
+      "derived": {
+        "moveSpeed": 6,
+        "evasion": 12,
+        "def": 16
+      },
+      "sellPrice": 220,
+      "description": "炎帝の靴。確かな作りの防具。"
+    },
+    {
+      "id": "abysstide_boots",
+      "name": "海淵の靴",
+      "slot": "feet",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 52,
+      "derived": {
+        "moveSpeed": 7,
+        "evasion": 13,
+        "def": 19
+      },
+      "sellPrice": 260,
+      "description": "海淵の靴。確かな作りの防具。"
+    },
+    {
+      "id": "thunderpeal_boots",
+      "name": "雷鳴の靴",
+      "slot": "feet",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 60,
+      "derived": {
+        "moveSpeed": 8,
+        "evasion": 14,
+        "def": 22
+      },
+      "sellPrice": 300,
+      "description": "雷鳴の靴。確かな作りの防具。"
+    },
+    {
+      "id": "starfrost_boots",
+      "name": "星霜の靴",
+      "slot": "feet",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 72,
+      "derived": {
+        "moveSpeed": 10,
+        "evasion": 16,
+        "def": 26
+      },
+      "sellPrice": 360,
+      "description": "星霜の靴。確かな作りの防具。"
+    },
+    {
+      "id": "skyvault_boots",
+      "name": "天穹の靴",
+      "slot": "feet",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 88,
+      "derived": {
+        "moveSpeed": 12,
+        "evasion": 18,
+        "def": 32
+      },
+      "sellPrice": 440,
+      "description": "天穹の靴。確かな作りの防具。"
+    },
+    {
+      "id": "beastbone_cloak",
+      "name": "獣骨のマント",
+      "slot": "back",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "levelRequirement": 8,
+      "derived": {
+        "evasion": 6,
+        "magDef": 2,
+        "maxHp": 8,
+        "moveSpeed": 2
+      },
+      "sellPrice": 40,
+      "description": "獣骨のマント。確かな作りの防具。"
+    },
+    {
+      "id": "whitesteel_cloak",
+      "name": "白鋼のマント",
+      "slot": "back",
+      "rarity": 4,
+      "visualId": "plate_iron",
+      "levelRequirement": 12,
+      "derived": {
+        "evasion": 6,
+        "magDef": 3,
+        "maxHp": 11,
+        "moveSpeed": 2
+      },
+      "sellPrice": 60,
+      "description": "白鋼のマント。確かな作りの防具。"
+    },
+    {
+      "id": "gale_cloak",
+      "name": "疾風のマント",
+      "slot": "back",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "levelRequirement": 18,
+      "derived": {
+        "evasion": 8,
+        "magDef": 4,
+        "maxHp": 15,
+        "moveSpeed": 2
+      },
+      "sellPrice": 90,
+      "description": "疾風のマント。確かな作りの防具。"
+    },
+    {
+      "id": "storm_cloak",
+      "name": "嵐のマント",
+      "slot": "back",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "levelRequirement": 24,
+      "derived": {
+        "evasion": 8,
+        "magDef": 4,
+        "maxHp": 18,
+        "moveSpeed": 2
+      },
+      "sellPrice": 120,
+      "description": "嵐のマント。確かな作りの防具。"
+    },
+    {
+      "id": "moonlit_cloak",
+      "name": "月影のマント",
+      "slot": "back",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "levelRequirement": 32,
+      "derived": {
+        "evasion": 10,
+        "magDef": 4,
+        "maxHp": 22,
+        "moveSpeed": 2
+      },
+      "sellPrice": 160,
+      "description": "月影のマント。確かな作りの防具。"
+    },
+    {
+      "id": "flarelord_cloak",
+      "name": "炎帝のマント",
+      "slot": "back",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "levelRequirement": 44,
+      "derived": {
+        "evasion": 11,
+        "magDef": 6,
+        "maxHp": 30,
+        "moveSpeed": 4
+      },
+      "sellPrice": 220,
+      "description": "炎帝のマント。確かな作りの防具。"
+    },
+    {
+      "id": "abysstide_cloak",
+      "name": "海淵のマント",
+      "slot": "back",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 52,
+      "derived": {
+        "evasion": 12,
+        "magDef": 7,
+        "maxHp": 35,
+        "moveSpeed": 5
+      },
+      "sellPrice": 260,
+      "description": "海淵のマント。確かな作りの防具。"
+    },
+    {
+      "id": "thunderpeal_cloak",
+      "name": "雷鳴のマント",
+      "slot": "back",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 60,
+      "derived": {
+        "evasion": 13,
+        "magDef": 8,
+        "maxHp": 40,
+        "moveSpeed": 6
+      },
+      "sellPrice": 300,
+      "description": "雷鳴のマント。確かな作りの防具。"
+    },
+    {
+      "id": "starfrost_cloak",
+      "name": "星霜のマント",
+      "slot": "back",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 72,
+      "derived": {
+        "evasion": 14,
+        "magDef": 10,
+        "maxHp": 48,
+        "moveSpeed": 8
+      },
+      "sellPrice": 360,
+      "description": "星霜のマント。確かな作りの防具。"
+    },
+    {
+      "id": "skyvault_cloak",
+      "name": "天穹のマント",
+      "slot": "back",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 88,
+      "derived": {
+        "evasion": 16,
+        "magDef": 12,
+        "maxHp": 58,
+        "moveSpeed": 10
+      },
+      "sellPrice": 440,
+      "description": "天穹のマント。確かな作りの防具。"
+    },
+    {
+      "id": "whitesteel_ring",
+      "name": "白鋼の指輪",
+      "slot": "accessory_1",
+      "rarity": 4,
+      "visualId": "vest_cloth",
+      "levelRequirement": 12,
+      "derived": {
+        "accuracy": 3,
+        "physAtk": 3
+      },
+      "sellPrice": 60,
+      "description": "白鋼の指輪。確かな作りの防具。"
+    },
+    {
+      "id": "moonlit_ring",
+      "name": "月影の指輪",
+      "slot": "accessory_1",
+      "rarity": 7,
+      "visualId": "vest_cloth",
+      "levelRequirement": 28,
+      "derived": {
+        "accuracy": 3,
+        "physAtk": 5,
+        "magAtk": 6
+      },
+      "sellPrice": 140,
+      "description": "月影の指輪。確かな作りの防具。"
+    },
+    {
+      "id": "abysstide_ring",
+      "name": "海淵の指輪",
+      "slot": "accessory_1",
+      "rarity": 9,
+      "visualId": "vest_cloth",
+      "levelRequirement": 52,
+      "derived": {
+        "accuracy": 4,
+        "physAtk": 7,
+        "magAtk": 7
+      },
+      "sellPrice": 260,
+      "description": "海淵の指輪。確かな作りの防具。"
+    },
+    {
+      "id": "thunderpeal_ring",
+      "name": "雷鳴の指輪",
+      "slot": "accessory_1",
+      "rarity": 9,
+      "visualId": "vest_cloth",
+      "levelRequirement": 60,
+      "derived": {
+        "accuracy": 5,
+        "physAtk": 7,
+        "magAtk": 7
+      },
+      "sellPrice": 300,
+      "description": "雷鳴の指輪。確かな作りの防具。"
+    },
+    {
+      "id": "skyvault_ring",
+      "name": "天穹の指輪",
+      "slot": "accessory_1",
+      "rarity": 10,
+      "visualId": "vest_cloth",
+      "levelRequirement": 88,
+      "derived": {
+        "accuracy": 6,
+        "physAtk": 9,
+        "magAtk": 9
+      },
+      "sellPrice": 440,
+      "description": "天穹の指輪。確かな作りの防具。"
+    },
+    {
+      "id": "whitesteel_amulet",
+      "name": "白鋼の護符",
+      "slot": "accessory_2",
+      "rarity": 4,
+      "visualId": "vest_cloth",
+      "levelRequirement": 12,
+      "derived": {
+        "maxHp": 22,
+        "evasion": 3,
+        "maxMp": 8,
+        "magDef": 3
+      },
+      "sellPrice": 60,
+      "description": "白鋼の護符。確かな作りの防具。"
+    },
+    {
+      "id": "moonlit_amulet",
+      "name": "月影の護符",
+      "slot": "accessory_2",
+      "rarity": 7,
+      "visualId": "vest_cloth",
+      "levelRequirement": 28,
+      "derived": {
+        "maxHp": 44,
+        "evasion": 4,
+        "maxMp": 8,
+        "magDef": 5,
+        "def": 5
+      },
+      "sellPrice": 140,
+      "description": "月影の護符。確かな作りの防具。"
+    },
+    {
+      "id": "abysstide_amulet",
+      "name": "海淵の護符",
+      "slot": "accessory_2",
+      "rarity": 9,
+      "visualId": "vest_cloth",
+      "levelRequirement": 52,
+      "derived": {
+        "maxHp": 76,
+        "evasion": 5,
+        "maxMp": 8,
+        "magDef": 8,
+        "def": 5,
+        "moveSpeed": 4
+      },
+      "sellPrice": 260,
+      "description": "海淵の護符。確かな作りの防具。"
+    },
+    {
+      "id": "thunderpeal_amulet",
+      "name": "雷鳴の護符",
+      "slot": "accessory_2",
+      "rarity": 9,
+      "visualId": "vest_cloth",
+      "levelRequirement": 60,
+      "derived": {
+        "maxHp": 87,
+        "evasion": 6,
+        "maxMp": 8,
+        "magDef": 9,
+        "def": 5,
+        "moveSpeed": 4
+      },
+      "sellPrice": 300,
+      "description": "雷鳴の護符。確かな作りの防具。"
+    },
+    {
+      "id": "skyvault_amulet",
+      "name": "天穹の護符",
+      "slot": "accessory_2",
+      "rarity": 10,
+      "visualId": "vest_cloth",
+      "levelRequirement": 88,
+      "derived": {
+        "maxHp": 124,
+        "evasion": 8,
+        "maxMp": 8,
+        "magDef": 12,
+        "def": 5,
+        "moveSpeed": 4
+      },
+      "sellPrice": 440,
+      "description": "天穹の護符。確かな作りの防具。"
     }
   ]
 }

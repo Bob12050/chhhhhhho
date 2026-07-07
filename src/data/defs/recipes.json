@@ -4609,6 +4609,846 @@
       },
       "gold": 1756,
       "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_helm",
+      "resultItemId": "beastbone_helm",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 34,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_helm",
+      "resultItemId": "whitesteel_helm",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_helm",
+      "resultItemId": "gale_helm",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 98,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_helm",
+      "resultItemId": "storm_helm",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_helm",
+      "resultItemId": "moonlit_helm",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "garo_fang": 2,
+        "spore_sac": 1
+      },
+      "gold": 232,
+      "station": "forge"
+    },
+    {
+      "id": "craft_flarelord_helm",
+      "resultItemId": "flarelord_helm",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 435,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abysstide_helm",
+      "resultItemId": "abysstide_helm",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 478,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_helm",
+      "resultItemId": "thunderpeal_helm",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 702,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_helm",
+      "resultItemId": "starfrost_helm",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 777,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_helm",
+      "resultItemId": "skyvault_helm",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 1,
+        "dragon_scale": 3
+      },
+      "gold": 1377,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_armor",
+      "resultItemId": "beastbone_armor",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 34,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_armor",
+      "resultItemId": "whitesteel_armor",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_armor",
+      "resultItemId": "gale_armor",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 98,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_armor",
+      "resultItemId": "storm_armor",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_armor",
+      "resultItemId": "moonlit_armor",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "garo_fang": 2,
+        "spore_sac": 1
+      },
+      "gold": 232,
+      "station": "forge"
+    },
+    {
+      "id": "craft_flarelord_armor",
+      "resultItemId": "flarelord_armor",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 435,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abysstide_armor",
+      "resultItemId": "abysstide_armor",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 478,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_armor",
+      "resultItemId": "thunderpeal_armor",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 702,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_armor",
+      "resultItemId": "starfrost_armor",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 777,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_armor",
+      "resultItemId": "skyvault_armor",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 1,
+        "dragon_scale": 3
+      },
+      "gold": 1377,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_gauntlet",
+      "resultItemId": "beastbone_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 34,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_gauntlet",
+      "resultItemId": "whitesteel_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_gauntlet",
+      "resultItemId": "gale_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 98,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_gauntlet",
+      "resultItemId": "storm_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_gauntlet",
+      "resultItemId": "moonlit_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "garo_fang": 2,
+        "spore_sac": 1
+      },
+      "gold": 232,
+      "station": "forge"
+    },
+    {
+      "id": "craft_flarelord_gauntlet",
+      "resultItemId": "flarelord_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 435,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abysstide_gauntlet",
+      "resultItemId": "abysstide_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 478,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_gauntlet",
+      "resultItemId": "thunderpeal_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 702,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_gauntlet",
+      "resultItemId": "starfrost_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 777,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_gauntlet",
+      "resultItemId": "skyvault_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 1,
+        "dragon_scale": 3
+      },
+      "gold": 1377,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_belt",
+      "resultItemId": "beastbone_belt",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 34,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_belt",
+      "resultItemId": "whitesteel_belt",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_belt",
+      "resultItemId": "gale_belt",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 98,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_belt",
+      "resultItemId": "storm_belt",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_belt",
+      "resultItemId": "moonlit_belt",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "garo_fang": 2,
+        "spore_sac": 1
+      },
+      "gold": 232,
+      "station": "forge"
+    },
+    {
+      "id": "craft_flarelord_belt",
+      "resultItemId": "flarelord_belt",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 435,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abysstide_belt",
+      "resultItemId": "abysstide_belt",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 478,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_belt",
+      "resultItemId": "thunderpeal_belt",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 702,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_belt",
+      "resultItemId": "starfrost_belt",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 777,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_belt",
+      "resultItemId": "skyvault_belt",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 1,
+        "dragon_scale": 3
+      },
+      "gold": 1377,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_boots",
+      "resultItemId": "beastbone_boots",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 34,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_boots",
+      "resultItemId": "whitesteel_boots",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_boots",
+      "resultItemId": "gale_boots",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 98,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_boots",
+      "resultItemId": "storm_boots",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_boots",
+      "resultItemId": "moonlit_boots",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "garo_fang": 2,
+        "spore_sac": 1
+      },
+      "gold": 232,
+      "station": "forge"
+    },
+    {
+      "id": "craft_flarelord_boots",
+      "resultItemId": "flarelord_boots",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 435,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abysstide_boots",
+      "resultItemId": "abysstide_boots",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 478,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_boots",
+      "resultItemId": "thunderpeal_boots",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 702,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_boots",
+      "resultItemId": "starfrost_boots",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 777,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_boots",
+      "resultItemId": "skyvault_boots",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 1,
+        "dragon_scale": 3
+      },
+      "gold": 1377,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_cloak",
+      "resultItemId": "beastbone_cloak",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 34,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_cloak",
+      "resultItemId": "whitesteel_cloak",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_cloak",
+      "resultItemId": "gale_cloak",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 98,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_cloak",
+      "resultItemId": "storm_cloak",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 2,
+        "alpha_pelt": 3,
+        "treant_sap": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_cloak",
+      "resultItemId": "moonlit_cloak",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "garo_fang": 2,
+        "spore_sac": 1
+      },
+      "gold": 232,
+      "station": "forge"
+    },
+    {
+      "id": "craft_flarelord_cloak",
+      "resultItemId": "flarelord_cloak",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 435,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abysstide_cloak",
+      "resultItemId": "abysstide_cloak",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 478,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_cloak",
+      "resultItemId": "thunderpeal_cloak",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 702,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_cloak",
+      "resultItemId": "starfrost_cloak",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 777,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_cloak",
+      "resultItemId": "skyvault_cloak",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 1,
+        "dragon_scale": 3
+      },
+      "gold": 1377,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_ring",
+      "resultItemId": "whitesteel_ring",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_ring",
+      "resultItemId": "moonlit_ring",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "garo_fang": 2,
+        "spore_sac": 1
+      },
+      "gold": 217,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abysstide_ring",
+      "resultItemId": "abysstide_ring",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 478,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_ring",
+      "resultItemId": "thunderpeal_ring",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 702,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_ring",
+      "resultItemId": "skyvault_ring",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 1,
+        "dragon_scale": 3
+      },
+      "gold": 1377,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_amulet",
+      "resultItemId": "whitesteel_amulet",
+      "resultQty": 1,
+      "materials": {
+        "soft_leather": 3,
+        "night_fang": 2,
+        "iron_ore": 2
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_amulet",
+      "resultItemId": "moonlit_amulet",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 2,
+        "garo_fang": 2,
+        "spore_sac": 1
+      },
+      "gold": 217,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abysstide_amulet",
+      "resultItemId": "abysstide_amulet",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 478,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_amulet",
+      "resultItemId": "thunderpeal_amulet",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 702,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_amulet",
+      "resultItemId": "skyvault_amulet",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 1,
+        "dragon_scale": 3
+      },
+      "gold": 1377,
+      "station": "forge"
     }
   ]
 }
