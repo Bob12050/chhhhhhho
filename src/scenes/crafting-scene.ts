@@ -32,6 +32,11 @@ export class CraftingScene extends Phaser.Scene {
   private chipBar: Phaser.GameObjects.Container | null = null;
   private chipBarWidth = 0;
   private chipDragging = false;
+  /** Edge chevrons hinting that more chips are hidden left/right. */
+  private chipHintL: Phaser.GameObjects.Container | null = null;
+  private chipHintR: Phaser.GameObjects.Container | null = null;
+  /** Attention nudge played when an overflowing chip bar first appears. */
+  private chipNudge: Phaser.Tweens.Tween | null = null;
   /** All rows as data (virtualized; see render/updateWindow). */
   private rowQueue: { r: Recipe; y: number; band: number }[] = [];
   /** Game objects of currently-materialized rows, keyed by row index. */
@@ -119,7 +124,10 @@ export class CraftingScene extends Phaser.Scene {
           : [];
     this.chipBar?.destroy();
     this.chipBar = null;
-    if (defs.length === 0) return;
+    if (defs.length === 0) {
+      this.buildChipEdgeHints(0); // no bar → just clears any leftover hints
+      return;
+    }
     // One horizontally-draggable row of finger-sized chips (3 wrapped rows ate
     // the screen and overlapped the list). Drag sideways to reach 手裏剣/ロッド.
     const bar = this.add.container(0, 0).setDepth(3);
@@ -141,6 +149,68 @@ export class CraftingScene extends Phaser.Scene {
       x += chipW + 8;
     }
     this.chipBarWidth = x;
+    this.buildChipEdgeHints(cy);
+  }
+
+  /**
+   * Scrollability affordances for the chip bar: pulsing ‹ › chevrons at the
+   * band edges (shown only while chips are hidden in that direction) plus a
+   * short slide-and-back nudge when the bar first appears. Without these the
+   * bar read as a fixed row and nobody discovered 手裏剣〜ロッド.
+   */
+  private buildChipEdgeHints(cy: number): void {
+    this.chipNudge?.remove();
+    this.chipNudge = null;
+    this.chipHintL?.destroy();
+    this.chipHintR?.destroy();
+    this.chipHintL = null;
+    this.chipHintR = null;
+    const w = this.scale.width;
+    if (!this.chipBar || this.chipBarWidth <= w) return;
+
+    const makeHint = (x: number, glyph: string): Phaser.GameObjects.Container => {
+      // Small dark pill under the arrow so it stays readable over a chip edge.
+      const pill = this.add.graphics();
+      pill.fillStyle(0x0e0f1a, 0.88);
+      pill.fillRoundedRect(-9, -14, 18, 28, 8);
+      const arrow = this.add
+        .text(0, 0, glyph, { fontFamily: FONT, fontSize: '16px', color: '#ffd86b' })
+        .setOrigin(0.5);
+      const c = this.add.container(x, cy, [pill, arrow]).setDepth(4);
+      this.tweens.add({
+        targets: arrow,
+        alpha: { from: 1, to: 0.35 },
+        duration: 650,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+      return c;
+    };
+    this.chipHintL = makeHint(10, '‹');
+    this.chipHintR = makeHint(w - 10, '›');
+    this.updateChipEdgeHints();
+
+    // One gentle slide-and-back so the row is *seen* moving. Stopped by any
+    // pointerdown (setupScroll) so it never fights a real drag.
+    this.chipNudge = this.tweens.add({
+      targets: this.chipBar,
+      x: -30,
+      delay: 450,
+      duration: 340,
+      yoyo: true,
+      ease: 'Sine.easeInOut',
+      onUpdate: () => this.updateChipEdgeHints(),
+      onComplete: () => this.updateChipEdgeHints(),
+    });
+  }
+
+  /** Show each chevron only while chips are actually hidden on that side. */
+  private updateChipEdgeHints(): void {
+    if (!this.chipBar) return;
+    const minX = Math.min(0, this.scale.width - this.chipBarWidth);
+    this.chipHintL?.setVisible(this.chipBar.x < -4);
+    this.chipHintR?.setVisible(this.chipBar.x > minX + 4);
   }
 
   /** True when a recipe's result matches the active sub-filter chip. */
@@ -171,6 +241,10 @@ export class CraftingScene extends Phaser.Scene {
       inList = p.y >= this.viewTop && p.y <= this.viewBottom;
       // Chip band: horizontal drag pans the chip bar instead.
       inChips = p.y >= 84 && p.y <= 122 && !!this.chipBar;
+      // Freeze the discovery nudge the moment the user touches the screen so
+      // it never shifts a chip out from under their finger mid-tap.
+      this.chipNudge?.remove();
+      this.chipNudge = null;
       chipStartX = this.chipBar?.x ?? 0;
     });
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
@@ -181,6 +255,7 @@ export class CraftingScene extends Phaser.Scene {
         if (this.chipDragging) {
           const minX = Math.min(0, this.scale.width - this.chipBarWidth);
           this.chipBar.x = Phaser.Math.Clamp(chipStartX + dx, minX, 0);
+          this.updateChipEdgeHints();
         }
         return;
       }
