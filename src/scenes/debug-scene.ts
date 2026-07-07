@@ -1,7 +1,11 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
-import { allEquipment } from '@/data/items';
-import { getMap, spawnPoint } from '@/maps/map-def';
+import { allEquipment, allMaterials, allConsumables } from '@/data/items';
+import { getMap, spawnPoint, allMaps } from '@/maps/map-def';
+import { allQuests } from '@/quests/quest-defs';
+import { allSkills } from '@/skills/skill-defs';
+import { allJobs } from '@/jobs/job-defs';
+import { totalExpForLevel } from '@/stats/leveling';
 import { bus } from '@/core/event-bus';
 import { FONT, addBackdrop } from '@/ui/theme';
 
@@ -53,6 +57,8 @@ export class DebugScene extends Phaser.Scene {
     y += 40;
     this.btn(16, y, '全装備入手', () => this.grant(() => this.grantAllEquipment()));
     this.btn(160, y, 'ペット入手', () => this.grant(() => gameState.obtainPetItem('pet_egg_slime')));
+    y += 40;
+    this.btn(16, y, '★最強モード（Lv99・全解放）', () => this.grant(() => this.godMode()), 0x6a2a2a);
     y += 44;
     this.btn(16, y, '通し確認チェックリスト', () => {
       this.scene.stop();
@@ -98,6 +104,51 @@ export class DebugScene extends Phaser.Scene {
 
   private grantAllEquipment(): void {
     for (const e of allEquipment()) gameState.addEquipment(e.id);
+  }
+
+  /**
+   * 最強モード: one tap to end-game state for testing. Lv99, every job/skill/
+   * recipe/quest/map unlocked, full inventory and riches. Debug-only by nature
+   * (this scene is unreachable without ?debug=1).
+   */
+  private godMode(): void {
+    const gs = gameState;
+    // Lv99 via the normal exp path so stat/skill points and events flow as usual.
+    const target = totalExpForLevel(99);
+    const current = totalExpForLevel(gs.level) + gs.exp;
+    if (target > current) gs.gainExp(target - current);
+    // 全職解放＋全職Lv99（現職はそのまま）.
+    for (const j of allJobs()) {
+      if (!gs.unlockedJobs.includes(j.id)) gs.unlockedJobs.push(j.id);
+      gs.jobLevels[j.id] = 99;
+    }
+    // 全スキル習得.
+    for (const s of allSkills()) gs.skills[s.id] = 1;
+    // 富と物資: 全素材99（=全レシピ解放）・全消耗品99・全装備・大金.
+    for (const m of allMaterials()) gs.addMaterial(m.id, 99);
+    for (const c of allConsumables()) gs.addConsumable(c.id, 99);
+    this.grantAllEquipment();
+    gs.addGold(999999);
+    // 全クエスト解放: 前提クエストを完了扱いにし、要求フラグを立てる.
+    const prereqs = new Set<string>();
+    for (const q of allQuests()) {
+      if (q.require?.questDone) prereqs.add(q.require.questDone);
+      if (q.require?.flag) gs.flags[q.require.flag] = true;
+    }
+    for (const id of prereqs) {
+      if (!gs.completedQuests.includes(id)) gs.completedQuests.push(id);
+    }
+    // 全マップ解放: ポータルの解錠フラグ＋訪問済みフラグ.
+    for (const m of allMaps()) {
+      gs.flags[`visited_${m.id}`] = true;
+      for (const p of m.portals ?? []) {
+        if (p.requiresFlag) gs.flags[p.requiresFlag] = true;
+      }
+    }
+    gs.recompute();
+    gs.fullHeal();
+    bus.emit('quest:changed', {});
+    bus.emit('save:written', { slot: -1 });
   }
 
   private refreshStatus(): void {
