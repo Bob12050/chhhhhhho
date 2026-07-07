@@ -25,6 +25,9 @@ export class CraftingScene extends Phaser.Scene {
   private viewBottom = 0;
   private tab: CraftTab = 'weapon';
   private tabButtons: { id: CraftTab; tab: TabHandle }[] = [];
+  /** Rows not yet built (lazy materialization; see render/materializeRows). */
+  private rowQueue: { r: Recipe; y: number; band: number }[] = [];
+  private builtRows = 0;
 
   constructor() {
     super('Crafting');
@@ -110,6 +113,7 @@ export class CraftingScene extends Phaser.Scene {
   private scrollTo(y: number): void {
     this.scrollY = Phaser.Math.Clamp(y, 0, this.maxScroll);
     this.content.y = -this.scrollY;
+    this.materializeRows();
   }
 
   private render(): void {
@@ -132,11 +136,12 @@ export class CraftingScene extends Phaser.Scene {
       );
       y += 28;
     }
-    let band = 0;
-    for (const r of visible) {
-      this.renderRecipe(r, y, w, band++);
-      y += 76;
-    }
+    // Rows are materialized lazily as they scroll into view: building every row
+    // up front froze the phone (150+ rows × ~12 objects each). Positions are
+    // fixed (76px pitch) so total height is known without building anything.
+    this.rowQueue = visible.map((r, i) => ({ r, y: y + i * 76, band: i }));
+    this.builtRows = 0;
+    y += visible.length * 76;
     if (hidden > 0) {
       this.content.add(
         this.add
@@ -151,6 +156,16 @@ export class CraftingScene extends Phaser.Scene {
     }
     this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
     this.scrollTo(this.scrollY);
+  }
+
+  /** Build queued rows that are near the current viewport (2 rows of margin). */
+  private materializeRows(): void {
+    const limit = this.scrollY + this.viewBottom + 152;
+    const w = this.scale.width;
+    while (this.builtRows < this.rowQueue.length && this.rowQueue[this.builtRows].y < limit) {
+      const q = this.rowQueue[this.builtRows++];
+      this.renderRecipe(q.r, q.y, w, q.band);
+    }
   }
 
   /** Icon for a recipe result (weapon type / armour slot / consumable / gem). */
