@@ -3,7 +3,7 @@ import { gameState } from '@/player/game-state';
 import { getEquipment, getConsumable, getMaterial, itemDisplayName } from '@/data/items';
 import { rarityColorHex, rarityColor, rarityLabel } from '@/data/rarity';
 import { TEX } from '@/assets/gen/textures';
-import type { EquipSlot } from '@/equipment/slots';
+import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
 import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
 import { allSkills } from '@/skills/skill-defs';
@@ -381,7 +381,22 @@ export class InventoryScene extends Phaser.Scene {
     if (counts.size === 0) this.emptyNote();
     let band = 0;
     const rowH = 40;
-    for (const [id, count] of counts) {
+    // Stable browsing order: slot (weapon→head→…→accessories) → level → id,
+    // instead of acquisition order (which scrambles after bulk grants).
+    const slotIdx = (s: string): number => {
+      const i = (EQUIP_SLOTS as readonly string[]).indexOf(s);
+      return i < 0 ? 99 : i;
+    };
+    const sorted = [...counts.entries()].sort(([a], [b]) => {
+      const da = getEquipment(a)!;
+      const db = getEquipment(b)!;
+      return (
+        slotIdx(da.slot) - slotIdx(db.slot) ||
+        (da.levelRequirement ?? 1) - (db.levelRequirement ?? 1) ||
+        a.localeCompare(b)
+      );
+    });
+    for (const [id, count] of sorted) {
       this.content.add(rowBand(this, y, rowH, band++));
       const def = getEquipment(id)!;
       const slot = def.slot as EquipSlot;

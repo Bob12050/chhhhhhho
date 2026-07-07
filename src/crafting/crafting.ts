@@ -42,14 +42,21 @@ export function isRecipeVisible(gs: GameState, r: Recipe): boolean {
   return false;
 }
 
-/** Visible recipes, craftable-first (stable order within each group). */
+/** Level requirement of a recipe's result (0 for materials/consumables). */
+function resultLevel(r: Recipe): number {
+  return getEquipment(r.resultItemId)?.levelRequirement ?? 0;
+}
+
+/** Visible recipes: craftable first, each group sorted by result level. */
 export function visibleRecipes(
   gs: GameState,
   all: Recipe[],
 ): { visible: Recipe[]; hidden: number } {
   const visible = all.filter((r) => isRecipeVisible(gs, r));
-  const craftable = visible.filter((r) => craftBlock(gs, r) === null);
-  const rest = visible.filter((r) => craftBlock(gs, r) !== null);
+  const byLevel = (a: Recipe, b: Recipe): number =>
+    resultLevel(a) - resultLevel(b) || a.resultItemId.localeCompare(b.resultItemId);
+  const craftable = visible.filter((r) => craftBlock(gs, r) === null).sort(byLevel);
+  const rest = visible.filter((r) => craftBlock(gs, r) !== null).sort(byLevel);
   return { visible: [...craftable, ...rest], hidden: all.length - visible.length };
 }
 
