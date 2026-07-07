@@ -21,10 +21,13 @@ export class CraftingScene extends Phaser.Scene {
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
-  private viewTop = 88;
+  private viewTop = 152;
   private viewBottom = 0;
   private tab: CraftTab = 'weapon';
   private tabButtons: { id: CraftTab; tab: TabHandle }[] = [];
+  /** Sub-filter (weapon type / armour slot) selected in the chip row. */
+  private subFilter: string | null = null;
+  private filterChips: { value: string | null; tab: TabHandle }[] = [];
   /** All rows as data (virtualized; see render/updateWindow). */
   private rowQueue: { r: Recipe; y: number; band: number }[] = [];
   /** Game objects of currently-materialized rows, keyed by row index. */
@@ -68,12 +71,15 @@ export class CraftingScene extends Phaser.Scene {
       const tab = tabChip(this, 46 + i * 78, 60, 74, t.label, () => {
         if (this.dragged) return;
         this.tab = t.id;
+        this.subFilter = null;
         this.scrollY = 0;
+        this.buildFilterChips();
         this.render();
       });
       tab.root.setDepth(3);
       this.tabButtons.push({ id: t.id, tab });
     });
+    this.buildFilterChips();
 
     this.content = this.add.container(0, 0).setDepth(1);
     this.viewBottom = h - 72;
@@ -88,6 +94,56 @@ export class CraftingScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
     this.render();
+  }
+
+  /**
+   * Second filter row under the tabs: weapon types on 武器, armour slots on
+   * 防具 (nothing on どうぐ). Chips flow left→right and wrap; tapping narrows
+   * the list so 400+ recipes never need marathon scrolling.
+   */
+  private buildFilterChips(): void {
+    for (const c of this.filterChips) c.tab.root.destroy();
+    this.filterChips = [];
+    const defs: [string | null, string][] =
+      this.tab === 'weapon'
+        ? [[null, '全部'], ['sword', '剣'], ['katana', '刀'], ['axe', '斧'], ['spear', '槍'],
+           ['dagger', '短剣'], ['mace', '槌'], ['whip', '鞭'], ['bow', '弓'],
+           ['shuriken', '手裏剣'], ['shield', '盾'], ['staff', '杖'], ['wand', 'ロッド']]
+        : this.tab === 'armor'
+          ? [[null, '全部'], ['head', '頭'], ['torso', '胴'], ['back', '背'], ['hands', '手'],
+             ['feet', '足'], ['waist', '腰'], ['accessory', 'アクセ']]
+          : [];
+    const w = this.scale.width;
+    let x = 8;
+    let cy = 96;
+    for (const [value, label] of defs) {
+      const chipW = label.length * 13 + 26;
+      if (x + chipW > w - 8) {
+        x = 8;
+        cy += 32;
+      }
+      const tab = tabChip(this, x + chipW / 2, cy, chipW, label, () => {
+        if (this.dragged) return;
+        this.subFilter = value;
+        this.scrollY = 0;
+        for (const c of this.filterChips) c.tab.setActive(c.value === value);
+        this.render();
+      });
+      tab.root.setDepth(3);
+      tab.setActive(value === this.subFilter);
+      this.filterChips.push({ value, tab });
+      x += chipW + 6;
+    }
+  }
+
+  /** True when a recipe's result matches the active sub-filter chip. */
+  private matchesSubFilter(r: Recipe): boolean {
+    if (this.subFilter === null) return true;
+    const eq = getEquipment(r.resultItemId);
+    if (!eq) return false;
+    if (this.tab === 'weapon') return (eq.weaponTags ?? [])[0] === this.subFilter;
+    if (this.subFilter === 'accessory') return eq.slot.startsWith('accessory');
+    return eq.slot === this.subFilter;
   }
 
   private setupScroll(): void {
@@ -127,7 +183,9 @@ export class CraftingScene extends Phaser.Scene {
     let y = this.viewTop + 8;
     // MH-style discovery: only recipes whose materials the player has seen,
     // craftable ones first. Hidden count hints there's more to find.
-    const inTab = allRecipes().filter((r) => this.recipeCategory(r) === this.tab);
+    const inTab = allRecipes().filter(
+      (r) => this.recipeCategory(r) === this.tab && this.matchesSubFilter(r),
+    );
     const { visible, hidden } = visibleRecipes(gameState, inTab);
     if (visible.length === 0) {
       this.content.add(
