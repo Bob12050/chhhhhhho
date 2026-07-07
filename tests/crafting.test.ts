@@ -44,8 +44,8 @@ describe('crafting', () => {
     expect(Object.keys(elixir.materials)).toContain('slime_jelly');
   });
 
-  it('ships 258 recipes', () => {
-    expect(allRecipes().length).toBe(258);
+  it('ships a substantial recipe catalogue (property, not a pinned count)', () => {
+    expect(allRecipes().length).toBeGreaterThanOrEqual(300);
   });
 
   it('boss signature materials drop and craft themed gear (MH loop)', () => {

@@ -3188,6 +3188,1427 @@
       },
       "gold": 50,
       "station": "workbench"
+    },
+    {
+      "id": "craft_beastbone_sword",
+      "resultItemId": "beastbone_sword",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_sword",
+      "resultItemId": "whitesteel_sword",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 49,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_sword",
+      "resultItemId": "gale_sword",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_sword",
+      "resultItemId": "storm_sword",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 132,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_sword",
+      "resultItemId": "moonlit_sword",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragonbone_sword",
+      "resultItemId": "dragonbone_sword",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesilver_sword",
+      "resultItemId": "whitesilver_sword",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 538,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_sword",
+      "resultItemId": "thunderpeal_sword",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 880,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_sword",
+      "resultItemId": "starfrost_sword",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_sword",
+      "resultItemId": "skyvault_sword",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_staff",
+      "resultItemId": "beastbone_staff",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_staff",
+      "resultItemId": "whitesteel_staff",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 49,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_staff",
+      "resultItemId": "gale_staff",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_staff",
+      "resultItemId": "storm_staff",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 132,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_staff",
+      "resultItemId": "moonlit_staff",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragonbone_staff",
+      "resultItemId": "dragonbone_staff",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesilver_staff",
+      "resultItemId": "whitesilver_staff",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 538,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_staff",
+      "resultItemId": "thunderpeal_staff",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 880,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_staff",
+      "resultItemId": "starfrost_staff",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_staff",
+      "resultItemId": "skyvault_staff",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_whip",
+      "resultItemId": "beastbone_whip",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_whip",
+      "resultItemId": "whitesteel_whip",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 49,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_whip",
+      "resultItemId": "gale_whip",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_whip",
+      "resultItemId": "storm_whip",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 132,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_whip",
+      "resultItemId": "moonlit_whip",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragonbone_whip",
+      "resultItemId": "dragonbone_whip",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesilver_whip",
+      "resultItemId": "whitesilver_whip",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 538,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_whip",
+      "resultItemId": "thunderpeal_whip",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 880,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_whip",
+      "resultItemId": "starfrost_whip",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_whip",
+      "resultItemId": "skyvault_whip",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_spear",
+      "resultItemId": "beastbone_spear",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_spear",
+      "resultItemId": "whitesteel_spear",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 49,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_spear",
+      "resultItemId": "gale_spear",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_spear",
+      "resultItemId": "storm_spear",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 132,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_spear",
+      "resultItemId": "moonlit_spear",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragonbone_spear",
+      "resultItemId": "dragonbone_spear",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesilver_spear",
+      "resultItemId": "whitesilver_spear",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 538,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_spear",
+      "resultItemId": "thunderpeal_spear",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 880,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_spear",
+      "resultItemId": "starfrost_spear",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_spear",
+      "resultItemId": "skyvault_spear",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_wand",
+      "resultItemId": "beastbone_wand",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_wand",
+      "resultItemId": "whitesteel_wand",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 49,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_wand",
+      "resultItemId": "gale_wand",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_wand",
+      "resultItemId": "storm_wand",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 132,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_wand",
+      "resultItemId": "moonlit_wand",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragonbone_wand",
+      "resultItemId": "dragonbone_wand",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesilver_wand",
+      "resultItemId": "whitesilver_wand",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 538,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_wand",
+      "resultItemId": "thunderpeal_wand",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 880,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_wand",
+      "resultItemId": "starfrost_wand",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_wand",
+      "resultItemId": "skyvault_wand",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_axe",
+      "resultItemId": "beastbone_axe",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_axe",
+      "resultItemId": "whitesteel_axe",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 49,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_axe",
+      "resultItemId": "gale_axe",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_axe",
+      "resultItemId": "moonlit_axe",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragonbone_axe",
+      "resultItemId": "dragonbone_axe",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesilver_axe",
+      "resultItemId": "whitesilver_axe",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 538,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_axe",
+      "resultItemId": "thunderpeal_axe",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 880,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_axe",
+      "resultItemId": "starfrost_axe",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_axe",
+      "resultItemId": "skyvault_axe",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
+    },
+    {
+      "id": "craft_overlord_axe",
+      "resultItemId": "overlord_axe",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1852,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_mace",
+      "resultItemId": "beastbone_mace",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_mace",
+      "resultItemId": "whitesteel_mace",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 49,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_mace",
+      "resultItemId": "gale_mace",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_mace",
+      "resultItemId": "moonlit_mace",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragonbone_mace",
+      "resultItemId": "dragonbone_mace",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesilver_mace",
+      "resultItemId": "whitesilver_mace",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 538,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_mace",
+      "resultItemId": "thunderpeal_mace",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 880,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_mace",
+      "resultItemId": "starfrost_mace",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_mace",
+      "resultItemId": "skyvault_mace",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
+    },
+    {
+      "id": "craft_overlord_mace",
+      "resultItemId": "overlord_mace",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1852,
+      "station": "forge"
+    },
+    {
+      "id": "craft_beastbone_dagger",
+      "resultItemId": "beastbone_dagger",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 41,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_dagger",
+      "resultItemId": "gale_dagger",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_dagger",
+      "resultItemId": "storm_dagger",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 132,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_dagger",
+      "resultItemId": "moonlit_dagger",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragonbone_dagger",
+      "resultItemId": "dragonbone_dagger",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesilver_dagger",
+      "resultItemId": "whitesilver_dagger",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 538,
+      "station": "forge"
+    },
+    {
+      "id": "craft_thunderpeal_dagger",
+      "resultItemId": "thunderpeal_dagger",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 880,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_dagger",
+      "resultItemId": "starfrost_dagger",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_dagger",
+      "resultItemId": "skyvault_dagger",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
+    },
+    {
+      "id": "craft_overlord_dagger",
+      "resultItemId": "overlord_dagger",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1852,
+      "station": "forge"
+    },
+    {
+      "id": "craft_ironwork_katana",
+      "resultItemId": "ironwork_katana",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2
+      },
+      "gold": 26,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_katana",
+      "resultItemId": "gale_katana",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_katana",
+      "resultItemId": "storm_katana",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 132,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_katana",
+      "resultItemId": "moonlit_katana",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_dragonbone_katana",
+      "resultItemId": "dragonbone_katana",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 300,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abysstide_katana",
+      "resultItemId": "abysstide_katana",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 562,
+      "station": "forge"
+    },
+    {
+      "id": "craft_royalline_katana",
+      "resultItemId": "royalline_katana",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 912,
+      "station": "forge"
+    },
+    {
+      "id": "craft_netherking_katana",
+      "resultItemId": "netherking_katana",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1660,
+      "station": "forge"
+    },
+    {
+      "id": "craft_overlord_katana",
+      "resultItemId": "overlord_katana",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1852,
+      "station": "forge"
+    },
+    {
+      "id": "craft_trainee_shuriken",
+      "resultItemId": "trainee_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2
+      },
+      "gold": 17,
+      "station": "forge"
+    },
+    {
+      "id": "craft_ironwork_shuriken",
+      "resultItemId": "ironwork_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2
+      },
+      "gold": 26,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_shuriken",
+      "resultItemId": "whitesteel_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 49,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_shuriken",
+      "resultItemId": "gale_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_shuriken",
+      "resultItemId": "storm_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 132,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_shuriken",
+      "resultItemId": "moonlit_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_flarelord_shuriken",
+      "resultItemId": "flarelord_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 514,
+      "station": "forge"
+    },
+    {
+      "id": "craft_snowveil_shuriken",
+      "resultItemId": "snowveil_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 586,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_shuriken",
+      "resultItemId": "starfrost_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_shuriken",
+      "resultItemId": "skyvault_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
+    },
+    {
+      "id": "craft_trainee_bow",
+      "resultItemId": "trainee_bow",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2
+      },
+      "gold": 17,
+      "station": "forge"
+    },
+    {
+      "id": "craft_ironwork_bow",
+      "resultItemId": "ironwork_bow",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2
+      },
+      "gold": 26,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_bow",
+      "resultItemId": "whitesteel_bow",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 49,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_bow",
+      "resultItemId": "gale_bow",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_bow",
+      "resultItemId": "storm_bow",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 132,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_bow",
+      "resultItemId": "moonlit_bow",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_flarelord_bow",
+      "resultItemId": "flarelord_bow",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 514,
+      "station": "forge"
+    },
+    {
+      "id": "craft_snowveil_bow",
+      "resultItemId": "snowveil_bow",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 586,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_bow",
+      "resultItemId": "starfrost_bow",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_bow",
+      "resultItemId": "skyvault_bow",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
+    },
+    {
+      "id": "craft_trainee_shield",
+      "resultItemId": "trainee_shield",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2
+      },
+      "gold": 17,
+      "station": "forge"
+    },
+    {
+      "id": "craft_ironwork_shield",
+      "resultItemId": "ironwork_shield",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 3,
+        "soft_leather": 2
+      },
+      "gold": 26,
+      "station": "forge"
+    },
+    {
+      "id": "craft_whitesteel_shield",
+      "resultItemId": "whitesteel_shield",
+      "resultQty": 1,
+      "materials": {
+        "iron_ore": 4,
+        "night_fang": 2,
+        "mana_stone": 1
+      },
+      "gold": 49,
+      "station": "forge"
+    },
+    {
+      "id": "craft_gale_shield",
+      "resultItemId": "gale_shield",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 114,
+      "station": "forge"
+    },
+    {
+      "id": "craft_storm_shield",
+      "resultItemId": "storm_shield",
+      "resultQty": 1,
+      "materials": {
+        "steel_ingot": 3,
+        "alpha_pelt": 2,
+        "stone_heart": 1
+      },
+      "gold": 132,
+      "station": "forge"
+    },
+    {
+      "id": "craft_moonlit_shield",
+      "resultItemId": "moonlit_shield",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 3,
+        "garo_fang": 2,
+        "flame_core": 1
+      },
+      "gold": 268,
+      "station": "forge"
+    },
+    {
+      "id": "craft_flarelord_shield",
+      "resultItemId": "flarelord_shield",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 514,
+      "station": "forge"
+    },
+    {
+      "id": "craft_snowveil_shield",
+      "resultItemId": "snowveil_shield",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 2,
+        "frost_heart": 1,
+        "mythril_ore": 3
+      },
+      "gold": 586,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starfrost_shield",
+      "resultItemId": "starfrost_shield",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dread_carapace": 2,
+        "golem_core": 1
+      },
+      "gold": 976,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skyvault_shield",
+      "resultItemId": "skyvault_shield",
+      "resultQty": 1,
+      "materials": {
+        "abyss_core": 2,
+        "star_fragment": 2,
+        "dragon_scale": 3
+      },
+      "gold": 1756,
+      "station": "forge"
     }
   ]
 }
