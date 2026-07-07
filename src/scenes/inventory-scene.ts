@@ -62,6 +62,10 @@ export class InventoryScene extends Phaser.Scene {
   private content!: Phaser.GameObjects.Container;
   private goldText!: Phaser.GameObjects.Text;
   private tabButtons: { id: Tab; tab: TabHandle }[] = [];
+  /** Virtualized equipment rows (data + live objects); see updateEquipWindow. */
+  private eqQueue: { id: string; count: number; y: number; band: number }[] = [];
+  private eqLive = new Map<number, Phaser.GameObjects.GameObject[]>();
+  private eqBaseY = 0;
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
@@ -187,6 +191,7 @@ export class InventoryScene extends Phaser.Scene {
   private scrollTo(y: number): void {
     this.scrollY = Phaser.Math.Clamp(y, 0, this.maxScroll);
     this.content.y = -this.scrollY;
+    this.updateEquipWindow();
   }
 
   /** Recompute scrollable range from the laid-out rows and re-clamp. */
@@ -236,6 +241,8 @@ export class InventoryScene extends Phaser.Scene {
 
   private renderTab(): void {
     this.content.removeAll(true);
+    this.eqQueue = [];
+    this.eqLive.clear();
     this.scrollY = 0;
     this.content.y = 0;
     for (const tb of this.tabButtons) {
@@ -376,11 +383,8 @@ export class InventoryScene extends Phaser.Scene {
     for (const id of gameState.equipmentOwned) {
       if (getEquipment(id)) counts.set(id, (counts.get(id) ?? 0) + 1);
     }
-    const w = this.scale.width;
     let y = 100;
     if (counts.size === 0) this.emptyNote();
-    let band = 0;
-    const rowH = 40;
     // Stable browsing order: slot (weapon→head→…→accessories) → level → id,
     // instead of acquisition order (which scrambles after bulk grants).
     const slotIdx = (s: string): number => {
@@ -396,8 +400,54 @@ export class InventoryScene extends Phaser.Scene {
         a.localeCompare(b)
       );
     });
-    for (const [id, count] of sorted) {
-      this.content.add(rowBand(this, y, rowH, band++));
+    // Virtualized rows (fixed 44px pitch): only ~14 near the viewport exist as
+    // game objects. A god-mode inventory (340+ pieces) froze the phone when
+    // every row was built up front.
+    this.eqBaseY = y;
+    this.eqQueue = sorted.map(([id, count], i) => ({ id, count, y: y + i * 44, band: i }));
+    y += sorted.length * 44;
+
+    const d = gameState.derived;
+    this.content.add(
+      this.add.text(16, y + 12, `物理攻撃 ${d.physAtk}   防御 ${d.def}   最大HP ${d.maxHp}`, {
+        fontFamily: 'system-ui, monospace',
+        fontSize: '12px',
+        color: '#cfe',
+      }),
+    );
+    this.updateEquipWindow();
+  }
+
+  /** Create/destroy equipment rows so only those near the viewport are live. */
+  private updateEquipWindow(): void {
+    if (this.eqQueue.length === 0) return;
+    const pitch = 44;
+    const first = Math.max(0, Math.floor((this.scrollY + this.viewTop - this.eqBaseY) / pitch) - 2);
+    const last = Math.min(
+      this.eqQueue.length - 1,
+      Math.ceil((this.scrollY + this.viewBottom - this.eqBaseY) / pitch) + 2,
+    );
+    for (const [idx, objs] of this.eqLive) {
+      if (idx < first || idx > last) {
+        for (const o of objs) o.destroy();
+        this.eqLive.delete(idx);
+      }
+    }
+    for (let i = first; i <= last; i++) {
+      if (this.eqLive.has(i)) continue;
+      const q = this.eqQueue[i];
+      const before = this.content.length;
+      this.renderEquipRow(q.id, q.count, q.y, q.band);
+      this.eqLive.set(i, this.content.list.slice(before) as Phaser.GameObjects.GameObject[]);
+    }
+  }
+
+  /** One equipment row at absolute y (used by the virtual window). */
+  private renderEquipRow(id: string, count: number, y: number, band: number): void {
+    const w = this.scale.width;
+    const rowH = 40;
+    {
+      this.content.add(rowBand(this, y, rowH, band));
       const def = getEquipment(id)!;
       const slot = def.slot as EquipSlot;
       const equipped = gameState.equipment[slot] === id;
@@ -479,17 +529,7 @@ export class InventoryScene extends Phaser.Scene {
             .setOrigin(1, 0.5),
         );
       }
-      y += rowH + 4;
     }
-
-    const d = gameState.derived;
-    this.content.add(
-      this.add.text(16, y + 12, `物理攻撃 ${d.physAtk}   防御 ${d.def}   最大HP ${d.maxHp}`, {
-        fontFamily: 'system-ui, monospace',
-        fontSize: '12px',
-        color: '#cfe',
-      }),
-    );
   }
 
   private renderStatus(): void {

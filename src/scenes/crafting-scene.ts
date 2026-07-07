@@ -25,9 +25,11 @@ export class CraftingScene extends Phaser.Scene {
   private viewBottom = 0;
   private tab: CraftTab = 'weapon';
   private tabButtons: { id: CraftTab; tab: TabHandle }[] = [];
-  /** Rows not yet built (lazy materialization; see render/materializeRows). */
+  /** All rows as data (virtualized; see render/updateWindow). */
   private rowQueue: { r: Recipe; y: number; band: number }[] = [];
-  private builtRows = 0;
+  /** Game objects of currently-materialized rows, keyed by row index. */
+  private liveRows = new Map<number, Phaser.GameObjects.GameObject[]>();
+  private rowsBaseY = 0;
 
   constructor() {
     super('Crafting');
@@ -113,11 +115,12 @@ export class CraftingScene extends Phaser.Scene {
   private scrollTo(y: number): void {
     this.scrollY = Phaser.Math.Clamp(y, 0, this.maxScroll);
     this.content.y = -this.scrollY;
-    this.materializeRows();
+    this.updateWindow();
   }
 
   private render(): void {
     this.content.removeAll(true);
+    this.liveRows.clear();
     this.goldText.setText(`${gameState.gold}`);
     for (const tb of this.tabButtons) tb.tab.setActive(tb.id === this.tab);
     const w = this.scale.width;
@@ -136,11 +139,11 @@ export class CraftingScene extends Phaser.Scene {
       );
       y += 28;
     }
-    // Rows are materialized lazily as they scroll into view: building every row
-    // up front froze the phone (150+ rows × ~12 objects each). Positions are
-    // fixed (76px pitch) so total height is known without building anything.
+    // Virtualized list: only rows near the viewport exist as game objects
+    // (~12 live at once). Rows leaving the window are destroyed. Fixed 76px
+    // pitch → total height and hit positions are known without building rows.
+    this.rowsBaseY = y;
     this.rowQueue = visible.map((r, i) => ({ r, y: y + i * 76, band: i }));
-    this.builtRows = 0;
     y += visible.length * 76;
     if (hidden > 0) {
       this.content.add(
@@ -158,13 +161,37 @@ export class CraftingScene extends Phaser.Scene {
     this.scrollTo(this.scrollY);
   }
 
-  /** Build queued rows that are near the current viewport (2 rows of margin). */
-  private materializeRows(): void {
-    const limit = this.scrollY + this.viewBottom + 152;
+  /**
+   * Virtual window: create rows within ±2 rows of the viewport, destroy rows
+   * outside it. Keeps live object count constant (~12 rows × ~12 objects) no
+   * matter how many recipes exist — big lists froze the phone otherwise.
+   */
+  private updateWindow(): void {
+    if (this.rowQueue.length === 0) return;
+    const pitch = 76;
+    const first = Math.max(
+      0,
+      Math.floor((this.scrollY + this.viewTop - this.rowsBaseY) / pitch) - 2,
+    );
+    const last = Math.min(
+      this.rowQueue.length - 1,
+      Math.ceil((this.scrollY + this.viewBottom - this.rowsBaseY) / pitch) + 2,
+    );
+    // Destroy rows that left the window.
+    for (const [idx, objs] of this.liveRows) {
+      if (idx < first || idx > last) {
+        for (const o of objs) o.destroy();
+        this.liveRows.delete(idx);
+      }
+    }
+    // Create rows that entered it (track exactly the objects each row adds).
     const w = this.scale.width;
-    while (this.builtRows < this.rowQueue.length && this.rowQueue[this.builtRows].y < limit) {
-      const q = this.rowQueue[this.builtRows++];
+    for (let i = first; i <= last; i++) {
+      if (this.liveRows.has(i)) continue;
+      const q = this.rowQueue[i];
+      const before = this.content.length;
       this.renderRecipe(q.r, q.y, w, q.band);
+      this.liveRows.set(i, this.content.list.slice(before) as Phaser.GameObjects.GameObject[]);
     }
   }
 
