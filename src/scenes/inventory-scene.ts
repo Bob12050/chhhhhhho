@@ -169,16 +169,19 @@ export class InventoryScene extends Phaser.Scene {
   private setupScroll(): void {
     let startPointerY = 0;
     let startScroll = 0;
+    let inList = false;
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       startPointerY = p.y;
       startScroll = this.scrollY;
       this.dragged = false;
+      // Header/footer taps must never turn into a drag (they ate button taps).
+      inList = p.y >= this.viewTop && p.y <= this.viewBottom;
     });
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (!p.isDown) return;
+      if (!p.isDown || !inList) return;
       const d = startPointerY - p.y;
-      if (Math.abs(d) > 6) this.dragged = true;
-      this.scrollTo(startScroll + d);
+      if (Math.abs(d) > 12) this.dragged = true;
+      if (this.dragged) this.scrollTo(startScroll + d);
     });
     this.input.on(
       'wheel',

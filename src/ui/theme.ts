@@ -172,16 +172,19 @@ export function tabChip(
   label: string,
   onTap: () => void,
 ): TabHandle {
-  const h = 30;
+  const h = 34; // finger-sized (30 was too easy to miss on device)
   const bw = width - 4;
   const txt = scene.add
     .text(0, 0, label, { fontFamily: FONT, fontSize: '13px', color: '#fff' })
     .setOrigin(0.5);
   const g = scene.add.graphics();
   const root = scene.add.container(cx, cy, [g, txt]);
-  root
-    .setSize(bw, h)
-    .setInteractive(new Phaser.Geom.Rectangle(-bw / 2, -h / 2, bw, h), Phaser.Geom.Rectangle.Contains);
+  // Argless setInteractive derives the hit rect from setSize — correct for
+  // Phaser 4 containers, whose displayOrigin is size/2 and gets ADDED to the
+  // hit-test point. A manual centred Rectangle(-bw/2, -h/2, …) here shifted
+  // the tappable area up-left by half a chip (only the top-left quadrant
+  // responded), which made every tab/chip feel broken on device.
+  root.setSize(bw, h).setInteractive();
   root.on('pointerup', onTap);
   const draw = (active: boolean): void => {
     g.clear();

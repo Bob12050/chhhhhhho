@@ -21,13 +21,17 @@ export class CraftingScene extends Phaser.Scene {
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
-  private viewTop = 152;
+  private viewTop = 128;
   private viewBottom = 0;
   private tab: CraftTab = 'weapon';
   private tabButtons: { id: CraftTab; tab: TabHandle }[] = [];
   /** Sub-filter (weapon type / armour slot) selected in the chip row. */
   private subFilter: string | null = null;
   private filterChips: { value: string | null; tab: TabHandle }[] = [];
+  /** Horizontally-scrollable chip bar (one big-finger-sized row). */
+  private chipBar: Phaser.GameObjects.Container | null = null;
+  private chipBarWidth = 0;
+  private chipDragging = false;
   /** All rows as data (virtualized; see render/updateWindow). */
   private rowQueue: { r: Recipe; y: number; band: number }[] = [];
   /** Game objects of currently-materialized rows, keyed by row index. */
@@ -113,27 +117,30 @@ export class CraftingScene extends Phaser.Scene {
           ? [[null, '全部'], ['head', '頭'], ['torso', '胴'], ['back', '背'], ['hands', '手'],
              ['feet', '足'], ['waist', '腰'], ['accessory', 'アクセ']]
           : [];
-    const w = this.scale.width;
+    this.chipBar?.destroy();
+    this.chipBar = null;
+    if (defs.length === 0) return;
+    // One horizontally-draggable row of finger-sized chips (3 wrapped rows ate
+    // the screen and overlapped the list). Drag sideways to reach 手裏剣/ロッド.
+    const bar = this.add.container(0, 0).setDepth(3);
+    this.chipBar = bar;
     let x = 8;
-    let cy = 96;
+    const cy = 102;
     for (const [value, label] of defs) {
-      const chipW = label.length * 13 + 26;
-      if (x + chipW > w - 8) {
-        x = 8;
-        cy += 32;
-      }
+      const chipW = label.length * 14 + 32;
       const tab = tabChip(this, x + chipW / 2, cy, chipW, label, () => {
-        if (this.dragged) return;
+        if (this.chipDragging) return;
         this.subFilter = value;
         this.scrollY = 0;
         for (const c of this.filterChips) c.tab.setActive(c.value === value);
         this.render();
       });
-      tab.root.setDepth(3);
       tab.setActive(value === this.subFilter);
+      bar.add(tab.root);
       this.filterChips.push({ value, tab });
-      x += chipW + 6;
+      x += chipW + 8;
     }
+    this.chipBarWidth = x;
   }
 
   /** True when a recipe's result matches the active sub-filter chip. */
@@ -149,16 +156,39 @@ export class CraftingScene extends Phaser.Scene {
   private setupScroll(): void {
     let startPointerY = 0;
     let startScroll = 0;
+    let inList = false;
+    let startPointerX = 0;
+    let inChips = false;
+    let chipStartX = 0;
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       startPointerY = p.y;
+      startPointerX = p.x;
       startScroll = this.scrollY;
       this.dragged = false;
+      this.chipDragging = false;
+      // Header taps (tabs / filter chips) must never turn into a drag — a tiny
+      // finger roll was eating chip taps. Only list-area gestures scroll.
+      inList = p.y >= this.viewTop && p.y <= this.viewBottom;
+      // Chip band: horizontal drag pans the chip bar instead.
+      inChips = p.y >= 84 && p.y <= 122 && !!this.chipBar;
+      chipStartX = this.chipBar?.x ?? 0;
     });
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
       if (!p.isDown) return;
+      if (inChips && this.chipBar) {
+        const dx = p.x - startPointerX;
+        if (Math.abs(dx) > 12) this.chipDragging = true;
+        if (this.chipDragging) {
+          const minX = Math.min(0, this.scale.width - this.chipBarWidth);
+          this.chipBar.x = Phaser.Math.Clamp(chipStartX + dx, minX, 0);
+        }
+        return;
+      }
+      if (!inList) return;
       const d = startPointerY - p.y;
-      if (Math.abs(d) > 6) this.dragged = true;
-      this.scrollTo(startScroll + d);
+      // 12px threshold: forgiving of natural tap wobble on device.
+      if (Math.abs(d) > 12) this.dragged = true;
+      if (this.dragged) this.scrollTo(startScroll + d);
     });
     this.input.on(
       'wheel',
