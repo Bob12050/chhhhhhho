@@ -18,10 +18,20 @@ describe('accessories', () => {
     expect(accessories.length).toBeGreaterThanOrEqual(10);
   });
 
-  it('every accessory is craftable', () => {
+  it('every accessory is obtainable (recipe, enemy drop, or quest reward)', async () => {
     const craftResults = new Set(allRecipes().map((r) => r.resultItemId));
+    const dropItems = new Set<string>();
+    for (const t of (dropsJson as { tables: { entries: { itemId: string }[] }[] }).tables)
+      for (const e of t.entries) dropItems.add(e.itemId);
+    const questsJson = (await import('@/data/defs/quests.json')).default as {
+      quests: { rewards?: { items?: Record<string, number> } }[];
+    };
+    const questItems = new Set<string>();
+    for (const q of questsJson.quests)
+      for (const id of Object.keys(q.rewards?.items ?? {})) questItems.add(id);
     for (const a of accessories) {
-      expect(craftResults.has(a.id), `${a.id} has a recipe`).toBe(true);
+      const obtainable = craftResults.has(a.id) || dropItems.has(a.id) || questItems.has(a.id);
+      expect(obtainable, `${a.id} is obtainable somehow`).toBe(true);
     }
   });
 

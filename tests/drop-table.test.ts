@@ -51,3 +51,39 @@ describe('rollDrops', () => {
     expect(t!.entries.length).toBeGreaterThan(0);
   });
 });
+
+describe('dropBonus (LUK / charm accessories)', () => {
+  it('multiplies entry chance (0.5 rate + 100% bonus = certain)', () => {
+    const t: DropTable = { id: 't', entries: [{ itemId: 'x', dropRate: 0.5, min: 1, max: 1 }] };
+    for (let s = 0; s < 30; s++) {
+      const drops = rollDrops(t, new Rng(s), { dropBonus: 1 });
+      expect(drops.some((d) => d.itemId === 'x')).toBe(true);
+    }
+  });
+
+  it('raises observed frequency roughly by the bonus', () => {
+    const t: DropTable = { id: 't', entries: [{ itemId: 'x', dropRate: 0.2, min: 1, max: 1 }] };
+    const N = 4000;
+    let base = 0;
+    let boosted = 0;
+    const r1 = new Rng(7);
+    const r2 = new Rng(7);
+    for (let i = 0; i < N; i++) {
+      if (rollDrops(t, r1).length) base++;
+      if (rollDrops(t, r2, { dropBonus: 0.5 }).length) boosted++;
+    }
+    expect(boosted / N).toBeGreaterThan(0.25); // 0.2*1.5=0.3 expected
+    expect(boosted).toBeGreaterThan(base);
+  });
+
+  it('charm gear exists in drop tables and grants dropRate', async () => {
+    const { getEquipment } = await import('@/data/items');
+    for (const id of ['charm_rabbit', 'gloves_thief', 'clover_gold']) {
+      const eq = getEquipment(id)!;
+      expect(eq).toBeTruthy();
+      expect((eq.derived as Record<string, number>).dropRate).toBeGreaterThan(0);
+    }
+    const slime = getDropTable('slime_basic')!;
+    expect(slime.entries.some((e) => e.itemId === 'charm_rabbit')).toBe(true);
+  });
+});

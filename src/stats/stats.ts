@@ -24,6 +24,8 @@ export interface DerivedStats {
   critRate: number; // 0..1
   atkSpeed: number; // multiplier (1 = base)
   moveSpeed: number; // logical px/sec
+  /** Drop-chance bonus (0.15 = +15%). From LUK and charm-type accessories. */
+  dropRate: number;
 }
 
 /** Flat additive modifiers, e.g. from equipment / job / passives. */
@@ -70,6 +72,8 @@ export function computeDerived(
     critRate: Math.min(0.5, 0.02 + base.LUK * 0.005),
     atkSpeed: 1 + base.DEX * 0.01,
     moveSpeed: 90,
+    // 運 literally: LUK makes materials drop more (5 LUK ≈ +1.5%).
+    dropRate: base.LUK * 0.003,
   };
 
   // 3) Additive derived modifiers (equipment etc.).

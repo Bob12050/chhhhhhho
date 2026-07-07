@@ -16,7 +16,8 @@
         "gold": 60,
         "exp": 120,
         "items": {
-          "soft_leather": 3
+          "soft_leather": 3,
+          "charm_rabbit": 1
         }
       },
       "rank": 1
@@ -135,7 +136,8 @@
         "gold": 20,
         "exp": 45,
         "items": {
-          "potion_hp": 1
+          "potion_hp": 1,
+          "padded_hood": 1
         }
       },
       "rank": 1
@@ -177,7 +179,8 @@
         "gold": 40,
         "exp": 90,
         "items": {
-          "soft_leather": 2
+          "soft_leather": 2,
+          "ring_copper": 1
         }
       },
       "rank": 1

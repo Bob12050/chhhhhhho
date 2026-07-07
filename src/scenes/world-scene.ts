@@ -1019,7 +1019,7 @@ export class WorldScene extends Phaser.Scene {
     const firstKill = !!def.isBoss && !gameState.flags[killFlag];
     const table = def.dropTableId ? getDropTable(def.dropTableId) : undefined;
     if (table) {
-      const drops = rollDrops(table, this.rng, { firstKill });
+      const drops = rollDrops(table, this.rng, { firstKill, dropBonus: gameState.derived.dropRate });
       for (const d of drops) {
         const ox = this.rng.intRange(-12, 12);
         const oy = this.rng.intRange(-6, 10);

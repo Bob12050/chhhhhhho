@@ -2835,6 +2835,47 @@
       "classRestrictions": [
         "thief"
       ]
+    },
+    {
+      "id": "charm_rabbit",
+      "name": "うさぎのおまもり",
+      "slot": "accessory_1",
+      "rarity": 2,
+      "visualId": "vest_cloth",
+      "levelRequirement": 3,
+      "derived": {
+        "dropRate": 0.1
+      },
+      "sellPrice": 40,
+      "description": "ふわふわの幸運のおまもり。持ち物がすこし見つかりやすくなる。"
+    },
+    {
+      "id": "gloves_thief",
+      "name": "とうぞくのグローブ",
+      "slot": "accessory_1",
+      "rarity": 3,
+      "visualId": "vest_cloth",
+      "levelRequirement": 10,
+      "derived": {
+        "dropRate": 0.15,
+        "evasion": 2
+      },
+      "sellPrice": 120,
+      "description": "すばしっこい盗賊の手袋。獲物からの戦利品を逃さない。"
+    },
+    {
+      "id": "clover_gold",
+      "name": "こがねのクローバー",
+      "slot": "accessory_2",
+      "rarity": 4,
+      "visualId": "vest_cloth",
+      "levelRequirement": 18,
+      "derived": {
+        "dropRate": 0.25,
+        "critRate": 0.02
+      },
+      "sellPrice": 400,
+      "description": "黄金に輝く四つ葉。身につけた者に大いなる幸運を呼ぶ。"
     }
   ]
 }

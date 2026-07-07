@@ -40,6 +40,7 @@ const DIFF_LABEL: Record<string, string> = {
   critRate: '会心',
   atkSpeed: '攻速',
   moveSpeed: '移動',
+  dropRate: 'ドロ率',
 };
 
 /** Japanese labels for class families (skill tab grouping). */
@@ -222,7 +223,7 @@ export class InventoryScene extends Phaser.Scene {
     diffs.sort((a, b) => Math.abs(b.d) - Math.abs(a.d));
     const out = diffs.slice(0, 3).map(({ key, d }) => {
       const val =
-        key === 'critRate'
+        key === 'critRate' || key === 'dropRate'
           ? `${Math.round(d * 100)}%`
           : key === 'atkSpeed'
             ? d.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
@@ -561,7 +562,7 @@ export class InventoryScene extends Phaser.Scene {
       `最大HP ${d.maxHp}   最大MP ${d.maxMp}`,
       `物攻 ${d.physAtk}   魔攻 ${d.magAtk}   防御 ${d.def}`,
       `命中 ${d.accuracy}   回避 ${d.evasion}   会心 ${Math.round(d.critRate * 100)}%`,
-      `攻速 ${d.atkSpeed.toFixed(2)}   移動 ${d.moveSpeed}`,
+      `攻速 ${d.atkSpeed.toFixed(2)}   移動 ${d.moveSpeed}   ドロ率 +${Math.round(d.dropRate * 100)}%`,
     ];
     this.content.add(
       this.add.text(16, panelY + 24, lines.join('\n'), {

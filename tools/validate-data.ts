@@ -48,6 +48,7 @@ const DERIVED_KEYS = new Set([
   'critRate',
   'atkSpeed',
   'moveSpeed',
+  'dropRate',
 ]);
 
 function err(msg: string): void {

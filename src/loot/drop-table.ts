@@ -39,16 +39,21 @@ export function allDropTables(): DropTable[] {
   return [...tables.values()];
 }
 
-/** Roll a table into concrete drops. `firstKill` enables guaranteed entries. */
+/**
+ * Roll a table into concrete drops. `firstKill` enables guaranteed entries;
+ * `dropBonus` multiplies every entry's chance (0.15 = +15%, from LUK / charm
+ * accessories), capped at 100% per entry.
+ */
 export function rollDrops(
   table: DropTable,
   rng: Rng,
-  opts: { firstKill?: boolean } = {},
+  opts: { firstKill?: boolean; dropBonus?: number } = {},
 ): DropResult[] {
   const out: DropResult[] = [];
+  const mult = 1 + Math.max(0, opts.dropBonus ?? 0);
   for (const e of table.entries) {
     const guaranteed = !!e.bossFirstGuaranteed && !!opts.firstKill;
-    if (!guaranteed && !rng.chance(e.dropRate)) continue;
+    if (!guaranteed && !rng.chance(Math.min(1, e.dropRate * mult))) continue;
     const qty = rng.intRange(e.min, e.max);
     if (qty > 0) out.push({ itemId: e.itemId, qty });
   }
