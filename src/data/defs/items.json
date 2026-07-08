@@ -275,6 +275,223 @@
       "rarity": 7,
       "sellPrice": 110,
       "description": "オブシオンの装甲片。夜より黒い。"
+    },
+    {
+      "id": "dragon_wing",
+      "name": "竜の剛翼",
+      "rarity": 7,
+      "sellPrice": 120,
+      "description": "竜王の翼膜。嵐でも裂けない。"
+    },
+    {
+      "id": "mother_cap",
+      "name": "母胞子の傘",
+      "rarity": 6,
+      "sellPrice": 90,
+      "description": "スポラの傘の一部。今も胞子を吐く。"
+    },
+    {
+      "id": "garo_scale",
+      "name": "岩牙竜の重鱗",
+      "rarity": 7,
+      "sellPrice": 130,
+      "description": "ガロの背の鱗。斧でも欠けない。"
+    },
+    {
+      "id": "queen_ice",
+      "name": "女王の氷片",
+      "rarity": 7,
+      "sellPrice": 150,
+      "description": "グラキエスの衣の欠片。決して溶けない。"
+    },
+    {
+      "id": "soul_iron",
+      "name": "騎士の魂鉄",
+      "rarity": 8,
+      "sellPrice": 190,
+      "description": "モルドの鎧から採れた黒鉄。魂が宿る。"
+    },
+    {
+      "id": "abyss_dreg",
+      "name": "深淵の澱",
+      "rarity": 8,
+      "sellPrice": 210,
+      "description": "深淵のスライムの底に沈む澱。"
+    },
+    {
+      "id": "dragon_gekirin",
+      "name": "竜王の逆鱗",
+      "rarity": 9,
+      "sellPrice": 600,
+      "description": "竜王の顎下に一枚だけある鱗。触れる者を焼く。"
+    },
+    {
+      "id": "venom_core",
+      "name": "母なる猛毒核",
+      "rarity": 9,
+      "sellPrice": 620,
+      "description": "スポラの心臓部。猛毒の源。"
+    },
+    {
+      "id": "garo_horn",
+      "name": "岩牙竜の宝角",
+      "rarity": 9,
+      "sellPrice": 640,
+      "description": "ガロの額の角。大地の宝石と呼ばれる。"
+    },
+    {
+      "id": "eternal_ice",
+      "name": "永久氷晶",
+      "rarity": 9,
+      "sellPrice": 700,
+      "description": "グラキエスの心核。永遠に凍る。"
+    },
+    {
+      "id": "dread_crownpiece",
+      "name": "不死の王冠片",
+      "rarity": 9,
+      "sellPrice": 760,
+      "description": "モルドの冠の欠片。生前の記憶が響く。"
+    },
+    {
+      "id": "abyss_truecore",
+      "name": "深淵の真核",
+      "rarity": 9,
+      "sellPrice": 900,
+      "description": "深淵の中心。覗くと覗き返される。"
+    },
+    {
+      "id": "hydra_scale",
+      "name": "沼蛇の鱗",
+      "rarity": 6,
+      "sellPrice": 85,
+      "description": "ヒュドラの鱗。ぬめりが取れない。"
+    },
+    {
+      "id": "hydra_fang",
+      "name": "沼蛇の毒牙",
+      "rarity": 7,
+      "sellPrice": 140,
+      "description": "ヒュドラの牙。乾いても毒が残る。"
+    },
+    {
+      "id": "hydra_orb",
+      "name": "ヒュドラの九首珠",
+      "rarity": 9,
+      "sellPrice": 660,
+      "description": "九つの首の記憶を封じた珠。"
+    },
+    {
+      "id": "sand_gold",
+      "name": "流砂の砂金",
+      "rarity": 6,
+      "sellPrice": 100,
+      "description": "サンドゴアの体からこぼれた砂金。"
+    },
+    {
+      "id": "sand_core",
+      "name": "巨神の砂核",
+      "rarity": 7,
+      "sellPrice": 160,
+      "description": "流砂を束ねる核石。"
+    },
+    {
+      "id": "sand_heart",
+      "name": "巨神の心臓",
+      "rarity": 9,
+      "sellPrice": 700,
+      "description": "サンドゴアの胸で脈打っていた巨石。"
+    },
+    {
+      "id": "ancient_gear",
+      "name": "古代の歯車",
+      "rarity": 7,
+      "sellPrice": 170,
+      "description": "アルマギアの関節部品。今も回り続ける。"
+    },
+    {
+      "id": "magia_plate",
+      "name": "機神の装甲板",
+      "rarity": 8,
+      "sellPrice": 260,
+      "description": "古代合金の装甲。現代の炉では再現できない。"
+    },
+    {
+      "id": "magia_reactor",
+      "name": "機神の動力炉",
+      "rarity": 9,
+      "sellPrice": 1000,
+      "description": "アルマギアの心臓部。微かに唸る。"
+    },
+    {
+      "id": "cruor_wing",
+      "name": "血染めの翼",
+      "rarity": 7,
+      "sellPrice": 150,
+      "description": "クルオルの翼。飲んだ血で赤い。"
+    },
+    {
+      "id": "aurum_jelly",
+      "name": "黄金の粘塊",
+      "rarity": 7,
+      "sellPrice": 300,
+      "description": "オーラムの体液。売るだけで儲かる。"
+    },
+    {
+      "id": "azure_core",
+      "name": "蒼炎の核",
+      "rarity": 7,
+      "sellPrice": 170,
+      "description": "アズヴルムの核。青く燃えて冷たい。"
+    },
+    {
+      "id": "skoll_pelt",
+      "name": "雷狼の毛皮",
+      "rarity": 7,
+      "sellPrice": 170,
+      "description": "スコルの毛皮。触れると弾ける。"
+    },
+    {
+      "id": "miasma_sac",
+      "name": "猛毒の胞子嚢",
+      "rarity": 8,
+      "sellPrice": 240,
+      "description": "ミアズマの胞子嚢。開封厳禁。"
+    },
+    {
+      "id": "varganos_scale",
+      "name": "黒竜の暗鱗",
+      "rarity": 8,
+      "sellPrice": 260,
+      "description": "ヴァルガノスの鱗。光を吸い込む。"
+    },
+    {
+      "id": "ignigaro_fang",
+      "name": "熔岩の牙",
+      "rarity": 8,
+      "sellPrice": 270,
+      "description": "イグニガロの牙。芯が熔けている。"
+    },
+    {
+      "id": "flarelis_core",
+      "name": "灼熱の心核",
+      "rarity": 8,
+      "sellPrice": 300,
+      "description": "フレアリスの心核。真夏の太陽より熱い。"
+    },
+    {
+      "id": "lux_carapace",
+      "name": "聖骸の甲殻",
+      "rarity": 9,
+      "sellPrice": 520,
+      "description": "ルクス・モルドの甲殻。淡く発光する。"
+    },
+    {
+      "id": "crimson_core",
+      "name": "緋の深淵核",
+      "rarity": 9,
+      "sellPrice": 850,
+      "description": "緋の深淵の核。血のように波打つ。"
     }
   ],
   "consumables": [
@@ -6734,6 +6951,476 @@
       },
       "sellPrice": 230,
       "description": "王者の粘液で織ったローブ。魔を弾く。"
+    },
+    {
+      "id": "varga_lance",
+      "name": "竜王の槍",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "spear"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "physAtk": 30,
+        "accuracy": 6,
+        "maxHp": 15,
+        "critRate": 0.04
+      },
+      "sellPrice": 380,
+      "description": "逆鱗を穂先にした槍。竜気を纏う。"
+    },
+    {
+      "id": "varga_mail",
+      "name": "竜王の鎧",
+      "slot": "torso",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "def": 19,
+        "maxHp": 44,
+        "magDef": 7
+      },
+      "sellPrice": 340,
+      "description": "竜鱗を重ねた鎧。炎に強い…気がする。"
+    },
+    {
+      "id": "varga_cloak",
+      "name": "竜翼の外套",
+      "slot": "back",
+      "rarity": 7,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "evasion": 9,
+        "magDef": 6,
+        "maxHp": 20,
+        "moveSpeed": 2
+      },
+      "sellPrice": 320,
+      "description": "剛翼の外套。羽ばたけば身が軽い。"
+    },
+    {
+      "id": "spora_staff",
+      "name": "胞子の傘杖",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "magAtk": 30,
+        "maxMp": 20,
+        "dropRate": 0.05
+      },
+      "sellPrice": 380,
+      "description": "母胞子の杖。振ると幸運の胞子が舞う。"
+    },
+    {
+      "id": "spora_cap",
+      "name": "スポラの菌糸帽",
+      "slot": "head",
+      "rarity": 7,
+      "visualId": "cap_leather",
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "def": 12,
+        "maxHp": 30,
+        "dropRate": 0.05
+      },
+      "sellPrice": 330,
+      "description": "菌糸の帽子。獲物のありかが匂いで判る。"
+    },
+    {
+      "id": "spora_shroud",
+      "name": "胞子の羽衣",
+      "slot": "back",
+      "rarity": 7,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 36,
+      "derived": {
+        "evasion": 8,
+        "dropRate": 0.08,
+        "magDef": 5
+      },
+      "sellPrice": 360,
+      "description": "猛毒核で染めた羽衣。奇妙に運が向く。"
+    },
+    {
+      "id": "garo_axe",
+      "name": "岩牙の大斧",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "axe"
+      ],
+      "element": "none",
+      "levelRequirement": 40,
+      "derived": {
+        "physAtk": 32,
+        "critRate": 0.06,
+        "maxHp": 15
+      },
+      "sellPrice": 400,
+      "description": "宝角の大斧。一撃が地響きになる。"
+    },
+    {
+      "id": "garo_plate",
+      "name": "岩牙の重鎧",
+      "slot": "torso",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 40,
+      "derived": {
+        "def": 21,
+        "maxHp": 48,
+        "moveSpeed": -6,
+        "magDef": 6
+      },
+      "sellPrice": 360,
+      "description": "重鱗の鎧。もはや城壁。"
+    },
+    {
+      "id": "garo_shield",
+      "name": "岩牙の重盾",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shield"
+      ],
+      "element": "none",
+      "levelRequirement": 40,
+      "derived": {
+        "physAtk": 9,
+        "def": 22,
+        "maxHp": 60,
+        "magDef": 6
+      },
+      "sellPrice": 380,
+      "description": "重鱗を張った大盾。竜の突進も止める。"
+    },
+    {
+      "id": "hydra_whip",
+      "name": "九首の連鞭",
+      "slot": "main_hand",
+      "rarity": 7,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "whip"
+      ],
+      "element": "poison",
+      "levelRequirement": 44,
+      "derived": {
+        "physAtk": 33,
+        "accuracy": 8,
+        "atkSpeed": 3
+      },
+      "sellPrice": 420,
+      "description": "九首珠を柄に嵌めた鞭。九方向から噛みつく。"
+    },
+    {
+      "id": "hydra_mail",
+      "name": "沼蛇の鱗鎧",
+      "slot": "torso",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 44,
+      "derived": {
+        "def": 23,
+        "maxHp": 50,
+        "magDef": 7
+      },
+      "sellPrice": 380,
+      "description": "沼蛇の鱗の鎧。毒が滑り落ちる。"
+    },
+    {
+      "id": "hydra_greaves",
+      "name": "毒牙の脛当",
+      "slot": "feet",
+      "rarity": 7,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 44,
+      "derived": {
+        "moveSpeed": 5,
+        "evasion": 12,
+        "def": 15
+      },
+      "sellPrice": 360,
+      "description": "毒牙を飾った脛当。沼地でも沈まない。"
+    },
+    {
+      "id": "glacies_staff",
+      "name": "女王の氷杖",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "ice",
+      "levelRequirement": 52,
+      "derived": {
+        "magAtk": 38,
+        "maxMp": 26,
+        "magDef": 6
+      },
+      "sellPrice": 560,
+      "description": "永久氷晶の杖。周囲の空気が凍てつく。"
+    },
+    {
+      "id": "glacies_crown",
+      "name": "氷晶の宝冠",
+      "slot": "head",
+      "rarity": 8,
+      "visualId": "cap_leather",
+      "element": "none",
+      "levelRequirement": 52,
+      "derived": {
+        "def": 18,
+        "maxMp": 24,
+        "magDef": 14
+      },
+      "sellPrice": 520,
+      "description": "女王の氷片の冠。頭が冴える。"
+    },
+    {
+      "id": "glacies_robe",
+      "name": "氷雪のローブ",
+      "slot": "torso",
+      "rarity": 8,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 52,
+      "derived": {
+        "def": 22,
+        "magDef": 16,
+        "maxMp": 22
+      },
+      "sellPrice": 520,
+      "description": "氷片を織り込んだローブ。魔を凍らせる。"
+    },
+    {
+      "id": "sandgoa_maul",
+      "name": "巨神の大槌",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "none",
+      "levelRequirement": 56,
+      "derived": {
+        "physAtk": 25,
+        "magAtk": 21,
+        "def": 8,
+        "maxHp": 30
+      },
+      "sellPrice": 580,
+      "description": "巨神の心臓を頭にした槌。大地が震える。"
+    },
+    {
+      "id": "sandgoa_plate",
+      "name": "流砂の重甲",
+      "slot": "torso",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 56,
+      "derived": {
+        "def": 28,
+        "maxHp": 70,
+        "moveSpeed": -6
+      },
+      "sellPrice": 540,
+      "description": "砂核の重甲。受けた衝撃を砂に流す。"
+    },
+    {
+      "id": "sandgoa_belt",
+      "name": "砂金の帯",
+      "slot": "waist",
+      "rarity": 8,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 56,
+      "derived": {
+        "maxHp": 50,
+        "def": 14,
+        "goldRate": 0.08
+      },
+      "sellPrice": 560,
+      "description": "砂金の帯。歩くたび金の音がする。"
+    },
+    {
+      "id": "mordo_greatsword",
+      "name": "不死騎士の大剣",
+      "slot": "main_hand",
+      "rarity": 8,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "sword"
+      ],
+      "element": "dark",
+      "levelRequirement": 66,
+      "derived": {
+        "physAtk": 42,
+        "critRate": 0.06
+      },
+      "sellPrice": 780,
+      "description": "王冠片を鍔に埋めた大剣。死を知らない。"
+    },
+    {
+      "id": "mordo_plate",
+      "name": "魂鉄の全身鎧",
+      "slot": "torso",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 66,
+      "derived": {
+        "def": 32,
+        "maxHp": 80,
+        "magDef": 12,
+        "moveSpeed": -6
+      },
+      "sellPrice": 740,
+      "description": "魂鉄の鎧。死者の忠義が守る。"
+    },
+    {
+      "id": "mordo_helm",
+      "name": "不死の大兜",
+      "slot": "head",
+      "rarity": 8,
+      "visualId": "cap_leather",
+      "element": "none",
+      "levelRequirement": 66,
+      "derived": {
+        "def": 24,
+        "maxHp": 60,
+        "magDef": 16
+      },
+      "sellPrice": 720,
+      "description": "モルドの大兜。恐怖が消える。"
+    },
+    {
+      "id": "magia_blade",
+      "name": "機神の粒子刃",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "sword"
+      ],
+      "element": "thunder",
+      "levelRequirement": 84,
+      "derived": {
+        "physAtk": 48,
+        "critRate": 0.1,
+        "accuracy": 8
+      },
+      "sellPrice": 1300,
+      "description": "動力炉で駆動する光の刃。狙いは機械精度。"
+    },
+    {
+      "id": "magia_visor",
+      "name": "機神の照準器",
+      "slot": "head",
+      "rarity": 9,
+      "visualId": "cap_leather",
+      "element": "none",
+      "levelRequirement": 84,
+      "derived": {
+        "def": 22,
+        "accuracy": 12,
+        "critRate": 0.06
+      },
+      "sellPrice": 1200,
+      "description": "機神の眼。急所が線で見える。"
+    },
+    {
+      "id": "magia_frame",
+      "name": "機神の外装",
+      "slot": "torso",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "element": "none",
+      "levelRequirement": 84,
+      "derived": {
+        "def": 34,
+        "maxHp": 70,
+        "magDef": 14
+      },
+      "sellPrice": 1250,
+      "description": "古代合金の外装。矢が滑る。"
+    },
+    {
+      "id": "abyss_scepter",
+      "name": "深淵の王笏",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "dark",
+      "levelRequirement": 86,
+      "derived": {
+        "magAtk": 48,
+        "maxMp": 30,
+        "lifesteal": 0.04
+      },
+      "sellPrice": 1350,
+      "description": "真核の笏。振るうたび生気が満ちる。"
+    },
+    {
+      "id": "abyss_ring",
+      "name": "深淵の宝環",
+      "slot": "accessory_1",
+      "rarity": 9,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 86,
+      "derived": {
+        "physAtk": 6,
+        "magAtk": 6,
+        "maxHp": 30,
+        "dropRate": 0.04,
+        "goldRate": 0.08
+      },
+      "sellPrice": 1400,
+      "description": "深淵を封じた指環。持ち主に万象が集う。"
+    },
+    {
+      "id": "crimson_mantle",
+      "name": "真紅のマント",
+      "slot": "back",
+      "rarity": 9,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 86,
+      "derived": {
+        "evasion": 12,
+        "magDef": 10,
+        "maxHp": 40,
+        "lifesteal": 0.03
+      },
+      "sellPrice": 1300,
+      "description": "緋の深淵核で染めたマント。傷がふさがる。"
     }
   ]
 }

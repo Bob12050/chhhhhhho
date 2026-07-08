@@ -203,7 +203,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -217,7 +218,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -379,7 +381,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -393,7 +396,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -554,7 +558,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -568,7 +573,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -871,7 +877,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -885,7 +892,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -999,7 +1007,8 @@
       "materials": {
         "mythril_ore": 3,
         "star_fragment": 1,
-        "mana_stone": 4
+        "mana_stone": 4,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -1013,7 +1022,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -1125,7 +1135,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -1139,7 +1150,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -1251,7 +1263,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -1265,7 +1278,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -1377,7 +1391,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -1391,7 +1406,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -1540,7 +1556,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "spore_sac": 1
       },
       "gold": 400,
       "station": "forge"
@@ -1554,7 +1571,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "dragon_scale": 1
       },
       "gold": 260,
       "station": "forge"
@@ -1704,7 +1722,8 @@
       "materials": {
         "mythril_ore": 3,
         "star_fragment": 1,
-        "mana_stone": 4
+        "mana_stone": 4,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -1718,7 +1737,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -1816,7 +1836,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "spore_sac": 1
       },
       "gold": 400,
       "station": "forge"
@@ -1830,7 +1851,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "dragon_scale": 1
       },
       "gold": 260,
       "station": "forge"
@@ -1928,7 +1950,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -1942,7 +1965,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -2040,7 +2064,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "spore_sac": 1
       },
       "gold": 400,
       "station": "forge"
@@ -2054,7 +2079,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "dragon_scale": 1
       },
       "gold": 260,
       "station": "forge"
@@ -2152,7 +2178,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -2166,7 +2193,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -2339,7 +2367,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "spore_sac": 1
       },
       "gold": 400,
       "station": "forge"
@@ -2353,7 +2382,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "dragon_scale": 1
       },
       "gold": 260,
       "station": "forge"
@@ -2526,7 +2556,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -2540,7 +2571,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -2713,7 +2745,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "spore_sac": 1
       },
       "gold": 400,
       "station": "forge"
@@ -2727,7 +2760,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "dragon_scale": 1
       },
       "gold": 260,
       "station": "forge"
@@ -2900,7 +2934,8 @@
       "materials": {
         "mythril_ore": 4,
         "star_fragment": 1,
-        "golem_core": 1
+        "golem_core": 1,
+        "dragon_scale": 1
       },
       "gold": 400,
       "station": "forge"
@@ -2914,7 +2949,8 @@
       ],
       "materials": {
         "mythril_ore": 2,
-        "star_fragment": 1
+        "star_fragment": 1,
+        "spore_sac": 1
       },
       "gold": 260,
       "station": "forge"
@@ -3096,7 +3132,8 @@
       "resultQty": 1,
       "materials": {
         "mythril_ore": 2,
-        "mana_stone": 2
+        "mana_stone": 2,
+        "hydra_scale": 1
       },
       "gold": 120,
       "station": "workbench"
@@ -5704,6 +5741,338 @@
         "soft_leather": 3
       },
       "gold": 230,
+      "station": "forge"
+    },
+    {
+      "id": "craft_varga_lance",
+      "resultItemId": "varga_lance",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dragon_wing": 2,
+        "dragon_gekirin": 1,
+        "steel_ingot": 2
+      },
+      "gold": 450,
+      "station": "forge"
+    },
+    {
+      "id": "craft_varga_mail",
+      "resultItemId": "varga_mail",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 4,
+        "dragon_wing": 2,
+        "soft_leather": 3
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "craft_varga_cloak",
+      "resultItemId": "varga_cloak",
+      "resultQty": 1,
+      "materials": {
+        "dragon_wing": 3,
+        "dragon_scale": 2,
+        "soft_leather": 2
+      },
+      "gold": 380,
+      "station": "forge"
+    },
+    {
+      "id": "craft_spora_staff",
+      "resultItemId": "spora_staff",
+      "resultQty": 1,
+      "materials": {
+        "spore_sac": 3,
+        "mother_cap": 2,
+        "mana_stone": 3
+      },
+      "gold": 420,
+      "station": "forge"
+    },
+    {
+      "id": "craft_spora_cap",
+      "resultItemId": "spora_cap",
+      "resultQty": 1,
+      "materials": {
+        "spore_sac": 2,
+        "mother_cap": 2,
+        "soft_leather": 2
+      },
+      "gold": 380,
+      "station": "forge"
+    },
+    {
+      "id": "craft_spora_shroud",
+      "resultItemId": "spora_shroud",
+      "resultQty": 1,
+      "materials": {
+        "mother_cap": 3,
+        "venom_core": 1,
+        "soft_leather": 3
+      },
+      "gold": 430,
+      "station": "forge"
+    },
+    {
+      "id": "craft_garo_axe",
+      "resultItemId": "garo_axe",
+      "resultQty": 1,
+      "materials": {
+        "garo_fang": 3,
+        "garo_scale": 2,
+        "garo_horn": 1,
+        "steel_ingot": 2
+      },
+      "gold": 480,
+      "station": "forge"
+    },
+    {
+      "id": "craft_garo_plate",
+      "resultItemId": "garo_plate",
+      "resultQty": 1,
+      "materials": {
+        "garo_scale": 4,
+        "garo_fang": 2,
+        "iron_ore": 4
+      },
+      "gold": 430,
+      "station": "forge"
+    },
+    {
+      "id": "craft_garo_shield",
+      "resultItemId": "garo_shield",
+      "resultQty": 1,
+      "materials": {
+        "garo_scale": 3,
+        "garo_fang": 2,
+        "steel_ingot": 2
+      },
+      "gold": 450,
+      "station": "forge"
+    },
+    {
+      "id": "craft_hydra_whip",
+      "resultItemId": "hydra_whip",
+      "resultQty": 1,
+      "materials": {
+        "hydra_scale": 3,
+        "hydra_fang": 2,
+        "hydra_orb": 1,
+        "steel_ingot": 2
+      },
+      "gold": 500,
+      "station": "forge"
+    },
+    {
+      "id": "craft_hydra_mail",
+      "resultItemId": "hydra_mail",
+      "resultQty": 1,
+      "materials": {
+        "hydra_scale": 4,
+        "hydra_fang": 2,
+        "soft_leather": 3
+      },
+      "gold": 450,
+      "station": "forge"
+    },
+    {
+      "id": "craft_hydra_greaves",
+      "resultItemId": "hydra_greaves",
+      "resultQty": 1,
+      "materials": {
+        "hydra_scale": 3,
+        "hydra_fang": 1,
+        "soft_leather": 3
+      },
+      "gold": 430,
+      "station": "forge"
+    },
+    {
+      "id": "craft_glacies_staff",
+      "resultItemId": "glacies_staff",
+      "resultQty": 1,
+      "materials": {
+        "frost_heart": 3,
+        "queen_ice": 2,
+        "eternal_ice": 1,
+        "mana_stone": 3
+      },
+      "gold": 680,
+      "station": "forge"
+    },
+    {
+      "id": "craft_glacies_crown",
+      "resultItemId": "glacies_crown",
+      "resultQty": 1,
+      "materials": {
+        "queen_ice": 3,
+        "frost_heart": 2,
+        "mana_stone": 2
+      },
+      "gold": 620,
+      "station": "forge"
+    },
+    {
+      "id": "craft_glacies_robe",
+      "resultItemId": "glacies_robe",
+      "resultQty": 1,
+      "materials": {
+        "queen_ice": 3,
+        "frost_heart": 2,
+        "soft_leather": 3
+      },
+      "gold": 620,
+      "station": "forge"
+    },
+    {
+      "id": "craft_sandgoa_maul",
+      "resultItemId": "sandgoa_maul",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "sand_core": 2,
+        "sand_heart": 1,
+        "steel_ingot": 2
+      },
+      "gold": 700,
+      "station": "forge"
+    },
+    {
+      "id": "craft_sandgoa_plate",
+      "resultItemId": "sandgoa_plate",
+      "resultQty": 1,
+      "materials": {
+        "sand_core": 3,
+        "sand_gold": 3,
+        "iron_ore": 4
+      },
+      "gold": 650,
+      "station": "forge"
+    },
+    {
+      "id": "craft_sandgoa_belt",
+      "resultItemId": "sandgoa_belt",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 4,
+        "sand_core": 2,
+        "soft_leather": 2
+      },
+      "gold": 660,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mordo_greatsword",
+      "resultItemId": "mordo_greatsword",
+      "resultQty": 1,
+      "materials": {
+        "dread_carapace": 3,
+        "soul_iron": 2,
+        "dread_crownpiece": 1,
+        "steel_ingot": 3
+      },
+      "gold": 920,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mordo_plate",
+      "resultItemId": "mordo_plate",
+      "resultQty": 1,
+      "materials": {
+        "soul_iron": 3,
+        "dread_carapace": 3,
+        "iron_ore": 5
+      },
+      "gold": 860,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mordo_helm",
+      "resultItemId": "mordo_helm",
+      "resultQty": 1,
+      "materials": {
+        "soul_iron": 2,
+        "dread_carapace": 2,
+        "steel_ingot": 2
+      },
+      "gold": 840,
+      "station": "forge"
+    },
+    {
+      "id": "craft_magia_blade",
+      "resultItemId": "magia_blade",
+      "resultQty": 1,
+      "materials": {
+        "ancient_gear": 3,
+        "magia_plate": 2,
+        "magia_reactor": 1,
+        "mythril_ore": 3
+      },
+      "gold": 1500,
+      "station": "forge"
+    },
+    {
+      "id": "craft_magia_visor",
+      "resultItemId": "magia_visor",
+      "resultQty": 1,
+      "materials": {
+        "ancient_gear": 2,
+        "magia_plate": 2,
+        "mana_stone": 4
+      },
+      "gold": 1350,
+      "station": "forge"
+    },
+    {
+      "id": "craft_magia_frame",
+      "resultItemId": "magia_frame",
+      "resultQty": 1,
+      "materials": {
+        "magia_plate": 3,
+        "ancient_gear": 2,
+        "mythril_ore": 3
+      },
+      "gold": 1400,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abyss_scepter",
+      "resultItemId": "abyss_scepter",
+      "resultQty": 1,
+      "materials": {
+        "abyss_dreg": 3,
+        "abyss_core": 2,
+        "abyss_truecore": 1,
+        "mana_stone": 5
+      },
+      "gold": 1600,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abyss_ring",
+      "resultItemId": "abyss_ring",
+      "resultQty": 1,
+      "materials": {
+        "abyss_dreg": 3,
+        "crimson_core": 1,
+        "mythril_ore": 3
+      },
+      "gold": 1650,
+      "station": "forge"
+    },
+    {
+      "id": "craft_crimson_mantle",
+      "resultItemId": "crimson_mantle",
+      "resultQty": 1,
+      "materials": {
+        "crimson_core": 1,
+        "abyss_dreg": 3,
+        "soft_leather": 4
+      },
+      "gold": 1500,
       "station": "forge"
     }
   ]

@@ -755,6 +755,590 @@
         }
       ],
       "enrageAtHpPct": 0.5
+    },
+    {
+      "id": "boss_cruor",
+      "name": "血染めの王 クルオル",
+      "textureKey": "gen.enemy.bat",
+      "tint": "#c03a50",
+      "scale": 2.0,
+      "isBoss": true,
+      "maxHp": 850,
+      "moveSpeed": 52,
+      "contactDamage": 38,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 2600,
+      "goldReward": 560,
+      "dropTableId": "boss_cruor",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 300,
+          "durationMs": 500,
+          "telegraphMs": 650
+        },
+        {
+          "type": "summon",
+          "enemyId": "bat",
+          "count": 2,
+          "maxMinions": 4
+        },
+        {
+          "type": "aoe",
+          "radius": 42,
+          "damageMult": 1.0,
+          "telegraphMs": 800,
+          "count": 2,
+          "at": "player"
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "variantOf": "boss_bat_lord",
+      "weakness": "holy",
+      "resist": "dark"
+    },
+    {
+      "id": "boss_aurum",
+      "name": "黄金スライム オーラム",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#f0c040",
+      "scale": 2.0,
+      "isBoss": true,
+      "maxHp": 700,
+      "moveSpeed": 56,
+      "contactDamage": 30,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 2200,
+      "goldReward": 1500,
+      "dropTableId": "boss_aurum",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 48,
+          "damageMult": 0.9,
+          "telegraphMs": 800,
+          "count": 1,
+          "at": "self"
+        },
+        {
+          "type": "shots",
+          "count": 8,
+          "speed": 130,
+          "damageMult": 0.5,
+          "spread": "radial"
+        },
+        {
+          "type": "summon",
+          "enemyId": "slime",
+          "count": 2,
+          "maxMinions": 4
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "variantOf": "boss_slime",
+      "keepDistance": 110
+    },
+    {
+      "id": "boss_hydra",
+      "name": "沼咬みのヒュドラ",
+      "textureKey": "gen.enemy.lizard",
+      "tint": "#4a8a5a",
+      "scale": 2.2,
+      "isBoss": true,
+      "maxHp": 1050,
+      "moveSpeed": 50,
+      "contactDamage": 42,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 3000,
+      "goldReward": 640,
+      "dropTableId": "boss_hydra",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 340,
+          "durationMs": 450,
+          "telegraphMs": 550
+        },
+        {
+          "type": "shots",
+          "count": 5,
+          "speed": 150,
+          "damageMult": 0.6,
+          "spread": "aim",
+          "arcDeg": 40
+        },
+        {
+          "type": "aoe",
+          "radius": 44,
+          "damageMult": 1.0,
+          "telegraphMs": 800,
+          "count": 2,
+          "at": "player"
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "weakness": "fire",
+      "resist": "poison"
+    },
+    {
+      "id": "boss_azvurm",
+      "name": "蒼炎の主 アズヴルム",
+      "textureKey": "gen.enemy.wolf",
+      "tint": "#4a90ff",
+      "scale": 2.0,
+      "isBoss": true,
+      "maxHp": 1250,
+      "moveSpeed": 66,
+      "contactDamage": 52,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 4800,
+      "goldReward": 950,
+      "dropTableId": "boss_azvurm",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 310,
+          "durationMs": 550,
+          "telegraphMs": 650
+        },
+        {
+          "type": "aoe",
+          "radius": 46,
+          "damageMult": 1.0,
+          "telegraphMs": 850,
+          "count": 2
+        },
+        {
+          "type": "shots",
+          "count": 8,
+          "speed": 150,
+          "damageMult": 0.6,
+          "spread": "radial"
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "variantOf": "boss_flame",
+      "weakness": "fire",
+      "resist": "ice"
+    },
+    {
+      "id": "boss_skoll",
+      "name": "雷狼の長 スコル",
+      "textureKey": "gen.enemy.wolf",
+      "tint": "#e8d060",
+      "scale": 2.0,
+      "isBoss": true,
+      "maxHp": 1350,
+      "moveSpeed": 56,
+      "contactDamage": 56,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 5200,
+      "goldReward": 1050,
+      "dropTableId": "boss_skoll",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 340,
+          "durationMs": 450,
+          "telegraphMs": 500
+        },
+        {
+          "type": "summon",
+          "enemyId": "green_wolf",
+          "count": 2,
+          "maxMinions": 4
+        },
+        {
+          "type": "aoe",
+          "radius": 40,
+          "damageMult": 0.9,
+          "telegraphMs": 700,
+          "count": 2
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "variantOf": "boss_wolf_alpha",
+      "weakness": "ice",
+      "resist": "thunder"
+    },
+    {
+      "id": "boss_sandgoa",
+      "name": "流砂の巨神 サンドゴア",
+      "textureKey": "gen.enemy.golem",
+      "tint": "#d8b060",
+      "scale": 2.4,
+      "isBoss": true,
+      "maxHp": 1600,
+      "moveSpeed": 30,
+      "contactDamage": 60,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.95,
+      "expReward": 6000,
+      "goldReward": 1200,
+      "dropTableId": "boss_sandgoa",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 64,
+          "damageMult": 1.3,
+          "telegraphMs": 1100,
+          "count": 1
+        },
+        {
+          "type": "aoe",
+          "radius": 44,
+          "damageMult": 1.0,
+          "telegraphMs": 850,
+          "count": 3,
+          "at": "player"
+        },
+        {
+          "type": "summon",
+          "enemyId": "golem",
+          "count": 1,
+          "maxMinions": 2
+        },
+        {
+          "type": "charge",
+          "speed": 220,
+          "durationMs": 700,
+          "telegraphMs": 800
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "weakness": "ice",
+      "resist": "thunder"
+    },
+    {
+      "id": "boss_miasma",
+      "name": "猛毒の母 ミアズマ",
+      "textureKey": "gen.enemy.mushroom",
+      "tint": "#70d040",
+      "scale": 2.0,
+      "isBoss": true,
+      "maxHp": 1750,
+      "moveSpeed": 48,
+      "contactDamage": 64,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 7200,
+      "goldReward": 1450,
+      "dropTableId": "boss_miasma",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 50,
+          "damageMult": 1.0,
+          "telegraphMs": 800,
+          "count": 3,
+          "at": "player"
+        },
+        {
+          "type": "shots",
+          "count": 10,
+          "speed": 130,
+          "damageMult": 0.6,
+          "spread": "radial"
+        },
+        {
+          "type": "summon",
+          "enemyId": "cap_shroom",
+          "count": 2,
+          "maxMinions": 4
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "variantOf": "boss_mushroom",
+      "weakness": "fire",
+      "resist": "poison"
+    },
+    {
+      "id": "boss_varganos",
+      "name": "黒竜 ヴァルガノス",
+      "textureKey": "gen.enemy.dragon",
+      "tint": "#3a3a4a",
+      "scale": 2.2,
+      "isBoss": true,
+      "maxHp": 1900,
+      "moveSpeed": 44,
+      "contactDamage": 70,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 7800,
+      "goldReward": 1550,
+      "dropTableId": "boss_varganos",
+      "attacks": [
+        {
+          "type": "shots",
+          "count": 6,
+          "speed": 180,
+          "damageMult": 0.65,
+          "spread": "aim",
+          "arcDeg": 64
+        },
+        {
+          "type": "charge",
+          "speed": 300,
+          "durationMs": 600,
+          "telegraphMs": 650
+        },
+        {
+          "type": "aoe",
+          "radius": 48,
+          "damageMult": 1.1,
+          "telegraphMs": 850,
+          "count": 3
+        },
+        {
+          "type": "shots",
+          "count": 12,
+          "speed": 140,
+          "damageMult": 0.5,
+          "spread": "radial"
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "variantOf": "boss_dragon",
+      "weakness": "holy",
+      "resist": "dark"
+    },
+    {
+      "id": "boss_ignigaro",
+      "name": "熔牙竜 イグニガロ",
+      "textureKey": "gen.enemy.lizard",
+      "tint": "#e05020",
+      "scale": 2.1,
+      "isBoss": true,
+      "maxHp": 2000,
+      "moveSpeed": 48,
+      "contactDamage": 74,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 8400,
+      "goldReward": 1650,
+      "dropTableId": "boss_ignigaro",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 340,
+          "durationMs": 550,
+          "telegraphMs": 550
+        },
+        {
+          "type": "aoe",
+          "radius": 56,
+          "damageMult": 1.2,
+          "telegraphMs": 800,
+          "count": 3
+        },
+        {
+          "type": "shots",
+          "count": 8,
+          "speed": 160,
+          "damageMult": 0.6,
+          "spread": "aim",
+          "arcDeg": 48
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "variantOf": "boss_lizard_king",
+      "weakness": "ice",
+      "resist": "fire"
+    },
+    {
+      "id": "boss_flarelis",
+      "name": "灼熱の女王 フレアリス",
+      "textureKey": "gen.enemy.wisp",
+      "tint": "#ff8040",
+      "scale": 2.0,
+      "isBoss": true,
+      "maxHp": 2300,
+      "moveSpeed": 48,
+      "contactDamage": 82,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 10500,
+      "goldReward": 2100,
+      "dropTableId": "boss_flarelis",
+      "attacks": [
+        {
+          "type": "shots",
+          "count": 12,
+          "speed": 150,
+          "damageMult": 0.6,
+          "spread": "radial"
+        },
+        {
+          "type": "aoe",
+          "radius": 50,
+          "damageMult": 1.0,
+          "telegraphMs": 750,
+          "count": 3
+        },
+        {
+          "type": "shots",
+          "count": 5,
+          "speed": 200,
+          "damageMult": 0.7,
+          "spread": "aim",
+          "arcDeg": 40
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "variantOf": "boss_wisp_queen",
+      "weakness": "ice",
+      "resist": "fire"
+    },
+    {
+      "id": "boss_luxmordo",
+      "name": "聖骸騎士 ルクス・モルド",
+      "textureKey": "gen.enemy.knight",
+      "tint": "#e8e0c0",
+      "scale": 2.1,
+      "isBoss": true,
+      "maxHp": 2500,
+      "moveSpeed": 50,
+      "contactDamage": 88,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 11500,
+      "goldReward": 2300,
+      "dropTableId": "boss_luxmordo",
+      "attacks": [
+        {
+          "type": "charge",
+          "speed": 360,
+          "durationMs": 500,
+          "telegraphMs": 500
+        },
+        {
+          "type": "aoe",
+          "radius": 54,
+          "damageMult": 1.1,
+          "telegraphMs": 700,
+          "count": 3
+        },
+        {
+          "type": "shots",
+          "count": 8,
+          "speed": 190,
+          "damageMult": 0.6,
+          "spread": "aim",
+          "arcDeg": 80
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "variantOf": "boss_knight_dread",
+      "weakness": "dark",
+      "resist": "holy"
+    },
+    {
+      "id": "boss_crimson_abyss",
+      "name": "緋の深淵",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#c02040",
+      "scale": 2.3,
+      "isBoss": true,
+      "maxHp": 2800,
+      "moveSpeed": 48,
+      "contactDamage": 95,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.8,
+      "expReward": 13000,
+      "goldReward": 2600,
+      "dropTableId": "boss_crimson_abyss",
+      "attacks": [
+        {
+          "type": "aoe",
+          "radius": 50,
+          "damageMult": 1.0,
+          "telegraphMs": 700,
+          "count": 5
+        },
+        {
+          "type": "summon",
+          "enemyId": "slime",
+          "count": 3,
+          "maxMinions": 6
+        },
+        {
+          "type": "shots",
+          "count": 14,
+          "speed": 150,
+          "damageMult": 0.55,
+          "spread": "radial"
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "variantOf": "boss_slime_abyss",
+      "weakness": "holy",
+      "resist": "dark"
+    },
+    {
+      "id": "boss_almagia",
+      "name": "古代機神 アルマギア",
+      "textureKey": "gen.enemy.knight",
+      "tint": "#8a9ab0",
+      "scale": 2.3,
+      "isBoss": true,
+      "maxHp": 3200,
+      "moveSpeed": 40,
+      "contactDamage": 100,
+      "aggroRange": 300,
+      "attackRange": 26,
+      "knockbackResist": 0.95,
+      "expReward": 15000,
+      "goldReward": 3000,
+      "dropTableId": "boss_almagia",
+      "attacks": [
+        {
+          "type": "shots",
+          "count": 3,
+          "speed": 240,
+          "damageMult": 0.8,
+          "spread": "aim",
+          "arcDeg": 10
+        },
+        {
+          "type": "shots",
+          "count": 16,
+          "speed": 140,
+          "damageMult": 0.5,
+          "spread": "radial"
+        },
+        {
+          "type": "aoe",
+          "radius": 60,
+          "damageMult": 1.2,
+          "telegraphMs": 900,
+          "count": 2
+        },
+        {
+          "type": "charge",
+          "speed": 300,
+          "durationMs": 650,
+          "telegraphMs": 700
+        }
+      ],
+      "enrageAtHpPct": 0.5,
+      "weakness": "thunder"
     }
   ]
 }

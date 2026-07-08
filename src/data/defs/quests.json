@@ -1570,6 +1570,978 @@
       },
       "repeatable": true,
       "rank": 2
+    },
+    {
+      "id": "hunt_r4_01_cruor",
+      "name": "大型狩猟：血染めの王 クルオル",
+      "type": "hunt",
+      "description": "血に飢えたノクスの亜種。噛まれるたび、奴は強くなる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_cruor",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 35,
+        "questDone": "hunt_bat_lord"
+      },
+      "huntMap": "arena_night",
+      "rewards": {
+        "gold": 600,
+        "exp": 2800,
+        "items": {
+          "cruor_wing": 2,
+          "night_fang": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 4
+    },
+    {
+      "id": "hunt_r4_02_aurum",
+      "name": "大型狩猟：黄金スライム オーラム",
+      "type": "hunt",
+      "description": "黄金に輝く臆病なスライム。逃げ足だけは王者級。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_aurum",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 32,
+        "questDone": "hunt_kingslime"
+      },
+      "huntMap": "arena_marsh",
+      "rewards": {
+        "gold": 1200,
+        "exp": 2400,
+        "items": {
+          "aurum_jelly": 2,
+          "royal_ichor": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 4
+    },
+    {
+      "id": "hunt_r4_03_hydra",
+      "name": "大型狩猟：沼咬みのヒュドラ",
+      "type": "hunt",
+      "description": "毒沼の主。連続のかみつき突進をかわし続けろ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_hydra",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 40
+      },
+      "huntMap": "arena_swamp",
+      "rewards": {
+        "gold": 700,
+        "exp": 3200,
+        "items": {
+          "hydra_scale": 2,
+          "hydra_fang": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 4
+    },
+    {
+      "id": "hunt_r4_04_dragon_prelude",
+      "name": "大型狩猟：竜の巣の露払い",
+      "type": "hunt",
+      "description": "巣を守る岩トカゲを蹴散らせば、竜王が怒りとともに降り立つ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "rock_lizard",
+          "count": 3
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_dragon",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 38,
+        "questDone": "hunt_dragon"
+      },
+      "huntMap": "arena_peak",
+      "rewards": {
+        "gold": 750,
+        "exp": 3400,
+        "items": {
+          "dragon_wing": 1,
+          "dragon_scale": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 4
+    },
+    {
+      "id": "hunt_r4_05_spore_blood",
+      "name": "連続狩猟：胞子と血翼",
+      "type": "hunt",
+      "description": "毒沼のスポラを討ち、常闇のクルオルを狩る長丁場。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_mushroom",
+          "count": 1
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_cruor",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 40,
+        "questDone": "hunt_r4_01_cruor"
+      },
+      "huntMap": "arena_swamp",
+      "rewards": {
+        "gold": 1000,
+        "exp": 4500,
+        "items": {
+          "mother_cap": 1,
+          "cruor_wing": 1,
+          "star_fragment": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 4
+    },
+    {
+      "id": "hunt_r4_06_veteran_dragon",
+      "name": "歴戦：竜王ヴァルガ",
+      "type": "hunt",
+      "description": "幾百年を生きた歴戦の竜王。ブレスの雨に晒される。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_dragon",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 45,
+        "questDone": "hunt_dragon"
+      },
+      "huntMap": "arena_peak",
+      "rewards": {
+        "gold": 1100,
+        "exp": 4800,
+        "items": {
+          "dragon_wing": 2,
+          "dragon_scale": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 4,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r5_01_azvurm",
+      "name": "大型狩猟：蒼炎の主 アズヴルム",
+      "type": "hunt",
+      "description": "青き炎は熱くない。凍えるのだ。弱点は逆——火で焼け。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_azvurm",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 50,
+        "questDone": "hunt_flame_lord"
+      },
+      "huntMap": "arena_volcano",
+      "rewards": {
+        "gold": 950,
+        "exp": 5000,
+        "items": {
+          "azure_core": 2,
+          "flame_core": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 5
+    },
+    {
+      "id": "hunt_r5_02_skoll",
+      "name": "大型狩猟：雷狼の長 スコル",
+      "type": "hunt",
+      "description": "雷を纏う白金の狼。突進は稲妻そのもの。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_skoll",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 54,
+        "questDone": "hunt_wolf_alpha"
+      },
+      "huntMap": "arena_plain",
+      "rewards": {
+        "gold": 1050,
+        "exp": 5400,
+        "items": {
+          "skoll_pelt": 2,
+          "alpha_pelt": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 5
+    },
+    {
+      "id": "hunt_r5_03_sandgoa",
+      "name": "大型狩猟：流砂の巨神 サンドゴア",
+      "type": "hunt",
+      "description": "断崖に現れた砂の巨神。地震の予兆を見逃すな。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_sandgoa",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 58
+      },
+      "huntMap": "arena_canyon",
+      "rewards": {
+        "gold": 1200,
+        "exp": 6200,
+        "items": {
+          "sand_gold": 2,
+          "sand_core": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 5
+    },
+    {
+      "id": "hunt_r5_04_frost_prelude",
+      "name": "大型狩猟：氷霜の露払い",
+      "type": "hunt",
+      "description": "聖域の氷霊を払い、玉座の女王を引きずり出せ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "frost_wisp",
+          "count": 4
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_wisp_queen",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 52,
+        "questDone": "hunt_wisp_queen"
+      },
+      "huntMap": "arena_frost",
+      "rewards": {
+        "gold": 1100,
+        "exp": 5600,
+        "items": {
+          "queen_ice": 1,
+          "frost_heart": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 5
+    },
+    {
+      "id": "hunt_r5_05_twin_flames",
+      "name": "連続狩猟：紅蓮と蒼炎",
+      "type": "hunt",
+      "description": "ヴルムとアズヴルム、双炎の主を続けて狩る。温度差に備えよ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_flame",
+          "count": 1
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_azvurm",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 52,
+        "questDone": "hunt_r5_01_azvurm"
+      },
+      "huntMap": "arena_volcano",
+      "rewards": {
+        "gold": 1400,
+        "exp": 7000,
+        "items": {
+          "flame_talon": 1,
+          "azure_core": 1,
+          "star_fragment": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 5
+    },
+    {
+      "id": "hunt_r5_06_garo_visit",
+      "name": "出張狩猟：氷雪の岩牙竜",
+      "type": "hunt",
+      "description": "ガロが氷の聖域に迷い込んだ。低温で動きが鈍い今が好機。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_lizard_king",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 50,
+        "questDone": "hunt_lizard_king"
+      },
+      "huntMap": "arena_frost",
+      "rewards": {
+        "gold": 900,
+        "exp": 4600,
+        "items": {
+          "garo_scale": 1,
+          "garo_fang": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 5
+    },
+    {
+      "id": "hunt_r5_07_wisp_cull",
+      "name": "討伐：氷霊の群れ",
+      "type": "hunt",
+      "description": "聖域に氷霊が湧きすぎた。凍える前に狩り尽くせ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "frost_wisp",
+          "count": 7
+        }
+      ],
+      "require": {
+        "minLevel": 48
+      },
+      "huntMap": "arena_frost",
+      "rewards": {
+        "gold": 700,
+        "exp": 3800,
+        "items": {
+          "frost_heart": 2,
+          "mana_stone": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 5
+    },
+    {
+      "id": "hunt_r5_08_veteran_wisp",
+      "name": "歴戦：霜の女王",
+      "type": "hunt",
+      "description": "千年の吹雪を統べる歴戦のグラキエス。弾幕が視界を奪う。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_wisp_queen",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 60,
+        "questDone": "hunt_wisp_queen"
+      },
+      "huntMap": "arena_frost",
+      "rewards": {
+        "gold": 1600,
+        "exp": 7500,
+        "items": {
+          "queen_ice": 2,
+          "frost_heart": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 5,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r5_09_veteran_skoll",
+      "name": "歴戦：雷狼の長",
+      "type": "hunt",
+      "description": "嵐の夜にだけ現れる歴戦のスコル。雷速の連撃を見切れ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_skoll",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 60,
+        "questDone": "hunt_r5_02_skoll"
+      },
+      "huntMap": "arena_plain",
+      "rewards": {
+        "gold": 1700,
+        "exp": 7800,
+        "items": {
+          "skoll_pelt": 2,
+          "alpha_fang": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 5,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r6_01_miasma",
+      "name": "大型狩猟：猛毒の母 ミアズマ",
+      "type": "hunt",
+      "description": "スポラの猛毒変異体。胞子の霧の中で戦うことになる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_miasma",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 64,
+        "questDone": "hunt_mushroom"
+      },
+      "huntMap": "arena_swamp",
+      "rewards": {
+        "gold": 1500,
+        "exp": 7500,
+        "items": {
+          "miasma_sac": 2,
+          "spore_sac": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 6
+    },
+    {
+      "id": "hunt_r6_02_varganos",
+      "name": "大型狩猟：黒竜 ヴァルガノス",
+      "type": "hunt",
+      "description": "光を喰らう黒竜。弾幕の密度は竜王の比ではない。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_varganos",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 68,
+        "questDone": "hunt_dragon"
+      },
+      "huntMap": "arena_peak",
+      "rewards": {
+        "gold": 1600,
+        "exp": 8100,
+        "items": {
+          "varganos_scale": 2,
+          "dragon_scale": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 6
+    },
+    {
+      "id": "hunt_r6_03_ignigaro",
+      "name": "大型狩猟：熔牙竜 イグニガロ",
+      "type": "hunt",
+      "description": "熔岩を血潮とする岩牙竜。足元の溶岩溜まりが本体より危険。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_ignigaro",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 72,
+        "questDone": "hunt_lizard_king"
+      },
+      "huntMap": "arena_volcano",
+      "rewards": {
+        "gold": 1700,
+        "exp": 8700,
+        "items": {
+          "ignigaro_fang": 2,
+          "garo_fang": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 6
+    },
+    {
+      "id": "hunt_r6_04_knight_prelude",
+      "name": "大型狩猟：古城の露払い",
+      "type": "hunt",
+      "description": "広間の影騎士を斬り伏せると、玉座のモルドが立ち上がる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "shadow_knight",
+          "count": 3
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_knight_dread",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 66,
+        "questDone": "hunt_knight_dread"
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 1650,
+        "exp": 8400,
+        "items": {
+          "soul_iron": 1,
+          "dread_carapace": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 6
+    },
+    {
+      "id": "hunt_r6_05_black_pair",
+      "name": "連続狩猟：黒竜と不死",
+      "type": "hunt",
+      "description": "黒竜を墜とし、返す刀で不死騎士を討つ。漆黒の二連戦。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_varganos",
+          "count": 1
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_knight_dread",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 70,
+        "questDone": "hunt_r6_02_varganos"
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 2200,
+        "exp": 11000,
+        "items": {
+          "varganos_scale": 1,
+          "soul_iron": 1,
+          "star_fragment": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 6
+    },
+    {
+      "id": "hunt_r6_06_sandgoa_visit",
+      "name": "出張狩猟：古城の巨神",
+      "type": "hunt",
+      "description": "サンドゴアが古城の床を砕いて現れた。瓦礫ごと薙ぎ払え。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_sandgoa",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 65,
+        "questDone": "hunt_r5_03_sandgoa"
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 1400,
+        "exp": 7000,
+        "items": {
+          "sand_core": 2,
+          "sand_gold": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 6
+    },
+    {
+      "id": "hunt_r6_07_knight_cull",
+      "name": "討伐：影騎士の隊列",
+      "type": "hunt",
+      "description": "古城に影騎士が集結しつつある。隊列が組まれる前に崩せ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "shadow_knight",
+          "count": 6
+        }
+      ],
+      "require": {
+        "minLevel": 62
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 1200,
+        "exp": 6200,
+        "items": {
+          "shadow_wing": 2,
+          "mana_stone": 3
+        }
+      },
+      "repeatable": true,
+      "rank": 6
+    },
+    {
+      "id": "hunt_r6_08_veteran_mordo",
+      "name": "歴戦：不死騎士",
+      "type": "hunt",
+      "description": "滅びを百度超えた歴戦のモルド。剣速が別物と化している。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_knight_dread",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 75,
+        "questDone": "hunt_knight_dread"
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 2400,
+        "exp": 12000,
+        "items": {
+          "soul_iron": 2,
+          "dread_carapace": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 6,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r6_09_veteran_miasma",
+      "name": "歴戦：猛毒の母",
+      "type": "hunt",
+      "description": "歴戦のミアズマ。胞子は即死毒に近い。解毒薬を忘れるな。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_miasma",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 75,
+        "questDone": "hunt_r6_01_miasma"
+      },
+      "huntMap": "arena_swamp",
+      "rewards": {
+        "gold": 2300,
+        "exp": 11500,
+        "items": {
+          "miasma_sac": 2,
+          "mother_cap": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 6,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r7_01_flarelis",
+      "name": "大型狩猟：灼熱の女王 フレアリス",
+      "type": "hunt",
+      "description": "氷の女王の対なる存在。氷霜の聖域が燃えている。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_flarelis",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 80,
+        "questDone": "hunt_wisp_queen"
+      },
+      "huntMap": "arena_frost",
+      "rewards": {
+        "gold": 2100,
+        "exp": 11000,
+        "items": {
+          "flarelis_core": 2,
+          "queen_ice": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 7
+    },
+    {
+      "id": "hunt_r7_02_luxmordo",
+      "name": "大型狩猟：聖骸騎士 ルクス・モルド",
+      "type": "hunt",
+      "description": "聖光に転じた不死騎士。闇の武器だけが装甲を割る。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_luxmordo",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 84,
+        "questDone": "hunt_knight_dread"
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 2300,
+        "exp": 12000,
+        "items": {
+          "lux_carapace": 2,
+          "soul_iron": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 7
+    },
+    {
+      "id": "hunt_r7_03_crimson",
+      "name": "大型狩猟：緋の深淵",
+      "type": "hunt",
+      "description": "深淵が血の色に染まった。分裂は五連。呑まれれば終わり。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_crimson_abyss",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 90,
+        "questDone": "hunt_slime_abyss"
+      },
+      "huntMap": "arena_abyss",
+      "rewards": {
+        "gold": 2600,
+        "exp": 13500,
+        "items": {
+          "crimson_core": 1,
+          "abyss_dreg": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 7
+    },
+    {
+      "id": "hunt_r7_04_almagia",
+      "name": "大型狩猟：古代機神 アルマギア",
+      "type": "hunt",
+      "description": "深淵の底で目覚めた古代兵器。レーザーの軌道を読め。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_almagia",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 94,
+        "questDone": "hunt_r7_03_crimson"
+      },
+      "huntMap": "arena_abyss",
+      "rewards": {
+        "gold": 3000,
+        "exp": 15500,
+        "items": {
+          "ancient_gear": 2,
+          "magia_plate": 1
+        }
+      },
+      "repeatable": true,
+      "rank": 7
+    },
+    {
+      "id": "hunt_r7_05_abyss_prelude",
+      "name": "大型狩猟：深淵の露払い",
+      "type": "hunt",
+      "description": "深淵に堕ちた影騎士を掃討すると、底からアレが浮上する。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "shadow_knight",
+          "count": 4
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_slime_abyss",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 82,
+        "questDone": "hunt_slime_abyss"
+      },
+      "huntMap": "arena_abyss",
+      "rewards": {
+        "gold": 2400,
+        "exp": 12500,
+        "items": {
+          "abyss_dreg": 2,
+          "shadow_wing": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 7
+    },
+    {
+      "id": "hunt_r7_06_two_queens",
+      "name": "連続狩猟：氷炎の女王",
+      "type": "hunt",
+      "description": "グラキエスとフレアリス。相反する女王を一狩りで制す。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_wisp_queen",
+          "count": 1
+        },
+        {
+          "type": "kill",
+          "enemyId": "boss_flarelis",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 84,
+        "questDone": "hunt_r7_01_flarelis"
+      },
+      "huntMap": "arena_frost",
+      "rewards": {
+        "gold": 3200,
+        "exp": 16000,
+        "items": {
+          "queen_ice": 2,
+          "flarelis_core": 1,
+          "star_fragment": 3
+        }
+      },
+      "repeatable": true,
+      "rank": 7
+    },
+    {
+      "id": "hunt_r7_07_veteran_abyss",
+      "name": "歴戦：深淵のスライム",
+      "type": "hunt",
+      "description": "深淵そのものと化した歴戦個体。核を晒す一瞬を逃すな。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_slime_abyss",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 92,
+        "questDone": "hunt_slime_abyss"
+      },
+      "huntMap": "arena_abyss",
+      "rewards": {
+        "gold": 3400,
+        "exp": 17000,
+        "items": {
+          "abyss_dreg": 2,
+          "abyss_core": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 7,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r7_08_veteran_lux",
+      "name": "歴戦：聖骸騎士",
+      "type": "hunt",
+      "description": "歴戦のルクス・モルド。聖光の剣戟は残像しか見えない。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_luxmordo",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 90,
+        "questDone": "hunt_r7_02_luxmordo"
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 3300,
+        "exp": 16500,
+        "items": {
+          "lux_carapace": 2,
+          "soul_iron": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 7,
+      "veteran": true
+    },
+    {
+      "id": "hunt_r7_09_veteran_almagia",
+      "name": "歴戦：古代機神",
+      "type": "hunt",
+      "description": "出力制限が外れた歴戦のアルマギア。全砲門が火を噴く。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_almagia",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 96,
+        "questDone": "hunt_r7_04_almagia"
+      },
+      "huntMap": "arena_abyss",
+      "rewards": {
+        "gold": 3800,
+        "exp": 19000,
+        "items": {
+          "magia_plate": 2,
+          "ancient_gear": 2
+        }
+      },
+      "repeatable": true,
+      "rank": 7,
+      "veteran": true
     }
   ]
 }
