@@ -51,6 +51,8 @@ export interface GameEvents {
 
   /** Boss HP bar shown/hidden — the HUD quest tracker yields its slot. */
   'boss:bar': { active: boolean };
+  /** Cinematic hunt intro shown above HUD controls when a boss appears. */
+  'boss:intro': { questName: string; bossName: string; rank?: number; veteran?: boolean; weakness?: string; durationMs: number };
 
   // Pets
   'pet:changed': { petId: string | null };

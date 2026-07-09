@@ -3,13 +3,14 @@ import { input } from '@/input/input-state';
 import { VirtualStick } from '@/input/virtual-stick';
 import { TouchButton } from '@/input/touch-button';
 import { readInsets } from '@/core/safe-area';
-import { bus } from '@/core/event-bus';
+import { bus, type GameEvents } from '@/core/event-bus';
 import { gameState } from '@/player/game-state';
 import { getJob } from '@/jobs/job-defs';
 import { getMap } from '@/maps/map-def';
 import { getQuest } from '@/quests/quest-defs';
 import { isComplete, objectiveProgress } from '@/quests/quests';
 import { getEnemyDef } from '@/enemies/enemy-defs';
+import { ELEMENT_LABEL, elementColorHex, isElement } from '@/combat/elements';
 import { expToNext } from '@/stats/leveling';
 import { FONT, HUD_DEPTH } from '@/ui/theme';
 import { TEX, UI_FRAME_SLICE } from '@/assets/gen/textures';
@@ -41,6 +42,7 @@ export class UIScene extends Phaser.Scene {
   private qWasDown = false;
   private usePotionByKey: (() => void) | null = null;
   private coach: TutorialCoach | null = null;
+  private bossIntroRoot: Phaser.GameObjects.Container | null = null;
 
   constructor() {
     super('UI');
@@ -422,6 +424,7 @@ export class UIScene extends Phaser.Scene {
         refreshTracker();
       }),
     );
+    this.busOff.push(bus.on('boss:intro', (data) => this.showBossIntro(data)));
 
     // Bag button (top-right) opens the inventory/menu.
     const bag = new TouchButton(this, w - insets.right - 24, insets.top + 26, 22, '', 0x6a4ea0, depth, TEX.iconBag);
@@ -472,6 +475,77 @@ export class UIScene extends Phaser.Scene {
       this.busOff = [];
       this.coach?.destroy();
       this.coach = null;
+      this.bossIntroRoot?.destroy();
+      this.bossIntroRoot = null;
+    });
+  }
+
+  private showBossIntro(data: GameEvents['boss:intro']): void {
+    this.bossIntroRoot?.destroy();
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const depth = HUD_DEPTH + 900;
+    const root = this.add.container(0, 0).setDepth(depth);
+    this.bossIntroRoot = root;
+
+    const veil = this.add.rectangle(0, 0, w, h, 0x050711, 0.58).setOrigin(0).setAlpha(0);
+    const cy = Math.round(h * 0.38);
+    const band = this.add.rectangle(w / 2, cy, w, 116, 0x0b0e19, 0.88).setScale(1, 0.08);
+    const top = this.add.rectangle(w / 2, cy - 58, w, 2, 0xf5c542, 0).setAlpha(0);
+    const bottom = this.add.rectangle(w / 2, cy + 58, w, 2, 0xf5c542, 0).setAlpha(0);
+    const rank = data.rank ? `★${data.rank}` : '';
+    const title = `${rank} ${data.veteran ? '歴戦個体' : '大型狩猟開始'}`.trim();
+    const titleText = this.add
+      .text(w / 2, cy - 34, title, { fontFamily: FONT, fontSize: '13px', color: '#ffd86b', fontStyle: 'bold' })
+      .setOrigin(0.5)
+      .setAlpha(0);
+    const bossText = this.add
+      .text(w / 2, cy - 6, data.bossName, { fontFamily: FONT, fontSize: '22px', color: '#ffffff', fontStyle: 'bold' })
+      .setOrigin(0.5)
+      .setAlpha(0);
+    const questText = this.add
+      .text(w / 2, cy + 22, data.questName, { fontFamily: FONT, fontSize: '11px', color: '#cfd3e6' })
+      .setOrigin(0.5)
+      .setAlpha(0);
+    root.add([veil, band, top, bottom, titleText, bossText, questText]);
+
+    if (isElement(data.weakness) && data.weakness !== 'none') {
+      const weakness = this.add
+        .text(w / 2, cy + 44, `弱点 ${ELEMENT_LABEL[data.weakness]}`, {
+          fontFamily: FONT,
+          fontSize: '11px',
+          color: elementColorHex(data.weakness),
+          backgroundColor: '#11182a',
+          padding: { x: 8, y: 3 },
+        })
+        .setOrigin(0.5)
+        .setAlpha(0);
+      root.add(weakness);
+      this.tweens.add({ targets: weakness, alpha: 1, delay: 280, duration: 180 });
+    }
+
+    this.tweens.add({ targets: veil, alpha: 1, duration: 180 });
+    this.tweens.add({ targets: band, scaleY: 1, duration: 220, ease: 'Back.easeOut' });
+    this.tweens.add({ targets: [top, bottom, titleText, bossText, questText], alpha: 1, delay: 160, duration: 220 });
+    this.tweens.add({
+      targets: bossText,
+      scaleX: 1.04,
+      scaleY: 1.04,
+      yoyo: true,
+      duration: 180,
+      delay: 320,
+      ease: 'Sine.InOut',
+    });
+    this.time.delayedCall(data.durationMs, () => {
+      this.tweens.add({
+        targets: root,
+        alpha: 0,
+        duration: 260,
+        onComplete: () => {
+          root.destroy();
+          if (this.bossIntroRoot === root) this.bossIntroRoot = null;
+        },
+      });
     });
   }
 

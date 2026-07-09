@@ -84,6 +84,7 @@ export class WorldScene extends Phaser.Scene {
   private portalLock = 0; // ms; blocks portal re-trigger right after arrival
   private portalHintCd = 0; // ms; throttles the "defeat the boss" hint
   private portalGuard = 0; // ms; blocks walk-on portals right after taking a hit
+  private bossIntroLockMs = 0;
   private transitioning = false;
   private npcBob = false;
   private busOff: Array<() => void> = [];
@@ -126,6 +127,7 @@ export class WorldScene extends Phaser.Scene {
     this.portalLock = 600;
     this.portalHintCd = 0;
     this.portalGuard = 0;
+    this.bossIntroLockMs = 0;
     this.petAtkCd = 0;
     this.transitioning = false;
     this.rng = new Rng((Date.now() ^ 0x9e3779b9) >>> 0);
@@ -352,18 +354,39 @@ export class WorldScene extends Phaser.Scene {
       : {};
     // Trash packs fan out around the spawn point so they don't stack.
     const spread: [number, number][] = [[0, 0], [-52, 26], [52, 26], [0, 58]];
+    let spawnedBoss = false;
     for (let i = alive; i < want; i++) {
       const [ox, oy] = def.isBoss ? [0, 0] : spread[i % spread.length];
       const e = this.spawnEnemy(wave.enemyId, sp.x + ox, sp.y + oy, { respawn: false, ...mods });
-      if (e) this.huntLive.set(e, wave.enemyId);
+      if (e) {
+        this.huntLive.set(e, wave.enemyId);
+        if (def.isBoss) spawnedBoss = true;
+      }
     }
-    if (announce) {
+    if (spawnedBoss && def.isBoss) {
+      this.showBossIntro(q, def);
+    } else if (announce) {
       const msg = def.isBoss
         ? `${q.veteran ? '歴戦の' : ''}${def.name} が現れた！`
         : '敵の群れが現れた！';
       this.floatText(sp.x, sp.y - 46, msg, '#ffb26b');
       bus.emit('sfx:play', { id: 'roar' });
     }
+  }
+
+  private showBossIntro(q: QuestDef, def: EnemyDef): void {
+    const durationMs = 1650;
+    this.bossIntroLockMs = Math.max(this.bossIntroLockMs, durationMs);
+    this.cameras.main.shake(260, 0.004);
+    bus.emit('sfx:play', { id: 'roar' });
+    bus.emit('boss:intro', {
+      questName: q.name,
+      bossName: `${q.veteran ? '歴戦の' : ''}${def.name}`,
+      rank: q.rank,
+      veteran: q.veteran,
+      weakness: def.weakness,
+      durationMs,
+    });
   }
 
   /**
@@ -1663,6 +1686,15 @@ export class WorldScene extends Phaser.Scene {
     // While defeated, just let the death animation/fade play out.
     if (this.playerDead) {
       this.player.update(delta);
+      return;
+    }
+
+    if (this.bossIntroLockMs > 0) {
+      this.bossIntroLockMs -= delta;
+      this.player.setMovement(0, 0);
+      this.player.update(delta);
+      this.updateBossBar();
+      input.endFrame();
       return;
     }
 
