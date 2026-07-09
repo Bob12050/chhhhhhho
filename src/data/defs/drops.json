@@ -162,6 +162,12 @@
           "dropRate": 0.06,
           "min": 1,
           "max": 1
+        },
+        {
+          "itemId": "pet_egg_king_slime",
+          "dropRate": 0.06,
+          "min": 1,
+          "max": 1
         }
       ]
     },
@@ -911,6 +917,12 @@
           "dropRate": 0.06,
           "min": 1,
           "max": 1
+        },
+        {
+          "itemId": "pet_egg_abyss_slime",
+          "dropRate": 0.06,
+          "min": 1,
+          "max": 1
         }
       ]
     },
@@ -1103,6 +1115,12 @@
           "min": 1,
           "max": 1,
           "bossFirstGuaranteed": true
+        },
+        {
+          "itemId": "pet_egg_gold_slime",
+          "dropRate": 0.08,
+          "min": 1,
+          "max": 1
         }
       ]
     },
@@ -1463,6 +1481,12 @@
           "min": 1,
           "max": 1,
           "bossFirstGuaranteed": true
+        },
+        {
+          "itemId": "pet_egg_crimson_slime",
+          "dropRate": 0.06,
+          "min": 1,
+          "max": 1
         }
       ]
     },

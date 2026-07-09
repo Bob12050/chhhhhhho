@@ -603,6 +603,34 @@
       "petId": "dragon_pet",
       "sellPrice": 500,
       "description": "伝説のたまご。竜の巣でしか見つからない。"
+    },
+    {
+      "id": "pet_egg_king_slime",
+      "name": "王のたまご",
+      "petId": "prince_slime_pet",
+      "sellPrice": 400,
+      "description": "王冠の模様が浮かぶたまご。"
+    },
+    {
+      "id": "pet_egg_gold_slime",
+      "name": "黄金のたまご",
+      "petId": "gold_slime_pet",
+      "sellPrice": 800,
+      "description": "ずっしり重い金色のたまご。売るな、孵せ。"
+    },
+    {
+      "id": "pet_egg_abyss_slime",
+      "name": "深淵のたまご",
+      "petId": "abyss_slime_pet",
+      "sellPrice": 900,
+      "description": "覗き込むと吸い込まれそうなたまご。"
+    },
+    {
+      "id": "pet_egg_crimson_slime",
+      "name": "緋のたまご",
+      "petId": "crimson_slime_pet",
+      "sellPrice": 1200,
+      "description": "脈打つ緋色のたまご。中で何かが笑った気がする。"
     }
   ],
   "equipment": [

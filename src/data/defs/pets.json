@@ -129,6 +129,61 @@
       },
       "atkBase": 8,
       "description": "竜王の忘れ形見。将来は大物になる…はず。"
+    },
+    {
+      "id": "prince_slime_pet",
+      "name": "おうじスライム",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#ffb0c8",
+      "scale": 0.72,
+      "passive": {
+        "maxHp": 14,
+        "maxMp": 8,
+        "def": 2
+      },
+      "atkBase": 6,
+      "description": "キングスライムの跡継ぎ。小さな王冠は本物。"
+    },
+    {
+      "id": "gold_slime_pet",
+      "name": "こがねスライム",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#ffd860",
+      "scale": 0.7,
+      "passive": {
+        "goldRate": 0.08,
+        "dropRate": 0.03
+      },
+      "atkBase": 4,
+      "description": "触れたものを金運で包む。連れて歩くだけで財布が重くなる。"
+    },
+    {
+      "id": "abyss_slime_pet",
+      "name": "しんえんスライム",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#7a5ad0",
+      "scale": 0.72,
+      "passive": {
+        "physAtk": 4,
+        "magAtk": 4,
+        "maxHp": 12
+      },
+      "atkBase": 10,
+      "description": "深淵の底から付いてきた。夜、たまに底のない目でこちらを見る。"
+    },
+    {
+      "id": "crimson_slime_pet",
+      "name": "ひいろスライム",
+      "textureKey": "gen.enemy.slime",
+      "tint": "#ff5070",
+      "scale": 0.74,
+      "passive": {
+        "physAtk": 5,
+        "maxHp": 15,
+        "lifesteal": 0.03
+      },
+      "atkBase": 12,
+      "description": "緋の深淵のかけら。主の傷を舐めて癒す、最強のスライム。"
     }
   ]
 }

@@ -12,7 +12,7 @@ import {
 import { GameState } from '@/player/game-state';
 import { migrate } from '@/save/schema';
 import { allPets, getPet } from '@/pets/pet-defs';
-import { getPetItem } from '@/data/items';
+import { allPetItems } from '@/data/items';
 
 describe('pet growth math', () => {
   it('level curve is monotonic and capped', () => {
@@ -89,15 +89,13 @@ describe('eggs and hatching', () => {
 });
 
 describe('pet roster data', () => {
-  it('every pet has an egg item, and every egg maps to a pet', () => {
+  it('every egg maps to a pet, and every pet is obtainable via some egg', () => {
     const petsWithEgg = new Set<string>();
-    for (const id of ['pet_egg_slime','pet_egg_bat','pet_egg_wolf','pet_egg_shroom','pet_egg_lizard','pet_egg_flame','pet_egg_wisp','pet_egg_golem','pet_egg_knight','pet_egg_dragon']) {
-      const item = getPetItem(id);
-      expect(item, id).toBeDefined();
-      expect(getPet(item!.petId), id).toBeDefined();
-      petsWithEgg.add(item!.petId);
+    for (const item of allPetItems()) {
+      expect(getPet(item.petId), item.id).toBeDefined();
+      petsWithEgg.add(item.petId);
     }
     for (const p of allPets()) expect(petsWithEgg.has(p.id), p.id).toBe(true);
-    expect(allPets().length).toBeGreaterThanOrEqual(10);
+    expect(allPets().length).toBeGreaterThanOrEqual(14);
   });
 });
