@@ -43,6 +43,8 @@ export class GameState {
   consumables: Record<string, number> = {};
   /** Materials ever obtained (survives spending/selling) — gates recipe visibility. */
   seenMaterials: Record<string, true> = {};
+  /** Lifetime kills per enemy id — drives the bestiary (図鑑). */
+  killCounts: Record<string, number> = {};
   /** Owned equipment ids (one entry per piece; equipped items are included). */
   equipmentOwned: string[] = [];
 
@@ -216,6 +218,11 @@ export class GameState {
   addGold(amount: number): void {
     this.gold = Math.max(0, this.gold + amount);
     bus.emit('gold:changed', { current: this.gold });
+  }
+
+  /** Record a lifetime kill (bestiary discovery + counter). */
+  addKill(enemyId: string): void {
+    this.killCounts[enemyId] = (this.killCounts[enemyId] ?? 0) + 1;
   }
 
   addMaterial(id: string, qty: number): void {
@@ -447,6 +454,7 @@ export class GameState {
         completed: [...this.completedQuests],
         progress: structuredClone(this.questProgress),
       },
+      killCounts: { ...this.killCounts },
       settings: { sfx: true, bgm: true },
     };
   }
@@ -480,6 +488,15 @@ export class GameState {
     // Owned equipment: keep only known ids.
     this.equipmentOwned = (data.inventory.equipmentOwned ?? []).filter((id) => !!getEquipment(id));
     this.flags = { ...data.flags };
+    // Bestiary kill counts. Legacy saves lack them: seed defeated bosses from
+    // their kill flags so the bestiary isn't empty after an update.
+    this.killCounts = { ...(data.killCounts ?? {}) };
+    for (const f of Object.keys(this.flags)) {
+      // Kill flags look like `boss_<enemyId>_killed` (enemyId itself starts
+      // with "boss_", e.g. boss_boss_flame_killed).
+      const m = /^boss_(boss_.+)_killed$/.exec(f);
+      if (m && this.flags[f] && !this.killCounts[m[1]]) this.killCounts[m[1]] = 1;
+    }
     // Quests: keep only known ids defensively.
     this.activeQuests = (data.quests?.active ?? []).filter((id) => !!getQuest(id));
     this.completedQuests = (data.quests?.completed ?? []).filter((id) => !!getQuest(id));

@@ -44,6 +44,8 @@ export interface SaveDataV1 {
     completed: string[]; // turned in
     progress: Record<string, Record<string, number>>; // questId -> enemyId -> kills
   };
+  /** Lifetime kills per enemy id (bestiary). Legacy saves lack it. */
+  killCounts?: Record<string, number>;
   settings: { sfx: boolean; bgm: boolean };
 }
 
@@ -119,6 +121,7 @@ export function migrate(raw: unknown, slot: number): SaveData {
       completed: [...(data.quests?.completed ?? [])],
       progress: { ...(data.quests?.progress ?? {}) },
     },
+    killCounts: { ...(data.killCounts ?? {}) },
     settings: { ...def.settings, ...(data.settings ?? {}) },
   };
 

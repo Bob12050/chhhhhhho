@@ -38,6 +38,8 @@ export interface EnemyDef {
   enrageAtHpPct?: number;
   /** 亜種: id of the base species this enemy is a recolored variant of. */
   variantOf?: string;
+  /** Bestiary flavor text (shown once discovered). */
+  description?: string;
 }
 
 /**

@@ -12,7 +12,8 @@
       "expReward": 12,
       "goldReward": 3,
       "dropTableId": "slime_basic",
-      "animSpeed": 0.5
+      "animSpeed": 0.5,
+      "description": "ぷるぷるした森の住人。冒険者が最初に出会う相手。実は再生力が高い。"
     },
     {
       "id": "bat",
@@ -28,7 +29,8 @@
       "expReward": 12,
       "goldReward": 3,
       "dropTableId": "bat_basic",
-      "scale": 1.25
+      "scale": 1.25,
+      "description": "洞窟や夜の森を飛び回るコウモリ。動きは読みにくいが打たれ弱い。"
     },
     {
       "id": "golem",
@@ -45,7 +47,8 @@
       "expReward": 85,
       "goldReward": 14,
       "dropTableId": "golem_basic",
-      "weakness": "thunder"
+      "weakness": "thunder",
+      "description": "古代の魔法で動く石人形。動きは鈍いが一撃が重い。"
     },
     {
       "id": "boss_slime",
@@ -86,7 +89,8 @@
           "count": 1
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "スライムたちの王。ぷるぷるの巨体から繰り出す圧殺は必見。"
     },
     {
       "id": "boss_treant",
@@ -122,7 +126,8 @@
           "spread": "radial"
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "ささやきの森の主。森を荒らす者に根の裁きを下す。"
     },
     {
       "id": "boss_stone",
@@ -156,7 +161,8 @@
           "telegraphMs": 800
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "洞窟の最深部を守り続ける石像。何を守っているのかは誰も知らない。"
     },
     {
       "id": "green_wolf",
@@ -171,7 +177,8 @@
       "attackRange": 18,
       "expReward": 32,
       "goldReward": 6,
-      "dropTableId": "wolf_basic"
+      "dropTableId": "wolf_basic",
+      "description": "森に群れで棲む狼。仲間の遠吠えで集まってくる。"
     },
     {
       "id": "cap_shroom",
@@ -189,7 +196,8 @@
       "goldReward": 6,
       "dropTableId": "shroom_basic",
       "weakness": "fire",
-      "resist": "poison"
+      "resist": "poison",
+      "description": "歩く毒キノコ。踏むと胞子が舞うので斬ってから近づくこと。"
     },
     {
       "id": "rock_lizard",
@@ -206,7 +214,8 @@
       "expReward": 95,
       "goldReward": 16,
       "dropTableId": "rock_lizard",
-      "weakness": "thunder"
+      "weakness": "thunder",
+      "description": "岩場に擬態するトカゲ。尻尾の一撃は岩をも砕く。"
     },
     {
       "id": "cave_bat",
@@ -222,7 +231,8 @@
       "keepDistance": 60,
       "expReward": 80,
       "goldReward": 13,
-      "dropTableId": "cave_bat"
+      "dropTableId": "cave_bat",
+      "description": "洞窟の深部に棲む大型のコウモリ。暗闇から急襲してくる。"
     },
     {
       "id": "flame_hound",
@@ -239,7 +249,8 @@
       "goldReward": 40,
       "dropTableId": "flame_hound",
       "weakness": "ice",
-      "resist": "fire"
+      "resist": "fire",
+      "description": "火山地帯を徘徊する火炎の獣。体毛が常に燃えている。"
     },
     {
       "id": "frost_wisp",
@@ -257,7 +268,8 @@
       "goldReward": 38,
       "dropTableId": "frost_wisp",
       "weakness": "fire",
-      "resist": "ice"
+      "resist": "ice",
+      "description": "氷の魔力が寄り集まった精霊。触れるだけで凍える。"
     },
     {
       "id": "shadow_knight",
@@ -275,7 +287,8 @@
       "goldReward": 55,
       "dropTableId": "shadow_knight",
       "weakness": "holy",
-      "resist": "dark"
+      "resist": "dark",
+      "description": "古城を彷徨う鎧の亡霊。生前の剣技を今も忘れていない。"
     },
     {
       "id": "boss_dragon",
@@ -318,7 +331,8 @@
           "count": 3
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "火山の頂に君臨する竜の王。その咆哮は麓の町まで届く。"
     },
     {
       "id": "boss_flame",
@@ -353,7 +367,8 @@
           "count": 2
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "業火を纏う四足の獣。火口の闘技場を根城にする。"
     },
     {
       "id": "boss_bat_lord",
@@ -387,7 +402,8 @@
           "maxMinions": 4
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "夜を統べるコウモリの王。月のない夜にだけ本気を出すという。"
     },
     {
       "id": "boss_wolf_alpha",
@@ -427,7 +443,8 @@
           "count": 1
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "百の群れを率いた狼の長。その突進は白い閃光と呼ばれる。"
     },
     {
       "id": "boss_mushroom",
@@ -469,7 +486,8 @@
           "spread": "radial"
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "全ての茸の母。撒き散らす胞子は森ひとつを毒に沈めた。"
     },
     {
       "id": "boss_lizard_king",
@@ -503,7 +521,8 @@
           "count": 2
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "断崖の主。岩の牙で幾多の狩人を葬ってきた。"
     },
     {
       "id": "boss_wisp_queen",
@@ -547,7 +566,8 @@
           "arcDeg": 40
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "氷霜の聖域に座す女王。彼女の吐息が永久凍土を作った。"
     },
     {
       "id": "boss_knight_dread",
@@ -590,7 +610,8 @@
           "arcDeg": 72
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "死してなお玉座を守る騎士。その忠義は呪いとなった。"
     },
     {
       "id": "boss_slime_abyss",
@@ -632,7 +653,8 @@
           "spread": "radial"
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "深淵の底に沈む名も無きもの。見た者は少なく、帰った者はさらに少ない。"
     },
     {
       "id": "boss_dross",
@@ -670,7 +692,8 @@
           "spread": "radial"
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "毒に堕ちたもうひとつの森の主。踏んだ大地から腐っていく。"
     },
     {
       "id": "boss_zephys",
@@ -711,7 +734,8 @@
           "count": 1
         }
       ],
-      "enrageAtHpPct": 0.45
+      "enrageAtHpPct": 0.45,
+      "description": "草原の空を統べる風の王。急降下は音を置き去りにする。"
     },
     {
       "id": "boss_obsidion",
@@ -754,7 +778,8 @@
           "spread": "radial"
         }
       ],
-      "enrageAtHpPct": 0.5
+      "enrageAtHpPct": 0.5,
+      "description": "黒曜と化した番人。光を吸う装甲は聖なる力でしか貫けない。"
     },
     {
       "id": "boss_cruor",
@@ -797,7 +822,8 @@
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_bat_lord",
       "weakness": "holy",
-      "resist": "dark"
+      "resist": "dark",
+      "description": "血に飢えた夜の王の亜種。吸った血の分だけ傷が塞がる。"
     },
     {
       "id": "boss_aurum",
@@ -840,7 +866,8 @@
       ],
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_slime",
-      "keepDistance": 110
+      "keepDistance": 110,
+      "description": "全身が黄金に輝くスライム。臆病で逃げ足が速いが、倒せば大金持ち。"
     },
     {
       "id": "boss_hydra",
@@ -884,7 +911,8 @@
       ],
       "enrageAtHpPct": 0.5,
       "weakness": "fire",
-      "resist": "poison"
+      "resist": "poison",
+      "description": "毒沼の主たる大蛇。九つの首の記憶を持つという。"
     },
     {
       "id": "boss_azvurm",
@@ -927,7 +955,8 @@
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_flame",
       "weakness": "fire",
-      "resist": "ice"
+      "resist": "ice",
+      "description": "蒼き炎を纏う主。その炎は熱くない——凍えるのだ。"
     },
     {
       "id": "boss_skoll",
@@ -969,7 +998,8 @@
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_wolf_alpha",
       "weakness": "ice",
-      "resist": "thunder"
+      "resist": "thunder",
+      "description": "雷を纏う白金の狼。嵐の夜、稲妻と共に駆ける姿が目撃される。"
     },
     {
       "id": "boss_sandgoa",
@@ -1018,7 +1048,8 @@
       ],
       "enrageAtHpPct": 0.5,
       "weakness": "ice",
-      "resist": "thunder"
+      "resist": "thunder",
+      "description": "流砂から生まれた巨神。歩くたび大地が鳴動する。"
     },
     {
       "id": "boss_miasma",
@@ -1062,7 +1093,8 @@
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_mushroom",
       "weakness": "fire",
-      "resist": "poison"
+      "resist": "poison",
+      "description": "猛毒に変異した胞子の母。彼女の霧に入った鳥は落ちる。"
     },
     {
       "id": "boss_varganos",
@@ -1113,7 +1145,8 @@
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_dragon",
       "weakness": "holy",
-      "resist": "dark"
+      "resist": "dark",
+      "description": "光を喰らう黒竜。夜空に紛れ、月を隠して飛来する。"
     },
     {
       "id": "boss_ignigaro",
@@ -1157,7 +1190,8 @@
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_lizard_king",
       "weakness": "ice",
-      "resist": "fire"
+      "resist": "fire",
+      "description": "熔岩を血潮とする岩牙竜。牙の一噛みで鋼が熔ける。"
     },
     {
       "id": "boss_flarelis",
@@ -1202,7 +1236,8 @@
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_wisp_queen",
       "weakness": "ice",
-      "resist": "fire"
+      "resist": "fire",
+      "description": "灼熱に転じた女王。氷の聖域を燃やし尽くそうとしている。"
     },
     {
       "id": "boss_luxmordo",
@@ -1246,7 +1281,8 @@
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_knight_dread",
       "weakness": "dark",
-      "resist": "holy"
+      "resist": "holy",
+      "description": "聖光に転じた不死騎士。救済か、それとも新たな呪いか。"
     },
     {
       "id": "boss_crimson_abyss",
@@ -1289,7 +1325,8 @@
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_slime_abyss",
       "weakness": "holy",
-      "resist": "dark"
+      "resist": "dark",
+      "description": "血の色に染まった深淵。緋色の波が触れたものを呑み込む。"
     },
     {
       "id": "boss_almagia",
@@ -1338,7 +1375,8 @@
         }
       ],
       "enrageAtHpPct": 0.5,
-      "weakness": "thunder"
+      "weakness": "thunder",
+      "description": "深淵の底で目覚めた古代兵器。製作者はもういない。命令だけが残った。"
     }
   ]
 }

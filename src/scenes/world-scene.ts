@@ -1082,6 +1082,7 @@ export class WorldScene extends Phaser.Scene {
     this.spawnDeathBurst(x, y, burstColor);
     bus.emit('sfx:play', { id: 'enemy_down' });
     gameState.flags['killed_any'] = true;
+    gameState.addKill(def.id); // bestiary discovery + lifetime counter
     recordKill(gameState, def.id); // advance active quest objectives
     this.notifyHuntComplete(def);
     this.scheduleHuntWaves(); // 連続狩猟: next wave after this kill

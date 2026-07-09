@@ -147,6 +147,20 @@ export class InventoryScene extends Phaser.Scene {
       this.scene.launch('Options', { from: 'Inventory' });
     });
 
+    const toBestiary = this.add
+      .text(84, h - 44, '📖 図鑑', {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#9aa0b5',
+      })
+      .setOrigin(0, 0.5)
+      .setDepth(3)
+      .setInteractive({ useHandCursor: true });
+    toBestiary.on('pointerup', () => {
+      this.scene.pause();
+      this.scene.launch('Bestiary');
+    });
+
     const toTitle = this.add
       .text(w - 16, h - 44, 'タイトルへ', {
         fontFamily: FONT,
