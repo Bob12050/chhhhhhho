@@ -38,6 +38,10 @@ export const TEX = {
   knight: 'gen.enemy.knight',
   treant: 'gen.enemy.treant',
   dragon: 'gen.enemy.dragon',
+  // AI-art-only bosses (no procedural generator; boot aliases a stand-in
+  // texture if the PNG fails to load — see ensureGeneratedTextures).
+  zephys: 'gen.enemy.zephys',
+  hydra: 'gen.enemy.hydra',
   tileGrass: 'gen.tile.grass',
   tileGrass2: 'gen.tile.grass2',
   tilePath: 'gen.tile.path',
@@ -112,6 +116,16 @@ const SPECS: Record<string, LayerSpec> = {
  * Generate all placeholder sheets and register them as spritesheets on the
  * given scene's texture manager. Idempotent: skips keys already present.
  */
+/**
+ * AI-art-only textures with NO procedural generator: if their PNG failed to
+ * load (offline first run with a stale cache), alias a visually-plausible
+ * stand-in so nothing renders as a missing-texture box.
+ */
+const ART_FALLBACK: Record<string, string> = {
+  [TEX.zephys]: TEX.bat,
+  [TEX.hydra]: TEX.lizard,
+};
+
 export function ensureGeneratedTextures(scene: Phaser.Scene): void {
   for (const [key, spec] of Object.entries(SPECS)) {
     if (scene.textures.exists(key)) continue;
@@ -128,6 +142,23 @@ export function ensureGeneratedTextures(scene: Phaser.Scene): void {
       frameWidth: CHAR_FRAME_W,
       frameHeight: CHAR_FRAME_H,
     });
+  }
+  for (const [key, standIn] of Object.entries(ART_FALLBACK)) {
+    if (scene.textures.exists(key) || !scene.textures.exists(standIn)) continue;
+    // Copy the stand-in's pixels into a fresh canvas: addSpriteSheet reuses
+    // the source texture's key (gotcha #2 above), so a direct alias is out.
+    const src = scene.textures.get(standIn).getSourceImage() as HTMLCanvasElement;
+    const canvas = document.createElement('canvas');
+    canvas.width = src.width;
+    canvas.height = src.height;
+    canvas.getContext('2d')?.drawImage(src, 0, 0);
+    const tex = scene.textures.addCanvas(key, canvas);
+    if (tex) {
+      scene.textures.addSpriteSheet(key, tex, {
+        frameWidth: CHAR_FRAME_W,
+        frameHeight: CHAR_FRAME_H,
+      });
+    }
   }
   generateEnvTextures(scene);
 }

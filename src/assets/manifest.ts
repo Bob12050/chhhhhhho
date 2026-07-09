@@ -56,6 +56,9 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   sheet(TEX.knight, 'assets/enemy/knight.png'),
   sheet(TEX.treant, 'assets/enemy/treant.png'),
   sheet(TEX.dragon, 'assets/enemy/dragon.png'),
+  // AI-art-only bosses (fallback alias in ensureGeneratedTextures).
+  sheet(TEX.zephys, 'assets/enemy/zephys.png'),
+  sheet(TEX.hydra, 'assets/enemy/hydra.png'),
   // Environment (single images).
   img(TEX.tileGrass, 'assets/tiles/grass.png'),
   img(TEX.tileGrass2, 'assets/tiles/grass2.png'),

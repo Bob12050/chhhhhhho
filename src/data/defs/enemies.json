@@ -698,9 +698,8 @@
     {
       "id": "boss_zephys",
       "name": "風翔の王 ゼフィス",
-      "textureKey": "gen.enemy.bat",
-      "tint": "#6ad0c8",
-      "scale": 2.1,
+      "textureKey": "gen.enemy.zephys",
+      "scale": 1.9,
       "isBoss": true,
       "maxHp": 910,
       "moveSpeed": 62,
@@ -872,9 +871,8 @@
     {
       "id": "boss_hydra",
       "name": "沼咬みのヒュドラ",
-      "textureKey": "gen.enemy.lizard",
-      "tint": "#4a8a5a",
-      "scale": 2.2,
+      "textureKey": "gen.enemy.hydra",
+      "scale": 2.0,
       "isBoss": true,
       "maxHp": 3630,
       "moveSpeed": 50,
