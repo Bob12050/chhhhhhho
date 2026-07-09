@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "validate-data": "tsx tools/validate-data.ts",
     "gen-templates": "tsx tools/gen-templates.ts",
-    "check-assets": "tsx tools/check-assets.ts"
+    "check-assets": "tsx tools/check-assets.ts",
+    "balance-sim": "tsx tools/balance-sim.ts"
   },
   "dependencies": {
     "phaser": "4.2.0"

@@ -776,7 +776,7 @@
         "physAtk": 30,
         "accuracy": 5,
         "critRate": 0.1,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 480,
       "description": "竜の牙を芯に鍛えた名剣。"
@@ -1161,7 +1161,7 @@
       "levelRequirement": 3,
       "derived": {
         "physAtk": 6,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 12,
       "description": "ナイフ。1次職向けのdagger。"
@@ -1179,7 +1179,7 @@
       "levelRequirement": 6,
       "derived": {
         "physAtk": 9,
-        "atkSpeed": 3,
+        "atkSpeed": 0.3,
         "critRate": 0.04
       },
       "sellPrice": 25,
@@ -1217,7 +1217,7 @@
       "derived": {
         "physAtk": 9,
         "accuracy": 4,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 25,
       "description": "鎖の鞭。鍛えられた1次職向けのwhip。"
@@ -1520,7 +1520,7 @@
       "levelRequirement": 10,
       "derived": {
         "physAtk": 12,
-        "atkSpeed": 3,
+        "atkSpeed": 0.3,
         "critRate": 0.05
       },
       "sellPrice": 50,
@@ -1539,7 +1539,7 @@
       "levelRequirement": 15,
       "derived": {
         "physAtk": 15,
-        "atkSpeed": 3,
+        "atkSpeed": 0.3,
         "critRate": 0.05,
         "evasion": 7
       },
@@ -1559,7 +1559,7 @@
       "levelRequirement": 21,
       "derived": {
         "physAtk": 19,
-        "atkSpeed": 4,
+        "atkSpeed": 0.4,
         "critRate": 0.06,
         "evasion": 8
       },
@@ -1579,7 +1579,7 @@
       "levelRequirement": 28,
       "derived": {
         "physAtk": 23,
-        "atkSpeed": 4,
+        "atkSpeed": 0.4,
         "critRate": 0.06,
         "evasion": 9
       },
@@ -1599,7 +1599,7 @@
       "levelRequirement": 36,
       "derived": {
         "physAtk": 29,
-        "atkSpeed": 5,
+        "atkSpeed": 0.5,
         "critRate": 0.07,
         "evasion": 10
       },
@@ -1620,7 +1620,7 @@
       "derived": {
         "physAtk": 12,
         "accuracy": 4,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 50,
       "description": "鋼の鞭。鞭使い向け。"
@@ -1639,7 +1639,7 @@
       "derived": {
         "physAtk": 15,
         "accuracy": 4,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 90,
       "description": "銀の鞭。鞭使い向け。"
@@ -1658,7 +1658,7 @@
       "derived": {
         "physAtk": 19,
         "accuracy": 5,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 160,
       "description": "ミスリルの鞭。鞭使い向け。"
@@ -1677,7 +1677,7 @@
       "derived": {
         "physAtk": 23,
         "accuracy": 5,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 280,
       "description": "竜の鞭。鞭使い向け。"
@@ -1696,7 +1696,7 @@
       "derived": {
         "physAtk": 29,
         "accuracy": 6,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 480,
       "description": "天上の鞭。鞭使い向け。"
@@ -1846,7 +1846,7 @@
       "derived": {
         "magAtk": 6,
         "maxMp": 10,
-        "atkSpeed": 1
+        "atkSpeed": 0.1
       },
       "sellPrice": 12,
       "description": "銅のロッド。ロッド使い向け。"
@@ -1865,7 +1865,7 @@
       "derived": {
         "magAtk": 9,
         "maxMp": 12,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 25,
       "description": "鉄のロッド。ロッド使い向け。"
@@ -1884,7 +1884,7 @@
       "derived": {
         "magAtk": 12,
         "maxMp": 14,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 50,
       "description": "鋼のロッド。ロッド使い向け。"
@@ -1903,7 +1903,7 @@
       "derived": {
         "magAtk": 15,
         "maxMp": 16,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 90,
       "description": "銀のロッド。ロッド使い向け。"
@@ -1922,7 +1922,7 @@
       "derived": {
         "magAtk": 19,
         "maxMp": 18,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 160,
       "description": "ミスリルのロッド。ロッド使い向け。"
@@ -1941,7 +1941,7 @@
       "derived": {
         "magAtk": 23,
         "maxMp": 20,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 280,
       "description": "竜のロッド。ロッド使い向け。"
@@ -1960,7 +1960,7 @@
       "derived": {
         "magAtk": 29,
         "maxMp": 22,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 480,
       "description": "天上のロッド。ロッド使い向け。"
@@ -1979,7 +1979,7 @@
       "derived": {
         "physAtk": 13,
         "critRate": 0.05,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 50,
       "description": "鋼の刀。刀使い向け。"
@@ -1998,7 +1998,7 @@
       "derived": {
         "physAtk": 16,
         "critRate": 0.05,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 90,
       "description": "銀の刀。刀使い向け。"
@@ -2017,7 +2017,7 @@
       "derived": {
         "physAtk": 20,
         "critRate": 0.06,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 160,
       "description": "ミスリルの刀。刀使い向け。"
@@ -2036,7 +2036,7 @@
       "derived": {
         "physAtk": 24,
         "critRate": 0.06,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 280,
       "description": "竜の刀。刀使い向け。"
@@ -2055,7 +2055,7 @@
       "derived": {
         "physAtk": 30,
         "critRate": 0.07,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 480,
       "description": "天上の刀。刀使い向け。"
@@ -2406,7 +2406,7 @@
       "derived": {
         "accuracy": 6,
         "def": 4,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 50,
       "description": "鋼の手甲。"
@@ -2422,7 +2422,7 @@
       "derived": {
         "accuracy": 7,
         "def": 6,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 90,
       "description": "銀の手甲。"
@@ -2438,7 +2438,7 @@
       "derived": {
         "accuracy": 8,
         "def": 8,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 160,
       "description": "ミスリルの手甲。"
@@ -2454,7 +2454,7 @@
       "derived": {
         "accuracy": 9,
         "def": 10,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 280,
       "description": "竜の手甲。"
@@ -2470,7 +2470,7 @@
       "derived": {
         "accuracy": 10,
         "def": 13,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 480,
       "description": "天上の手甲。"
@@ -3411,7 +3411,7 @@
         "physAtk": 31,
         "accuracy": 5,
         "critRate": 0.1,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 240,
       "description": "竜骨の剣。腕に馴染む一品。"
@@ -3431,7 +3431,7 @@
         "physAtk": 32,
         "accuracy": 5,
         "critRate": 0.1,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 288,
       "description": "白銀の剣。腕に馴染む一品。"
@@ -3690,7 +3690,7 @@
       "derived": {
         "physAtk": 11,
         "accuracy": 4,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 48,
       "description": "獣骨の鞭。腕に馴染む一品。"
@@ -3709,7 +3709,7 @@
       "derived": {
         "physAtk": 13,
         "accuracy": 4,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 72,
       "description": "白鋼の鞭。腕に馴染む一品。"
@@ -3728,7 +3728,7 @@
       "derived": {
         "physAtk": 17,
         "accuracy": 4,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 108,
       "description": "疾風の鞭。腕に馴染む一品。"
@@ -3747,7 +3747,7 @@
       "derived": {
         "physAtk": 21,
         "accuracy": 5,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 144,
       "description": "嵐の鞭。腕に馴染む一品。"
@@ -3766,7 +3766,7 @@
       "derived": {
         "physAtk": 25,
         "accuracy": 5,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 192,
       "description": "月影の鞭。腕に馴染む一品。"
@@ -3785,7 +3785,7 @@
       "derived": {
         "physAtk": 30,
         "accuracy": 6,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 240,
       "description": "竜骨の鞭。腕に馴染む一品。"
@@ -3804,7 +3804,7 @@
       "derived": {
         "physAtk": 32,
         "accuracy": 6,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 288,
       "description": "白銀の鞭。腕に馴染む一品。"
@@ -3823,7 +3823,7 @@
       "derived": {
         "physAtk": 36,
         "accuracy": 6,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 360,
       "description": "雷鳴の鞭。腕に馴染む一品。"
@@ -3842,7 +3842,7 @@
       "derived": {
         "physAtk": 40,
         "accuracy": 6,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 432,
       "description": "星霜の鞭。腕に馴染む一品。"
@@ -3861,7 +3861,7 @@
       "derived": {
         "physAtk": 45,
         "accuracy": 6,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 528,
       "description": "天穹の鞭。腕に馴染む一品。"
@@ -4068,7 +4068,7 @@
       "derived": {
         "magAtk": 12,
         "maxMp": 16,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 48,
       "description": "獣骨のロッド。腕に馴染む一品。"
@@ -4087,7 +4087,7 @@
       "derived": {
         "magAtk": 14,
         "maxMp": 16,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 72,
       "description": "白鋼のロッド。腕に馴染む一品。"
@@ -4106,7 +4106,7 @@
       "derived": {
         "magAtk": 18,
         "maxMp": 19,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 108,
       "description": "疾風のロッド。腕に馴染む一品。"
@@ -4125,7 +4125,7 @@
       "derived": {
         "magAtk": 22,
         "maxMp": 21,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 144,
       "description": "嵐のロッド。腕に馴染む一品。"
@@ -4162,7 +4162,7 @@
       "derived": {
         "magAtk": 31,
         "maxMp": 24,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 240,
       "description": "竜骨のロッド。腕に馴染む一品。"
@@ -4181,7 +4181,7 @@
       "derived": {
         "magAtk": 34,
         "maxMp": 26,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 288,
       "description": "白銀のロッド。腕に馴染む一品。"
@@ -4200,7 +4200,7 @@
       "derived": {
         "magAtk": 38,
         "maxMp": 29,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 360,
       "description": "雷鳴のロッド。腕に馴染む一品。"
@@ -4219,7 +4219,7 @@
       "derived": {
         "magAtk": 43,
         "maxMp": 33,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 432,
       "description": "星霜のロッド。腕に馴染む一品。"
@@ -4238,7 +4238,7 @@
       "derived": {
         "magAtk": 48,
         "maxMp": 36,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 528,
       "description": "天穹のロッド。腕に馴染む一品。"
@@ -4636,7 +4636,7 @@
       "levelRequirement": 8,
       "derived": {
         "physAtk": 11,
-        "atkSpeed": 3,
+        "atkSpeed": 0.3,
         "critRate": 0.04
       },
       "sellPrice": 48,
@@ -4655,7 +4655,7 @@
       "levelRequirement": 18,
       "derived": {
         "physAtk": 17,
-        "atkSpeed": 3,
+        "atkSpeed": 0.3,
         "critRate": 0.05,
         "evasion": 8
       },
@@ -4675,7 +4675,7 @@
       "levelRequirement": 24,
       "derived": {
         "physAtk": 21,
-        "atkSpeed": 4,
+        "atkSpeed": 0.4,
         "critRate": 0.06,
         "evasion": 9
       },
@@ -4695,7 +4695,7 @@
       "levelRequirement": 32,
       "derived": {
         "physAtk": 25,
-        "atkSpeed": 4,
+        "atkSpeed": 0.4,
         "critRate": 0.06,
         "evasion": 11
       },
@@ -4715,7 +4715,7 @@
       "levelRequirement": 40,
       "derived": {
         "physAtk": 30,
-        "atkSpeed": 5,
+        "atkSpeed": 0.5,
         "critRate": 0.07,
         "evasion": 11
       },
@@ -4735,7 +4735,7 @@
       "levelRequirement": 48,
       "derived": {
         "physAtk": 32,
-        "atkSpeed": 5,
+        "atkSpeed": 0.5,
         "critRate": 0.07,
         "evasion": 12
       },
@@ -4755,7 +4755,7 @@
       "levelRequirement": 60,
       "derived": {
         "physAtk": 36,
-        "atkSpeed": 5,
+        "atkSpeed": 0.5,
         "critRate": 0.07,
         "evasion": 13
       },
@@ -4775,7 +4775,7 @@
       "levelRequirement": 72,
       "derived": {
         "physAtk": 40,
-        "atkSpeed": 5,
+        "atkSpeed": 0.5,
         "critRate": 0.07,
         "evasion": 15
       },
@@ -4795,7 +4795,7 @@
       "levelRequirement": 88,
       "derived": {
         "physAtk": 45,
-        "atkSpeed": 5,
+        "atkSpeed": 0.5,
         "critRate": 0.07,
         "evasion": 17
       },
@@ -4815,7 +4815,7 @@
       "levelRequirement": 96,
       "derived": {
         "physAtk": 48,
-        "atkSpeed": 5,
+        "atkSpeed": 0.5,
         "critRate": 0.07,
         "evasion": 18
       },
@@ -4836,7 +4836,7 @@
       "derived": {
         "physAtk": 9,
         "critRate": 0.05,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 36,
       "description": "鉄造りの刀。腕に馴染む一品。"
@@ -4855,7 +4855,7 @@
       "derived": {
         "physAtk": 17,
         "critRate": 0.05,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 108,
       "description": "疾風の刀。腕に馴染む一品。"
@@ -4874,7 +4874,7 @@
       "derived": {
         "physAtk": 21,
         "critRate": 0.06,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 144,
       "description": "嵐の刀。腕に馴染む一品。"
@@ -4893,7 +4893,7 @@
       "derived": {
         "physAtk": 25,
         "critRate": 0.06,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 192,
       "description": "月影の刀。腕に馴染む一品。"
@@ -4912,7 +4912,7 @@
       "derived": {
         "physAtk": 31,
         "critRate": 0.07,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 240,
       "description": "竜骨の刀。腕に馴染む一品。"
@@ -5905,7 +5905,7 @@
       "derived": {
         "accuracy": 6,
         "def": 3,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 40,
       "description": "獣骨の手甲。確かな作りの防具。"
@@ -5920,7 +5920,7 @@
       "derived": {
         "accuracy": 6,
         "def": 5,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 60,
       "description": "白鋼の手甲。確かな作りの防具。"
@@ -5935,7 +5935,7 @@
       "derived": {
         "accuracy": 8,
         "def": 7,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 90,
       "description": "疾風の手甲。確かな作りの防具。"
@@ -5950,7 +5950,7 @@
       "derived": {
         "accuracy": 8,
         "def": 9,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 120,
       "description": "嵐の手甲。確かな作りの防具。"
@@ -5965,7 +5965,7 @@
       "derived": {
         "accuracy": 10,
         "def": 12,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 160,
       "description": "月影の手甲。確かな作りの防具。"
@@ -5980,7 +5980,7 @@
       "derived": {
         "accuracy": 11,
         "def": 16,
-        "atkSpeed": 4
+        "atkSpeed": 0.4
       },
       "sellPrice": 220,
       "description": "炎帝の手甲。確かな作りの防具。"
@@ -5995,7 +5995,7 @@
       "derived": {
         "accuracy": 12,
         "def": 19,
-        "atkSpeed": 5
+        "atkSpeed": 0.5
       },
       "sellPrice": 260,
       "description": "海淵の手甲。確かな作りの防具。"
@@ -6010,7 +6010,7 @@
       "derived": {
         "accuracy": 13,
         "def": 22,
-        "atkSpeed": 6
+        "atkSpeed": 0.6
       },
       "sellPrice": 300,
       "description": "雷鳴の手甲。確かな作りの防具。"
@@ -6025,7 +6025,7 @@
       "derived": {
         "accuracy": 14,
         "def": 26,
-        "atkSpeed": 8
+        "atkSpeed": 0.4
       },
       "sellPrice": 360,
       "description": "星霜の手甲。確かな作りの防具。"
@@ -6040,7 +6040,7 @@
       "derived": {
         "accuracy": 16,
         "def": 32,
-        "atkSpeed": 10
+        "atkSpeed": 0.5
       },
       "sellPrice": 440,
       "description": "天穹の手甲。確かな作りの防具。"
@@ -6796,7 +6796,7 @@
       "levelRequirement": 16,
       "derived": {
         "physAtk": 16,
-        "atkSpeed": 3,
+        "atkSpeed": 0.3,
         "lifesteal": 0.06
       },
       "sellPrice": 150,
@@ -6849,7 +6849,7 @@
       "derived": {
         "physAtk": 17,
         "accuracy": 6,
-        "atkSpeed": 2,
+        "atkSpeed": 0.2,
         "moveSpeed": 2
       },
       "sellPrice": 150,
@@ -6917,7 +6917,7 @@
         "accuracy": 7,
         "def": 8,
         "physAtk": 4,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 220,
       "description": "剛爪の籠手。拳に熱がこもる。"
@@ -6952,7 +6952,7 @@
       "derived": {
         "physAtk": 22,
         "critRate": 0.07,
-        "atkSpeed": 4
+        "atkSpeed": 0.4
       },
       "sellPrice": 260,
       "description": "月魄の牙を研いだ刀。太刀筋が残像になる。"
@@ -6985,7 +6985,7 @@
         "maxHp": 28,
         "def": 9,
         "evasion": 5,
-        "atkSpeed": 1
+        "atkSpeed": 0.1
       },
       "sellPrice": 210,
       "description": "長牙を飾った腰帯。群れの長の証。"
@@ -7005,7 +7005,7 @@
         "magAtk": 23,
         "maxMp": 22,
         "goldRate": 0.1,
-        "atkSpeed": 2
+        "atkSpeed": 0.2
       },
       "sellPrice": 260,
       "description": "王冠の雫を封じたロッド。振ると金の音がする。"
@@ -7217,7 +7217,7 @@
       "derived": {
         "physAtk": 33,
         "accuracy": 8,
-        "atkSpeed": 3
+        "atkSpeed": 0.3
       },
       "sellPrice": 420,
       "description": "九首珠を柄に嵌めた鞭。九方向から噛みつく。"

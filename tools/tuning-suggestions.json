@@ -1,0 +1,170 @@
+{
+  "boss_treant": {
+    "maxHp": 810,
+    "contactDamage": 20,
+    "rank": 1,
+    "lv": 5
+  },
+  "boss_stone": {
+    "maxHp": 980,
+    "contactDamage": 26,
+    "rank": 1,
+    "lv": 6
+  },
+  "boss_bat_lord": {
+    "maxHp": 2440,
+    "contactDamage": 44,
+    "rank": 2,
+    "lv": 12
+  },
+  "boss_zephys": {
+    "maxHp": 2510,
+    "contactDamage": 47,
+    "rank": 2,
+    "lv": 13
+  },
+  "boss_dross": {
+    "maxHp": 2870,
+    "contactDamage": 53,
+    "rank": 2,
+    "lv": 15
+  },
+  "boss_flame": {
+    "maxHp": 4480,
+    "contactDamage": 76,
+    "rank": 3,
+    "lv": 20
+  },
+  "boss_obsidion": {
+    "maxHp": 4910,
+    "contactDamage": 84,
+    "rank": 3,
+    "lv": 22
+  },
+  "boss_wolf_alpha": {
+    "maxHp": 5410,
+    "contactDamage": 92,
+    "rank": 3,
+    "lv": 24
+  },
+  "boss_slime": {
+    "maxHp": 5510,
+    "contactDamage": 99,
+    "rank": 3,
+    "lv": 25
+  },
+  "boss_dragon": {
+    "maxHp": 7740,
+    "contactDamage": 130,
+    "rank": 4,
+    "lv": 30
+  },
+  "boss_aurum": {
+    "maxHp": 8290,
+    "contactDamage": 147,
+    "rank": 4,
+    "lv": 32
+  },
+  "boss_mushroom": {
+    "maxHp": 8660,
+    "contactDamage": 155,
+    "rank": 4,
+    "lv": 34
+  },
+  "boss_cruor": {
+    "maxHp": 8780,
+    "contactDamage": 161,
+    "rank": 4,
+    "lv": 35
+  },
+  "boss_hydra": {
+    "maxHp": 12550,
+    "contactDamage": 194,
+    "rank": 4,
+    "lv": 40
+  },
+  "boss_lizard_king": {
+    "maxHp": 14340,
+    "contactDamage": 234,
+    "rank": 4,
+    "lv": 44
+  },
+  "boss_azvurm": {
+    "maxHp": 18610,
+    "contactDamage": 295,
+    "rank": 5,
+    "lv": 50
+  },
+  "boss_wisp_queen": {
+    "maxHp": 20340,
+    "contactDamage": 332,
+    "rank": 5,
+    "lv": 52
+  },
+  "boss_skoll": {
+    "maxHp": 20950,
+    "contactDamage": 345,
+    "rank": 5,
+    "lv": 54
+  },
+  "boss_sandgoa": {
+    "maxHp": 22170,
+    "contactDamage": 379,
+    "rank": 5,
+    "lv": 58
+  },
+  "boss_miasma": {
+    "maxHp": 26290,
+    "contactDamage": 500,
+    "rank": 6,
+    "lv": 64
+  },
+  "boss_knight_dread": {
+    "maxHp": 27070,
+    "contactDamage": 529,
+    "rank": 6,
+    "lv": 66
+  },
+  "boss_varganos": {
+    "maxHp": 27720,
+    "contactDamage": 546,
+    "rank": 6,
+    "lv": 68
+  },
+  "boss_ignigaro": {
+    "maxHp": 25870,
+    "contactDamage": 628,
+    "rank": 6,
+    "lv": 72
+  },
+  "boss_slime_abyss": {
+    "maxHp": 31960,
+    "contactDamage": 804,
+    "rank": 7,
+    "lv": 80
+  },
+  "boss_flarelis": {
+    "maxHp": 31960,
+    "contactDamage": 804,
+    "rank": 7,
+    "lv": 80
+  },
+  "boss_luxmordo": {
+    "maxHp": 33950,
+    "contactDamage": 849,
+    "rank": 7,
+    "lv": 84
+  },
+  "boss_crimson_abyss": {
+    "maxHp": 39080,
+    "contactDamage": 1036,
+    "rank": 7,
+    "lv": 90
+  },
+  "boss_almagia": {
+    "maxHp": 40470,
+    "contactDamage": 1087,
+    "rank": 7,
+    "lv": 94
+  }
+}

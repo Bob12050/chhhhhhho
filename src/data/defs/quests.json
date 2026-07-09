@@ -82,7 +82,8 @@
         }
       ],
       "require": {
-        "questDone": "subj_treant"
+        "questDone": "subj_treant",
+        "minLevel": 6
       },
       "rewards": {
         "gold": 220,
@@ -555,7 +556,8 @@
         }
       },
       "require": {
-        "questDone": "subj_treant"
+        "questDone": "subj_treant",
+        "minLevel": 5
       },
       "repeatable": true,
       "huntMap": "arena_grove",
@@ -581,7 +583,8 @@
         }
       },
       "require": {
-        "questDone": "subj_stone"
+        "questDone": "subj_stone",
+        "minLevel": 7
       },
       "repeatable": true,
       "huntMap": "arena_cavern",

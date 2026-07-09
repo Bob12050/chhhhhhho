@@ -17,6 +17,7 @@ import { recordKill, isComplete } from '@/quests/quests';
 import { getQuest, type QuestDef } from '@/quests/quest-defs';
 import { currentWave, concurrentSpawnCount, VETERAN_MODS } from '@/quests/hunt-logic';
 import { PET_EXP_SHARE, petAttackDamage } from '@/pets/pet-growth';
+import { mitigateDamage } from '@/combat/mitigation';
 import { input } from '@/input/input-state';
 import { bus } from '@/core/event-bus';
 import { saveManager } from '@/save/save-manager';
@@ -524,7 +525,7 @@ export class WorldScene extends Phaser.Scene {
         !this.playerDead &&
         this.playerInvuln <= 0 &&
         Phaser.Math.Distance.Between(b.obj.x, b.obj.y, this.player.x, this.player.y - 20) < 16;
-      if (hit) this.damagePlayer(b.damage, b.obj.x, b.obj.y);
+      if (hit) this.damagePlayer(b.damage, b.obj.x, b.obj.y, 'mag');
       const out =
         b.obj.x < -20 || b.obj.y < -20 || b.obj.x > this.map.size.w + 20 || b.obj.y > this.map.size.h + 20;
       if (hit || out || b.ttl <= 0) {
@@ -681,13 +682,18 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Apply damage to the player (shared by contact + attack strikes).
-   *  Respects the post-hit invulnerability window. */
-  private damagePlayer(amount: number, fromX: number, fromY: number): void {
+   *  Respects the post-hit invulnerability window. Defense (防御/魔防)
+   *  mitigates via the shared curve — armor was previously cosmetic. */
+  private damagePlayer(raw: number, fromX: number, fromY: number, kind: 'phys' | 'mag' = 'phys'): void {
     if (this.playerInvuln > 0 || this.playerDead) return;
     this.playerInvuln = 700;
     // Knockback can shove the player onto a walk-on portal mid-fight (boss
     // charges ejected hunters from the arena). Briefly disarm portals.
     this.portalGuard = 1500;
+    const amount = mitigateDamage(
+      raw,
+      kind === 'mag' ? gameState.derived.magDef : gameState.derived.def,
+    );
     gameState.hp = Math.max(0, gameState.hp - amount);
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
     this.dmg.show(this.player.x, this.player.y - 40, amount, false);

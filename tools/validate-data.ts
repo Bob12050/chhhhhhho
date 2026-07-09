@@ -52,6 +52,12 @@ const DERIVED_KEYS = new Set([
   'lifesteal',
   'goldRate',
 ]);
+/**
+ * atkSpeed is ADDED to a ×1 multiplier, so equipment values must stay well
+ * below 1 (0.1〜0.5 ≈ +10〜50% swing speed). Values ≥1 once shipped by
+ * accident and made weapons swing 3〜11× fast — never again.
+ */
+const MAX_EQUIP_ATKSPEED = 0.6;
 
 function err(msg: string): void {
   errors.push(msg);
@@ -118,6 +124,9 @@ function validateItems(): void {
     for (const k of Object.keys(e.derived ?? {})) {
       if (!DERIVED_KEYS.has(k)) err(`Equipment ${e.id}: invalid derived stat "${k}"`);
     }
+    const atkSp = (e.derived as Record<string, number> | undefined)?.atkSpeed;
+    if (atkSp != null && atkSp > MAX_EQUIP_ATKSPEED)
+      err(`Equipment ${e.id}: atkSpeed ${atkSp} > ${MAX_EQUIP_ATKSPEED} (it's a multiplier bonus, use 0.1〜0.5)`);
     if (e.sellPrice != null && e.sellPrice < 0) err(`Equipment ${e.id}: negative sellPrice`);
     if (e.element != null && !ELEMENT_SET.has(e.element))
       err(`Equipment ${e.id}: unknown element "${e.element}"`);
