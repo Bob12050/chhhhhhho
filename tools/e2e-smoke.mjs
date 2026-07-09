@@ -96,6 +96,7 @@ try {
   }
   s = await snap(page);
   check('ボス素材がドロップする', (s.materials['gale_feather'] ?? 0) > 0);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(700); // close quest result
   const turnedIn = await page.evaluate(() => window.__test.turnInQuest('hunt_r2_01_zephys'));
   check('報酬を受け取れる（turn-in）', turnedIn === true);
   s = await snap(page);

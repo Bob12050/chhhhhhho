@@ -28,6 +28,7 @@ import type { Direction } from '@/config/layers';
 import { FONT, ninePanel } from '@/ui/theme';
 import { npcHintFor, npcHintFlag } from '@/tutorial/tutorial-defs';
 import { bgm, bgmForMap } from '@/audio/bgm-engine';
+import { craftableEquipmentIds, type QuestResultData, type QuestResultItem } from '@/scenes/quest-result-scene';
 import {
   elementMultiplier,
   statusFromElement,
@@ -1340,27 +1341,36 @@ export class WorldScene extends Phaser.Scene {
     gameState.flags['killed_any'] = true;
     gameState.addKill(def.id); // bestiary discovery + lifetime counter
     recordKill(gameState, def.id); // advance active quest objectives
-    this.notifyHuntComplete(def);
+    const completedHunt = this.completedHuntQuestFor(def);
+    if (completedHunt) this.showQuestClearBanner(completedHunt.name);
     this.scheduleHuntWaves(); // 連続狩猟: next wave after this kill
     const killFlag = `boss_${def.id}_killed`;
     const firstKill = !!def.isBoss && !gameState.flags[killFlag];
     const table = def.dropTableId ? getDropTable(def.dropTableId) : undefined;
+    const earnedDrops: QuestResultItem[] = [];
     if (table) {
       // 歴戦 individuals double every drop chance on top of the player's bonus.
       const dropBonus = gameState.derived.dropRate + (veteran ? VETERAN_MODS.dropBonusAdd : 0);
       const drops = rollDrops(table, this.rng, { firstKill, dropBonus });
       for (const d of drops) {
-        const ox = this.rng.intRange(-12, 12);
-        const oy = this.rng.intRange(-6, 10);
-        this.spawnLoot(x + ox, y + oy, d.itemId, d.qty);
+        earnedDrops.push(d);
+        if (completedHunt) {
+          this.grantLoot(d.itemId, d.qty);
+          this.floatText(x, y - 18, `+${itemDisplayName(d.itemId)}×${d.qty}`, rarityColorHex(this.itemRarity(d.itemId)));
+        } else {
+          const ox = this.rng.intRange(-12, 12);
+          const oy = this.rng.intRange(-6, 10);
+          this.spawnLoot(x + ox, y + oy, d.itemId, d.qty);
+        }
       }
     }
     const rewardMult = veteran ? VETERAN_MODS.rewardMult : 1;
+    let combatGold = 0;
     if (def.goldReward) {
       // 金運 (goldRate) scales combat gold; shop sells stay untouched.
-      const gold = Math.round(def.goldReward * rewardMult * (1 + gameState.derived.goldRate));
-      gameState.addGold(gold);
-      this.floatText(x + 14, y - 24, `+${gold}G`);
+      combatGold = Math.round(def.goldReward * rewardMult * (1 + gameState.derived.goldRate));
+      gameState.addGold(combatGold);
+      this.floatText(x + 14, y - 24, `+${combatGold}G`);
     }
     const expGain = Math.round(def.expReward * rewardMult);
     gameState.gainExp(expGain);
@@ -1377,18 +1387,37 @@ export class WorldScene extends Phaser.Scene {
       this.floatText(x, y - 46, `${def.name} を倒した！`);
       void this.save();
     }
+    if (completedHunt) this.scheduleQuestResult(completedHunt, combatGold, expGain, earnedDrops);
   }
 
-  /** Show a hunt-complete banner when killing this enemy finishes a hunt quest. */
-  private notifyHuntComplete(def: EnemyDef): void {
+  private completedHuntQuestFor(def: EnemyDef): QuestDef | null {
     for (const qid of gameState.activeQuests) {
       const q = getQuest(qid);
       if (!q?.huntMap || !q.objectives.some((o) => o.enemyId === def.id)) continue;
-      if (isComplete(gameState, qid)) {
-        this.showQuestClearBanner(q.name);
-        break;
-      }
+      if (isComplete(gameState, qid)) return q;
     }
+    return null;
+  }
+
+  private scheduleQuestResult(quest: QuestDef, combatGold: number, combatExp: number, drops: QuestResultItem[]): void {
+    const reportItems = Object.entries(quest.rewards.items ?? {}).map(([itemId, qty]) => ({ itemId, qty }));
+    const data: QuestResultData = {
+      questName: quest.name,
+      rank: quest.rank,
+      veteran: quest.veteran,
+      combatGold,
+      combatExp,
+      drops,
+      reportGold: Math.round((quest.rewards.gold ?? 0) * (1 + gameState.derived.goldRate)),
+      reportExp: quest.rewards.exp ?? 0,
+      reportItems,
+      craftableEquipment: craftableEquipmentIds(),
+    };
+    this.time.delayedCall(1050, () => {
+      if (this.transitioning || this.playerDead || !this.scene.isActive() || this.scene.isPaused()) return;
+      this.scene.pause();
+      this.scene.launch('QuestResult', data);
+    });
   }
 
   /** MH-style quest-clear ceremony: banner band + fanfare, then fades out. */
@@ -1509,6 +1538,14 @@ export class WorldScene extends Phaser.Scene {
     const itemId = l.getData('itemId') as string | undefined;
     if (!itemId) return;
     const qty = (l.getData('qty') as number | undefined) ?? 1;
+    this.grantLoot(itemId, qty);
+    const label = qty > 1 ? `+${itemDisplayName(itemId)}×${qty}` : `+${itemDisplayName(itemId)}`;
+    this.floatText(l.x, l.y - 18, label, rarityColorHex(this.itemRarity(itemId)));
+    (l.getData('beam') as Phaser.GameObjects.Rectangle | undefined)?.destroy();
+    l.destroy();
+  }
+
+  private grantLoot(itemId: string, qty: number): void {
     if (getMaterial(itemId)) gameState.addMaterial(itemId, qty);
     else if (getConsumable(itemId)) gameState.addConsumable(itemId, qty);
     else if (getPetItem(itemId)) {
@@ -1516,10 +1553,6 @@ export class WorldScene extends Phaser.Scene {
       for (let i = 0; i < qty; i++) gameState.addEgg(itemId);
       this.floatText(this.player.x, this.player.y - 52, 'たまごを拾った！ペット画面で孵化できる', '#ffd0e8');
     } else if (getEquipment(itemId)) for (let i = 0; i < qty; i++) gameState.addEquipment(itemId);
-    const label = qty > 1 ? `+${itemDisplayName(itemId)}×${qty}` : `+${itemDisplayName(itemId)}`;
-    this.floatText(l.x, l.y - 18, label, rarityColorHex(this.itemRarity(itemId)));
-    (l.getData('beam') as Phaser.GameObjects.Rectangle | undefined)?.destroy();
-    l.destroy();
   }
 
   private updateLootMagnet(_delta: number): void {
