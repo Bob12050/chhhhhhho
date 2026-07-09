@@ -112,7 +112,7 @@ try {
   });
   await page.waitForTimeout(1600);
   await page.keyboard.down('w'); await page.waitForTimeout(200); await page.keyboard.up('w');
-  await page.keyboard.press('e'); await page.waitForTimeout(1200);
+  await page.keyboard.down('e'); await page.waitForTimeout(140); await page.keyboard.up('e'); await page.waitForTimeout(1200);
   // 武器タブ→槌チップ（bar内 6番目）は座標依存が強いので「全部」のまま、
   // craftable-first ソートで主の大槌が上位に来る前提で最初の 作る を押す。
   const before = await snap(page);

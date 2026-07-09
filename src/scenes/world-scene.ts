@@ -48,6 +48,9 @@ interface BuiltNpc {
 
 /** Delay before a defeated normal enemy respawns at its post (farmability). */
 const RESPAWN_MS = 8000;
+const LOOT_PICKUP_RADIUS = 42;
+const LOOT_MAGNET_RADIUS = 150;
+const LOOT_MAGNET_SPEED = 260;
 
 /**
  * Generic world scene: renders whichever map `gameState.mapId` points at,
@@ -1519,6 +1522,24 @@ export class WorldScene extends Phaser.Scene {
     l.destroy();
   }
 
+  private updateLootMagnet(_delta: number): void {
+    for (const obj of this.loot.getChildren()) {
+      const l = obj as Phaser.Physics.Arcade.Image;
+      if (!l.active) continue;
+      const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, l.x, l.y);
+      if (dist <= LOOT_PICKUP_RADIUS) {
+        this.pickup(l);
+        continue;
+      }
+      if (dist <= LOOT_MAGNET_RADIUS) {
+        const pull = 1 + (LOOT_MAGNET_RADIUS - dist) / LOOT_MAGNET_RADIUS;
+        this.physics.moveToObject(l, this.player.body, LOOT_MAGNET_SPEED * pull);
+      } else {
+        l.setVelocity(0, 0);
+      }
+    }
+  }
+
   /** Celebratory feedback when the active job levels up (from kills). */
   private onLevelUp(level: number): void {
     const x = this.player.x;
@@ -1637,6 +1658,7 @@ export class WorldScene extends Phaser.Scene {
     if (this.boss && !this.boss.isDead()) this.bossBrain?.update(delta);
     this.updateBullets(delta);
     this.updatePlayerBolts(delta);
+    this.updateLootMagnet(delta);
     if (gameState.tempBuffs.length > 0) gameState.expireBuffs(this.time.now);
 
     const lead = 28;
