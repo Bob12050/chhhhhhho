@@ -94,7 +94,7 @@ export class WorldScene extends Phaser.Scene {
   private minions: Enemy[] = [];
   private bossMaxHp = 0;
   private bossBar: {
-    bg: Phaser.GameObjects.Rectangle;
+    bg: Phaser.GameObjects.Graphics;
     fill: Phaser.GameObjects.Rectangle;
     label: Phaser.GameObjects.Text;
   } | null = null;
@@ -125,6 +125,8 @@ export class WorldScene extends Phaser.Scene {
     this.boss = null;
     this.bossMaxHp = 0;
     this.bossBar = null;
+    // Leaving an arena mid-fight must hand the HUD slot back to the tracker.
+    bus.emit('boss:bar', { active: false });
     this.bossBrain = null;
     this.bullets = [];
     this.bulletPool = [];
@@ -549,22 +551,39 @@ export class WorldScene extends Phaser.Scene {
     bus.emit('sfx:play', { id: 'roar' });
   }
 
+  /**
+   * Boss HP card. Lives in the quest tracker's slot just BELOW the player
+   * status panel — the old top-of-screen bar sat behind the panel and was
+   * invisible during every boss fight. The HUD tracker hides while this is
+   * up (boss:bar event); it returns when the boss dies.
+   */
   private buildBossBar(name: string): void {
     const w = this.scale.width;
-    const bg = this.add.rectangle(w / 2, 30, w - 40, 14, 0x000000, 0.55).setScrollFactor(0).setDepth(8000);
+    const x = 8;
+    const y = 116; // statusPanel bottom + margin (same slot as the tracker)
+    const cardW = w - 16;
+    const cardH = 42;
+    const bg = this.add.graphics().setScrollFactor(0).setDepth(8000);
+    bg.fillStyle(0x1a0e14, 0.88);
+    bg.fillRoundedRect(x, y, cardW, cardH, 7);
+    bg.fillStyle(0xcc3a4a, 0.95);
+    bg.fillRoundedRect(x, y, 3, cardH, { tl: 7, bl: 7, tr: 0, br: 0 });
+    bg.lineStyle(1, 0xff8090, 0.18);
+    bg.strokeRoundedRect(x, y, cardW, cardH, 7);
+    // Empty groove under the fill so lost HP reads clearly.
+    bg.fillStyle(0x000000, 0.5);
+    bg.fillRoundedRect(x + 10, y + 24, cardW - 20, 10, 4);
+    const label = this.add
+      .text(x + 10, y + 4, name, { fontFamily: FONT, fontSize: '12px', color: '#ffd0d8' })
+      .setScrollFactor(0)
+      .setDepth(8002);
     const fill = this.add
-      .rectangle(20, 30, w - 44, 9, 0xcc3a4a)
+      .rectangle(x + 11, y + 29, cardW - 22, 8, 0xcc3a4a)
       .setOrigin(0, 0.5)
       .setScrollFactor(0)
       .setDepth(8001);
-    // Right-aligned: the player status panel covers the top-LEFT, so a
-    // centred name was always hidden behind it. The right side stays clear.
-    const label = this.add
-      .text(w - 52, 30, name, { fontFamily: FONT, fontSize: '10px', color: '#fff' })
-      .setOrigin(1, 0.5)
-      .setScrollFactor(0)
-      .setDepth(8002);
     this.bossBar = { bg, fill, label };
+    bus.emit('boss:bar', { active: true });
   }
 
   private spawnPetIfAny(): void {
@@ -1428,6 +1447,7 @@ export class WorldScene extends Phaser.Scene {
       this.bossBar.fill.destroy();
       this.bossBar.label.destroy();
       this.bossBar = null;
+      bus.emit('boss:bar', { active: false });
     }
   }
 

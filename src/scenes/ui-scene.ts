@@ -313,10 +313,13 @@ export class UIScene extends Phaser.Scene {
     const trObj = this.add
       .text(hudX + 8, trY + 19, '', { fontFamily: FONT, fontSize: '10px', color: '#cfd3e6' })
       .setDepth(depth);
+    // While a boss HP card is up it borrows this exact HUD slot, so the
+    // tracker yields (the objective IS the boss on screen anyway).
+    let bossBarActive = false;
     const setTrackerVisible = (v: boolean): void => {
-      trPanel.setVisible(v);
-      trTitle.setVisible(v);
-      trObj.setVisible(v);
+      trPanel.setVisible(v && !bossBarActive);
+      trTitle.setVisible(v && !bossBarActive);
+      trObj.setVisible(v && !bossBarActive);
     };
     const refreshTracker = (): void => {
       // First incomplete active quest; if everything is done, prompt to report.
@@ -350,6 +353,12 @@ export class UIScene extends Phaser.Scene {
     };
     refreshTracker();
     this.busOff.push(bus.on('quest:changed', refreshTracker));
+    this.busOff.push(
+      bus.on('boss:bar', ({ active }) => {
+        bossBarActive = active;
+        refreshTracker();
+      }),
+    );
 
     // Bag button (top-right) opens the inventory/menu.
     const bag = new TouchButton(this, w - insets.right - 24, insets.top + 26, 22, '', 0x6a4ea0, depth, TEX.iconBag);
