@@ -1,6 +1,6 @@
 /**
  * Debug-gated automation hooks (`window.__test`). Installed ONLY when the
- * debug flag is on (?debug=1 / DEV) so the E2E smoke suite can assert real
+ * debug flag is on (?debug=1 / localStorage.debug) so the E2E smoke suite can assert real
  * game state and set up scenarios against PRODUCTION builds, where module
  * imports aren't reachable from the page. Players never get this object.
  */

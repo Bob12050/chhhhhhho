@@ -647,6 +647,7 @@ export class WorldScene extends Phaser.Scene {
     this.spawnZap(this.pet.x, this.pet.y - 14, target.x, target.y - 20);
     target.takeDamage(dmg, this.pet.x, this.pet.y, 40);
     this.dmg.show(target.x, target.y - 42, dmg, false, '#a8f0c0');
+    this.spawnHitSpark(target.x, target.y - 22, false, 0xa8f0c0);
   }
 
   private spawnNpc(
@@ -759,8 +760,9 @@ export class WorldScene extends Phaser.Scene {
     const killed = e.takeDamage(amount, this.player.x, this.player.y, knockback);
     // Elemental hits color the number; a super-effective hit reads red.
     const color = element !== 'none' ? elementColorHex(element) : undefined;
+    const sparkColor = weak ? 0xff5a5a : element !== 'none' ? ELEMENT_COLOR[element] : 0xffffff;
     this.dmg.show(e.x, e.y - 42, amount, crit, weak ? '#ff5a5a' : color);
-    this.spawnHitSpark(e.x, e.y - 22, crit);
+    this.spawnHitSpark(e.x, e.y - 22, crit, sparkColor);
     bus.emit('combat:damage-dealt', { x: e.x, y: e.y, amount, crit });
     // 吸血 (lifesteal): boss-gear special — heal a fraction of dealt damage.
     const ls = gameState.derived.lifesteal;
@@ -805,8 +807,8 @@ export class WorldScene extends Phaser.Scene {
       }
     }
     if (hitStop) {
-      this.hitStop(60);
-      this.cameras.main.shake(anyCrit ? 90 : 60, anyCrit ? 0.005 : 0.0028);
+      this.hitStop(anyCrit ? 76 : 62);
+      this.cameras.main.shake(anyCrit ? 120 : 80, anyCrit ? 0.0065 : 0.0038);
       bus.emit('sfx:play', { id: anyCrit ? 'crit' : 'hit' });
     }
   }
@@ -815,20 +817,57 @@ export class WorldScene extends Phaser.Scene {
   private spawnSlash(dir: Direction): void {
     const { ax, ay } = aheadOffset(dir, 1);
     const ang = Math.atan2(ay, ax);
-    const cx = this.player.x + ax * 12;
-    const cy = this.player.y - 24 + ay * 12;
-    const g = this.add.graphics().setDepth(Math.round(this.player.y) + 2);
-    g.lineStyle(3, 0xffffff, 0.9);
+    const cx = Math.round(this.player.x + ax * 14);
+    const cy = Math.round(this.player.y - 24 + ay * 14);
+    const depth = 9000;
+    const g = this.add.graphics().setPosition(cx, cy).setDepth(depth);
+    g.setBlendMode(Phaser.BlendModes.ADD);
+    g.lineStyle(9, 0x7ae3ff, 0.72);
     g.beginPath();
-    g.arc(cx, cy, 18, ang - 1.0, ang + 1.0, false);
+    g.arc(0, 0, 24, ang - 1.08, ang + 1.08, false);
     g.strokePath();
+    g.lineStyle(5, 0xffffff, 1);
+    g.beginPath();
+    g.arc(0, 0, 19, ang - 1.0, ang + 1.0, false);
+    g.strokePath();
+    g.lineStyle(3, 0xffd86b, 0.9);
+    g.beginPath();
+    g.arc(0, 0, 13, ang - 0.86, ang + 0.86, false);
+    g.strokePath();
+    const flash = this.add.circle(cx, cy, 7, 0xffffff, 0.55).setDepth(depth + 1);
+    flash.setBlendMode(Phaser.BlendModes.ADD);
     this.tweens.add({
       targets: g,
       alpha: 0,
-      duration: 160,
+      scaleX: 1.18,
+      scaleY: 1.18,
+      duration: 320,
       ease: 'Quad.easeOut',
       onComplete: () => g.destroy(),
     });
+    this.tweens.add({
+      targets: flash,
+      alpha: 0,
+      scale: 2.4,
+      duration: 220,
+      ease: 'Quad.easeOut',
+      onComplete: () => flash.destroy(),
+    });
+    for (let i = 0; i < 4; i++) {
+      const t = ang - 0.75 + i * 0.5;
+      const px = cx + Math.round(Math.cos(t) * 18);
+      const py = cy + Math.round(Math.sin(t) * 18);
+      const chip = this.add.rectangle(px, py, 2, 2, i % 2 ? 0xffffff : 0xffd86b, 0.95).setDepth(depth + 1);
+      this.tweens.add({
+        targets: chip,
+        x: px + Math.round(Math.cos(t) * 10),
+        y: py + Math.round(Math.sin(t) * 10),
+        alpha: 0,
+        duration: 180,
+        ease: 'Quad.easeOut',
+        onComplete: () => chip.destroy(),
+      });
+    }
   }
 
   /** Dust puffs trailing the roll (no rotation allowed, so dust sells motion). */
@@ -870,19 +909,67 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Small impact burst where a hit lands. */
-  private spawnHitSpark(x: number, y: number, crit: boolean): void {
-    const color = crit ? 0xffd24a : 0xffffff;
-    const spark = this.add
-      .circle(Math.round(x), Math.round(y), crit ? 5 : 3, color, 0.95)
-      .setDepth(9000);
+  private spawnHitSpark(x: number, y: number, crit: boolean, color = 0xffffff): void {
+    const cx = Math.round(x);
+    const cy = Math.round(y);
+    const main = crit ? 0xffd24a : color;
+    const core = this.add.circle(cx, cy, crit ? 7 : 5, main, 0.95).setDepth(9002);
+    core.setBlendMode(Phaser.BlendModes.ADD);
+    const ring = this.add
+      .circle(cx, cy, crit ? 8 : 6, main, 0)
+      .setStrokeStyle(crit ? 3 : 2, main, 0.9)
+      .setDepth(9001);
+    const burst = this.add.graphics().setDepth(9003);
+    const rays = crit ? 10 : 7;
+    burst.lineStyle(crit ? 3 : 2, main, 0.95);
+    for (let i = 0; i < rays; i++) {
+      const a = (Math.PI * 2 * i) / rays + (crit ? 0.08 : 0);
+      const inner = crit ? 5 : 4;
+      const outer = crit ? 24 : 17;
+      burst.lineBetween(
+        cx + Math.round(Math.cos(a) * inner),
+        cy + Math.round(Math.sin(a) * inner),
+        cx + Math.round(Math.cos(a) * outer),
+        cy + Math.round(Math.sin(a) * outer),
+      );
+    }
     this.tweens.add({
-      targets: spark,
-      scale: crit ? 3 : 2.2,
+      targets: core,
+      scale: crit ? 2.5 : 2,
       alpha: 0,
-      duration: crit ? 260 : 200,
+      duration: crit ? 260 : 210,
       ease: 'Cubic.Out',
-      onComplete: () => spark.destroy(),
+      onComplete: () => core.destroy(),
     });
+    this.tweens.add({
+      targets: ring,
+      scale: crit ? 3.2 : 2.5,
+      alpha: 0,
+      duration: crit ? 300 : 240,
+      ease: 'Cubic.Out',
+      onComplete: () => ring.destroy(),
+    });
+    this.tweens.add({
+      targets: burst,
+      alpha: 0,
+      duration: crit ? 210 : 170,
+      ease: 'Quad.easeOut',
+      onComplete: () => burst.destroy(),
+    });
+    for (let i = 0; i < (crit ? 8 : 5); i++) {
+      const a = (Math.PI * 2 * i) / (crit ? 8 : 5) + Math.random() * 0.4;
+      const dist = (crit ? 22 : 14) + Math.random() * 10;
+      const chip = this.add.rectangle(cx, cy, crit ? 3 : 2, crit ? 3 : 2, i % 2 ? 0xffffff : main, 1).setDepth(9004);
+      this.tweens.add({
+        targets: chip,
+        x: cx + Math.round(Math.cos(a) * dist),
+        y: cy + Math.round(Math.sin(a) * dist),
+        alpha: 0,
+        duration: crit ? 260 : 210,
+        ease: 'Quad.easeOut',
+        onComplete: () => chip.destroy(),
+      });
+    }
   }
 
   /** Full-screen colour flash (camera-locked). Used for player hurt feedback. */
@@ -955,11 +1042,12 @@ export class WorldScene extends Phaser.Scene {
     bus.emit('skill:cooldown', { slot, duration: this.skillCd[slot] });
     this.player.play('cast');
     const dir = this.player.getDirection();
-    this.spawnSkillEffect(dir, def.fx ?? 'magic');
     const atk = def.scaling === 'mag' ? gameState.derived.magAtk : gameState.derived.physAtk;
     // Skill element overrides the weapon's; otherwise the weapon's element rides along.
     const skillEl: Element = isElement(def.element) ? def.element : 'none';
     const element = skillEl !== 'none' ? skillEl : this.weaponElement();
+    this.spawnSkillEffect(dir, def.fx ?? 'magic', element);
+    bus.emit('sfx:play', { id: 'skill' });
 
     // Effect kinds: heal / buff / projectile give each family its own verb;
     // 'damage' (default) is the classic forward strike.
@@ -1075,54 +1163,99 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Cast effect, styled per skill (data-driven `fx`: slash | impact | magic). */
-  private spawnSkillEffect(dir: Direction, style: string): void {
-    if (style === 'slash') this.fxSkillSlash(dir);
-    else if (style === 'impact') this.fxSkillImpact(dir);
-    else this.fxSkillMagic(dir);
+  private spawnSkillEffect(dir: Direction, style: string, element: Element): void {
+    if (style === 'slash') this.fxSkillSlash(dir, element);
+    else if (style === 'impact') this.fxSkillImpact(dir, element);
+    else this.fxSkillMagic(dir, element);
   }
 
   /** 斬撃: a big bright crescent sweeping across the strike arc. */
-  private fxSkillSlash(dir: Direction): void {
+  private fxSkillSlash(dir: Direction, element: Element): void {
     const { ax, ay } = aheadOffset(dir, 1);
     const ang = Math.atan2(ay, ax);
     const cx = Math.round(this.player.x + ax * 14);
     const cy = Math.round(this.player.y - 24 + ay * 14);
-    const g = this.add.graphics().setDepth(Math.round(this.player.y) + 2);
-    g.lineStyle(5, 0xbfefff, 0.95);
+    const color = element !== 'none' ? ELEMENT_COLOR[element] : 0xbfefff;
+    const g = this.add.graphics().setPosition(cx, cy).setDepth(9000);
+    g.setBlendMode(Phaser.BlendModes.ADD);
+    g.lineStyle(12, color, 0.55);
     g.beginPath();
-    g.arc(cx, cy, 26, ang - 1.2, ang + 1.2, false);
+    g.arc(0, 0, 34, ang - 1.22, ang + 1.22, false);
     g.strokePath();
-    g.lineStyle(2, 0xffffff, 1);
+    g.lineStyle(8, 0xbfefff, 0.95);
     g.beginPath();
-    g.arc(cx, cy, 26, ang - 1.2, ang + 1.2, false);
+    g.arc(0, 0, 28, ang - 1.18, ang + 1.18, false);
     g.strokePath();
+    g.lineStyle(4, 0xffffff, 1);
+    g.beginPath();
+    g.arc(0, 0, 22, ang - 1.0, ang + 1.0, false);
+    g.strokePath();
+    const flash = this.add.circle(cx, cy, 11, 0xffffff, 0.72).setDepth(9001);
+    flash.setBlendMode(Phaser.BlendModes.ADD);
     this.tweens.add({
       targets: g,
       alpha: 0,
-      scaleX: 1.25,
-      scaleY: 1.25,
-      duration: 200,
+      scaleX: 1.38,
+      scaleY: 1.38,
+      duration: 420,
       ease: 'Quad.easeOut',
       onComplete: () => g.destroy(),
     });
+    this.tweens.add({
+      targets: flash,
+      alpha: 0,
+      scale: 2.8,
+      duration: 260,
+      ease: 'Quad.easeOut',
+      onComplete: () => flash.destroy(),
+    });
+    for (let i = 0; i < 6; i++) {
+      const t = ang - 0.9 + i * 0.36;
+      const chip = this.add
+        .rectangle(cx + Math.round(Math.cos(t) * 26), cy + Math.round(Math.sin(t) * 26), 3, 3, i % 2 ? 0xffffff : color, 1)
+        .setDepth(Math.round(this.player.y) + 3);
+      this.tweens.add({
+        targets: chip,
+        x: chip.x + Math.round(Math.cos(t) * 16),
+        y: chip.y + Math.round(Math.sin(t) * 16),
+        alpha: 0,
+        duration: 260,
+        ease: 'Quad.easeOut',
+        onComplete: () => chip.destroy(),
+      });
+    }
   }
 
   /** 強打: a heavy ground shockwave ring plus extra shake (weighty hit). */
-  private fxSkillImpact(dir: Direction): void {
+  private fxSkillImpact(dir: Direction, element: Element): void {
     const { ax, ay } = aheadOffset(dir, 22);
     const cx = Math.round(this.player.x + ax);
     const cy = Math.round(this.player.y - 6 + ay);
-    const ring = this.add.circle(cx, cy, 8, 0xffd27a, 0).setDepth(Math.round(this.player.y) + 2);
-    ring.setStrokeStyle(4, 0xffb24a, 0.95);
+    const color = element !== 'none' ? ELEMENT_COLOR[element] : 0xffb24a;
+    const depth = Math.round(this.player.y) + 2;
+    const ring = this.add.circle(cx, cy, 8, color, 0).setDepth(depth);
+    ring.setStrokeStyle(4, color, 0.95);
     this.tweens.add({
       targets: ring,
-      scale: 4.5,
+      scale: 5.2,
       alpha: 0,
-      duration: 300,
+      duration: 360,
       ease: 'Cubic.Out',
       onComplete: () => ring.destroy(),
     });
-    const flash = this.add.circle(cx, cy, 14, 0xfff2c0, 0.9).setDepth(Math.round(this.player.y) + 3);
+    const crack = this.add.graphics().setDepth(depth + 1);
+    crack.lineStyle(2, 0x2a1c18, 0.8);
+    crack.lineBetween(cx - 22, cy, cx + 22, cy);
+    crack.lineBetween(cx, cy - 16, cx, cy + 16);
+    crack.lineBetween(cx - 14, cy - 9, cx + 15, cy + 10);
+    this.tweens.add({
+      targets: crack,
+      alpha: 0,
+      duration: 420,
+      ease: 'Quad.easeOut',
+      onComplete: () => crack.destroy(),
+    });
+    const flash = this.add.circle(cx, cy, 16, 0xfff2c0, 0.9).setDepth(depth + 2);
     this.tweens.add({
       targets: flash,
       scale: 0.2,
@@ -1131,28 +1264,67 @@ export class WorldScene extends Phaser.Scene {
       ease: 'Quad.easeOut',
       onComplete: () => flash.destroy(),
     });
-    this.cameras.main.shake(120, 0.006);
+    for (let i = 0; i < 5; i++) {
+      const a = -Math.PI + i * (Math.PI / 4) + Math.random() * 0.3;
+      const dust = this.add.circle(cx, cy + 4, 4, 0xd8c090, 0.45).setDepth(depth);
+      this.tweens.add({
+        targets: dust,
+        x: cx + Math.round(Math.cos(a) * (18 + i * 3)),
+        y: cy + Math.round(Math.sin(a) * 8) + 8,
+        alpha: 0,
+        scale: 1.8,
+        duration: 320,
+        ease: 'Quad.easeOut',
+        onComplete: () => dust.destroy(),
+      });
+    }
+    this.cameras.main.shake(150, 0.007);
   }
 
   /** Default magic burst (expanding blue orb). */
-  private fxSkillMagic(dir: Direction): void {
+  private fxSkillMagic(dir: Direction, element: Element): void {
     const { ax, ay } = aheadOffset(dir, 30);
+    const color = element !== 'none' ? ELEMENT_COLOR[element] : 0x9cd2ff;
+    const cx = Math.round(this.player.x + ax);
+    const cy = Math.round(this.player.y - 30 + ay);
     const fx = this.add.circle(
-      Math.round(this.player.x + ax),
-      Math.round(this.player.y - 30 + ay),
+      cx,
+      cy,
       6,
-      0x9cd2ff,
+      color,
       0.85,
     );
-    fx.setDepth(Math.round(this.player.y) + 1);
+    fx.setDepth(Math.round(this.player.y) + 2).setBlendMode(Phaser.BlendModes.ADD);
+    const ring = this.add.circle(cx, cy, 10, color, 0).setStrokeStyle(3, 0xffffff, 0.8).setDepth(Math.round(this.player.y) + 1);
     this.tweens.add({
       targets: fx,
-      scale: 4,
+      scale: 4.8,
       alpha: 0,
-      duration: 220,
+      duration: 340,
       ease: 'Cubic.Out',
       onComplete: () => fx.destroy(),
     });
+    this.tweens.add({
+      targets: ring,
+      scale: 3.2,
+      alpha: 0,
+      duration: 360,
+      ease: 'Quad.easeOut',
+      onComplete: () => ring.destroy(),
+    });
+    for (let i = 0; i < 6; i++) {
+      const a = (Math.PI * 2 * i) / 6;
+      const mote = this.add.circle(cx, cy, 2, i % 2 ? 0xffffff : color, 0.9).setDepth(Math.round(this.player.y) + 3);
+      this.tweens.add({
+        targets: mote,
+        x: cx + Math.round(Math.cos(a) * 30),
+        y: cy + Math.round(Math.sin(a) * 22),
+        alpha: 0,
+        duration: 300,
+        ease: 'Quad.easeOut',
+        onComplete: () => mote.destroy(),
+      });
+    }
   }
 
   private onEnemyDeath(x: number, y: number, def: EnemyDef, veteran = false): void {

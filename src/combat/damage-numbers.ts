@@ -18,26 +18,27 @@ export class DamageNumbers {
   /** `color` overrides the number color (e.g. elemental / DoT tints). */
   show(x: number, y: number, amount: number, crit: boolean, color?: string): void {
     const t = this.acquire();
-    t.setText(crit ? `${amount}!` : `${amount}`);
+    t.setText(crit ? `${amount}!!` : `${amount}`);
     t.setColor(color ?? (crit ? '#ffd24a' : '#ffffff'));
-    t.setFontSize(crit ? 19 : 13);
+    t.setFontSize(crit ? 21 : 15);
     // Dark outline keeps numbers readable over any tile/sprite.
-    t.setStroke('#1a1020', crit ? 5 : 4);
+    t.setStroke('#1a1020', crit ? 6 : 4);
+    t.setShadow(0, 2, '#000000', 2, false, true);
     const jitter = Math.round((Math.random() - 0.5) * 10);
     const px = Math.round(x) + jitter;
     const py = Math.round(y);
     t.setPosition(px, py);
     t.setAlpha(1);
-    t.setScale(crit ? 1.5 : 1.3);
+    t.setScale(crit ? 1.65 : 1.35);
     t.setVisible(true);
     // Pop in (scale settle), then rise + fade out.
-    this.scene.tweens.add({ targets: t, scaleX: 1, scaleY: 1, duration: 160, ease: 'Back.easeOut' });
+    this.scene.tweens.add({ targets: t, scaleX: 1, scaleY: 1, duration: 180, ease: 'Back.easeOut' });
     this.scene.tweens.add({
       targets: t,
-      y: py - (crit ? 28 : 18),
+      y: py - (crit ? 34 : 24),
       alpha: 0,
-      duration: crit ? 700 : 600,
-      delay: crit ? 120 : 60,
+      duration: crit ? 820 : 690,
+      delay: crit ? 140 : 70,
       ease: 'Quad.easeOut',
       onComplete: () => this.release(t),
     });

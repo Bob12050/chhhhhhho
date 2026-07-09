@@ -2,11 +2,11 @@
  * Debug-tools gating. `debug` is true when ANY of:
  *   - URL `?debug=1`
  *   - `localStorage.debug === "1"`
- *   - `import.meta.env.DEV` (dev server)
- * ...UNLESS `?debug=0` is present, which forces it OFF even on the dev server —
- * this is the clean "screenshot / art-review" mode. `?debug=1` / `?debug=0` also
- * persist to `localStorage.debug`. A normal published URL resolves to false, so
- * players never see the DEV button, warp menu, or any debug overlay.
+ * ...UNLESS `?debug=0` is present, which forces it OFF. Dev server alone does
+ * not enable the overlay; local art review should look player-facing by default.
+ * `?debug=1` / `?debug=0` also persist to `localStorage.debug`. A normal
+ * published URL resolves to false, so players never see the DEV button, warp
+ * menu, or any debug overlay.
  *
  * Computed once at load (the URL/flag can't change without a reload).
  */
@@ -29,7 +29,7 @@ function compute(): boolean {
   } catch {
     /* no window (SSR / tests) */
   }
-  return !!import.meta.env.DEV;
+  return false;
 }
 
 const DEBUG = compute();
