@@ -14,13 +14,15 @@
     "validate-data": "tsx tools/validate-data.ts",
     "gen-templates": "tsx tools/gen-templates.ts",
     "check-assets": "tsx tools/check-assets.ts",
-    "balance-sim": "tsx tools/balance-sim.ts"
+    "balance-sim": "tsx tools/balance-sim.ts",
+    "e2e": "node tools/e2e-smoke.mjs"
   },
   "dependencies": {
     "phaser": "4.2.0"
   },
   "devDependencies": {
     "@types/node": "22.20.0",
+    "playwright": "^1.61.1",
     "tsx": "4.22.4",
     "typescript": "6.0.3",
     "vite": "8.0.16",

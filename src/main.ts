@@ -29,6 +29,7 @@ import { installOrientationGuard } from '@/scenes/orientation-guard';
 import { installLifecycle } from '@/core/lifecycle';
 import { registerServiceWorker } from '@/core/pwa';
 import { soundEngine } from '@/audio/sound-engine';
+import { installTestHooks } from '@/core/test-hooks';
 
 // Logical size: width is fixed at 360; height follows the device aspect ratio
 // clamped to [640, 800]. Integer zoom + letterbox is handled by Phaser FIT
@@ -101,6 +102,7 @@ function startGame(): void {
   bgm.setVolume(settings.bgmVol);
   installOrientationGuard(game);
   installLifecycle(game);
+  installTestHooks(); // no-op unless the debug flag is on
   void registerServiceWorker();
 }
 

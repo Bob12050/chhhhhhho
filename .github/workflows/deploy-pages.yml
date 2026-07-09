@@ -42,6 +42,18 @@ jobs:
         run: npm run build
         env:
           VITE_BASE: /chhhhhhho/
+      # E2E smoke: boots the REAL built game headless and plays the core
+      # loops (new game → combat → hunt quest → craft → pet hatch → save/
+      # reload). A red run blocks the deploy — broken builds never ship.
+      - name: Install E2E browser
+        run: npx playwright install --with-deps chromium
+      - name: E2E smoke (headless playthrough)
+        env:
+          VITE_BASE: /chhhhhhho/
+        run: |
+          npx vite preview --port 4173 &
+          sleep 4
+          node tools/e2e-smoke.mjs http://localhost:4173/chhhhhhho
       - uses: actions/configure-pages@v5
         with:
           # Enable Pages (build_type=workflow) automatically if not already on,

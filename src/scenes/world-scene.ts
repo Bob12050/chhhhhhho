@@ -122,6 +122,7 @@ export class WorldScene extends Phaser.Scene {
     this.portalLock = 600;
     this.portalHintCd = 0;
     this.portalGuard = 0;
+    this.petAtkCd = 0;
     this.transitioning = false;
     this.rng = new Rng((Date.now() ^ 0x9e3779b9) >>> 0);
     this.pet = null;
@@ -303,17 +304,26 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * Monster-Hunter style hunts: for every active quest whose `huntMap` is the
-   * current map, spawn its CURRENT wave (objectives are hunted in order —
-   * 連続狩猟/露払い). The wave returns each time you enter while the quest is
-   * active, so repeatable hunts let you farm materials.
+   * Monster-Hunter style hunts: ONE quest drives an arena per visit — with
+   * several active hunts on the same map (e.g. 通常＋歴戦 of the same boss,
+   * or two different bosses sharing an arena), spawning them all at once
+   * stacked two bosses on one point, corrupted this.boss/bossBar tracking,
+   * and let the 歴戦 quest complete off a normal-stat kill. Veteran quests
+   * win the pick so the harder version is the one that spawns.
    */
-  private spawnHuntTargets(): void {
+  private currentHuntQuest(): QuestDef | null {
+    let pick: QuestDef | null = null;
     for (const qid of gameState.activeQuests) {
       const q = getQuest(qid);
-      if (!q || q.huntMap !== this.map.id) continue;
-      this.spawnHuntWave(q, false);
+      if (!q || q.huntMap !== this.map.id || isComplete(gameState, qid)) continue;
+      if (!pick || (q.veteran && !pick.veteran)) pick = q;
     }
+    return pick;
+  }
+
+  private spawnHuntTargets(): void {
+    const q = this.currentHuntQuest();
+    if (q) this.spawnHuntWave(q, false);
   }
 
   /**
@@ -357,16 +367,14 @@ export class WorldScene extends Phaser.Scene {
    * itself isn't done, spawn the next wave (short delay so the death reads).
    */
   private scheduleHuntWaves(): void {
-    for (const qid of gameState.activeQuests) {
-      const q = getQuest(qid);
-      if (!q || q.huntMap !== this.map.id || isComplete(gameState, qid)) continue;
-      this.time.delayedCall(900, () => {
-        if (this.transitioning || !this.scene.isActive() || this.playerDead) return;
-        if (gameState.activeQuests.includes(qid) && !isComplete(gameState, qid)) {
-          this.spawnHuntWave(q, true);
-        }
-      });
-    }
+    if (!this.currentHuntQuest()) return;
+    this.time.delayedCall(900, () => {
+      if (this.transitioning || !this.scene.isActive() || this.playerDead) return;
+      // Re-pick at fire time: the driving quest may have completed and the
+      // next active hunt (if any) takes over on re-entry, not mid-visit.
+      const q = this.currentHuntQuest();
+      if (q) this.spawnHuntWave(q, true);
+    });
   }
 
   private spawnEnemy(
@@ -447,7 +455,9 @@ export class WorldScene extends Phaser.Scene {
     return {
       bossPos: () => ({ x: boss.x, y: boss.y }),
       playerPos: () => ({ x: this.player.x, y: this.player.y }),
-      hpPct: () => Math.max(0, boss.hp) / def.maxHp,
+      // cfg.maxHp, NOT def.maxHp: veteran spawns scale HP ×1.6 and the
+      // enrage threshold must track the scaled pool or it fires too late.
+      hpPct: () => Math.max(0, boss.hp) / boss.cfg.maxHp,
       telegraph: (x, y, r, ms, onDone) => this.telegraphFx(x, y, r, ms, onDone),
       explode: (x, y, r, dmg) => this.explodeAt(x, y, r, dmg),
       hold: (ms) => boss.castHold(ms),
@@ -569,6 +579,13 @@ export class WorldScene extends Phaser.Scene {
    * up (boss:bar event); it returns when the boss dies.
    */
   private buildBossBar(name: string): void {
+    // Rebuilding (sequential hunts in one visit) must not orphan the old bar.
+    if (this.bossBar) {
+      this.bossBar.bg.destroy();
+      this.bossBar.fill.destroy();
+      this.bossBar.label.destroy();
+      this.bossBar = null;
+    }
     const w = this.scale.width;
     const x = 8;
     const y = 116; // statusPanel bottom + margin (same slot as the tracker)
@@ -1179,7 +1196,9 @@ export class WorldScene extends Phaser.Scene {
     if (def.isBoss) {
       gameState.flags[killFlag] = true;
       gameState.flags[`${def.id}_defeated`] = true;
-      this.boss = null;
+      // Only drop tracking if the TRACKED boss died (a stray second boss's
+      // death must not tear down the live one's bar/brain).
+      if (!this.boss || this.boss.isDead()) this.boss = null;
       this.floatText(x, y - 46, `${def.name} を倒した！`);
       void this.save();
     }
@@ -1319,7 +1338,7 @@ export class WorldScene extends Phaser.Scene {
     else if (getConsumable(itemId)) gameState.addConsumable(itemId, qty);
     else if (getPetItem(itemId)) {
       // Eggs go to the bag; hatching happens on the pet screen (🐾).
-      gameState.addEgg(itemId);
+      for (let i = 0; i < qty; i++) gameState.addEgg(itemId);
       this.floatText(this.player.x, this.player.y - 52, 'たまごを拾った！ペット画面で孵化できる', '#ffd0e8');
     } else if (getEquipment(itemId)) for (let i = 0; i < qty; i++) gameState.addEquipment(itemId);
     const label = qty > 1 ? `+${itemDisplayName(itemId)}×${qty}` : `+${itemDisplayName(itemId)}`;

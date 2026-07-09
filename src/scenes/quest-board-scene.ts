@@ -397,7 +397,11 @@ export class QuestBoardScene extends Phaser.Scene {
     const h = this.scale.height;
     const rows: { label: string; color: string }[] = [];
     if (q.rewards.exp) rows.push({ label: `EXP +${q.rewards.exp}`, color: '#9fe3a0' });
-    if (q.rewards.gold) rows.push({ label: `ゴールド +${q.rewards.gold}`, color: '#ffd86b' });
+    if (q.rewards.gold) {
+      // Show what was actually granted: turn-in applies the 金運 bonus.
+      const granted = Math.round(q.rewards.gold * (1 + gameState.derived.goldRate));
+      rows.push({ label: `ゴールド +${granted}`, color: '#ffd86b' });
+    }
     for (const [id, qty] of Object.entries(q.rewards.items ?? {})) {
       rows.push({ label: `${itemDisplayName(id)} ×${qty}`, color: '#cfd3e6' });
     }
