@@ -6,7 +6,129 @@
       "textureKey": "gen.enemy.slime",
       "tint": "#a8f0c0",
       "scale": 0.7,
-      "passive": { "maxHp": 10, "def": 1 }
+      "passive": {
+        "maxHp": 10,
+        "def": 1
+      },
+      "atkBase": 3,
+      "description": "ぷるぷるの子分。たまにぶつかって手伝ってくれる。"
+    },
+    {
+      "id": "bat_pet",
+      "name": "ちびこうもり",
+      "textureKey": "gen.enemy.bat",
+      "tint": "#b090e0",
+      "scale": 0.6,
+      "passive": {
+        "evasion": 4,
+        "moveSpeed": 2
+      },
+      "atkBase": 3,
+      "description": "肩にとまりたがる甘えん坊。夜目が利く。"
+    },
+    {
+      "id": "wolf_pet",
+      "name": "こわっぱ狼",
+      "textureKey": "gen.enemy.wolf",
+      "tint": "#b0c8b0",
+      "scale": 0.6,
+      "passive": {
+        "physAtk": 3,
+        "atkSpeed": 1
+      },
+      "atkBase": 5,
+      "description": "群れからはぐれた子狼。牙はまだ乳歯。"
+    },
+    {
+      "id": "shroom_pet",
+      "name": "ぼうしっ子",
+      "textureKey": "gen.enemy.mushroom",
+      "tint": "#f0c0d8",
+      "scale": 0.62,
+      "passive": {
+        "dropRate": 0.04
+      },
+      "atkBase": 2,
+      "description": "帽子の下は誰も見たことがない。幸運の胞子を撒く。"
+    },
+    {
+      "id": "lizard_pet",
+      "name": "いわとかげベビー",
+      "textureKey": "gen.enemy.lizard",
+      "tint": "#d0b080",
+      "scale": 0.6,
+      "passive": {
+        "def": 3,
+        "maxHp": 8
+      },
+      "atkBase": 4,
+      "description": "日なたぼっこが仕事。鱗はもう一人前に硬い。"
+    },
+    {
+      "id": "flame_pet",
+      "name": "ほのおの子",
+      "textureKey": "gen.enemy.wolf",
+      "tint": "#ff9a60",
+      "scale": 0.58,
+      "passive": {
+        "physAtk": 4
+      },
+      "atkBase": 6,
+      "description": "火山生まれの火の粉のかたまり。抱くと温かい。"
+    },
+    {
+      "id": "wisp_pet",
+      "name": "こごえ玉",
+      "textureKey": "gen.enemy.wisp",
+      "tint": "#a0e0f0",
+      "scale": 0.62,
+      "passive": {
+        "magAtk": 4,
+        "maxMp": 6
+      },
+      "atkBase": 5,
+      "description": "ひんやりした光の玉。夏場に人気。"
+    },
+    {
+      "id": "golem_pet",
+      "name": "ミニゴーレム",
+      "textureKey": "gen.enemy.golem",
+      "tint": "#c0c0a0",
+      "scale": 0.6,
+      "passive": {
+        "def": 4,
+        "maxHp": 12
+      },
+      "atkBase": 4,
+      "description": "手のひらサイズの石人形。掃除が得意らしい。"
+    },
+    {
+      "id": "knight_pet",
+      "name": "かげの見習い",
+      "textureKey": "gen.enemy.knight",
+      "tint": "#9090c0",
+      "scale": 0.58,
+      "passive": {
+        "critRate": 0.03,
+        "accuracy": 3
+      },
+      "atkBase": 6,
+      "description": "小さな鎧の亡霊。騎士道を勉強中。"
+    },
+    {
+      "id": "dragon_pet",
+      "name": "ちびドラゴン",
+      "textureKey": "gen.enemy.dragon",
+      "tint": "#ff8080",
+      "scale": 0.55,
+      "passive": {
+        "physAtk": 3,
+        "magAtk": 3,
+        "maxHp": 10,
+        "critRate": 0.02
+      },
+      "atkBase": 8,
+      "description": "竜王の忘れ形見。将来は大物になる…はず。"
     }
   ]
 }

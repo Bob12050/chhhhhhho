@@ -67,6 +67,12 @@
           "dropRate": 0.015,
           "min": 1,
           "max": 1
+        },
+        {
+          "itemId": "pet_egg_bat",
+          "dropRate": 0.03,
+          "min": 1,
+          "max": 1
         }
       ]
     },
@@ -100,6 +106,12 @@
         {
           "itemId": "mythril_ore",
           "dropRate": 0.06,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "pet_egg_golem",
+          "dropRate": 0.03,
           "min": 1,
           "max": 1
         }
@@ -293,6 +305,12 @@
           "dropRate": 0.012,
           "min": 1,
           "max": 1
+        },
+        {
+          "itemId": "pet_egg_wolf",
+          "dropRate": 0.03,
+          "min": 1,
+          "max": 1
         }
       ]
     },
@@ -328,6 +346,12 @@
           "dropRate": 0.02,
           "min": 1,
           "max": 1
+        },
+        {
+          "itemId": "pet_egg_shroom",
+          "dropRate": 0.03,
+          "min": 1,
+          "max": 1
         }
       ]
     },
@@ -357,6 +381,12 @@
           "dropRate": 0.008,
           "min": 1,
           "max": 1
+        },
+        {
+          "itemId": "pet_egg_lizard",
+          "dropRate": 0.03,
+          "min": 1,
+          "max": 1
         }
       ]
     },
@@ -380,6 +410,12 @@
           "dropRate": 0.06,
           "min": 1,
           "max": 1
+        },
+        {
+          "itemId": "pet_egg_bat",
+          "dropRate": 0.04,
+          "min": 1,
+          "max": 1
         }
       ]
     },
@@ -401,6 +437,12 @@
         {
           "itemId": "golem_core",
           "dropRate": 0.08,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "pet_egg_flame",
+          "dropRate": 0.03,
           "min": 1,
           "max": 1
         }
@@ -432,6 +474,12 @@
           "dropRate": 0.008,
           "min": 1,
           "max": 1
+        },
+        {
+          "itemId": "pet_egg_wisp",
+          "dropRate": 0.03,
+          "min": 1,
+          "max": 1
         }
       ]
     },
@@ -453,6 +501,12 @@
         {
           "itemId": "star_fragment",
           "dropRate": 0.04,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "pet_egg_knight",
+          "dropRate": 0.03,
           "min": 1,
           "max": 1
         }
@@ -501,6 +555,12 @@
         {
           "itemId": "dragon_gekirin",
           "dropRate": 0.06,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "pet_egg_dragon",
+          "dropRate": 0.08,
           "min": 1,
           "max": 1
         }

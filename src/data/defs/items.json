@@ -540,6 +540,69 @@
       "petId": "slime_pet",
       "sellPrice": 0,
       "description": "割るとスライムが仲間になる。"
+    },
+    {
+      "id": "pet_egg_bat",
+      "name": "こうもりのたまご",
+      "petId": "bat_pet",
+      "sellPrice": 80,
+      "description": "ほんのり温かい紫のたまご。"
+    },
+    {
+      "id": "pet_egg_wolf",
+      "name": "狼のたまご",
+      "petId": "wolf_pet",
+      "sellPrice": 100,
+      "description": "…狼はたまごを産まないはずだが。"
+    },
+    {
+      "id": "pet_egg_shroom",
+      "name": "きのこのたまご",
+      "petId": "shroom_pet",
+      "sellPrice": 120,
+      "description": "胞子のかたまり。大事に持つと孵る。"
+    },
+    {
+      "id": "pet_egg_lizard",
+      "name": "トカゲのたまご",
+      "petId": "lizard_pet",
+      "sellPrice": 120,
+      "description": "岩みたいに硬い殻のたまご。"
+    },
+    {
+      "id": "pet_egg_flame",
+      "name": "ほのおのたまご",
+      "petId": "flame_pet",
+      "sellPrice": 150,
+      "description": "触れないほど熱いたまご。"
+    },
+    {
+      "id": "pet_egg_wisp",
+      "name": "こおりのたまご",
+      "petId": "wisp_pet",
+      "sellPrice": 150,
+      "description": "溶けない氷のたまご。"
+    },
+    {
+      "id": "pet_egg_golem",
+      "name": "いしのたまご",
+      "petId": "golem_pet",
+      "sellPrice": 150,
+      "description": "ただの石にしか見えないたまご。"
+    },
+    {
+      "id": "pet_egg_knight",
+      "name": "かげのたまご",
+      "petId": "knight_pet",
+      "sellPrice": 200,
+      "description": "夜だけ鼓動が聞こえるたまご。"
+    },
+    {
+      "id": "pet_egg_dragon",
+      "name": "竜のたまご",
+      "petId": "dragon_pet",
+      "sellPrice": 500,
+      "description": "伝説のたまご。竜の巣でしか見つからない。"
     }
   ],
   "equipment": [

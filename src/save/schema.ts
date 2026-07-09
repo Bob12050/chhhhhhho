@@ -46,6 +46,8 @@ export interface SaveDataV1 {
   };
   /** Lifetime kills per enemy id (bestiary). Legacy saves lack it. */
   killCounts?: Record<string, number>;
+  /** Pet system v2 (eggs held + per-pet exp). Legacy saves lack it. */
+  pets?: { eggs: Record<string, number>; exp: Record<string, number> };
   settings: { sfx: boolean; bgm: boolean };
 }
 
@@ -122,6 +124,10 @@ export function migrate(raw: unknown, slot: number): SaveData {
       progress: { ...(data.quests?.progress ?? {}) },
     },
     killCounts: { ...(data.killCounts ?? {}) },
+    pets: {
+      eggs: { ...(data.pets?.eggs ?? {}) },
+      exp: { ...(data.pets?.exp ?? {}) },
+    },
     settings: { ...def.settings, ...(data.settings ?? {}) },
   };
 

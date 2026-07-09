@@ -86,6 +86,9 @@ export function getConsumable(id: string): ConsumableDef | undefined {
 export function getPetItem(id: string): PetItemDef | undefined {
   return petItems.get(id);
 }
+export function allPetItems(): PetItemDef[] {
+  return [...petItems.values()];
+}
 export function getEquipment(id: string): EquipmentDef | undefined {
   return equipment.get(id);
 }

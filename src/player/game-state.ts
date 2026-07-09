@@ -10,6 +10,7 @@ import { getJob } from '@/jobs/job-defs';
 import { getQuest } from '@/quests/quest-defs';
 import { canEquipClass, canEquipWeapon, canEquipTier } from '@/equipment/restrictions';
 import { getPet } from '@/pets/pet-defs';
+import { petLevelFromExp, scaledPassive, DUPLICATE_EGG_EXP } from '@/pets/pet-growth';
 import { getPetItem } from '@/data/items';
 import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
 import { bus } from '@/core/event-bus';
@@ -75,6 +76,10 @@ export class GameState {
   jobExp: Record<string, number> = { adventurer: 0 };
   ownedPets: string[] = [];
   activePetId: string | null = null;
+  /** Unhatched eggs (petItemId -> count). */
+  petEggs: Record<string, number> = {};
+  /** Lifetime pet exp (petId -> total; level is derived in pet-growth). */
+  petExp: Record<string, number> = {};
   derived: DerivedStats = computeDerived(this.base);
 
   mapId = 'town';
@@ -103,7 +108,9 @@ export class GameState {
     }
     // Active pet passive.
     const pet = this.activePetId ? getPet(this.activePetId) : undefined;
-    if (pet?.passive) mods.push({ derived: pet.passive });
+    if (pet?.passive) {
+      mods.push({ derived: scaledPassive(pet, petLevelFromExp(this.petExp[pet.id] ?? 0)) });
+    }
     // Temporary skill buffs (雄叫び etc.); expiry is ticked by the scene.
     for (const b of this.tempBuffs) mods.push({ derived: b.stats });
     const prev = this.derived;
@@ -314,12 +321,53 @@ export class GameState {
     return true;
   }
 
-  /** Obtain a pet via a pet item: add it and auto-summon if none active. */
+  /** Legacy path: instantly hatch a pet item (debug button). */
   obtainPetItem(petItemId: string): boolean {
     const def = getPetItem(petItemId);
     if (!def) return false;
     this.addPet(def.petId);
     return true;
+  }
+
+  /** Store a picked-up egg in the bag (hatch it on the pet screen). */
+  addEgg(petItemId: string): boolean {
+    if (!getPetItem(petItemId)) return false;
+    this.petEggs[petItemId] = (this.petEggs[petItemId] ?? 0) + 1;
+    bus.emit('inventory:changed', {});
+    return true;
+  }
+
+  /**
+   * Hatch one egg: a new species joins at Lv1; a duplicate feeds the pet a
+   * chunk of exp instead. Returns what happened (null = no egg / unknown).
+   */
+  hatchEgg(petItemId: string): 'new' | 'duplicate' | null {
+    const def = getPetItem(petItemId);
+    if (!def || (this.petEggs[petItemId] ?? 0) < 1) return null;
+    this.petEggs[petItemId]--;
+    if (this.petEggs[petItemId] <= 0) delete this.petEggs[petItemId];
+    if (!this.ownedPets.includes(def.petId)) {
+      this.addPet(def.petId);
+      bus.emit('inventory:changed', {});
+      return 'new';
+    }
+    this.gainPetExp(def.petId, DUPLICATE_EGG_EXP);
+    bus.emit('inventory:changed', {});
+    return 'duplicate';
+  }
+
+  /** Feed exp to a pet; recompute when its level (→ passive) changed. */
+  gainPetExp(petId: string, amount: number): void {
+    if (!getPet(petId) || amount <= 0) return;
+    const before = petLevelFromExp(this.petExp[petId] ?? 0);
+    this.petExp[petId] = (this.petExp[petId] ?? 0) + amount;
+    if (petLevelFromExp(this.petExp[petId]) !== before && this.activePetId === petId) {
+      this.recompute();
+    }
+  }
+
+  petLevel(petId: string): number {
+    return petLevelFromExp(this.petExp[petId] ?? 0);
   }
 
   addPet(petId: string): void {
@@ -455,6 +503,7 @@ export class GameState {
         progress: structuredClone(this.questProgress),
       },
       killCounts: { ...this.killCounts },
+      pets: { eggs: { ...this.petEggs }, exp: { ...this.petExp } },
       settings: { sfx: true, bgm: true },
     };
   }
@@ -491,6 +540,15 @@ export class GameState {
     // Bestiary kill counts. Legacy saves lack them: seed defeated bosses from
     // their kill flags so the bestiary isn't empty after an update.
     this.killCounts = { ...(data.killCounts ?? {}) };
+    // Pet system v2: keep only known ids defensively.
+    this.petEggs = {};
+    for (const [id, n] of Object.entries(data.pets?.eggs ?? {})) {
+      if (getPetItem(id) && n > 0) this.petEggs[id] = n;
+    }
+    this.petExp = {};
+    for (const [id, n] of Object.entries(data.pets?.exp ?? {})) {
+      if (getPet(id) && n > 0) this.petExp[id] = n;
+    }
     for (const f of Object.keys(this.flags)) {
       // Kill flags look like `boss_<enemyId>_killed` (enemyId itself starts
       // with "boss_", e.g. boss_boss_flame_killed).

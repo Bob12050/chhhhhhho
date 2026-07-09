@@ -11,6 +11,13 @@ export class Pet {
   readonly sprite: Phaser.GameObjects.Image;
   private readonly speed = 120;
 
+  get x(): number {
+    return this.sprite.x;
+  }
+  get y(): number {
+    return this.sprite.y;
+  }
+
   constructor(scene: Phaser.Scene, x: number, y: number, def: PetDef) {
     this.sprite = scene.add.image(Math.round(x), Math.round(y), def.textureKey, 0).setOrigin(0.5, 0.875);
     if (def.scale) this.sprite.setScale(def.scale);

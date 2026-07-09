@@ -16,6 +16,7 @@ import { getSkill } from '@/skills/skill-defs';
 import { recordKill, isComplete } from '@/quests/quests';
 import { getQuest, type QuestDef } from '@/quests/quest-defs';
 import { currentWave, concurrentSpawnCount, VETERAN_MODS } from '@/quests/hunt-logic';
+import { PET_EXP_SHARE, petAttackDamage } from '@/pets/pet-growth';
 import { input } from '@/input/input-state';
 import { bus } from '@/core/event-bus';
 import { saveManager } from '@/save/save-manager';
@@ -93,6 +94,7 @@ export class WorldScene extends Phaser.Scene {
   private pBoltPool: Phaser.GameObjects.Arc[] = [];
   private minions: Enemy[] = [];
   private bossMaxHp = 0;
+  private petAtkCd = 0;
   private bossBar: {
     bg: Phaser.GameObjects.Graphics;
     fill: Phaser.GameObjects.Rectangle;
@@ -265,6 +267,14 @@ export class WorldScene extends Phaser.Scene {
     this.busOff.push(bus.on('debug:warp', () => this.transitionRestart(true)));
     this.busOff.push(bus.on('player:level-up', ({ level }) => this.onLevelUp(level)));
     this.busOff.push(bus.on('map:travel', () => this.transitionRestart(true)));
+    // Live pet swap (pet screen): replace the follower sprite in place.
+    this.busOff.push(
+      bus.on('pet:changed', () => {
+        this.pet?.destroy();
+        this.pet = null;
+        this.spawnPetIfAny();
+      }),
+    );
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.busOff) off();
       this.busOff = [];
@@ -590,6 +600,35 @@ export class WorldScene extends Phaser.Scene {
     if (this.pet || !gameState.activePetId) return;
     const def = getPet(gameState.activePetId);
     if (def) this.pet = new Pet(this, this.player.x - 18, this.player.y + 8, def);
+  }
+
+  /**
+   * Pet assist: every couple of seconds the active pet zaps the nearest
+   * living enemy near it. Damage comes from the pet's atkBase × its level
+   * (pet-growth), flows through Enemy.takeDamage so kills/drops/quests all
+   * behave exactly like player kills.
+   */
+  private updatePetAssist(delta: number): void {
+    this.petAtkCd -= delta;
+    if (!this.pet || this.petAtkCd > 0 || this.playerDead) return;
+    const def = gameState.activePetId ? getPet(gameState.activePetId) : undefined;
+    if (!def?.atkBase) return;
+    let target: Enemy | null = null;
+    let best = 130;
+    for (const e of this.enemies) {
+      if (e.isDead()) continue;
+      const d = Phaser.Math.Distance.Between(this.pet.x, this.pet.y, e.x, e.y);
+      if (d < best) {
+        best = d;
+        target = e;
+      }
+    }
+    if (!target) return;
+    this.petAtkCd = 2200;
+    const dmg = petAttackDamage(def.atkBase, gameState.petLevel(def.id));
+    this.spawnZap(this.pet.x, this.pet.y - 14, target.x, target.y - 20);
+    target.takeDamage(dmg, this.pet.x, this.pet.y, 40);
+    this.dmg.show(target.x, target.y - 42, dmg, false, '#a8f0c0');
   }
 
   private spawnNpc(
@@ -1125,7 +1164,12 @@ export class WorldScene extends Phaser.Scene {
       gameState.addGold(gold);
       this.floatText(x + 14, y - 24, `+${gold}G`);
     }
-    gameState.gainExp(Math.round(def.expReward * rewardMult));
+    const expGain = Math.round(def.expReward * rewardMult);
+    gameState.gainExp(expGain);
+    // The active pet learns from watching (share of kill exp → its level).
+    if (gameState.activePetId) {
+      gameState.gainPetExp(gameState.activePetId, Math.round(expGain * PET_EXP_SHARE));
+    }
     if (def.isBoss) {
       gameState.flags[killFlag] = true;
       gameState.flags[`${def.id}_defeated`] = true;
@@ -1268,8 +1312,9 @@ export class WorldScene extends Phaser.Scene {
     if (getMaterial(itemId)) gameState.addMaterial(itemId, qty);
     else if (getConsumable(itemId)) gameState.addConsumable(itemId, qty);
     else if (getPetItem(itemId)) {
-      gameState.obtainPetItem(itemId);
-      this.spawnPetIfAny();
+      // Eggs go to the bag; hatching happens on the pet screen (🐾).
+      gameState.addEgg(itemId);
+      this.floatText(this.player.x, this.player.y - 52, 'たまごを拾った！ペット画面で孵化できる', '#ffd0e8');
     } else if (getEquipment(itemId)) for (let i = 0; i < qty; i++) gameState.addEquipment(itemId);
     const label = qty > 1 ? `+${itemDisplayName(itemId)}×${qty}` : `+${itemDisplayName(itemId)}`;
     this.floatText(l.x, l.y - 18, label, rarityColorHex(this.itemRarity(itemId)));
@@ -1390,6 +1435,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.player.update(delta);
     this.pet?.update(delta, this.player.x, this.player.y);
+    this.updatePetAssist(delta);
     for (const e of this.enemies) e.update(delta, this.player.x, this.player.y);
     if (this.boss && !this.boss.isDead()) this.bossBrain?.update(delta);
     this.updateBullets(delta);
