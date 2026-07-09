@@ -38,12 +38,53 @@ def load_png(path: Path) -> Image.Image:
     return Image.open(path).convert('RGBA')
 
 
+def keep_largest_component(img: Image.Image) -> Image.Image:
+    """Drop stray alpha blobs (PixelLab sometimes bakes watermark letters in).
+
+    Flood-fills 4-connected opaque regions and erases everything except the
+    largest one (plus any blob at least 40% of its size, so multi-part
+    designs like detached wings survive)."""
+    w, h = img.size
+    px = img.load()
+    seen = [[False] * h for _ in range(w)]
+    comps: list[list[tuple[int, int]]] = []
+    for sx in range(w):
+        for sy in range(h):
+            if seen[sx][sy] or px[sx, sy][3] <= 16:
+                continue
+            stack = [(sx, sy)]
+            seen[sx][sy] = True
+            comp = []
+            while stack:
+                x, y = stack.pop()
+                comp.append((x, y))
+                for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                    if 0 <= nx < w and 0 <= ny < h and not seen[nx][ny] and px[nx, ny][3] > 16:
+                        seen[nx][ny] = True
+                        stack.append((nx, ny))
+            comps.append(comp)
+    if len(comps) <= 1:
+        return img
+    biggest = max(len(c) for c in comps)
+    removed = 0
+    for comp in comps:
+        if len(comp) >= biggest * 0.4:
+            continue
+        for x, y in comp:
+            px[x, y] = (0, 0, 0, 0)
+        removed += 1
+    if removed:
+        print(f'  cleaned {removed} stray blob(s) (watermark bits etc.)')
+    return img
+
+
 def main() -> None:
     if len(sys.argv) != 3:
         sys.exit(__doc__)
     src = Path(sys.argv[1])
     out_name = sys.argv[2]
     img = load_png(src)
+    img = keep_largest_component(img)
 
     bbox = img.getbbox()
     if not bbox:

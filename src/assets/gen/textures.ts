@@ -42,6 +42,8 @@ export const TEX = {
   // texture if the PNG fails to load — see ensureGeneratedTextures).
   zephys: 'gen.enemy.zephys',
   hydra: 'gen.enemy.hydra',
+  sandgoa: 'gen.enemy.sandgoa',
+  almagia: 'gen.enemy.almagia',
   tileGrass: 'gen.tile.grass',
   tileGrass2: 'gen.tile.grass2',
   tilePath: 'gen.tile.path',
@@ -124,6 +126,8 @@ const SPECS: Record<string, LayerSpec> = {
 const ART_FALLBACK: Record<string, string> = {
   [TEX.zephys]: TEX.bat,
   [TEX.hydra]: TEX.lizard,
+  [TEX.sandgoa]: TEX.golem,
+  [TEX.almagia]: TEX.knight,
 };
 
 export function ensureGeneratedTextures(scene: Phaser.Scene): void {

@@ -1002,9 +1002,8 @@
     {
       "id": "boss_sandgoa",
       "name": "流砂の巨神 サンドゴア",
-      "textureKey": "gen.enemy.golem",
-      "tint": "#d8b060",
-      "scale": 2.4,
+      "textureKey": "gen.enemy.sandgoa",
+      "scale": 2.2,
       "isBoss": true,
       "maxHp": 5960,
       "moveSpeed": 30,
@@ -1329,9 +1328,8 @@
     {
       "id": "boss_almagia",
       "name": "古代機神 アルマギア",
-      "textureKey": "gen.enemy.knight",
-      "tint": "#8a9ab0",
-      "scale": 2.3,
+      "textureKey": "gen.enemy.almagia",
+      "scale": 2.1,
       "isBoss": true,
       "maxHp": 13090,
       "moveSpeed": 40,
