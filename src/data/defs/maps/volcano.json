@@ -47,9 +47,25 @@
     "from_canyon": [
       180,
       1180
+    ],
+    "from_snowfield": [
+      180,
+      150
     ]
   },
   "portals": [
+    {
+      "rect": [
+        148,
+        32,
+        64,
+        32
+      ],
+      "to": "snowfield",
+      "toSpawn": "from_volcano",
+      "label": "雪原へ",
+      "requiresFlag": "boss_hydra_defeated"
+    },
     {
       "rect": [
         148,

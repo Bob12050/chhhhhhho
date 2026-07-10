@@ -2671,8 +2671,58 @@
       }
     },
     {
+      "id": "main_10_venom",
+      "name": "第6章 沼に滲む深淵",
+      "type": "main",
+      "description": "竜王の警告は早くも形になった。深淵の澱が地脈を伝って沼へ滲み、主のヒュドラを狂わせている。毒が里の水に届く前に、源を断て。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_hydra",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 40,
+        "questDone": "main_05_dragon"
+      },
+      "huntMap": "arena_swamp",
+      "rewards": {
+        "gold": 1500,
+        "exp": 6200,
+        "items": {
+          "hydra_orb": 2
+        }
+      }
+    },
+    {
+      "id": "main_11_earthfang",
+      "name": "第7章 大地の牙",
+      "type": "main",
+      "description": "沼だけではない。渓谷の地脈も脈打ち、岩牙竜ガロが縄張りを捨てて暴れ始めた。大地の異変の正体を、その牙から読み取れ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_lizard_king",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 48,
+        "questDone": "main_10_venom"
+      },
+      "huntMap": "arena_canyon",
+      "rewards": {
+        "gold": 1800,
+        "exp": 7500,
+        "items": {
+          "garo_horn": 2
+        }
+      }
+    },
+    {
       "id": "main_06_queen",
-      "name": "第6章 氷の女王の封印",
+      "name": "第8章 氷の女王の封印",
       "type": "main",
       "description": "ヴァルガは語った。「深淵の底に、古の機神が眠る。封じたのは氷の女王だ」。グラキエスの氷片には封印の記憶が宿る——力ずくで分けてもらう。",
       "objectives": [
@@ -2684,7 +2734,7 @@
       ],
       "require": {
         "minLevel": 56,
-        "questDone": "main_05_dragon"
+        "questDone": "main_11_earthfang"
       },
       "huntMap": "arena_frost",
       "rewards": {
@@ -2696,8 +2746,33 @@
       }
     },
     {
+      "id": "main_12_quicksand",
+      "name": "第9章 流砂の封印庫",
+      "type": "main",
+      "description": "女王の氷片が示した封印の要は、流砂の底に沈む古代の封印庫にあった。だが庫の番人サンドゴアは、訪う者を選ばない。掘り起こせ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_sandgoa",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 62,
+        "questDone": "main_06_queen"
+      },
+      "huntMap": "arena_canyon",
+      "rewards": {
+        "gold": 2700,
+        "exp": 11000,
+        "items": {
+          "sand_heart": 2
+        }
+      }
+    },
+    {
       "id": "main_07_knight",
-      "name": "第7章 不死騎士の遺言",
+      "name": "第10章 不死騎士の遺言",
       "type": "main",
       "description": "機神を封じた騎士団の最後の一人が、古城で今も玉座を守っている。モルドの魂鉄には封印の要が残る。安らかに眠らせ、遺言を受け取れ。",
       "objectives": [
@@ -2709,7 +2784,7 @@
       ],
       "require": {
         "minLevel": 68,
-        "questDone": "main_06_queen"
+        "questDone": "main_12_quicksand"
       },
       "huntMap": "arena_ruins",
       "rewards": {
@@ -2721,8 +2796,33 @@
       }
     },
     {
+      "id": "main_13_furnace",
+      "name": "第11章 機神の炉心",
+      "type": "main",
+      "description": "深淵の鼓動に呼応して、火山の奥で機神の炉が熱を取り戻し始めた。炉の火を喰らって育つ熔牙竜イグニガロを討ち、点火を遅らせろ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_ignigaro",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 74,
+        "questDone": "main_07_knight"
+      },
+      "huntMap": "arena_volcano",
+      "rewards": {
+        "gold": 3800,
+        "exp": 15500,
+        "items": {
+          "ignigaro_fang": 2
+        }
+      }
+    },
+    {
       "id": "main_08_abyss",
-      "name": "第8章 深淵の胎動",
+      "name": "第12章 深淵の胎動",
       "type": "main",
       "description": "封印の要が失われた今、深淵が脈打ち始めた。底に沈むスライムは機神の「揺りかご」だ。取り込まれる前に、深淵そのものを討て。",
       "objectives": [
@@ -2734,7 +2834,7 @@
       ],
       "require": {
         "minLevel": 80,
-        "questDone": "main_07_knight"
+        "questDone": "main_13_furnace"
       },
       "huntMap": "arena_abyss",
       "rewards": {
@@ -2742,6 +2842,31 @@
         "exp": 18000,
         "items": {
           "abyss_dreg": 3
+        }
+      }
+    },
+    {
+      "id": "main_14_sacred",
+      "name": "第13章 聖骸の騎士",
+      "type": "main",
+      "description": "モルドの遺言には続きがあった。「わが亡骸が光を纏いて立つとき、機神の扉は開く」。深淵に清められた聖骸騎士が、最後の門の前で待っている。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_luxmordo",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 87,
+        "questDone": "main_08_abyss"
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 6500,
+        "exp": 26000,
+        "items": {
+          "lux_carapace": 2
         }
       }
     },
@@ -2759,7 +2884,7 @@
       ],
       "require": {
         "minLevel": 94,
-        "questDone": "main_08_abyss"
+        "questDone": "main_14_sacred"
       },
       "huntMap": "arena_abyss",
       "rewards": {

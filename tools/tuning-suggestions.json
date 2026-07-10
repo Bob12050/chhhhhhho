@@ -29,11 +29,29 @@
     "rank": 1,
     "lv": 30
   },
+  "boss_hydra": {
+    "maxHp": 6140,
+    "contactDamage": 149,
+    "rank": 1,
+    "lv": 40
+  },
+  "boss_lizard_king": {
+    "maxHp": 14340,
+    "contactDamage": 234,
+    "rank": 4,
+    "lv": 44
+  },
   "boss_wisp_queen": {
     "maxHp": 20340,
     "contactDamage": 332,
     "rank": 5,
     "lv": 52
+  },
+  "boss_sandgoa": {
+    "maxHp": 22170,
+    "contactDamage": 379,
+    "rank": 5,
+    "lv": 58
   },
   "boss_knight_dread": {
     "maxHp": 27070,
@@ -41,11 +59,23 @@
     "rank": 6,
     "lv": 66
   },
+  "boss_ignigaro": {
+    "maxHp": 25870,
+    "contactDamage": 628,
+    "rank": 6,
+    "lv": 72
+  },
   "boss_slime_abyss": {
     "maxHp": 10350,
     "contactDamage": 433,
     "rank": 1,
     "lv": 80
+  },
+  "boss_luxmordo": {
+    "maxHp": 33950,
+    "contactDamage": 849,
+    "rank": 7,
+    "lv": 84
   },
   "boss_almagia": {
     "maxHp": 13110,
@@ -101,18 +131,6 @@
     "rank": 4,
     "lv": 35
   },
-  "boss_hydra": {
-    "maxHp": 12550,
-    "contactDamage": 194,
-    "rank": 4,
-    "lv": 40
-  },
-  "boss_lizard_king": {
-    "maxHp": 14340,
-    "contactDamage": 234,
-    "rank": 4,
-    "lv": 44
-  },
   "boss_azvurm": {
     "maxHp": 18610,
     "contactDamage": 295,
@@ -124,12 +142,6 @@
     "contactDamage": 345,
     "rank": 5,
     "lv": 54
-  },
-  "boss_sandgoa": {
-    "maxHp": 22170,
-    "contactDamage": 379,
-    "rank": 5,
-    "lv": 58
   },
   "boss_miasma": {
     "maxHp": 26290,
@@ -143,23 +155,11 @@
     "rank": 6,
     "lv": 68
   },
-  "boss_ignigaro": {
-    "maxHp": 25870,
-    "contactDamage": 628,
-    "rank": 6,
-    "lv": 72
-  },
   "boss_flarelis": {
     "maxHp": 31960,
     "contactDamage": 804,
     "rank": 7,
     "lv": 80
-  },
-  "boss_luxmordo": {
-    "maxHp": 33950,
-    "contactDamage": 849,
-    "rank": 7,
-    "lv": 84
   },
   "boss_crimson_abyss": {
     "maxHp": 39080,

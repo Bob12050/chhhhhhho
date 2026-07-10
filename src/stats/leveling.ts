@@ -5,7 +5,7 @@
  * Shape: quadratic early (levels feel fast through the story's first acts) +
  * a small cubic term that dominates late. The cubic coefficient is tuned by
  * tools/balance-sim.ts's story-time model so the main story lands at roughly
- * 25〜35 hours (0.22 ≈ 30h) — raise it to lengthen the endgame, lower it to
+ * 25〜35 hours (0.22 ≈ 26h with the 14-chapter story) — raise it to lengthen, lower it to
  * shorten. Old saves keep their stored level; only future exp-to-next changes.
  */
 export function expToNext(level: number): number {

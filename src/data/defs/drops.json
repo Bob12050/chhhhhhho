@@ -519,6 +519,150 @@
       ]
     },
     {
+      "id": "ice_wolf",
+      "entries": [
+        {
+          "itemId": "alpha_pelt",
+          "dropRate": 0.4,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "mythril_ore",
+          "dropRate": 0.2,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "queen_ice",
+          "dropRate": 0.02,
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "snow_shroom",
+      "entries": [
+        {
+          "itemId": "mana_stone",
+          "dropRate": 0.5,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "spore_sac",
+          "dropRate": 0.3,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "frost_heart",
+          "dropRate": 0.015,
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "frost_knight",
+      "entries": [
+        {
+          "itemId": "mythril_ore",
+          "dropRate": 0.35,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "shadow_wing",
+          "dropRate": 0.25,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "soul_iron",
+          "dropRate": 0.02,
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "sand_lizard",
+      "entries": [
+        {
+          "itemId": "dragon_scale",
+          "dropRate": 0.35,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "sand_gold",
+          "dropRate": 0.08,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "garo_scale",
+          "dropRate": 0.03,
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "mirage_wisp",
+      "entries": [
+        {
+          "itemId": "mana_stone",
+          "dropRate": 0.55,
+          "min": 1,
+          "max": 3
+        },
+        {
+          "itemId": "star_fragment",
+          "dropRate": 0.06,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "abyss_dreg",
+          "dropRate": 0.015,
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "dune_golem",
+      "entries": [
+        {
+          "itemId": "golem_core",
+          "dropRate": 0.45,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "itemId": "obsidian_shard",
+          "dropRate": 0.2,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "sand_core",
+          "dropRate": 0.06,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "itemId": "earth_coreorb",
+          "dropRate": 0.02,
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
       "id": "boss_dragon",
       "entries": [
         {

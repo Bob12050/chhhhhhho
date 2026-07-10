@@ -1,0 +1,58 @@
+{
+  "id": "desert",
+  "name": "星降りの砂漠",
+  "travel": {
+    "order": 8,
+    "note": "Lv70〜の狩場。終盤の稼ぎ場とR7素材",
+    "unlockFlag": "boss_sandgoa_defeated"
+  },
+  "size": {
+    "w": 360,
+    "h": 1280
+  },
+  "ground": "stone",
+  "path": {
+    "axis": "v",
+    "thickness": 48,
+    "wind": 22
+  },
+  "border": "walls",
+  "obstacles": [
+    [80, 280],
+    [290, 360],
+    [70, 640],
+    [300, 720],
+    [120, 980],
+    [260, 1060]
+  ],
+  "spawns": {
+    "from_snowfield": [180, 1180]
+  },
+  "portals": [
+    {
+      "rect": [148, 1232, 64, 32],
+      "to": "snowfield",
+      "toSpawn": "from_desert",
+      "label": "雪原へ"
+    }
+  ],
+  "enemies": [
+    { "type": "sand_lizard", "x": 150, "y": 1020 },
+    { "type": "sand_lizard", "x": 240, "y": 700 },
+    { "type": "sand_lizard", "x": 110, "y": 420 },
+    { "type": "mirage_wisp", "x": 260, "y": 540 },
+    { "type": "mirage_wisp", "x": 100, "y": 800 },
+    { "type": "dune_golem", "x": 180, "y": 320 },
+    { "type": "dune_golem", "x": 220, "y": 880 }
+  ],
+  "npcs": [],
+  "ambient": {
+    "color": "#e8a850",
+    "alpha": 0.28
+  },
+  "landmarks": [
+    { "x": 90, "y": 500, "kind": "ruin" },
+    { "x": 270, "y": 940, "kind": "ruin" },
+    { "x": 160, "y": 180, "kind": "stone_circle" }
+  ]
+}

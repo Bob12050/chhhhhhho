@@ -4,6 +4,8 @@ import forestJson from '@/data/defs/maps/forest.json';
 import dungeonJson from '@/data/defs/maps/dungeon.json';
 import canyonJson from '@/data/defs/maps/canyon.json';
 import volcanoJson from '@/data/defs/maps/volcano.json';
+import snowfieldJson from '@/data/defs/maps/snowfield.json';
+import desertJson from '@/data/defs/maps/desert.json';
 import bossRoomJson from '@/data/defs/maps/boss_room.json';
 import arenaVolcanoJson from '@/data/defs/maps/arena_volcano.json';
 import arenaGroveJson from '@/data/defs/maps/arena_grove.json';
@@ -125,6 +127,8 @@ for (const m of [
   dungeonJson,
   canyonJson,
   volcanoJson,
+  snowfieldJson,
+  desertJson,
   bossRoomJson,
   arenaVolcanoJson,
   arenaGroveJson,

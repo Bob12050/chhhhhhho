@@ -1,0 +1,69 @@
+{
+  "id": "snowfield",
+  "name": "凍てつく雪原",
+  "travel": {
+    "order": 7,
+    "note": "Lv50〜の狩場。雪原の獣とR5素材",
+    "unlockFlag": "boss_hydra_defeated"
+  },
+  "size": {
+    "w": 360,
+    "h": 1152
+  },
+  "ground": "stone",
+  "path": {
+    "axis": "v",
+    "thickness": 44,
+    "wind": 18
+  },
+  "border": "trees",
+  "obstacles": [
+    [90, 240],
+    [280, 320],
+    [70, 540],
+    [300, 600],
+    [110, 860],
+    [270, 920]
+  ],
+  "water": [
+    [40, 400, 90, 70],
+    [230, 740, 100, 80]
+  ],
+  "spawns": {
+    "from_volcano": [180, 1060],
+    "from_desert": [180, 150]
+  },
+  "portals": [
+    {
+      "rect": [148, 1104, 64, 32],
+      "to": "volcano",
+      "toSpawn": "from_snowfield",
+      "label": "火山へ"
+    },
+    {
+      "rect": [148, 32, 64, 32],
+      "to": "desert",
+      "toSpawn": "from_snowfield",
+      "label": "砂漠へ",
+      "requiresFlag": "boss_sandgoa_defeated"
+    }
+  ],
+  "enemies": [
+    { "type": "ice_wolf", "x": 140, "y": 940 },
+    { "type": "ice_wolf", "x": 250, "y": 660 },
+    { "type": "ice_wolf", "x": 120, "y": 300 },
+    { "type": "snow_shroom", "x": 260, "y": 480 },
+    { "type": "snow_shroom", "x": 90, "y": 700 },
+    { "type": "frost_knight", "x": 200, "y": 380 },
+    { "type": "frost_knight", "x": 180, "y": 220 }
+  ],
+  "npcs": [],
+  "ambient": {
+    "color": "#bcd8f0",
+    "alpha": 0.22
+  },
+  "landmarks": [
+    { "x": 80, "y": 480, "kind": "stone_circle" },
+    { "x": 270, "y": 1000, "kind": "campfire" }
+  ]
+}

@@ -9,8 +9,8 @@ const MAIN = allQuests()
   .sort();
 
 describe('main story line', () => {
-  it('has 9 chapters, all non-repeatable with a hunt arena', () => {
-    expect(MAIN).toHaveLength(9);
+  it('has 14 chapters, all non-repeatable with a hunt arena', () => {
+    expect(MAIN).toHaveLength(14);
     for (const id of MAIN) {
       const q = getQuest(id)!;
       expect(q.repeatable, id).toBeFalsy();
@@ -23,7 +23,9 @@ describe('main story line', () => {
     gs.level = 99;
     const chain = [
       'main_01_stirring', 'main_02_guardian', 'main_03_warning', 'main_04_twinflame',
-      'main_05_dragon', 'main_06_queen', 'main_07_knight', 'main_08_abyss', 'main_09_finale',
+      'main_05_dragon', 'main_10_venom', 'main_11_earthfang', 'main_06_queen',
+      'main_12_quicksand', 'main_07_knight', 'main_13_furnace', 'main_08_abyss',
+      'main_14_sacred', 'main_09_finale',
     ];
     for (let i = 0; i < chain.length; i++) {
       const avail = availableQuests(gs).filter((q) => q.type === 'main').map((q) => q.id);

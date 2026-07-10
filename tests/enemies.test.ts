@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { allEnemyDefs, getEnemyDef } from '@/enemies/enemy-defs';
 import { getDropTable } from '@/loot/drop-table';
 import { getEquipment } from '@/data/items';
+import { allQuests } from '@/quests/quest-defs';
 
 describe('enemy roster + boss', () => {
   it('ships several normal enemies and at least one boss per tier', () => {
@@ -19,13 +20,25 @@ describe('enemy roster + boss', () => {
     }
   });
 
-  it('bosses are tougher and hit harder than any normal enemy', () => {
-    const defs = allEnemyDefs();
-    const normals = defs.filter((d) => !d.isBoss);
-    const bosses = defs.filter((d) => d.isBoss);
-    const maxNormalHp = Math.max(...normals.map((d) => d.maxHp));
-    for (const b of bosses) {
-      expect(b.maxHp, `${b.id} hp`).toBeGreaterThan(maxNormalHp);
+  it('within each hunt, the boss out-stats its own trash waves', () => {
+    // 2026-07: late-game field mobs (雪原/砂漠) legitimately out-stat early
+    // bosses, so a roster-wide "boss > any normal" check no longer holds.
+    // The invariant that matters: inside one hunt quest, the boss must be
+    // the toughest thing on the arena floor.
+    for (const q of allQuests()) {
+      const targets = q.objectives
+        .filter((o) => o.type === 'kill' && o.enemyId)
+        .map((o) => getEnemyDef(o.enemyId!)!);
+      const boss = targets.find((d) => d.isBoss);
+      if (!boss) continue;
+      for (const trash of targets.filter((d) => !d.isBoss)) {
+        expect(boss.maxHp, `${q.id}: ${boss.id} vs ${trash.id} hp`).toBeGreaterThan(trash.maxHp);
+        expect(boss.contactDamage, `${q.id}: ${boss.id} vs ${trash.id} atk`).toBeGreaterThan(
+          trash.contactDamage,
+        );
+      }
+    }
+    for (const b of allEnemyDefs().filter((d) => d.isBoss)) {
       expect(b.contactDamage, `${b.id} atk`).toBeGreaterThanOrEqual(20);
     }
   });
