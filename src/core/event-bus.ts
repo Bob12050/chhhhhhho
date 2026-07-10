@@ -28,8 +28,18 @@ export interface GameEvents {
   'ui:open-map': Record<string, never>;
   'debug:warp': Record<string, never>;
   'map:travel': Record<string, never>;
-  /** Fired when a map finishes building; `safe` gates town-mode HUD (no combat). */
-  'world:map-ready': { safe: boolean };
+  /** Fired when a map finishes building; drives the town-mode HUD and minimap. */
+  'world:map-ready': {
+    safe: boolean;
+    mapId: string;
+    mapName: string;
+    mapWidth: number;
+    mapHeight: number;
+    playerX: number;
+    playerY: number;
+  };
+  /** Throttled world position for the HUD minimap marker. */
+  'world:player-position': { mapId: string; x: number; y: number };
 
   // Equipment
   'equipment:changed': { slot: string };

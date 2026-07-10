@@ -128,7 +128,7 @@ try {
   // ---- pets: egg → hatch → assist ----
   step = 'pets';
   await page.evaluate(() => window.__test.addEgg('pet_egg_wolf'));
-  await page.mouse.click(336, 26); await page.waitForTimeout(900); // bag
+  await page.mouse.click(250, 28); await page.waitForTimeout(900); // bag
   await page.mouse.click(168, 676); await page.waitForTimeout(800); // 🐾 ペット
   await page.mouse.click(302, 193); await page.waitForTimeout(900); // 孵化する
   s = await snap(page);
@@ -139,7 +139,7 @@ try {
 
   // ---- bestiary opens ----
   step = 'bestiary';
-  await page.mouse.click(336, 26); await page.waitForTimeout(900);
+  await page.mouse.click(250, 28); await page.waitForTimeout(900);
   await page.mouse.click(100, 676); await page.waitForTimeout(800); // 📖 図鑑
   // Detail for the first (slime) row must open without errors.
   await page.mouse.click(180, 134); await page.waitForTimeout(600);

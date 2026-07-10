@@ -85,6 +85,7 @@ export class WorldScene extends Phaser.Scene {
   private portalHintCd = 0; // ms; throttles the "defeat the boss" hint
   private portalGuard = 0; // ms; blocks walk-on portals right after taking a hit
   private bossIntroLockMs = 0;
+  private hudPositionTimer = 0;
   private transitioning = false;
   private npcBob = false;
   private busOff: Array<() => void> = [];
@@ -128,6 +129,7 @@ export class WorldScene extends Phaser.Scene {
     this.portalHintCd = 0;
     this.portalGuard = 0;
     this.bossIntroLockMs = 0;
+    this.hudPositionTimer = 0;
     this.petAtkCd = 0;
     this.transitioning = false;
     this.rng = new Rng((Date.now() ^ 0x9e3779b9) >>> 0);
@@ -147,9 +149,6 @@ export class WorldScene extends Phaser.Scene {
     this.map = getMap(gameState.mapId) ?? getMap('town')!;
     gameState.flags[`visited_${this.map.id}`] = true;
     bgm.play(bgmForMap(this.map.id));
-    // Tell the (persistent) HUD whether this is a safe zone (town → dim combat UI).
-    bus.emit('world:map-ready', { safe: !!this.map.safe });
-
     this.ui = this.scene.get('UI') as UIScene;
     this.ui.showInteract(false);
 
@@ -194,6 +193,17 @@ export class WorldScene extends Phaser.Scene {
     };
     this.cameras.main.startFollow(this.player.body, true, 0.15, 0.15);
     this.physics.add.collider(this.player.body, this.obstacles);
+    // Tell the persistent HUD about the new zone only once the player exists,
+    // so the minimap can place its marker immediately.
+    bus.emit('world:map-ready', {
+      safe: !!this.map.safe,
+      mapId: this.map.id,
+      mapName: this.map.name,
+      mapWidth: this.map.size.w,
+      mapHeight: this.map.size.h,
+      playerX: this.player.x,
+      playerY: this.player.y,
+    });
 
     // Combat / loot.
     this.dmg = new DamageNumbers(this);
@@ -1717,6 +1727,11 @@ export class WorldScene extends Phaser.Scene {
     if (input.interact.justPressed && this.activeNpc) this.runNpc(this.activeNpc);
 
     this.player.update(delta);
+    this.hudPositionTimer -= delta;
+    if (this.hudPositionTimer <= 0) {
+      this.hudPositionTimer = 100;
+      bus.emit('world:player-position', { mapId: this.map.id, x: this.player.x, y: this.player.y });
+    }
     this.pet?.update(delta, this.player.x, this.player.y);
     this.updatePetAssist(delta);
     for (const e of this.enemies) e.update(delta, this.player.x, this.player.y);

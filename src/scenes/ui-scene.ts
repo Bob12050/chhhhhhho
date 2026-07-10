@@ -19,9 +19,9 @@ import { isUpdateReady } from '@/core/pwa';
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
- * buttons (lower-right), and a small HUD (HP/MP). Renders above the world and
- * keeps controls clear of the home-indicator safe area. Also provides a dev
- * keyboard fallback.
+ * buttons (lower-right), compact hunter/quest panels, and a live minimap.
+ * Renders above the world and keeps controls clear of the home-indicator safe
+ * area. Also provides a dev keyboard fallback.
  */
 export class UIScene extends Phaser.Scene {
   private stick!: VirtualStick;
@@ -77,6 +77,21 @@ export class UIScene extends Phaser.Scene {
     const baseX = w - insets.right - 44;
     const baseY = h - bottomPad - 44;
 
+    // A quiet control deck groups the combat buttons without boxing in the
+    // playfield. Its connectors make the lower-right read as one instrument.
+    const actionDeck = this.add.graphics().setDepth(depth - 1);
+    const deckX = baseX - 28;
+    const deckY = baseY - 58;
+    actionDeck.fillStyle(0x07101c, 0.28);
+    actionDeck.fillCircle(deckX, deckY, 104);
+    actionDeck.lineStyle(1, 0x9fd0ff, 0.2);
+    actionDeck.strokeCircle(deckX, deckY, 104);
+    actionDeck.lineStyle(2, 0xf5c542, 0.38);
+    actionDeck.lineBetween(baseX - 76, baseY + 6, baseX - 60, baseY - 58);
+    actionDeck.lineBetween(baseX - 60, baseY - 58, baseX + 2, baseY - 76);
+    actionDeck.lineStyle(1, 0xffffff, 0.14);
+    actionDeck.lineBetween(baseX - 64, baseY - 122, baseX - 60, baseY - 58);
+
     const attackBtn = new TouchButton(this, baseX, baseY, 32, '', 0xcc4444, depth, TEX.iconSword);
     attackBtn.onChange = (d) => input.setButton('attack', d);
 
@@ -121,7 +136,10 @@ export class UIScene extends Phaser.Scene {
 
     // Safe zone (town): dim the combat buttons so the screen isn't "戦闘UI全開".
     const combatButtons = [attackBtn, skillBtn, skill2Btn, dodgeBtn, potBtn];
-    const setCombatDim = (dim: boolean): void => combatButtons.forEach((b) => b.setDimmed(dim));
+    const setCombatDim = (dim: boolean): void => {
+      combatButtons.forEach((b) => b.setDimmed(dim));
+      actionDeck.setAlpha(dim ? 0.38 : 1);
+    };
     setCombatDim(!!getMap(gameState.mapId)?.safe);
     this.busOff.push(bus.on('world:map-ready', ({ safe }) => setCombatDim(safe)));
 
@@ -426,16 +444,86 @@ export class UIScene extends Phaser.Scene {
     );
     this.busOff.push(bus.on('boss:intro', (data) => this.showBossIntro(data)));
 
-    // Bag button (top-right) opens the inventory/menu.
-    const bag = new TouchButton(this, w - insets.right - 24, insets.top + 26, 22, '', 0x6a4ea0, depth, TEX.iconBag);
+    // Live minimap: intentionally compact, but it gives the upper-right a
+    // recognisable RPG silhouette and makes map position visible at a glance.
+    const miniSize = 82;
+    const miniInner = 68;
+    const miniX = w - insets.right - 46;
+    const miniY = insets.top + 46;
+    const miniG = this.add.graphics();
+    const miniDot = this.add.circle(0, 0, 3.5, 0xffe16a).setStrokeStyle(1.5, 0x2a1820, 1);
+    const miniNorth = this.add
+      .text(0, -31, 'N', { fontFamily: FONT, fontSize: '8px', color: '#d9e8ff', fontStyle: 'bold' })
+      .setOrigin(0.5);
+    const miniName = this.add
+      .text(0, 48, '', { fontFamily: FONT, fontSize: '8px', color: '#d9e8ff' })
+      .setOrigin(0.5)
+      .setShadow(0, 1, '#000000', 2);
+    const miniRoot = this.add.container(miniX, miniY, [miniG, miniDot, miniNorth, miniName]).setDepth(depth);
+    miniRoot.setSize(miniSize, miniSize).setInteractive({ useHandCursor: true });
+    miniRoot.on('pointerup', () => bus.emit('ui:open-map', {}));
+
+    let miniMap = getMap(gameState.mapId);
+    let miniWidth = miniMap?.size.w ?? 1;
+    let miniHeight = miniMap?.size.h ?? 1;
+    const drawMiniMap = (x: number, y: number): void => {
+      const half = miniInner / 2;
+      const ground = miniMap?.ground === 'stone' ? 0x536172 : miniMap?.ground === 'floor' ? 0x62515e : 0x45694a;
+      miniG.clear();
+      miniG.fillStyle(0x050912, 0.84);
+      miniG.fillRoundedRect(-miniSize / 2, -miniSize / 2, miniSize, miniSize, 10);
+      miniG.fillStyle(ground, 0.95);
+      miniG.fillRoundedRect(-half, -half, miniInner, miniInner, 7);
+      if (miniMap?.path) {
+        miniG.fillStyle(0xc49a62, 0.72);
+        const thickness = Math.max(4, Math.round((miniMap.path.thickness / (miniMap.path.axis === 'v' ? miniWidth : miniHeight)) * miniInner));
+        if (miniMap.path.axis === 'v') miniG.fillRect(-thickness / 2, -half, thickness, miniInner);
+        else miniG.fillRect(-half, -thickness / 2, miniInner, thickness);
+      }
+      for (const portal of miniMap?.portals ?? []) {
+        const px = Phaser.Math.Clamp(((portal.rect[0] + portal.rect[2] / 2) / miniWidth - 0.5) * miniInner, -half + 3, half - 3);
+        const py = Phaser.Math.Clamp(((portal.rect[1] + portal.rect[3] / 2) / miniHeight - 0.5) * miniInner, -half + 3, half - 3);
+        miniG.fillStyle(portal.requiresFlag && !gameState.flags[portal.requiresFlag] ? 0xc45a62 : 0x8ddcff, 0.95);
+        miniG.fillCircle(px, py, 2);
+      }
+      miniG.lineStyle(2, 0xe9c45f, 0.8);
+      miniG.strokeRoundedRect(-miniSize / 2, -miniSize / 2, miniSize, miniSize, 10);
+      miniG.lineStyle(1, 0xffffff, 0.12);
+      miniG.strokeRoundedRect(-half, -half, miniInner, miniInner, 7);
+      miniDot.setPosition(
+        Phaser.Math.Clamp((x / miniWidth - 0.5) * miniInner, -half + 4, half - 4),
+        Phaser.Math.Clamp((y / miniHeight - 0.5) * miniInner, -half + 4, half - 4),
+      );
+    };
+    const refreshMiniMap = (data: {
+      mapId: string;
+      mapName?: string;
+      mapWidth?: number;
+      mapHeight?: number;
+      x: number;
+      y: number;
+    }): void => {
+      miniMap = getMap(data.mapId) ?? miniMap;
+      miniWidth = data.mapWidth ?? miniMap?.size.w ?? miniWidth;
+      miniHeight = data.mapHeight ?? miniMap?.size.h ?? miniHeight;
+      miniName.setText(data.mapName ?? miniMap?.name ?? '');
+      drawMiniMap(data.x, data.y);
+    };
+    refreshMiniMap({ mapId: gameState.mapId, x: gameState.x, y: gameState.y });
+    this.busOff.push(
+      bus.on('world:map-ready', ({ mapId, mapName, mapWidth, mapHeight, playerX, playerY }) =>
+        refreshMiniMap({ mapId, mapName, mapWidth, mapHeight, x: playerX, y: playerY }),
+      ),
+    );
+    this.busOff.push(bus.on('world:player-position', ({ mapId, x, y }) => refreshMiniMap({ mapId, x, y })));
+
+    // Bag button stays beside the minimap, so map navigation and inventory
+    // read as a compact utility strip instead of two floating controls.
+    const bagX = miniX - 64;
+    const bagY = insets.top + 28;
+    const bag = new TouchButton(this, bagX, bagY, 22, '', 0x6a4ea0, depth, TEX.iconBag);
     bag.onChange = (down) => {
       if (down) bus.emit('ui:open-inventory', {});
-    };
-
-    // Map button (below the bag) opens the fast-travel list.
-    const mapBtn = new TouchButton(this, w - insets.right - 24, insets.top + 74, 22, '', 0x4e7aa0, depth, TEX.iconMap);
-    mapBtn.onChange = (down) => {
-      if (down) bus.emit('ui:open-map', {});
     };
 
     // (Debug entry is a separate dev overlay — see DebugOverlayScene. It is never
@@ -463,7 +551,7 @@ export class UIScene extends Phaser.Scene {
         {
           stick: { x: insets.left + 60, y: baseY },
           attack: { x: baseX, y: baseY },
-          bag: { x: w - insets.right - 24, y: insets.top + 26 },
+          bag: { x: bagX, y: bagY },
         },
         depth + 20,
       );
