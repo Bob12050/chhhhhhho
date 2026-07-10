@@ -26,6 +26,7 @@ import { MapSelectScene } from '@/scenes/map-select-scene';
 import { BestiaryScene } from '@/scenes/bestiary-scene';
 import { PetScene } from '@/scenes/pet-scene';
 import { QuestResultScene } from '@/scenes/quest-result-scene';
+import { EndingScene } from '@/scenes/ending-scene';
 import { installOrientationGuard } from '@/scenes/orientation-guard';
 import { installLifecycle } from '@/core/lifecycle';
 import { registerServiceWorker } from '@/core/pwa';
@@ -92,6 +93,7 @@ const config: Phaser.Types.Core.GameConfig = {
     BestiaryScene,
     PetScene,
     QuestResultScene,
+    EndingScene,
   ],
 };
 

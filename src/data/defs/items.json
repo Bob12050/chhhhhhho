@@ -7512,6 +7512,25 @@
       },
       "sellPrice": 1300,
       "description": "緋の深淵核で染めたマント。傷がふさがる。"
+    },
+    {
+      "id": "hero_emblem",
+      "name": "勇者の証",
+      "slot": "accessory_2",
+      "rarity": 10,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 1,
+      "derived": {
+        "physAtk": 8,
+        "magAtk": 8,
+        "maxHp": 40,
+        "maxMp": 20,
+        "dropRate": 0.05,
+        "goldRate": 0.05
+      },
+      "sellPrice": 0,
+      "description": "古代機神を討った者だけが持つ紋章。世界はまだ、この狩人を覚えている。"
     }
   ]
 }

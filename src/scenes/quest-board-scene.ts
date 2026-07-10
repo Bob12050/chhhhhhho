@@ -26,8 +26,8 @@ export class QuestBoardScene extends Phaser.Scene {
   private dragged = false;
   private viewTop = 92;
   private viewBottom = 0;
-  private tab: 'normal' | 'hunt' = 'normal';
-  private tabButtons: { id: 'normal' | 'hunt'; tab: TabHandle }[] = [];
+  private tab: 'main' | 'normal' | 'hunt' = 'main';
+  private tabButtons: { id: 'main' | 'normal' | 'hunt'; tab: TabHandle }[] = [];
   /** In the 大型狩猟 tab: null = show the ★rank list, else the picked rank's quests. */
   private selectedRank: number | null = null;
 
@@ -47,14 +47,19 @@ export class QuestBoardScene extends Phaser.Scene {
       })
       .setDepth(3);
 
-    // Category tabs: 通常クエスト / 大型狩猟 (MH style).
+    // Category tabs: メイン / 通常 / 大型狩猟 (MH style).
     this.tabButtons = [];
-    const tabs: { id: 'normal' | 'hunt'; label: string }[] = [
-      { id: 'normal', label: '通常クエスト' },
+    const tabs: { id: 'main' | 'normal' | 'hunt'; label: string }[] = [
+      { id: 'main', label: 'メイン' },
+      { id: 'normal', label: '通常' },
       { id: 'hunt', label: '大型狩猟' },
     ];
+    // Land on the story tab only while it still has something to do.
+    this.tab = allQuests().some(
+      (q) => q.type === 'main' && !gameState.completedQuests.includes(q.id),
+    ) ? 'main' : 'hunt';
     tabs.forEach((t, i) => {
-      const tab = tabChip(this, 78 + i * 130, 56, 124, t.label, () => {
+      const tab = tabChip(this, 62 + i * 98, 56, 94, t.label, () => {
         if (this.dragged) return;
         this.tab = t.id;
         this.selectedRank = null;
@@ -108,8 +113,10 @@ export class QuestBoardScene extends Phaser.Scene {
     this.content.y = -this.scrollY;
   }
 
-  /** A quest belongs to the 大型狩猟 tab if it spawns a boss in an arena. */
+  /** メイン = story line; 大型狩猟 = arena hunts; 通常 = the rest. */
   private inTab(q: QuestDef): boolean {
+    if (this.tab === 'main') return q.type === 'main';
+    if (q.type === 'main') return false;
     const isHunt = !!q.huntMap;
     return this.tab === 'hunt' ? isHunt : !isHunt;
   }
@@ -269,7 +276,8 @@ export class QuestBoardScene extends Phaser.Scene {
     if (r.gold) parts.push(`${r.gold}G`);
     if (r.exp) parts.push(`EXP ${r.exp}`);
     for (const [id, qty] of Object.entries(r.items ?? {})) parts.push(`${itemDisplayName(id)}×${qty}`);
-    if (r.setFlags?.length) parts.push('★職業解放');
+    if (r.setFlags?.includes('main_story_complete')) parts.push('★エンディング');
+    else if (r.setFlags?.length) parts.push('★職業解放');
     return parts.length ? `報酬: ${parts.join(' / ')}` : '';
   }
 
@@ -288,7 +296,8 @@ export class QuestBoardScene extends Phaser.Scene {
     const titleColor = state === 'done' ? '#6b7088' : q.type === 'unlock' ? '#ffe9a8' : '#ffffff';
     // MH-style star rank prefix, colored by rank (dimmed once done).
     const rank = q.rank ?? 1;
-    const starTxt = this.add.text(16, y, `★${rank}`, {
+    // Story chapters carry a book mark instead of a meaningless ★1.
+    const starTxt = this.add.text(16, y, q.type === 'main' ? '📖' : `★${rank}`, {
       fontFamily: FONT,
       fontSize: '15px',
       color: state === 'done' ? '#6b7088' : this.rankColor(rank),
@@ -459,6 +468,12 @@ export class QuestBoardScene extends Phaser.Scene {
     this.time.delayedCall(420 + rows.length * 240 + 150, () => hint.setAlpha(1));
     dim.on('pointerup', () => {
       c.destroy(true);
+      // Finishing the story: roll the ending instead of returning to the list.
+      if (q.rewards.setFlags?.includes('main_story_complete')) {
+        this.scene.stop();
+        this.scene.launch('Ending');
+        return;
+      }
       this.render();
     });
   }

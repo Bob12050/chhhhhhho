@@ -564,7 +564,7 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set
       veteran?: unknown;
     }[];
   }>('src/data/defs/quests.json');
-  const QTYPES = new Set(['subjugation', 'unlock', 'hunt']);
+  const QTYPES = new Set(['subjugation', 'unlock', 'hunt', 'main']);
   const ids = new Set(file.quests.map((q) => q.id));
   for (const q of file.quests) {
     if (q.huntMap && !mapIds.has(q.huntMap))

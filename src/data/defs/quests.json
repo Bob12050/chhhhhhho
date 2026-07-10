@@ -2545,6 +2545,233 @@
       "repeatable": true,
       "rank": 7,
       "veteran": true
+    },
+    {
+      "id": "main_01_stirring",
+      "name": "第1章 ざわめく森",
+      "type": "main",
+      "description": "近ごろ、森の主が誰かれかまわず根を振り回しているという。むらおさ曰く「森の奥から、変な鼓動が聞こえる」——調査を兼ねて主を鎮めてほしい。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_treant",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 5
+      },
+      "huntMap": "arena_grove",
+      "rewards": {
+        "gold": 150,
+        "exp": 600,
+        "items": {
+          "potion_hp": 3
+        }
+      }
+    },
+    {
+      "id": "main_02_guardian",
+      "name": "第2章 目覚めた番人",
+      "type": "main",
+      "description": "洞窟の番人が急に動き出した。何百年も動かなかった石像がだ。主と同じ「鼓動」を聞いたのだろうか。番人を止めて、胸の核を調べよう。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_stone",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 8,
+        "questDone": "main_01_stirring"
+      },
+      "huntMap": "arena_cavern",
+      "rewards": {
+        "gold": 250,
+        "exp": 1000,
+        "items": {
+          "iron_ore": 5
+        }
+      }
+    },
+    {
+      "id": "main_03_warning",
+      "name": "第3章 夜の王の警告",
+      "type": "main",
+      "description": "夜の王ノクスが人里に現れた。逃げる村人に、奴はこう言い残したという——「深淵が目覚める。狩れるうちに狩っておけ」。真意を確かめる。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_bat_lord",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 13,
+        "questDone": "main_02_guardian"
+      },
+      "huntMap": "arena_night",
+      "rewards": {
+        "gold": 400,
+        "exp": 1600,
+        "items": {
+          "mana_stone": 3
+        }
+      }
+    },
+    {
+      "id": "main_04_twinflame",
+      "name": "第4章 業火の主",
+      "type": "main",
+      "description": "火口のヴルムが山を降り、麓を焼き始めた。ノクスの言葉が本当なら、強い獣ほど深淵の鼓動に怯えて暴れている。ヴルムを鎮めるしかない。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_flame",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 20,
+        "questDone": "main_03_warning"
+      },
+      "huntMap": "arena_volcano",
+      "rewards": {
+        "gold": 700,
+        "exp": 2800,
+        "items": {
+          "potion_hp_l": 3
+        }
+      }
+    },
+    {
+      "id": "main_05_dragon",
+      "name": "第5章 竜王の記憶",
+      "type": "main",
+      "description": "竜の巣の主ヴァルガは千年を生きる。深淵の正体を知る唯一の生き証人だ。だが竜は問答より力を好む——語らせたければ、倒して見せろ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_dragon",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 30,
+        "questDone": "main_04_twinflame"
+      },
+      "huntMap": "arena_peak",
+      "rewards": {
+        "gold": 1200,
+        "exp": 5000,
+        "items": {
+          "star_fragment": 2
+        }
+      }
+    },
+    {
+      "id": "main_06_queen",
+      "name": "第6章 氷の女王の封印",
+      "type": "main",
+      "description": "ヴァルガは語った。「深淵の底に、古の機神が眠る。封じたのは氷の女王だ」。グラキエスの氷片には封印の記憶が宿る——力ずくで分けてもらう。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_wisp_queen",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 56,
+        "questDone": "main_05_dragon"
+      },
+      "huntMap": "arena_frost",
+      "rewards": {
+        "gold": 2200,
+        "exp": 9000,
+        "items": {
+          "queen_ice": 2
+        }
+      }
+    },
+    {
+      "id": "main_07_knight",
+      "name": "第7章 不死騎士の遺言",
+      "type": "main",
+      "description": "機神を封じた騎士団の最後の一人が、古城で今も玉座を守っている。モルドの魂鉄には封印の要が残る。安らかに眠らせ、遺言を受け取れ。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_knight_dread",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 68,
+        "questDone": "main_06_queen"
+      },
+      "huntMap": "arena_ruins",
+      "rewards": {
+        "gold": 3200,
+        "exp": 13000,
+        "items": {
+          "soul_iron": 2
+        }
+      }
+    },
+    {
+      "id": "main_08_abyss",
+      "name": "第8章 深淵の胎動",
+      "type": "main",
+      "description": "封印の要が失われた今、深淵が脈打ち始めた。底に沈むスライムは機神の「揺りかご」だ。取り込まれる前に、深淵そのものを討て。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_slime_abyss",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 80,
+        "questDone": "main_07_knight"
+      },
+      "huntMap": "arena_abyss",
+      "rewards": {
+        "gold": 4500,
+        "exp": 18000,
+        "items": {
+          "abyss_dreg": 3
+        }
+      }
+    },
+    {
+      "id": "main_09_finale",
+      "name": "最終章 古代機神アルマギア",
+      "type": "main",
+      "description": "深淵の底で、千年の眠りから機神が起動した。製作者は滅び、命令だけが残った——「すべてを狩れ」。ならばこちらも狩人だ。狩り勝て。",
+      "objectives": [
+        {
+          "type": "kill",
+          "enemyId": "boss_almagia",
+          "count": 1
+        }
+      ],
+      "require": {
+        "minLevel": 94,
+        "questDone": "main_08_abyss"
+      },
+      "huntMap": "arena_abyss",
+      "rewards": {
+        "gold": 10000,
+        "exp": 40000,
+        "items": {
+          "hero_emblem": 1
+        },
+        "setFlags": [
+          "main_story_complete"
+        ]
+      }
     }
   ]
 }

@@ -25,7 +25,8 @@ export interface QuestRequire {
   flag?: string;
 }
 
-export type QuestType = 'subjugation' | 'unlock' | 'hunt';
+/** 'main' = the one-shot story line (own board tab, chained, non-repeatable). */
+export type QuestType = 'subjugation' | 'unlock' | 'hunt' | 'main';
 
 export interface QuestDef {
   id: string;

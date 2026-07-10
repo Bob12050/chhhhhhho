@@ -5,7 +5,7 @@
  * imports aren't reachable from the page. Players never get this object.
  */
 import { gameState } from '@/player/game-state';
-import { acceptQuest, isComplete, turnInQuest } from '@/quests/quests';
+import { acceptQuest, isComplete, turnInQuest, recordKill } from '@/quests/quests';
 import { getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
 import { totalExpForLevel } from '@/stats/leveling';
@@ -36,6 +36,8 @@ export interface TestHooks {
   acceptQuest(id: string): boolean;
   isQuestComplete(id: string): boolean;
   turnInQuest(id: string): boolean;
+  /** Credit a kill toward active quests without fighting (E2E scenario setup). */
+  recordKill(enemyId: string): void;
   /** Warp to a map's default spawn (or x/y) via the real travel path. */
   warp(mapId: string, x?: number, y?: number): boolean;
   addEgg(petItemId: string): boolean;
@@ -74,6 +76,9 @@ export function installTestHooks(): void {
     acceptQuest: (id: string) => acceptQuest(gameState, id),
     isQuestComplete: (id: string) => isComplete(gameState, id),
     turnInQuest: (id: string) => turnInQuest(gameState, id),
+    recordKill: (enemyId: string) => {
+      recordKill(gameState, enemyId);
+    },
     warp: (mapId: string, x?: number, y?: number) => {
       const m = getMap(mapId);
       if (!m) return false;
