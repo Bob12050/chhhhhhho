@@ -649,7 +649,8 @@
         "physAtk": 4
       },
       "sellPrice": 5,
-      "description": "練習用の木剣。"
+      "description": "練習用の木剣。",
+      "series": "木"
     },
     {
       "id": "hunters_sword",
@@ -685,7 +686,8 @@
         "accuracy": 3
       },
       "sellPrice": 25,
-      "description": "よく鍛えられた鉄の剣。"
+      "description": "よく鍛えられた鉄の剣。",
+      "series": "鉄"
     },
     {
       "id": "steel_sword",
@@ -703,7 +705,8 @@
         "accuracy": 3
       },
       "sellPrice": 50,
-      "description": "硬い鋼で打たれた剣。"
+      "description": "硬い鋼で打たれた剣。",
+      "series": "鋼"
     },
     {
       "id": "kings_blade",
@@ -740,7 +743,8 @@
         "critRate": 0.05
       },
       "sellPrice": 160,
-      "description": "熟練の騎士が帯びる剣。"
+      "description": "熟練の騎士が帯びる剣。",
+      "series": "騎士"
     },
     {
       "id": "radiant_blade",
@@ -779,7 +783,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 480,
-      "description": "竜の牙を芯に鍛えた名剣。"
+      "description": "竜の牙を芯に鍛えた名剣。",
+      "series": "竜"
     },
     {
       "id": "leather_cap",
@@ -794,7 +799,8 @@
         "maxHp": 6
       },
       "sellPrice": 5,
-      "description": "軽い革製の帽子。"
+      "description": "軽い革製の帽子。",
+      "series": "革"
     },
     {
       "id": "padded_hood",
@@ -809,7 +815,8 @@
         "maxHp": 10
       },
       "sellPrice": 12,
-      "description": "綿を詰めた丈夫な頭巾。"
+      "description": "綿を詰めた丈夫な頭巾。",
+      "series": "綿入れ"
     },
     {
       "id": "iron_helm",
@@ -825,7 +832,8 @@
         "evasion": -1
       },
       "sellPrice": 25,
-      "description": "重いが頑丈な鉄兜。"
+      "description": "重いが頑丈な鉄兜。",
+      "series": "鉄"
     },
     {
       "id": "knight_helm",
@@ -841,7 +849,8 @@
         "magDef": 2
       },
       "sellPrice": 50,
-      "description": "騎士団支給の兜。"
+      "description": "騎士団支給の兜。",
+      "series": "騎士"
     },
     {
       "id": "guardian_helm",
@@ -857,7 +866,8 @@
         "magDef": 4
       },
       "sellPrice": 90,
-      "description": "守りに優れた兜。"
+      "description": "守りに優れた兜。",
+      "series": "番人"
     },
     {
       "id": "royal_helm",
@@ -874,7 +884,8 @@
         "accuracy": 2
       },
       "sellPrice": 160,
-      "description": "王室近衛の兜。"
+      "description": "王室近衛の兜。",
+      "series": "粘王"
     },
     {
       "id": "aegis_helm",
@@ -890,7 +901,8 @@
         "magDef": 7
       },
       "sellPrice": 280,
-      "description": "鉄壁の守護兜。"
+      "description": "鉄壁の守護兜。",
+      "series": "イージス"
     },
     {
       "id": "starlight_crown",
@@ -937,7 +949,8 @@
         "maxHp": 14
       },
       "sellPrice": 12,
-      "description": "綿入りで保温性のある服。"
+      "description": "綿入りで保温性のある服。",
+      "series": "綿入れ"
     },
     {
       "id": "chain_vest",
@@ -952,7 +965,8 @@
         "maxHp": 18
       },
       "sellPrice": 25,
-      "description": "鎖を編んだ防具。"
+      "description": "鎖を編んだ防具。",
+      "series": "鎖"
     },
     {
       "id": "iron_plate",
@@ -968,7 +982,8 @@
         "moveSpeed": -4
       },
       "sellPrice": 50,
-      "description": "重厚な鉄の鎧。"
+      "description": "重厚な鉄の鎧。",
+      "series": "鉄"
     },
     {
       "id": "steel_plate",
@@ -984,7 +999,8 @@
         "moveSpeed": -4
       },
       "sellPrice": 90,
-      "description": "鋼で組んだ堅牢な鎧。"
+      "description": "鋼で組んだ堅牢な鎧。",
+      "series": "鋼"
     },
     {
       "id": "knight_plate",
@@ -1001,7 +1017,8 @@
         "moveSpeed": -5
       },
       "sellPrice": 160,
-      "description": "騎士の正装鎧。"
+      "description": "騎士の正装鎧。",
+      "series": "騎士"
     },
     {
       "id": "aegis_plate",
@@ -1018,7 +1035,8 @@
         "moveSpeed": -5
       },
       "sellPrice": 280,
-      "description": "防御に特化した重鎧。"
+      "description": "防御に特化した重鎧。",
+      "series": "イージス"
     },
     {
       "id": "dragon_plate",
@@ -1035,7 +1053,8 @@
         "moveSpeed": -5
       },
       "sellPrice": 480,
-      "description": "竜の鱗で覆った最高峰の鎧。"
+      "description": "竜の鱗で覆った最高峰の鎧。",
+      "series": "竜"
     },
     {
       "id": "hatchet",
@@ -1090,7 +1109,8 @@
         "maxMp": 10
       },
       "sellPrice": 12,
-      "description": "木の杖。1次職向けのstaff。"
+      "description": "木の杖。1次職向けのstaff。",
+      "series": "木"
     },
     {
       "id": "mage_staff",
@@ -1146,7 +1166,8 @@
         "def": 2
       },
       "sellPrice": 25,
-      "description": "鉄の槌。鍛えられた1次職向けのmace。"
+      "description": "鉄の槌。鍛えられた1次職向けのmace。",
+      "series": "鉄"
     },
     {
       "id": "knife",
@@ -1201,7 +1222,8 @@
         "accuracy": 3
       },
       "sellPrice": 12,
-      "description": "革の鞭。1次職向けのwhip。"
+      "description": "革の鞭。1次職向けのwhip。",
+      "series": "革"
     },
     {
       "id": "chain_whip",
@@ -1220,7 +1242,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 25,
-      "description": "鎖の鞭。鍛えられた1次職向けのwhip。"
+      "description": "鎖の鞭。鍛えられた1次職向けのwhip。",
+      "series": "鎖"
     },
     {
       "id": "steel_axe",
@@ -1239,7 +1262,8 @@
         "maxHp": 8
       },
       "sellPrice": 50,
-      "description": "鋼の斧。斧使い向け。"
+      "description": "鋼の斧。斧使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_axe",
@@ -1258,7 +1282,8 @@
         "maxHp": 9
       },
       "sellPrice": 90,
-      "description": "銀の斧。斧使い向け。"
+      "description": "銀の斧。斧使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_axe",
@@ -1277,7 +1302,8 @@
         "maxHp": 10
       },
       "sellPrice": 160,
-      "description": "ミスリルの斧。斧使い向け。"
+      "description": "ミスリルの斧。斧使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_axe",
@@ -1296,7 +1322,8 @@
         "maxHp": 11
       },
       "sellPrice": 280,
-      "description": "竜の斧。斧使い向け。"
+      "description": "竜の斧。斧使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_axe",
@@ -1315,7 +1342,8 @@
         "maxHp": 12
       },
       "sellPrice": 480,
-      "description": "天上の斧。斧使い向け。"
+      "description": "天上の斧。斧使い向け。",
+      "series": "天上"
     },
     {
       "id": "steel_staff",
@@ -1334,7 +1362,8 @@
         "magDef": 3
       },
       "sellPrice": 50,
-      "description": "鋼の杖。杖使い向け。"
+      "description": "鋼の杖。杖使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_staff",
@@ -1353,7 +1382,8 @@
         "magDef": 3
       },
       "sellPrice": 90,
-      "description": "銀の杖。杖使い向け。"
+      "description": "銀の杖。杖使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_staff",
@@ -1372,7 +1402,8 @@
         "magDef": 4
       },
       "sellPrice": 160,
-      "description": "ミスリルの杖。杖使い向け。"
+      "description": "ミスリルの杖。杖使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_staff",
@@ -1391,7 +1422,8 @@
         "magDef": 4
       },
       "sellPrice": 280,
-      "description": "竜の杖。杖使い向け。"
+      "description": "竜の杖。杖使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_staff",
@@ -1410,7 +1442,8 @@
         "magDef": 5
       },
       "sellPrice": 480,
-      "description": "天上の杖。杖使い向け。"
+      "description": "天上の杖。杖使い向け。",
+      "series": "天上"
     },
     {
       "id": "steel_mace",
@@ -1429,7 +1462,8 @@
         "def": 3
       },
       "sellPrice": 50,
-      "description": "鋼の槌。槌使い向け。"
+      "description": "鋼の槌。槌使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_mace",
@@ -1448,7 +1482,8 @@
         "def": 3
       },
       "sellPrice": 90,
-      "description": "銀の槌。槌使い向け。"
+      "description": "銀の槌。槌使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_mace",
@@ -1467,7 +1502,8 @@
         "def": 4
       },
       "sellPrice": 160,
-      "description": "ミスリルの槌。槌使い向け。"
+      "description": "ミスリルの槌。槌使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_mace",
@@ -1486,7 +1522,8 @@
         "def": 4
       },
       "sellPrice": 280,
-      "description": "竜の槌。槌使い向け。"
+      "description": "竜の槌。槌使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_mace",
@@ -1505,7 +1542,8 @@
         "def": 5
       },
       "sellPrice": 480,
-      "description": "天上の槌。槌使い向け。"
+      "description": "天上の槌。槌使い向け。",
+      "series": "天上"
     },
     {
       "id": "steel_dagger",
@@ -1524,7 +1562,8 @@
         "critRate": 0.05
       },
       "sellPrice": 50,
-      "description": "鋼の短剣。短剣使い向け。"
+      "description": "鋼の短剣。短剣使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_dagger",
@@ -1544,7 +1583,8 @@
         "evasion": 7
       },
       "sellPrice": 90,
-      "description": "銀の短剣。短剣使い向け。"
+      "description": "銀の短剣。短剣使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_dagger",
@@ -1564,7 +1604,8 @@
         "evasion": 8
       },
       "sellPrice": 160,
-      "description": "ミスリルの短剣。短剣使い向け。"
+      "description": "ミスリルの短剣。短剣使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_dagger",
@@ -1584,7 +1625,8 @@
         "evasion": 9
       },
       "sellPrice": 280,
-      "description": "竜の短剣。短剣使い向け。"
+      "description": "竜の短剣。短剣使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_dagger",
@@ -1604,7 +1646,8 @@
         "evasion": 10
       },
       "sellPrice": 480,
-      "description": "天上の短剣。短剣使い向け。"
+      "description": "天上の短剣。短剣使い向け。",
+      "series": "天上"
     },
     {
       "id": "steel_whip",
@@ -1623,7 +1666,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 50,
-      "description": "鋼の鞭。鞭使い向け。"
+      "description": "鋼の鞭。鞭使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_whip",
@@ -1642,7 +1686,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 90,
-      "description": "銀の鞭。鞭使い向け。"
+      "description": "銀の鞭。鞭使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_whip",
@@ -1661,7 +1706,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 160,
-      "description": "ミスリルの鞭。鞭使い向け。"
+      "description": "ミスリルの鞭。鞭使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_whip",
@@ -1680,7 +1726,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 280,
-      "description": "竜の鞭。鞭使い向け。"
+      "description": "竜の鞭。鞭使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_whip",
@@ -1699,7 +1746,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 480,
-      "description": "天上の鞭。鞭使い向け。"
+      "description": "天上の鞭。鞭使い向け。",
+      "series": "天上"
     },
     {
       "id": "copper_spear",
@@ -1717,7 +1765,8 @@
         "accuracy": 3
       },
       "sellPrice": 12,
-      "description": "銅の槍。槍使い向け。"
+      "description": "銅の槍。槍使い向け。",
+      "series": "銅"
     },
     {
       "id": "iron_spear",
@@ -1735,7 +1784,8 @@
         "accuracy": 3
       },
       "sellPrice": 25,
-      "description": "鉄の槍。槍使い向け。"
+      "description": "鉄の槍。槍使い向け。",
+      "series": "鉄"
     },
     {
       "id": "steel_spear",
@@ -1754,7 +1804,8 @@
         "magDef": 2
       },
       "sellPrice": 50,
-      "description": "鋼の槍。槍使い向け。"
+      "description": "鋼の槍。槍使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_spear",
@@ -1773,7 +1824,8 @@
         "magDef": 2
       },
       "sellPrice": 90,
-      "description": "銀の槍。槍使い向け。"
+      "description": "銀の槍。槍使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_spear",
@@ -1792,7 +1844,8 @@
         "magDef": 3
       },
       "sellPrice": 160,
-      "description": "ミスリルの槍。槍使い向け。"
+      "description": "ミスリルの槍。槍使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_spear",
@@ -1811,7 +1864,8 @@
         "magDef": 3
       },
       "sellPrice": 280,
-      "description": "竜の槍。槍使い向け。"
+      "description": "竜の槍。槍使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_spear",
@@ -1830,7 +1884,8 @@
         "magDef": 3
       },
       "sellPrice": 480,
-      "description": "天上の槍。槍使い向け。"
+      "description": "天上の槍。槍使い向け。",
+      "series": "天上"
     },
     {
       "id": "copper_wand",
@@ -1849,7 +1904,8 @@
         "atkSpeed": 0.1
       },
       "sellPrice": 12,
-      "description": "銅のロッド。ロッド使い向け。"
+      "description": "銅のロッド。ロッド使い向け。",
+      "series": "銅"
     },
     {
       "id": "iron_wand",
@@ -1868,7 +1924,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 25,
-      "description": "鉄のロッド。ロッド使い向け。"
+      "description": "鉄のロッド。ロッド使い向け。",
+      "series": "鉄"
     },
     {
       "id": "steel_wand",
@@ -1887,7 +1944,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 50,
-      "description": "鋼のロッド。ロッド使い向け。"
+      "description": "鋼のロッド。ロッド使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_wand",
@@ -1906,7 +1964,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 90,
-      "description": "銀のロッド。ロッド使い向け。"
+      "description": "銀のロッド。ロッド使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_wand",
@@ -1925,7 +1984,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 160,
-      "description": "ミスリルのロッド。ロッド使い向け。"
+      "description": "ミスリルのロッド。ロッド使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_wand",
@@ -1944,7 +2004,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 280,
-      "description": "竜のロッド。ロッド使い向け。"
+      "description": "竜のロッド。ロッド使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_wand",
@@ -1963,7 +2024,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 480,
-      "description": "天上のロッド。ロッド使い向け。"
+      "description": "天上のロッド。ロッド使い向け。",
+      "series": "天上"
     },
     {
       "id": "steel_katana",
@@ -1982,7 +2044,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 50,
-      "description": "鋼の刀。刀使い向け。"
+      "description": "鋼の刀。刀使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_katana",
@@ -2001,7 +2064,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 90,
-      "description": "銀の刀。刀使い向け。"
+      "description": "銀の刀。刀使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_katana",
@@ -2020,7 +2084,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 160,
-      "description": "ミスリルの刀。刀使い向け。"
+      "description": "ミスリルの刀。刀使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_katana",
@@ -2039,7 +2104,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 280,
-      "description": "竜の刀。刀使い向け。"
+      "description": "竜の刀。刀使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_katana",
@@ -2058,7 +2124,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 480,
-      "description": "天上の刀。刀使い向け。"
+      "description": "天上の刀。刀使い向け。",
+      "series": "天上"
     },
     {
       "id": "steel_shuriken",
@@ -2077,7 +2144,8 @@
         "critRate": 0.05
       },
       "sellPrice": 50,
-      "description": "鋼の手裏剣。手裏剣使い向け。"
+      "description": "鋼の手裏剣。手裏剣使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_shuriken",
@@ -2096,7 +2164,8 @@
         "critRate": 0.05
       },
       "sellPrice": 90,
-      "description": "銀の手裏剣。手裏剣使い向け。"
+      "description": "銀の手裏剣。手裏剣使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_shuriken",
@@ -2115,7 +2184,8 @@
         "critRate": 0.06
       },
       "sellPrice": 160,
-      "description": "ミスリルの手裏剣。手裏剣使い向け。"
+      "description": "ミスリルの手裏剣。手裏剣使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_shuriken",
@@ -2134,7 +2204,8 @@
         "critRate": 0.06
       },
       "sellPrice": 280,
-      "description": "竜の手裏剣。手裏剣使い向け。"
+      "description": "竜の手裏剣。手裏剣使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_shuriken",
@@ -2153,7 +2224,8 @@
         "critRate": 0.07
       },
       "sellPrice": 480,
-      "description": "天上の手裏剣。手裏剣使い向け。"
+      "description": "天上の手裏剣。手裏剣使い向け。",
+      "series": "天上"
     },
     {
       "id": "steel_bow",
@@ -2172,7 +2244,8 @@
         "critRate": 0.04
       },
       "sellPrice": 50,
-      "description": "鋼の弓。弓使い向け。"
+      "description": "鋼の弓。弓使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_bow",
@@ -2191,7 +2264,8 @@
         "critRate": 0.04
       },
       "sellPrice": 90,
-      "description": "銀の弓。弓使い向け。"
+      "description": "銀の弓。弓使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_bow",
@@ -2210,7 +2284,8 @@
         "critRate": 0.05
       },
       "sellPrice": 160,
-      "description": "ミスリルの弓。弓使い向け。"
+      "description": "ミスリルの弓。弓使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_bow",
@@ -2229,7 +2304,8 @@
         "critRate": 0.05
       },
       "sellPrice": 280,
-      "description": "竜の弓。弓使い向け。"
+      "description": "竜の弓。弓使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_bow",
@@ -2248,7 +2324,8 @@
         "critRate": 0.06
       },
       "sellPrice": 480,
-      "description": "天上の弓。弓使い向け。"
+      "description": "天上の弓。弓使い向け。",
+      "series": "天上"
     },
     {
       "id": "steel_shield",
@@ -2268,7 +2345,8 @@
         "magDef": 3
       },
       "sellPrice": 50,
-      "description": "鋼の盾。盾使い向け。"
+      "description": "鋼の盾。盾使い向け。",
+      "series": "鋼"
     },
     {
       "id": "silver_shield",
@@ -2288,7 +2366,8 @@
         "magDef": 3
       },
       "sellPrice": 90,
-      "description": "銀の盾。盾使い向け。"
+      "description": "銀の盾。盾使い向け。",
+      "series": "銀"
     },
     {
       "id": "mythril_shield",
@@ -2308,7 +2387,8 @@
         "magDef": 4
       },
       "sellPrice": 160,
-      "description": "ミスリルの盾。盾使い向け。"
+      "description": "ミスリルの盾。盾使い向け。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_shield",
@@ -2328,7 +2408,8 @@
         "magDef": 4
       },
       "sellPrice": 280,
-      "description": "竜の盾。盾使い向け。"
+      "description": "竜の盾。盾使い向け。",
+      "series": "竜"
     },
     {
       "id": "celestial_shield",
@@ -2348,7 +2429,8 @@
         "magDef": 5
       },
       "sellPrice": 480,
-      "description": "天上の盾。盾使い向け。"
+      "description": "天上の盾。盾使い向け。",
+      "series": "天上"
     },
     {
       "id": "wood_gloves",
@@ -2363,7 +2445,8 @@
         "def": 1
       },
       "sellPrice": 5,
-      "description": "木の手甲。"
+      "description": "木の手甲。",
+      "series": "木"
     },
     {
       "id": "copper_gloves",
@@ -2378,7 +2461,8 @@
         "def": 1
       },
       "sellPrice": 12,
-      "description": "銅の手甲。"
+      "description": "銅の手甲。",
+      "series": "銅"
     },
     {
       "id": "iron_gloves",
@@ -2393,7 +2477,8 @@
         "def": 2
       },
       "sellPrice": 25,
-      "description": "鉄の手甲。"
+      "description": "鉄の手甲。",
+      "series": "鉄"
     },
     {
       "id": "steel_gloves",
@@ -2409,7 +2494,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 50,
-      "description": "鋼の手甲。"
+      "description": "鋼の手甲。",
+      "series": "鋼"
     },
     {
       "id": "silver_gloves",
@@ -2425,7 +2511,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 90,
-      "description": "銀の手甲。"
+      "description": "銀の手甲。",
+      "series": "銀"
     },
     {
       "id": "mythril_gloves",
@@ -2441,7 +2528,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 160,
-      "description": "ミスリルの手甲。"
+      "description": "ミスリルの手甲。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_gloves",
@@ -2457,7 +2545,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 280,
-      "description": "竜の手甲。"
+      "description": "竜の手甲。",
+      "series": "竜"
     },
     {
       "id": "celestial_gloves",
@@ -2473,7 +2562,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 480,
-      "description": "天上の手甲。"
+      "description": "天上の手甲。",
+      "series": "天上"
     },
     {
       "id": "wood_belt",
@@ -2488,7 +2578,8 @@
         "def": 1
       },
       "sellPrice": 5,
-      "description": "木の帯。"
+      "description": "木の帯。",
+      "series": "木"
     },
     {
       "id": "copper_belt",
@@ -2503,7 +2594,8 @@
         "def": 2
       },
       "sellPrice": 12,
-      "description": "銅の帯。"
+      "description": "銅の帯。",
+      "series": "銅"
     },
     {
       "id": "iron_belt",
@@ -2519,7 +2611,8 @@
         "maxMp": 10
       },
       "sellPrice": 25,
-      "description": "鉄の帯。"
+      "description": "鉄の帯。",
+      "series": "鉄"
     },
     {
       "id": "steel_belt",
@@ -2536,7 +2629,8 @@
         "magDef": 2
       },
       "sellPrice": 50,
-      "description": "鋼の帯。"
+      "description": "鋼の帯。",
+      "series": "鋼"
     },
     {
       "id": "silver_belt",
@@ -2553,7 +2647,8 @@
         "magDef": 2
       },
       "sellPrice": 90,
-      "description": "銀の帯。"
+      "description": "銀の帯。",
+      "series": "銀"
     },
     {
       "id": "mythril_belt",
@@ -2570,7 +2665,8 @@
         "magDef": 3
       },
       "sellPrice": 160,
-      "description": "ミスリルの帯。"
+      "description": "ミスリルの帯。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_belt",
@@ -2587,7 +2683,8 @@
         "magDef": 3
       },
       "sellPrice": 280,
-      "description": "竜の帯。"
+      "description": "竜の帯。",
+      "series": "竜"
     },
     {
       "id": "celestial_belt",
@@ -2604,7 +2701,8 @@
         "magDef": 3
       },
       "sellPrice": 480,
-      "description": "天上の帯。"
+      "description": "天上の帯。",
+      "series": "天上"
     },
     {
       "id": "wood_boots",
@@ -2620,7 +2718,8 @@
         "def": 1
       },
       "sellPrice": 5,
-      "description": "木の靴。"
+      "description": "木の靴。",
+      "series": "木"
     },
     {
       "id": "copper_boots",
@@ -2636,7 +2735,8 @@
         "def": 1
       },
       "sellPrice": 12,
-      "description": "銅の靴。"
+      "description": "銅の靴。",
+      "series": "銅"
     },
     {
       "id": "iron_boots",
@@ -2652,7 +2752,8 @@
         "def": 2
       },
       "sellPrice": 25,
-      "description": "鉄の靴。"
+      "description": "鉄の靴。",
+      "series": "鉄"
     },
     {
       "id": "steel_boots",
@@ -2668,7 +2769,8 @@
         "def": 4
       },
       "sellPrice": 50,
-      "description": "鋼の靴。"
+      "description": "鋼の靴。",
+      "series": "鋼"
     },
     {
       "id": "silver_boots",
@@ -2684,7 +2786,8 @@
         "def": 6
       },
       "sellPrice": 90,
-      "description": "銀の靴。"
+      "description": "銀の靴。",
+      "series": "銀"
     },
     {
       "id": "mythril_boots",
@@ -2700,7 +2803,8 @@
         "def": 8
       },
       "sellPrice": 160,
-      "description": "ミスリルの靴。"
+      "description": "ミスリルの靴。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_boots",
@@ -2716,7 +2820,8 @@
         "def": 10
       },
       "sellPrice": 280,
-      "description": "竜の靴。"
+      "description": "竜の靴。",
+      "series": "竜"
     },
     {
       "id": "celestial_boots",
@@ -2732,7 +2837,8 @@
         "def": 13
       },
       "sellPrice": 480,
-      "description": "天上の靴。"
+      "description": "天上の靴。",
+      "series": "天上"
     },
     {
       "id": "wood_cloak",
@@ -2748,7 +2854,8 @@
         "maxHp": 2
       },
       "sellPrice": 5,
-      "description": "木のマント。"
+      "description": "木のマント。",
+      "series": "木"
     },
     {
       "id": "copper_cloak",
@@ -2764,7 +2871,8 @@
         "maxHp": 5
       },
       "sellPrice": 12,
-      "description": "銅のマント。"
+      "description": "銅のマント。",
+      "series": "銅"
     },
     {
       "id": "iron_cloak",
@@ -2780,7 +2888,8 @@
         "maxHp": 7
       },
       "sellPrice": 25,
-      "description": "鉄のマント。"
+      "description": "鉄のマント。",
+      "series": "鉄"
     },
     {
       "id": "steel_cloak",
@@ -2797,7 +2906,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 50,
-      "description": "鋼のマント。"
+      "description": "鋼のマント。",
+      "series": "鋼"
     },
     {
       "id": "silver_cloak",
@@ -2814,7 +2924,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 90,
-      "description": "銀のマント。"
+      "description": "銀のマント。",
+      "series": "銀"
     },
     {
       "id": "mythril_cloak",
@@ -2831,7 +2942,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 160,
-      "description": "ミスリルのマント。"
+      "description": "ミスリルのマント。",
+      "series": "ミスリル"
     },
     {
       "id": "dragon_cloak",
@@ -2848,7 +2960,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 280,
-      "description": "竜のマント。"
+      "description": "竜のマント。",
+      "series": "竜"
     },
     {
       "id": "celestial_cloak",
@@ -2865,7 +2978,8 @@
         "moveSpeed": 3
       },
       "sellPrice": 480,
-      "description": "天上のマント。"
+      "description": "天上のマント。",
+      "series": "天上"
     },
     {
       "id": "lifewood_staff",
@@ -2957,7 +3071,8 @@
       "description": "王者の粘液を加工した一品。",
       "weaponTags": [
         "mace"
-      ]
+      ],
+      "series": "粘王"
     },
     {
       "id": "dragonscale_lance",
@@ -3011,7 +3126,8 @@
       "description": "岩牙を加工した一品。",
       "weaponTags": [
         "katana"
-      ]
+      ],
+      "series": "岩牙"
     },
     {
       "id": "glacier_staff",
@@ -3063,7 +3179,8 @@
       "description": "深淵核を加工した一品。",
       "weaponTags": [
         "sword"
-      ]
+      ],
+      "series": "深淵"
     },
     {
       "id": "bastion_helm",
@@ -3092,7 +3209,8 @@
         "accuracy": 2
       },
       "sellPrice": 20,
-      "description": "ささやかな加護を宿す銅の指輪。"
+      "description": "ささやかな加護を宿す銅の指輪。",
+      "series": "指輪"
     },
     {
       "id": "ring_iron",
@@ -3106,7 +3224,8 @@
         "physAtk": 2
       },
       "sellPrice": 40,
-      "description": "打ち手の勘を研ぎ澄ます鉄の指輪。"
+      "description": "打ち手の勘を研ぎ澄ます鉄の指輪。",
+      "series": "指輪"
     },
     {
       "id": "ring_steel",
@@ -3121,7 +3240,8 @@
         "accuracy": 3
       },
       "sellPrice": 90,
-      "description": "鋼を鍛えた重厚な指輪。"
+      "description": "鋼を鍛えた重厚な指輪。",
+      "series": "指輪"
     },
     {
       "id": "ring_mythril",
@@ -3136,7 +3256,8 @@
         "magAtk": 6
       },
       "sellPrice": 180,
-      "description": "魔力を通すミスリルの指輪。"
+      "description": "魔力を通すミスリルの指輪。",
+      "series": "指輪"
     },
     {
       "id": "ring_astral",
@@ -3152,7 +3273,8 @@
         "accuracy": 5
       },
       "sellPrice": 320,
-      "description": "星屑の輝きを封じた至高の指輪。"
+      "description": "星屑の輝きを封じた至高の指輪。",
+      "series": "指輪"
     },
     {
       "id": "ring_arcane",
@@ -3170,7 +3292,8 @@
       "classRestrictions": [
         "mage",
         "cleric"
-      ]
+      ],
+      "series": "指輪"
     },
     {
       "id": "amulet_wood",
@@ -3184,7 +3307,8 @@
         "evasion": 2
       },
       "sellPrice": 20,
-      "description": "森の気を宿した素朴な護符。"
+      "description": "森の気を宿した素朴な護符。",
+      "series": "護符"
     },
     {
       "id": "amulet_bone",
@@ -3198,7 +3322,8 @@
         "magDef": 2
       },
       "sellPrice": 40,
-      "description": "魔を退ける骨細工の護符。"
+      "description": "魔を退ける骨細工の護符。",
+      "series": "護符"
     },
     {
       "id": "amulet_jade",
@@ -3213,7 +3338,8 @@
         "evasion": 3
       },
       "sellPrice": 90,
-      "description": "翠の玉が身を守る護符。"
+      "description": "翠の玉が身を守る護符。",
+      "series": "護符"
     },
     {
       "id": "amulet_dragon",
@@ -3228,7 +3354,8 @@
         "magDef": 6
       },
       "sellPrice": 180,
-      "description": "竜鱗を編み込んだ堅牢な護符。"
+      "description": "竜鱗を編み込んだ堅牢な護符。",
+      "series": "護符"
     },
     {
       "id": "amulet_abyss",
@@ -3243,7 +3370,8 @@
         "moveSpeed": 4
       },
       "sellPrice": 320,
-      "description": "深淵の力を封じた漆黒の護符。"
+      "description": "深淵の力を封じた漆黒の護符。",
+      "series": "護符"
     },
     {
       "id": "amulet_thief",
@@ -3261,7 +3389,8 @@
       "description": "身軽さを与える盗賊の耳飾り。",
       "classRestrictions": [
         "thief"
-      ]
+      ],
+      "series": "護符"
     },
     {
       "id": "charm_rabbit",
@@ -3320,7 +3449,8 @@
         "accuracy": 3
       },
       "sellPrice": 48,
-      "description": "獣骨の剣。腕に馴染む一品。"
+      "description": "獣骨の剣。腕に馴染む一品。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_sword",
@@ -3338,7 +3468,8 @@
         "accuracy": 3
       },
       "sellPrice": 72,
-      "description": "白鋼の剣。腕に馴染む一品。"
+      "description": "白鋼の剣。腕に馴染む一品。",
+      "series": "白鋼"
     },
     {
       "id": "gale_sword",
@@ -3356,7 +3487,8 @@
         "critRate": 0.04
       },
       "sellPrice": 108,
-      "description": "疾風の剣。腕に馴染む一品。"
+      "description": "疾風の剣。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "storm_sword",
@@ -3375,7 +3507,8 @@
         "critRate": 0.05
       },
       "sellPrice": 144,
-      "description": "嵐の剣。腕に馴染む一品。"
+      "description": "嵐の剣。腕に馴染む一品。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_sword",
@@ -3394,7 +3527,8 @@
         "critRate": 0.08
       },
       "sellPrice": 192,
-      "description": "月影の剣。腕に馴染む一品。"
+      "description": "月影の剣。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "dragonbone_sword",
@@ -3414,7 +3548,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 240,
-      "description": "竜骨の剣。腕に馴染む一品。"
+      "description": "竜骨の剣。腕に馴染む一品。",
+      "series": "竜骨"
     },
     {
       "id": "whitesilver_sword",
@@ -3434,7 +3569,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 288,
-      "description": "白銀の剣。腕に馴染む一品。"
+      "description": "白銀の剣。腕に馴染む一品。",
+      "series": "白銀"
     },
     {
       "id": "thunderpeal_sword",
@@ -3452,7 +3588,8 @@
         "critRate": 0.08
       },
       "sellPrice": 360,
-      "description": "雷鳴の剣。腕に馴染む一品。"
+      "description": "雷鳴の剣。腕に馴染む一品。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_sword",
@@ -3470,7 +3607,8 @@
         "critRate": 0.08
       },
       "sellPrice": 432,
-      "description": "星霜の剣。腕に馴染む一品。"
+      "description": "星霜の剣。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_sword",
@@ -3488,7 +3626,8 @@
         "critRate": 0.08
       },
       "sellPrice": 528,
-      "description": "天穹の剣。腕に馴染む一品。"
+      "description": "天穹の剣。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_staff",
@@ -3507,7 +3646,8 @@
         "magDef": 2
       },
       "sellPrice": 48,
-      "description": "獣骨の杖。腕に馴染む一品。"
+      "description": "獣骨の杖。腕に馴染む一品。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_staff",
@@ -3526,7 +3666,8 @@
         "magDef": 3
       },
       "sellPrice": 72,
-      "description": "白鋼の杖。腕に馴染む一品。"
+      "description": "白鋼の杖。腕に馴染む一品。",
+      "series": "白鋼"
     },
     {
       "id": "gale_staff",
@@ -3545,7 +3686,8 @@
         "magDef": 3
       },
       "sellPrice": 108,
-      "description": "疾風の杖。腕に馴染む一品。"
+      "description": "疾風の杖。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "storm_staff",
@@ -3564,7 +3706,8 @@
         "magDef": 4
       },
       "sellPrice": 144,
-      "description": "嵐の杖。腕に馴染む一品。"
+      "description": "嵐の杖。腕に馴染む一品。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_staff",
@@ -3583,7 +3726,8 @@
         "magDef": 4
       },
       "sellPrice": 192,
-      "description": "月影の杖。腕に馴染む一品。"
+      "description": "月影の杖。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "dragonbone_staff",
@@ -3602,7 +3746,8 @@
         "magDef": 5
       },
       "sellPrice": 240,
-      "description": "竜骨の杖。腕に馴染む一品。"
+      "description": "竜骨の杖。腕に馴染む一品。",
+      "series": "竜骨"
     },
     {
       "id": "whitesilver_staff",
@@ -3620,7 +3765,8 @@
         "maxMp": 36
       },
       "sellPrice": 288,
-      "description": "白銀の杖。腕に馴染む一品。"
+      "description": "白銀の杖。腕に馴染む一品。",
+      "series": "白銀"
     },
     {
       "id": "thunderpeal_staff",
@@ -3638,7 +3784,8 @@
         "maxMp": 41
       },
       "sellPrice": 360,
-      "description": "雷鳴の杖。腕に馴染む一品。"
+      "description": "雷鳴の杖。腕に馴染む一品。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_staff",
@@ -3656,7 +3803,8 @@
         "maxMp": 46
       },
       "sellPrice": 432,
-      "description": "星霜の杖。腕に馴染む一品。"
+      "description": "星霜の杖。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_staff",
@@ -3674,7 +3822,8 @@
         "maxMp": 51
       },
       "sellPrice": 528,
-      "description": "天穹の杖。腕に馴染む一品。"
+      "description": "天穹の杖。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_whip",
@@ -3693,7 +3842,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 48,
-      "description": "獣骨の鞭。腕に馴染む一品。"
+      "description": "獣骨の鞭。腕に馴染む一品。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_whip",
@@ -3712,7 +3862,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 72,
-      "description": "白鋼の鞭。腕に馴染む一品。"
+      "description": "白鋼の鞭。腕に馴染む一品。",
+      "series": "白鋼"
     },
     {
       "id": "gale_whip",
@@ -3731,7 +3882,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 108,
-      "description": "疾風の鞭。腕に馴染む一品。"
+      "description": "疾風の鞭。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "storm_whip",
@@ -3750,7 +3902,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 144,
-      "description": "嵐の鞭。腕に馴染む一品。"
+      "description": "嵐の鞭。腕に馴染む一品。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_whip",
@@ -3769,7 +3922,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 192,
-      "description": "月影の鞭。腕に馴染む一品。"
+      "description": "月影の鞭。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "dragonbone_whip",
@@ -3788,7 +3942,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 240,
-      "description": "竜骨の鞭。腕に馴染む一品。"
+      "description": "竜骨の鞭。腕に馴染む一品。",
+      "series": "竜骨"
     },
     {
       "id": "whitesilver_whip",
@@ -3807,7 +3962,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 288,
-      "description": "白銀の鞭。腕に馴染む一品。"
+      "description": "白銀の鞭。腕に馴染む一品。",
+      "series": "白銀"
     },
     {
       "id": "thunderpeal_whip",
@@ -3826,7 +3982,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 360,
-      "description": "雷鳴の鞭。腕に馴染む一品。"
+      "description": "雷鳴の鞭。腕に馴染む一品。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_whip",
@@ -3845,7 +4002,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 432,
-      "description": "星霜の鞭。腕に馴染む一品。"
+      "description": "星霜の鞭。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_whip",
@@ -3864,7 +4022,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 528,
-      "description": "天穹の鞭。腕に馴染む一品。"
+      "description": "天穹の鞭。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_spear",
@@ -3882,7 +4041,8 @@
         "accuracy": 3
       },
       "sellPrice": 48,
-      "description": "獣骨の槍。腕に馴染む一品。"
+      "description": "獣骨の槍。腕に馴染む一品。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_spear",
@@ -3901,7 +4061,8 @@
         "magDef": 2
       },
       "sellPrice": 72,
-      "description": "白鋼の槍。腕に馴染む一品。"
+      "description": "白鋼の槍。腕に馴染む一品。",
+      "series": "白鋼"
     },
     {
       "id": "gale_spear",
@@ -3920,7 +4081,8 @@
         "magDef": 2
       },
       "sellPrice": 108,
-      "description": "疾風の槍。腕に馴染む一品。"
+      "description": "疾風の槍。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "storm_spear",
@@ -3939,7 +4101,8 @@
         "magDef": 3
       },
       "sellPrice": 144,
-      "description": "嵐の槍。腕に馴染む一品。"
+      "description": "嵐の槍。腕に馴染む一品。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_spear",
@@ -3957,7 +4120,8 @@
         "accuracy": 5
       },
       "sellPrice": 192,
-      "description": "月影の槍。腕に馴染む一品。"
+      "description": "月影の槍。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "dragonbone_spear",
@@ -3976,7 +4140,8 @@
         "magDef": 3
       },
       "sellPrice": 240,
-      "description": "竜骨の槍。腕に馴染む一品。"
+      "description": "竜骨の槍。腕に馴染む一品。",
+      "series": "竜骨"
     },
     {
       "id": "whitesilver_spear",
@@ -3995,7 +4160,8 @@
         "magDef": 3
       },
       "sellPrice": 288,
-      "description": "白銀の槍。腕に馴染む一品。"
+      "description": "白銀の槍。腕に馴染む一品。",
+      "series": "白銀"
     },
     {
       "id": "thunderpeal_spear",
@@ -4014,7 +4180,8 @@
         "magDef": 3
       },
       "sellPrice": 360,
-      "description": "雷鳴の槍。腕に馴染む一品。"
+      "description": "雷鳴の槍。腕に馴染む一品。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_spear",
@@ -4033,7 +4200,8 @@
         "magDef": 3
       },
       "sellPrice": 432,
-      "description": "星霜の槍。腕に馴染む一品。"
+      "description": "星霜の槍。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_spear",
@@ -4052,7 +4220,8 @@
         "magDef": 3
       },
       "sellPrice": 528,
-      "description": "天穹の槍。腕に馴染む一品。"
+      "description": "天穹の槍。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_wand",
@@ -4071,7 +4240,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 48,
-      "description": "獣骨のロッド。腕に馴染む一品。"
+      "description": "獣骨のロッド。腕に馴染む一品。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_wand",
@@ -4090,7 +4260,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 72,
-      "description": "白鋼のロッド。腕に馴染む一品。"
+      "description": "白鋼のロッド。腕に馴染む一品。",
+      "series": "白鋼"
     },
     {
       "id": "gale_wand",
@@ -4109,7 +4280,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 108,
-      "description": "疾風のロッド。腕に馴染む一品。"
+      "description": "疾風のロッド。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "storm_wand",
@@ -4128,7 +4300,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 144,
-      "description": "嵐のロッド。腕に馴染む一品。"
+      "description": "嵐のロッド。腕に馴染む一品。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_wand",
@@ -4146,7 +4319,8 @@
         "magDef": 8
       },
       "sellPrice": 192,
-      "description": "月影のロッド。腕に馴染む一品。"
+      "description": "月影のロッド。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "dragonbone_wand",
@@ -4165,7 +4339,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 240,
-      "description": "竜骨のロッド。腕に馴染む一品。"
+      "description": "竜骨のロッド。腕に馴染む一品。",
+      "series": "竜骨"
     },
     {
       "id": "whitesilver_wand",
@@ -4184,7 +4359,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 288,
-      "description": "白銀のロッド。腕に馴染む一品。"
+      "description": "白銀のロッド。腕に馴染む一品。",
+      "series": "白銀"
     },
     {
       "id": "thunderpeal_wand",
@@ -4203,7 +4379,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 360,
-      "description": "雷鳴のロッド。腕に馴染む一品。"
+      "description": "雷鳴のロッド。腕に馴染む一品。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_wand",
@@ -4222,7 +4399,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 432,
-      "description": "星霜のロッド。腕に馴染む一品。"
+      "description": "星霜のロッド。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_wand",
@@ -4241,7 +4419,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 528,
-      "description": "天穹のロッド。腕に馴染む一品。"
+      "description": "天穹のロッド。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_axe",
@@ -4260,7 +4439,8 @@
         "maxHp": 6
       },
       "sellPrice": 48,
-      "description": "獣骨の斧。腕に馴染む一品。"
+      "description": "獣骨の斧。腕に馴染む一品。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_axe",
@@ -4279,7 +4459,8 @@
         "maxHp": 9
       },
       "sellPrice": 72,
-      "description": "白鋼の斧。腕に馴染む一品。"
+      "description": "白鋼の斧。腕に馴染む一品。",
+      "series": "白鋼"
     },
     {
       "id": "gale_axe",
@@ -4298,7 +4479,8 @@
         "maxHp": 10
       },
       "sellPrice": 108,
-      "description": "疾風の斧。腕に馴染む一品。"
+      "description": "疾風の斧。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "moonlit_axe",
@@ -4317,7 +4499,8 @@
         "maxHp": 12
       },
       "sellPrice": 192,
-      "description": "月影の斧。腕に馴染む一品。"
+      "description": "月影の斧。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "dragonbone_axe",
@@ -4336,7 +4519,8 @@
         "maxHp": 12
       },
       "sellPrice": 240,
-      "description": "竜骨の斧。腕に馴染む一品。"
+      "description": "竜骨の斧。腕に馴染む一品。",
+      "series": "竜骨"
     },
     {
       "id": "whitesilver_axe",
@@ -4355,7 +4539,8 @@
         "maxHp": 14
       },
       "sellPrice": 288,
-      "description": "白銀の斧。腕に馴染む一品。"
+      "description": "白銀の斧。腕に馴染む一品。",
+      "series": "白銀"
     },
     {
       "id": "thunderpeal_axe",
@@ -4374,7 +4559,8 @@
         "maxHp": 15
       },
       "sellPrice": 360,
-      "description": "雷鳴の斧。腕に馴染む一品。"
+      "description": "雷鳴の斧。腕に馴染む一品。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_axe",
@@ -4393,7 +4579,8 @@
         "maxHp": 17
       },
       "sellPrice": 432,
-      "description": "星霜の斧。腕に馴染む一品。"
+      "description": "星霜の斧。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_axe",
@@ -4412,7 +4599,8 @@
         "maxHp": 19
       },
       "sellPrice": 528,
-      "description": "天穹の斧。腕に馴染む一品。"
+      "description": "天穹の斧。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "overlord_axe",
@@ -4431,7 +4619,8 @@
         "maxHp": 20
       },
       "sellPrice": 576,
-      "description": "覇王の斧。腕に馴染む一品。"
+      "description": "覇王の斧。腕に馴染む一品。",
+      "series": "覇王"
     },
     {
       "id": "beastbone_mace",
@@ -4450,7 +4639,8 @@
         "def": 2
       },
       "sellPrice": 48,
-      "description": "獣骨の槌。腕に馴染む一品。"
+      "description": "獣骨の槌。腕に馴染む一品。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_mace",
@@ -4469,7 +4659,8 @@
         "def": 3
       },
       "sellPrice": 72,
-      "description": "白鋼の槌。腕に馴染む一品。"
+      "description": "白鋼の槌。腕に馴染む一品。",
+      "series": "白鋼"
     },
     {
       "id": "gale_mace",
@@ -4488,7 +4679,8 @@
         "def": 3
       },
       "sellPrice": 108,
-      "description": "疾風の槌。腕に馴染む一品。"
+      "description": "疾風の槌。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "moonlit_mace",
@@ -4507,7 +4699,8 @@
         "def": 4
       },
       "sellPrice": 192,
-      "description": "月影の槌。腕に馴染む一品。"
+      "description": "月影の槌。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "dragonbone_mace",
@@ -4526,7 +4719,8 @@
         "def": 5
       },
       "sellPrice": 240,
-      "description": "竜骨の槌。腕に馴染む一品。"
+      "description": "竜骨の槌。腕に馴染む一品。",
+      "series": "竜骨"
     },
     {
       "id": "whitesilver_mace",
@@ -4545,7 +4739,8 @@
         "def": 5
       },
       "sellPrice": 288,
-      "description": "白銀の槌。腕に馴染む一品。"
+      "description": "白銀の槌。腕に馴染む一品。",
+      "series": "白銀"
     },
     {
       "id": "thunderpeal_mace",
@@ -4564,7 +4759,8 @@
         "def": 5
       },
       "sellPrice": 360,
-      "description": "雷鳴の槌。腕に馴染む一品。"
+      "description": "雷鳴の槌。腕に馴染む一品。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_mace",
@@ -4583,7 +4779,8 @@
         "def": 5
       },
       "sellPrice": 432,
-      "description": "星霜の槌。腕に馴染む一品。"
+      "description": "星霜の槌。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_mace",
@@ -4602,7 +4799,8 @@
         "def": 5
       },
       "sellPrice": 528,
-      "description": "天穹の槌。腕に馴染む一品。"
+      "description": "天穹の槌。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "overlord_mace",
@@ -4621,7 +4819,8 @@
         "def": 5
       },
       "sellPrice": 576,
-      "description": "覇王の槌。腕に馴染む一品。"
+      "description": "覇王の槌。腕に馴染む一品。",
+      "series": "覇王"
     },
     {
       "id": "beastbone_dagger",
@@ -4640,7 +4839,8 @@
         "critRate": 0.04
       },
       "sellPrice": 48,
-      "description": "獣骨の短剣。腕に馴染む一品。"
+      "description": "獣骨の短剣。腕に馴染む一品。",
+      "series": "獣骨"
     },
     {
       "id": "gale_dagger",
@@ -4660,7 +4860,8 @@
         "evasion": 8
       },
       "sellPrice": 108,
-      "description": "疾風の短剣。腕に馴染む一品。"
+      "description": "疾風の短剣。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "storm_dagger",
@@ -4680,7 +4881,8 @@
         "evasion": 9
       },
       "sellPrice": 144,
-      "description": "嵐の短剣。腕に馴染む一品。"
+      "description": "嵐の短剣。腕に馴染む一品。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_dagger",
@@ -4700,7 +4902,8 @@
         "evasion": 11
       },
       "sellPrice": 192,
-      "description": "月影の短剣。腕に馴染む一品。"
+      "description": "月影の短剣。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "dragonbone_dagger",
@@ -4720,7 +4923,8 @@
         "evasion": 11
       },
       "sellPrice": 240,
-      "description": "竜骨の短剣。腕に馴染む一品。"
+      "description": "竜骨の短剣。腕に馴染む一品。",
+      "series": "竜骨"
     },
     {
       "id": "whitesilver_dagger",
@@ -4740,7 +4944,8 @@
         "evasion": 12
       },
       "sellPrice": 288,
-      "description": "白銀の短剣。腕に馴染む一品。"
+      "description": "白銀の短剣。腕に馴染む一品。",
+      "series": "白銀"
     },
     {
       "id": "thunderpeal_dagger",
@@ -4760,7 +4965,8 @@
         "evasion": 13
       },
       "sellPrice": 360,
-      "description": "雷鳴の短剣。腕に馴染む一品。"
+      "description": "雷鳴の短剣。腕に馴染む一品。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_dagger",
@@ -4780,7 +4986,8 @@
         "evasion": 15
       },
       "sellPrice": 432,
-      "description": "星霜の短剣。腕に馴染む一品。"
+      "description": "星霜の短剣。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_dagger",
@@ -4800,7 +5007,8 @@
         "evasion": 17
       },
       "sellPrice": 528,
-      "description": "天穹の短剣。腕に馴染む一品。"
+      "description": "天穹の短剣。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "overlord_dagger",
@@ -4820,7 +5028,8 @@
         "evasion": 18
       },
       "sellPrice": 576,
-      "description": "覇王の短剣。腕に馴染む一品。"
+      "description": "覇王の短剣。腕に馴染む一品。",
+      "series": "覇王"
     },
     {
       "id": "ironwork_katana",
@@ -4839,7 +5048,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 36,
-      "description": "鉄造りの刀。腕に馴染む一品。"
+      "description": "鉄造りの刀。腕に馴染む一品。",
+      "series": "鉄造り"
     },
     {
       "id": "gale_katana",
@@ -4858,7 +5068,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 108,
-      "description": "疾風の刀。腕に馴染む一品。"
+      "description": "疾風の刀。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "storm_katana",
@@ -4877,7 +5088,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 144,
-      "description": "嵐の刀。腕に馴染む一品。"
+      "description": "嵐の刀。腕に馴染む一品。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_katana",
@@ -4896,7 +5108,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 192,
-      "description": "月影の刀。腕に馴染む一品。"
+      "description": "月影の刀。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "dragonbone_katana",
@@ -4915,7 +5128,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 240,
-      "description": "竜骨の刀。腕に馴染む一品。"
+      "description": "竜骨の刀。腕に馴染む一品。",
+      "series": "竜骨"
     },
     {
       "id": "abysstide_katana",
@@ -4933,7 +5147,8 @@
         "critRate": 0.05
       },
       "sellPrice": 312,
-      "description": "海淵の刀。腕に馴染む一品。"
+      "description": "海淵の刀。腕に馴染む一品。",
+      "series": "海淵"
     },
     {
       "id": "royalline_katana",
@@ -4987,7 +5202,8 @@
         "critRate": 0.05
       },
       "sellPrice": 576,
-      "description": "覇王の刀。腕に馴染む一品。"
+      "description": "覇王の刀。腕に馴染む一品。",
+      "series": "覇王"
     },
     {
       "id": "trainee_shuriken",
@@ -5006,7 +5222,8 @@
         "critRate": 0.05
       },
       "sellPrice": 18,
-      "description": "見習いの手裏剣。腕に馴染む一品。"
+      "description": "見習いの手裏剣。腕に馴染む一品。",
+      "series": "見習い"
     },
     {
       "id": "ironwork_shuriken",
@@ -5025,7 +5242,8 @@
         "critRate": 0.05
       },
       "sellPrice": 36,
-      "description": "鉄造りの手裏剣。腕に馴染む一品。"
+      "description": "鉄造りの手裏剣。腕に馴染む一品。",
+      "series": "鉄造り"
     },
     {
       "id": "whitesteel_shuriken",
@@ -5044,7 +5262,8 @@
         "critRate": 0.05
       },
       "sellPrice": 72,
-      "description": "白鋼の手裏剣。腕に馴染む一品。"
+      "description": "白鋼の手裏剣。腕に馴染む一品。",
+      "series": "白鋼"
     },
     {
       "id": "gale_shuriken",
@@ -5063,7 +5282,8 @@
         "critRate": 0.05
       },
       "sellPrice": 108,
-      "description": "疾風の手裏剣。腕に馴染む一品。"
+      "description": "疾風の手裏剣。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "storm_shuriken",
@@ -5082,7 +5302,8 @@
         "critRate": 0.06
       },
       "sellPrice": 144,
-      "description": "嵐の手裏剣。腕に馴染む一品。"
+      "description": "嵐の手裏剣。腕に馴染む一品。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_shuriken",
@@ -5101,7 +5322,8 @@
         "critRate": 0.06
       },
       "sellPrice": 192,
-      "description": "月影の手裏剣。腕に馴染む一品。"
+      "description": "月影の手裏剣。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "flarelord_shuriken",
@@ -5120,7 +5342,8 @@
         "critRate": 0.07
       },
       "sellPrice": 264,
-      "description": "炎帝の手裏剣。腕に馴染む一品。"
+      "description": "炎帝の手裏剣。腕に馴染む一品。",
+      "series": "炎帝"
     },
     {
       "id": "snowveil_shuriken",
@@ -5139,7 +5362,8 @@
         "critRate": 0.07
       },
       "sellPrice": 336,
-      "description": "氷雪の手裏剣。腕に馴染む一品。"
+      "description": "氷雪の手裏剣。腕に馴染む一品。",
+      "series": "氷雪"
     },
     {
       "id": "starfrost_shuriken",
@@ -5158,7 +5382,8 @@
         "critRate": 0.07
       },
       "sellPrice": 432,
-      "description": "星霜の手裏剣。腕に馴染む一品。"
+      "description": "星霜の手裏剣。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_shuriken",
@@ -5177,7 +5402,8 @@
         "critRate": 0.07
       },
       "sellPrice": 528,
-      "description": "天穹の手裏剣。腕に馴染む一品。"
+      "description": "天穹の手裏剣。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "trainee_bow",
@@ -5196,7 +5422,8 @@
         "critRate": 0.04
       },
       "sellPrice": 18,
-      "description": "見習いの弓。腕に馴染む一品。"
+      "description": "見習いの弓。腕に馴染む一品。",
+      "series": "見習い"
     },
     {
       "id": "ironwork_bow",
@@ -5215,7 +5442,8 @@
         "critRate": 0.04
       },
       "sellPrice": 36,
-      "description": "鉄造りの弓。腕に馴染む一品。"
+      "description": "鉄造りの弓。腕に馴染む一品。",
+      "series": "鉄造り"
     },
     {
       "id": "whitesteel_bow",
@@ -5234,7 +5462,8 @@
         "critRate": 0.04
       },
       "sellPrice": 72,
-      "description": "白鋼の弓。腕に馴染む一品。"
+      "description": "白鋼の弓。腕に馴染む一品。",
+      "series": "白鋼"
     },
     {
       "id": "gale_bow",
@@ -5253,7 +5482,8 @@
         "critRate": 0.04
       },
       "sellPrice": 108,
-      "description": "疾風の弓。腕に馴染む一品。"
+      "description": "疾風の弓。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "storm_bow",
@@ -5272,7 +5502,8 @@
         "critRate": 0.05
       },
       "sellPrice": 144,
-      "description": "嵐の弓。腕に馴染む一品。"
+      "description": "嵐の弓。腕に馴染む一品。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_bow",
@@ -5291,7 +5522,8 @@
         "critRate": 0.05
       },
       "sellPrice": 192,
-      "description": "月影の弓。腕に馴染む一品。"
+      "description": "月影の弓。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "flarelord_bow",
@@ -5310,7 +5542,8 @@
         "critRate": 0.06
       },
       "sellPrice": 264,
-      "description": "炎帝の弓。腕に馴染む一品。"
+      "description": "炎帝の弓。腕に馴染む一品。",
+      "series": "炎帝"
     },
     {
       "id": "snowveil_bow",
@@ -5329,7 +5562,8 @@
         "critRate": 0.06
       },
       "sellPrice": 336,
-      "description": "氷雪の弓。腕に馴染む一品。"
+      "description": "氷雪の弓。腕に馴染む一品。",
+      "series": "氷雪"
     },
     {
       "id": "starfrost_bow",
@@ -5348,7 +5582,8 @@
         "critRate": 0.06
       },
       "sellPrice": 432,
-      "description": "星霜の弓。腕に馴染む一品。"
+      "description": "星霜の弓。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_bow",
@@ -5367,7 +5602,8 @@
         "critRate": 0.06
       },
       "sellPrice": 528,
-      "description": "天穹の弓。腕に馴染む一品。"
+      "description": "天穹の弓。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "trainee_shield",
@@ -5387,7 +5623,8 @@
         "magDef": 3
       },
       "sellPrice": 18,
-      "description": "見習いの盾。腕に馴染む一品。"
+      "description": "見習いの盾。腕に馴染む一品。",
+      "series": "見習い"
     },
     {
       "id": "ironwork_shield",
@@ -5407,7 +5644,8 @@
         "magDef": 3
       },
       "sellPrice": 36,
-      "description": "鉄造りの盾。腕に馴染む一品。"
+      "description": "鉄造りの盾。腕に馴染む一品。",
+      "series": "鉄造り"
     },
     {
       "id": "whitesteel_shield",
@@ -5427,7 +5665,8 @@
         "magDef": 3
       },
       "sellPrice": 72,
-      "description": "白鋼の盾。腕に馴染む一品。"
+      "description": "白鋼の盾。腕に馴染む一品。",
+      "series": "白鋼"
     },
     {
       "id": "gale_shield",
@@ -5447,7 +5686,8 @@
         "magDef": 3
       },
       "sellPrice": 108,
-      "description": "疾風の盾。腕に馴染む一品。"
+      "description": "疾風の盾。腕に馴染む一品。",
+      "series": "疾風"
     },
     {
       "id": "storm_shield",
@@ -5467,7 +5707,8 @@
         "magDef": 4
       },
       "sellPrice": 144,
-      "description": "嵐の盾。腕に馴染む一品。"
+      "description": "嵐の盾。腕に馴染む一品。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_shield",
@@ -5487,7 +5728,8 @@
         "magDef": 4
       },
       "sellPrice": 192,
-      "description": "月影の盾。腕に馴染む一品。"
+      "description": "月影の盾。腕に馴染む一品。",
+      "series": "月影"
     },
     {
       "id": "flarelord_shield",
@@ -5507,7 +5749,8 @@
         "magDef": 5
       },
       "sellPrice": 264,
-      "description": "炎帝の盾。腕に馴染む一品。"
+      "description": "炎帝の盾。腕に馴染む一品。",
+      "series": "炎帝"
     },
     {
       "id": "snowveil_shield",
@@ -5527,7 +5770,8 @@
         "magDef": 5
       },
       "sellPrice": 336,
-      "description": "氷雪の盾。腕に馴染む一品。"
+      "description": "氷雪の盾。腕に馴染む一品。",
+      "series": "氷雪"
     },
     {
       "id": "starfrost_shield",
@@ -5547,7 +5791,8 @@
         "magDef": 5
       },
       "sellPrice": 432,
-      "description": "星霜の盾。腕に馴染む一品。"
+      "description": "星霜の盾。腕に馴染む一品。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_shield",
@@ -5567,7 +5812,8 @@
         "magDef": 5
       },
       "sellPrice": 528,
-      "description": "天穹の盾。腕に馴染む一品。"
+      "description": "天穹の盾。腕に馴染む一品。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_helm",
@@ -5583,7 +5829,8 @@
         "magDef": 2
       },
       "sellPrice": 40,
-      "description": "獣骨の兜。確かな作りの防具。"
+      "description": "獣骨の兜。確かな作りの防具。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_helm",
@@ -5599,7 +5846,8 @@
         "magDef": 3
       },
       "sellPrice": 60,
-      "description": "白鋼の兜。確かな作りの防具。"
+      "description": "白鋼の兜。確かな作りの防具。",
+      "series": "白鋼"
     },
     {
       "id": "gale_helm",
@@ -5616,7 +5864,8 @@
         "accuracy": 2
       },
       "sellPrice": 90,
-      "description": "疾風の兜。確かな作りの防具。"
+      "description": "疾風の兜。確かな作りの防具。",
+      "series": "疾風"
     },
     {
       "id": "storm_helm",
@@ -5633,7 +5882,8 @@
         "accuracy": 2
       },
       "sellPrice": 120,
-      "description": "嵐の兜。確かな作りの防具。"
+      "description": "嵐の兜。確かな作りの防具。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_helm",
@@ -5650,7 +5900,8 @@
         "accuracy": 2
       },
       "sellPrice": 160,
-      "description": "月影の兜。確かな作りの防具。"
+      "description": "月影の兜。確かな作りの防具。",
+      "series": "月影"
     },
     {
       "id": "flarelord_helm",
@@ -5667,7 +5918,8 @@
         "accuracy": 2
       },
       "sellPrice": 220,
-      "description": "炎帝の兜。確かな作りの防具。"
+      "description": "炎帝の兜。確かな作りの防具。",
+      "series": "炎帝"
     },
     {
       "id": "abysstide_helm",
@@ -5684,7 +5936,8 @@
         "accuracy": 2
       },
       "sellPrice": 260,
-      "description": "海淵の兜。確かな作りの防具。"
+      "description": "海淵の兜。確かな作りの防具。",
+      "series": "海淵"
     },
     {
       "id": "thunderpeal_helm",
@@ -5701,7 +5954,8 @@
         "accuracy": 2
       },
       "sellPrice": 300,
-      "description": "雷鳴の兜。確かな作りの防具。"
+      "description": "雷鳴の兜。確かな作りの防具。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_helm",
@@ -5718,7 +5972,8 @@
         "accuracy": 2
       },
       "sellPrice": 360,
-      "description": "星霜の兜。確かな作りの防具。"
+      "description": "星霜の兜。確かな作りの防具。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_helm",
@@ -5735,7 +5990,8 @@
         "accuracy": 2
       },
       "sellPrice": 440,
-      "description": "天穹の兜。確かな作りの防具。"
+      "description": "天穹の兜。確かな作りの防具。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_armor",
@@ -5750,7 +6006,8 @@
         "moveSpeed": -4
       },
       "sellPrice": 40,
-      "description": "獣骨の鎧。確かな作りの防具。"
+      "description": "獣骨の鎧。確かな作りの防具。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_armor",
@@ -5765,7 +6022,8 @@
         "moveSpeed": -4
       },
       "sellPrice": 60,
-      "description": "白鋼の鎧。確かな作りの防具。"
+      "description": "白鋼の鎧。確かな作りの防具。",
+      "series": "白鋼"
     },
     {
       "id": "gale_armor",
@@ -5781,7 +6039,8 @@
         "magDef": 4
       },
       "sellPrice": 90,
-      "description": "疾風の鎧。確かな作りの防具。"
+      "description": "疾風の鎧。確かな作りの防具。",
+      "series": "疾風"
     },
     {
       "id": "storm_armor",
@@ -5797,7 +6056,8 @@
         "magDef": 4
       },
       "sellPrice": 120,
-      "description": "嵐の鎧。確かな作りの防具。"
+      "description": "嵐の鎧。確かな作りの防具。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_armor",
@@ -5813,7 +6073,8 @@
         "magDef": 6
       },
       "sellPrice": 160,
-      "description": "月影の鎧。確かな作りの防具。"
+      "description": "月影の鎧。確かな作りの防具。",
+      "series": "月影"
     },
     {
       "id": "flarelord_armor",
@@ -5829,7 +6090,8 @@
         "magDef": 7
       },
       "sellPrice": 220,
-      "description": "炎帝の鎧。確かな作りの防具。"
+      "description": "炎帝の鎧。確かな作りの防具。",
+      "series": "炎帝"
     },
     {
       "id": "abysstide_armor",
@@ -5845,7 +6107,8 @@
         "magDef": 8
       },
       "sellPrice": 260,
-      "description": "海淵の鎧。確かな作りの防具。"
+      "description": "海淵の鎧。確かな作りの防具。",
+      "series": "海淵"
     },
     {
       "id": "thunderpeal_armor",
@@ -5861,7 +6124,8 @@
         "magDef": 9
       },
       "sellPrice": 300,
-      "description": "雷鳴の鎧。確かな作りの防具。"
+      "description": "雷鳴の鎧。確かな作りの防具。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_armor",
@@ -5877,7 +6141,8 @@
         "magDef": 10
       },
       "sellPrice": 360,
-      "description": "星霜の鎧。確かな作りの防具。"
+      "description": "星霜の鎧。確かな作りの防具。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_armor",
@@ -5893,7 +6158,8 @@
         "magDef": 12
       },
       "sellPrice": 440,
-      "description": "天穹の鎧。確かな作りの防具。"
+      "description": "天穹の鎧。確かな作りの防具。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_gauntlet",
@@ -5908,7 +6174,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 40,
-      "description": "獣骨の手甲。確かな作りの防具。"
+      "description": "獣骨の手甲。確かな作りの防具。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_gauntlet",
@@ -5923,7 +6190,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 60,
-      "description": "白鋼の手甲。確かな作りの防具。"
+      "description": "白鋼の手甲。確かな作りの防具。",
+      "series": "白鋼"
     },
     {
       "id": "gale_gauntlet",
@@ -5938,7 +6206,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 90,
-      "description": "疾風の手甲。確かな作りの防具。"
+      "description": "疾風の手甲。確かな作りの防具。",
+      "series": "疾風"
     },
     {
       "id": "storm_gauntlet",
@@ -5953,7 +6222,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 120,
-      "description": "嵐の手甲。確かな作りの防具。"
+      "description": "嵐の手甲。確かな作りの防具。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_gauntlet",
@@ -5968,7 +6238,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 160,
-      "description": "月影の手甲。確かな作りの防具。"
+      "description": "月影の手甲。確かな作りの防具。",
+      "series": "月影"
     },
     {
       "id": "flarelord_gauntlet",
@@ -5983,7 +6254,8 @@
         "atkSpeed": 0.4
       },
       "sellPrice": 220,
-      "description": "炎帝の手甲。確かな作りの防具。"
+      "description": "炎帝の手甲。確かな作りの防具。",
+      "series": "炎帝"
     },
     {
       "id": "abysstide_gauntlet",
@@ -5998,7 +6270,8 @@
         "atkSpeed": 0.5
       },
       "sellPrice": 260,
-      "description": "海淵の手甲。確かな作りの防具。"
+      "description": "海淵の手甲。確かな作りの防具。",
+      "series": "海淵"
     },
     {
       "id": "thunderpeal_gauntlet",
@@ -6013,7 +6286,8 @@
         "atkSpeed": 0.6
       },
       "sellPrice": 300,
-      "description": "雷鳴の手甲。確かな作りの防具。"
+      "description": "雷鳴の手甲。確かな作りの防具。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_gauntlet",
@@ -6028,7 +6302,8 @@
         "atkSpeed": 0.4
       },
       "sellPrice": 360,
-      "description": "星霜の手甲。確かな作りの防具。"
+      "description": "星霜の手甲。確かな作りの防具。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_gauntlet",
@@ -6043,7 +6318,8 @@
         "atkSpeed": 0.5
       },
       "sellPrice": 440,
-      "description": "天穹の手甲。確かな作りの防具。"
+      "description": "天穹の手甲。確かな作りの防具。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_belt",
@@ -6059,7 +6335,8 @@
         "magDef": 2
       },
       "sellPrice": 40,
-      "description": "獣骨の帯。確かな作りの防具。"
+      "description": "獣骨の帯。確かな作りの防具。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_belt",
@@ -6075,7 +6352,8 @@
         "magDef": 2
       },
       "sellPrice": 60,
-      "description": "白鋼の帯。確かな作りの防具。"
+      "description": "白鋼の帯。確かな作りの防具。",
+      "series": "白鋼"
     },
     {
       "id": "gale_belt",
@@ -6091,7 +6369,8 @@
         "magDef": 2
       },
       "sellPrice": 90,
-      "description": "疾風の帯。確かな作りの防具。"
+      "description": "疾風の帯。確かな作りの防具。",
+      "series": "疾風"
     },
     {
       "id": "storm_belt",
@@ -6107,7 +6386,8 @@
         "magDef": 3
       },
       "sellPrice": 120,
-      "description": "嵐の帯。確かな作りの防具。"
+      "description": "嵐の帯。確かな作りの防具。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_belt",
@@ -6123,7 +6403,8 @@
         "magDef": 3
       },
       "sellPrice": 160,
-      "description": "月影の帯。確かな作りの防具。"
+      "description": "月影の帯。確かな作りの防具。",
+      "series": "月影"
     },
     {
       "id": "flarelord_belt",
@@ -6139,7 +6420,8 @@
         "magDef": 3
       },
       "sellPrice": 220,
-      "description": "炎帝の帯。確かな作りの防具。"
+      "description": "炎帝の帯。確かな作りの防具。",
+      "series": "炎帝"
     },
     {
       "id": "abysstide_belt",
@@ -6155,7 +6437,8 @@
         "magDef": 3
       },
       "sellPrice": 260,
-      "description": "海淵の帯。確かな作りの防具。"
+      "description": "海淵の帯。確かな作りの防具。",
+      "series": "海淵"
     },
     {
       "id": "thunderpeal_belt",
@@ -6171,7 +6454,8 @@
         "magDef": 3
       },
       "sellPrice": 300,
-      "description": "雷鳴の帯。確かな作りの防具。"
+      "description": "雷鳴の帯。確かな作りの防具。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_belt",
@@ -6187,7 +6471,8 @@
         "magDef": 3
       },
       "sellPrice": 360,
-      "description": "星霜の帯。確かな作りの防具。"
+      "description": "星霜の帯。確かな作りの防具。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_belt",
@@ -6203,7 +6488,8 @@
         "magDef": 3
       },
       "sellPrice": 440,
-      "description": "天穹の帯。確かな作りの防具。"
+      "description": "天穹の帯。確かな作りの防具。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_boots",
@@ -6218,7 +6504,8 @@
         "def": 3
       },
       "sellPrice": 40,
-      "description": "獣骨の靴。確かな作りの防具。"
+      "description": "獣骨の靴。確かな作りの防具。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_boots",
@@ -6233,7 +6520,8 @@
         "def": 5
       },
       "sellPrice": 60,
-      "description": "白鋼の靴。確かな作りの防具。"
+      "description": "白鋼の靴。確かな作りの防具。",
+      "series": "白鋼"
     },
     {
       "id": "gale_boots",
@@ -6248,7 +6536,8 @@
         "def": 7
       },
       "sellPrice": 90,
-      "description": "疾風の靴。確かな作りの防具。"
+      "description": "疾風の靴。確かな作りの防具。",
+      "series": "疾風"
     },
     {
       "id": "storm_boots",
@@ -6263,7 +6552,8 @@
         "def": 9
       },
       "sellPrice": 120,
-      "description": "嵐の靴。確かな作りの防具。"
+      "description": "嵐の靴。確かな作りの防具。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_boots",
@@ -6278,7 +6568,8 @@
         "def": 12
       },
       "sellPrice": 160,
-      "description": "月影の靴。確かな作りの防具。"
+      "description": "月影の靴。確かな作りの防具。",
+      "series": "月影"
     },
     {
       "id": "flarelord_boots",
@@ -6293,7 +6584,8 @@
         "def": 16
       },
       "sellPrice": 220,
-      "description": "炎帝の靴。確かな作りの防具。"
+      "description": "炎帝の靴。確かな作りの防具。",
+      "series": "炎帝"
     },
     {
       "id": "abysstide_boots",
@@ -6308,7 +6600,8 @@
         "def": 19
       },
       "sellPrice": 260,
-      "description": "海淵の靴。確かな作りの防具。"
+      "description": "海淵の靴。確かな作りの防具。",
+      "series": "海淵"
     },
     {
       "id": "thunderpeal_boots",
@@ -6323,7 +6616,8 @@
         "def": 22
       },
       "sellPrice": 300,
-      "description": "雷鳴の靴。確かな作りの防具。"
+      "description": "雷鳴の靴。確かな作りの防具。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_boots",
@@ -6338,7 +6632,8 @@
         "def": 26
       },
       "sellPrice": 360,
-      "description": "星霜の靴。確かな作りの防具。"
+      "description": "星霜の靴。確かな作りの防具。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_boots",
@@ -6353,7 +6648,8 @@
         "def": 32
       },
       "sellPrice": 440,
-      "description": "天穹の靴。確かな作りの防具。"
+      "description": "天穹の靴。確かな作りの防具。",
+      "series": "天穹"
     },
     {
       "id": "beastbone_cloak",
@@ -6369,7 +6665,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 40,
-      "description": "獣骨のマント。確かな作りの防具。"
+      "description": "獣骨のマント。確かな作りの防具。",
+      "series": "獣骨"
     },
     {
       "id": "whitesteel_cloak",
@@ -6385,7 +6682,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 60,
-      "description": "白鋼のマント。確かな作りの防具。"
+      "description": "白鋼のマント。確かな作りの防具。",
+      "series": "白鋼"
     },
     {
       "id": "gale_cloak",
@@ -6401,7 +6699,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 90,
-      "description": "疾風のマント。確かな作りの防具。"
+      "description": "疾風のマント。確かな作りの防具。",
+      "series": "疾風"
     },
     {
       "id": "storm_cloak",
@@ -6417,7 +6716,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 120,
-      "description": "嵐のマント。確かな作りの防具。"
+      "description": "嵐のマント。確かな作りの防具。",
+      "series": "嵐"
     },
     {
       "id": "moonlit_cloak",
@@ -6433,7 +6733,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 160,
-      "description": "月影のマント。確かな作りの防具。"
+      "description": "月影のマント。確かな作りの防具。",
+      "series": "月影"
     },
     {
       "id": "flarelord_cloak",
@@ -6449,7 +6750,8 @@
         "moveSpeed": 4
       },
       "sellPrice": 220,
-      "description": "炎帝のマント。確かな作りの防具。"
+      "description": "炎帝のマント。確かな作りの防具。",
+      "series": "炎帝"
     },
     {
       "id": "abysstide_cloak",
@@ -6465,7 +6767,8 @@
         "moveSpeed": 5
       },
       "sellPrice": 260,
-      "description": "海淵のマント。確かな作りの防具。"
+      "description": "海淵のマント。確かな作りの防具。",
+      "series": "海淵"
     },
     {
       "id": "thunderpeal_cloak",
@@ -6481,7 +6784,8 @@
         "moveSpeed": 6
       },
       "sellPrice": 300,
-      "description": "雷鳴のマント。確かな作りの防具。"
+      "description": "雷鳴のマント。確かな作りの防具。",
+      "series": "雷鳴"
     },
     {
       "id": "starfrost_cloak",
@@ -6497,7 +6801,8 @@
         "moveSpeed": 8
       },
       "sellPrice": 360,
-      "description": "星霜のマント。確かな作りの防具。"
+      "description": "星霜のマント。確かな作りの防具。",
+      "series": "星霜"
     },
     {
       "id": "skyvault_cloak",
@@ -6513,7 +6818,8 @@
         "moveSpeed": 10
       },
       "sellPrice": 440,
-      "description": "天穹のマント。確かな作りの防具。"
+      "description": "天穹のマント。確かな作りの防具。",
+      "series": "天穹"
     },
     {
       "id": "whitesteel_ring",
@@ -6527,7 +6833,8 @@
         "physAtk": 3
       },
       "sellPrice": 60,
-      "description": "白鋼の指輪。確かな作りの防具。"
+      "description": "白鋼の指輪。確かな作りの防具。",
+      "series": "白鋼"
     },
     {
       "id": "moonlit_ring",
@@ -6542,7 +6849,8 @@
         "magAtk": 6
       },
       "sellPrice": 140,
-      "description": "月影の指輪。確かな作りの防具。"
+      "description": "月影の指輪。確かな作りの防具。",
+      "series": "月影"
     },
     {
       "id": "abysstide_ring",
@@ -6557,7 +6865,8 @@
         "magAtk": 7
       },
       "sellPrice": 260,
-      "description": "海淵の指輪。確かな作りの防具。"
+      "description": "海淵の指輪。確かな作りの防具。",
+      "series": "海淵"
     },
     {
       "id": "thunderpeal_ring",
@@ -6572,7 +6881,8 @@
         "magAtk": 7
       },
       "sellPrice": 300,
-      "description": "雷鳴の指輪。確かな作りの防具。"
+      "description": "雷鳴の指輪。確かな作りの防具。",
+      "series": "雷鳴"
     },
     {
       "id": "skyvault_ring",
@@ -6587,7 +6897,8 @@
         "magAtk": 9
       },
       "sellPrice": 440,
-      "description": "天穹の指輪。確かな作りの防具。"
+      "description": "天穹の指輪。確かな作りの防具。",
+      "series": "天穹"
     },
     {
       "id": "whitesteel_amulet",
@@ -6603,7 +6914,8 @@
         "magDef": 3
       },
       "sellPrice": 60,
-      "description": "白鋼の護符。確かな作りの防具。"
+      "description": "白鋼の護符。確かな作りの防具。",
+      "series": "白鋼"
     },
     {
       "id": "moonlit_amulet",
@@ -6620,7 +6932,8 @@
         "def": 5
       },
       "sellPrice": 140,
-      "description": "月影の護符。確かな作りの防具。"
+      "description": "月影の護符。確かな作りの防具。",
+      "series": "月影"
     },
     {
       "id": "abysstide_amulet",
@@ -6638,7 +6951,8 @@
         "moveSpeed": 4
       },
       "sellPrice": 260,
-      "description": "海淵の護符。確かな作りの防具。"
+      "description": "海淵の護符。確かな作りの防具。",
+      "series": "海淵"
     },
     {
       "id": "thunderpeal_amulet",
@@ -6656,7 +6970,8 @@
         "moveSpeed": 4
       },
       "sellPrice": 300,
-      "description": "雷鳴の護符。確かな作りの防具。"
+      "description": "雷鳴の護符。確かな作りの防具。",
+      "series": "雷鳴"
     },
     {
       "id": "skyvault_amulet",
@@ -6674,7 +6989,8 @@
         "moveSpeed": 4
       },
       "sellPrice": 440,
-      "description": "天穹の護符。確かな作りの防具。"
+      "description": "天穹の護符。確かな作りの防具。",
+      "series": "天穹"
     },
     {
       "id": "lord_mace",
@@ -6694,7 +7010,8 @@
         "def": 3
       },
       "sellPrice": 80,
-      "description": "もりの主の堅木で作った大槌。命が宿る。"
+      "description": "もりの主の堅木で作った大槌。命が宿る。",
+      "series": "森の主"
     },
     {
       "id": "lord_bark_mail",
@@ -6710,7 +7027,8 @@
         "magDef": 2
       },
       "sellPrice": 80,
-      "description": "主の樹皮の鎧。着る者を守るように軋む。"
+      "description": "主の樹皮の鎧。着る者を守るように軋む。",
+      "series": "森の主"
     },
     {
       "id": "lord_root_boots",
@@ -6726,7 +7044,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 70,
-      "description": "主の根で編んだ靴。大地を掴む。"
+      "description": "主の根で編んだ靴。大地を掴む。",
+      "series": "森の主"
     },
     {
       "id": "guardian_blade",
@@ -6744,7 +7063,8 @@
         "def": 4
       },
       "sellPrice": 95,
-      "description": "番人の腕部を打ち直した剣。重く、硬い。"
+      "description": "番人の腕部を打ち直した剣。重く、硬い。",
+      "series": "番人"
     },
     {
       "id": "guardian_bulwark",
@@ -6764,7 +7084,8 @@
         "magDef": 4
       },
       "sellPrice": 95,
-      "description": "番人の胸甲そのものの大盾。"
+      "description": "番人の胸甲そのものの大盾。",
+      "series": "番人"
     },
     {
       "id": "guardian_plate",
@@ -6781,7 +7102,8 @@
         "magDef": 3
       },
       "sellPrice": 90,
-      "description": "番人の装甲を纏う。重いが頼れる。"
+      "description": "番人の装甲を纏う。重いが頼れる。",
+      "series": "番人"
     },
     {
       "id": "nox_fang_blade",
@@ -6800,7 +7122,8 @@
         "lifesteal": 0.06
       },
       "sellPrice": 150,
-      "description": "夜王の牙の短剣。斬るたび生気を吸う。"
+      "description": "夜王の牙の短剣。斬るたび生気を吸う。",
+      "series": "ノクス"
     },
     {
       "id": "nox_wing_cloak",
@@ -6817,7 +7140,8 @@
         "maxHp": 12
       },
       "sellPrice": 140,
-      "description": "夜王の翼膜のマント。傷を癒す夜気を纏う。"
+      "description": "夜王の翼膜のマント。傷を癒す夜気を纏う。",
+      "series": "ノクス"
     },
     {
       "id": "nox_mask",
@@ -6833,7 +7157,8 @@
         "magDef": 4
       },
       "sellPrice": 130,
-      "description": "夜王の貌を模した仮面。急所が視える。"
+      "description": "夜王の貌を模した仮面。急所が視える。",
+      "series": "ノクス"
     },
     {
       "id": "zephys_gale_bow",
@@ -6853,7 +7178,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 150,
-      "description": "風切羽の弓。矢が風に乗る。"
+      "description": "風切羽の弓。矢が風に乗る。",
+      "series": "ゼフィス"
     },
     {
       "id": "zephys_boots",
@@ -6869,7 +7195,8 @@
         "def": 5
       },
       "sellPrice": 130,
-      "description": "ゼフィスの羽をあしらった靴。足が軽い。"
+      "description": "ゼフィスの羽をあしらった靴。足が軽い。",
+      "series": "ゼフィス"
     },
     {
       "id": "zephys_band",
@@ -6885,7 +7212,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 120,
-      "description": "尾羽を編み込んだ帯。身のこなしが変わる。"
+      "description": "尾羽を編み込んだ帯。身のこなしが変わる。",
+      "series": "ゼフィス"
     },
     {
       "id": "vurm_greatsword",
@@ -6903,7 +7231,8 @@
         "critRate": 0.05
       },
       "sellPrice": 260,
-      "description": "ヴルムの紅蓮珠を鍔に埋めた大剣。刃が燃える。"
+      "description": "ヴルムの紅蓮珠を鍔に埋めた大剣。刃が燃える。",
+      "series": "業火"
     },
     {
       "id": "vurm_gauntlet",
@@ -6920,7 +7249,8 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 220,
-      "description": "剛爪の籠手。拳に熱がこもる。"
+      "description": "剛爪の籠手。拳に熱がこもる。",
+      "series": "業火"
     },
     {
       "id": "vurm_helm",
@@ -6936,7 +7266,8 @@
         "magDef": 5
       },
       "sellPrice": 220,
-      "description": "ヴルムの頭殻の兜。炎を恐れなくなる。"
+      "description": "ヴルムの頭殻の兜。炎を恐れなくなる。",
+      "series": "業火"
     },
     {
       "id": "fenrir_fang_katana",
@@ -6955,7 +7286,8 @@
         "atkSpeed": 0.4
       },
       "sellPrice": 260,
-      "description": "月魄の牙を研いだ刀。太刀筋が残像になる。"
+      "description": "月魄の牙を研いだ刀。太刀筋が残像になる。",
+      "series": "フェンリル"
     },
     {
       "id": "fenrir_greaves",
@@ -6971,7 +7303,8 @@
         "def": 8
       },
       "sellPrice": 220,
-      "description": "群狼の毛皮の脚甲。狼の速さを宿す。"
+      "description": "群狼の毛皮の脚甲。狼の速さを宿す。",
+      "series": "フェンリル"
     },
     {
       "id": "fenrir_belt",
@@ -6988,7 +7321,8 @@
         "atkSpeed": 0.1
       },
       "sellPrice": 210,
-      "description": "長牙を飾った腰帯。群れの長の証。"
+      "description": "長牙を飾った腰帯。群れの長の証。",
+      "series": "フェンリル"
     },
     {
       "id": "king_jelly_rod",
@@ -7041,7 +7375,8 @@
         "maxHp": 24
       },
       "sellPrice": 230,
-      "description": "王者の粘液で織ったローブ。魔を弾く。"
+      "description": "王者の粘液で織ったローブ。魔を弾く。",
+      "series": "粘王"
     },
     {
       "id": "varga_lance",
@@ -7061,7 +7396,8 @@
         "critRate": 0.04
       },
       "sellPrice": 380,
-      "description": "逆鱗を穂先にした槍。竜気を纏う。"
+      "description": "逆鱗を穂先にした槍。竜気を纏う。",
+      "series": "竜王"
     },
     {
       "id": "varga_mail",
@@ -7077,7 +7413,8 @@
         "magDef": 7
       },
       "sellPrice": 340,
-      "description": "竜鱗を重ねた鎧。炎に強い…気がする。"
+      "description": "竜鱗を重ねた鎧。炎に強い…気がする。",
+      "series": "竜王"
     },
     {
       "id": "varga_cloak",
@@ -7094,7 +7431,8 @@
         "moveSpeed": 2
       },
       "sellPrice": 320,
-      "description": "剛翼の外套。羽ばたけば身が軽い。"
+      "description": "剛翼の外套。羽ばたけば身が軽い。",
+      "series": "竜王"
     },
     {
       "id": "spora_staff",
@@ -7113,7 +7451,8 @@
         "dropRate": 0.05
       },
       "sellPrice": 380,
-      "description": "母胞子の杖。振ると幸運の胞子が舞う。"
+      "description": "母胞子の杖。振ると幸運の胞子が舞う。",
+      "series": "スポラ"
     },
     {
       "id": "spora_cap",
@@ -7129,7 +7468,8 @@
         "dropRate": 0.05
       },
       "sellPrice": 330,
-      "description": "菌糸の帽子。獲物のありかが匂いで判る。"
+      "description": "菌糸の帽子。獲物のありかが匂いで判る。",
+      "series": "スポラ"
     },
     {
       "id": "spora_shroud",
@@ -7145,7 +7485,8 @@
         "magDef": 5
       },
       "sellPrice": 360,
-      "description": "猛毒核で染めた羽衣。奇妙に運が向く。"
+      "description": "猛毒核で染めた羽衣。奇妙に運が向く。",
+      "series": "スポラ"
     },
     {
       "id": "garo_axe",
@@ -7164,7 +7505,8 @@
         "maxHp": 15
       },
       "sellPrice": 400,
-      "description": "宝角の大斧。一撃が地響きになる。"
+      "description": "宝角の大斧。一撃が地響きになる。",
+      "series": "岩牙"
     },
     {
       "id": "garo_plate",
@@ -7181,7 +7523,8 @@
         "magDef": 6
       },
       "sellPrice": 360,
-      "description": "重鱗の鎧。もはや城壁。"
+      "description": "重鱗の鎧。もはや城壁。",
+      "series": "岩牙"
     },
     {
       "id": "garo_shield",
@@ -7201,7 +7544,8 @@
         "magDef": 6
       },
       "sellPrice": 380,
-      "description": "重鱗を張った大盾。竜の突進も止める。"
+      "description": "重鱗を張った大盾。竜の突進も止める。",
+      "series": "岩牙"
     },
     {
       "id": "hydra_whip",
@@ -7220,7 +7564,8 @@
         "atkSpeed": 0.3
       },
       "sellPrice": 420,
-      "description": "九首珠を柄に嵌めた鞭。九方向から噛みつく。"
+      "description": "九首珠を柄に嵌めた鞭。九方向から噛みつく。",
+      "series": "ヒュドラ"
     },
     {
       "id": "hydra_mail",
@@ -7236,7 +7581,8 @@
         "magDef": 7
       },
       "sellPrice": 380,
-      "description": "沼蛇の鱗の鎧。毒が滑り落ちる。"
+      "description": "沼蛇の鱗の鎧。毒が滑り落ちる。",
+      "series": "ヒュドラ"
     },
     {
       "id": "hydra_greaves",
@@ -7252,7 +7598,8 @@
         "def": 15
       },
       "sellPrice": 360,
-      "description": "毒牙を飾った脛当。沼地でも沈まない。"
+      "description": "毒牙を飾った脛当。沼地でも沈まない。",
+      "series": "ヒュドラ"
     },
     {
       "id": "glacies_staff",
@@ -7271,7 +7618,8 @@
         "magDef": 6
       },
       "sellPrice": 560,
-      "description": "永久氷晶の杖。周囲の空気が凍てつく。"
+      "description": "永久氷晶の杖。周囲の空気が凍てつく。",
+      "series": "グラキエス"
     },
     {
       "id": "glacies_crown",
@@ -7287,7 +7635,8 @@
         "magDef": 14
       },
       "sellPrice": 520,
-      "description": "女王の氷片の冠。頭が冴える。"
+      "description": "女王の氷片の冠。頭が冴える。",
+      "series": "グラキエス"
     },
     {
       "id": "glacies_robe",
@@ -7303,7 +7652,8 @@
         "maxMp": 22
       },
       "sellPrice": 520,
-      "description": "氷片を織り込んだローブ。魔を凍らせる。"
+      "description": "氷片を織り込んだローブ。魔を凍らせる。",
+      "series": "グラキエス"
     },
     {
       "id": "sandgoa_maul",
@@ -7323,7 +7673,8 @@
         "maxHp": 30
       },
       "sellPrice": 580,
-      "description": "巨神の心臓を頭にした槌。大地が震える。"
+      "description": "巨神の心臓を頭にした槌。大地が震える。",
+      "series": "サンドゴア"
     },
     {
       "id": "sandgoa_plate",
@@ -7339,7 +7690,8 @@
         "moveSpeed": -6
       },
       "sellPrice": 540,
-      "description": "砂核の重甲。受けた衝撃を砂に流す。"
+      "description": "砂核の重甲。受けた衝撃を砂に流す。",
+      "series": "サンドゴア"
     },
     {
       "id": "sandgoa_belt",
@@ -7355,7 +7707,8 @@
         "goldRate": 0.08
       },
       "sellPrice": 560,
-      "description": "砂金の帯。歩くたび金の音がする。"
+      "description": "砂金の帯。歩くたび金の音がする。",
+      "series": "サンドゴア"
     },
     {
       "id": "mordo_greatsword",
@@ -7373,7 +7726,8 @@
         "critRate": 0.06
       },
       "sellPrice": 780,
-      "description": "王冠片を鍔に埋めた大剣。死を知らない。"
+      "description": "王冠片を鍔に埋めた大剣。死を知らない。",
+      "series": "モルド"
     },
     {
       "id": "mordo_plate",
@@ -7390,7 +7744,8 @@
         "moveSpeed": -6
       },
       "sellPrice": 740,
-      "description": "魂鉄の鎧。死者の忠義が守る。"
+      "description": "魂鉄の鎧。死者の忠義が守る。",
+      "series": "モルド"
     },
     {
       "id": "mordo_helm",
@@ -7406,7 +7761,8 @@
         "magDef": 16
       },
       "sellPrice": 720,
-      "description": "モルドの大兜。恐怖が消える。"
+      "description": "モルドの大兜。恐怖が消える。",
+      "series": "モルド"
     },
     {
       "id": "magia_blade",
@@ -7425,7 +7781,8 @@
         "accuracy": 8
       },
       "sellPrice": 1300,
-      "description": "動力炉で駆動する光の刃。狙いは機械精度。"
+      "description": "動力炉で駆動する光の刃。狙いは機械精度。",
+      "series": "機神"
     },
     {
       "id": "magia_visor",
@@ -7441,7 +7798,8 @@
         "critRate": 0.06
       },
       "sellPrice": 1200,
-      "description": "機神の眼。急所が線で見える。"
+      "description": "機神の眼。急所が線で見える。",
+      "series": "機神"
     },
     {
       "id": "magia_frame",
@@ -7457,7 +7815,8 @@
         "magDef": 14
       },
       "sellPrice": 1250,
-      "description": "古代合金の外装。矢が滑る。"
+      "description": "古代合金の外装。矢が滑る。",
+      "series": "機神"
     },
     {
       "id": "abyss_scepter",
@@ -7476,7 +7835,8 @@
         "lifesteal": 0.04
       },
       "sellPrice": 1350,
-      "description": "真核の笏。振るうたび生気が満ちる。"
+      "description": "真核の笏。振るうたび生気が満ちる。",
+      "series": "深淵"
     },
     {
       "id": "abyss_ring",
@@ -7494,7 +7854,8 @@
         "goldRate": 0.08
       },
       "sellPrice": 1400,
-      "description": "深淵を封じた指環。持ち主に万象が集う。"
+      "description": "深淵を封じた指環。持ち主に万象が集う。",
+      "series": "深淵"
     },
     {
       "id": "crimson_mantle",
@@ -7549,7 +7910,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_katana",
@@ -7568,7 +7930,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_axe",
@@ -7588,7 +7951,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_spear",
@@ -7608,7 +7972,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_mace",
@@ -7628,7 +7993,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_dagger",
@@ -7649,7 +8015,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_whip",
@@ -7669,7 +8036,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_bow",
@@ -7689,7 +8057,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_shuriken",
@@ -7709,7 +8078,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_staff",
@@ -7728,7 +8098,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_wand",
@@ -7748,7 +8119,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_shield",
@@ -7769,7 +8141,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 350,
-      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_mail",
@@ -7784,7 +8157,8 @@
         "magDef": 12
       },
       "sellPrice": 310,
-      "description": "凍晶を編み込んだ鎧。重さを感じさせないのに芯まで温かい。"
+      "description": "凍晶を編み込んだ鎧。重さを感じさせないのに芯まで温かい。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_crown",
@@ -7799,7 +8173,8 @@
         "maxMp": 20
       },
       "sellPrice": 310,
-      "description": "女王の氷片を戴く冠。魔の冷気を退ける。"
+      "description": "女王の氷片を戴く冠。魔の冷気を退ける。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_cloak",
@@ -7815,7 +8190,8 @@
         "moveSpeed": 5
       },
       "sellPrice": 310,
-      "description": "氷狼の毛皮の裏地。吹雪の中でも足が止まらない。"
+      "description": "氷狼の毛皮の裏地。吹雪の中でも足が止まらない。",
+      "series": "凍晶"
     },
     {
       "id": "frostcrystal_charm",
@@ -7830,7 +8206,8 @@
         "lifesteal": 0.02
       },
       "sellPrice": 310,
-      "description": "凍った心臓を封じたお守り。持ち主の傷をゆっくり癒す。"
+      "description": "凍った心臓を封じたお守り。持ち主の傷をゆっくり癒す。",
+      "series": "凍晶"
     },
     {
       "id": "starsand_sword",
@@ -7849,7 +8226,8 @@
         "goldRate": 0.04
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_katana",
@@ -7868,7 +8246,8 @@
         "goldRate": 0.04
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_axe",
@@ -7888,7 +8267,8 @@
         "goldRate": 0.04
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_spear",
@@ -7908,7 +8288,8 @@
         "goldRate": 0.04
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_mace",
@@ -7928,7 +8309,8 @@
         "goldRate": 0.04
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_dagger",
@@ -7949,7 +8331,8 @@
         "goldRate": 0.04
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_whip",
@@ -7969,7 +8352,8 @@
         "goldRate": 0.04
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_bow",
@@ -7989,7 +8373,8 @@
         "goldRate": 0.04
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_shuriken",
@@ -8009,7 +8394,8 @@
         "goldRate": 0.04
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_staff",
@@ -8028,7 +8414,8 @@
         "dropRate": 0.03
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_wand",
@@ -8048,7 +8435,8 @@
         "dropRate": 0.03
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_shield",
@@ -8069,7 +8457,8 @@
         "goldRate": 0.04
       },
       "sellPrice": 480,
-      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。",
+      "series": "星砂"
     },
     {
       "id": "starsand_coat",
@@ -8084,7 +8473,8 @@
         "dropRate": 0.04
       },
       "sellPrice": 420,
-      "description": "星降る夜の砂漠色のコート。獲物の素材を見逃さない。"
+      "description": "星降る夜の砂漠色のコート。獲物の素材を見逃さない。",
+      "series": "星砂"
     },
     {
       "id": "starsand_hood",
@@ -8099,7 +8489,8 @@
         "goldRate": 0.05
       },
       "sellPrice": 420,
-      "description": "砂除けのフード。縁に縫い込まれた砂金が光る。"
+      "description": "砂除けのフード。縁に縫い込まれた砂金が光る。",
+      "series": "星砂"
     },
     {
       "id": "starsand_boots",
@@ -8114,7 +8505,8 @@
         "def": 25
       },
       "sellPrice": 420,
-      "description": "流砂の上でも沈まない軽業師のブーツ。"
+      "description": "流砂の上でも沈まない軽業師のブーツ。",
+      "series": "星砂"
     },
     {
       "id": "starsand_talisman",
@@ -8130,7 +8522,8 @@
         "dropRate": 0.04
       },
       "sellPrice": 420,
-      "description": "流れ星を閉じ込めた護符。幸運は狩人に味方する。"
+      "description": "流れ星を閉じ込めた護符。幸運は狩人に味方する。",
+      "series": "星砂"
     }
   ]
 }

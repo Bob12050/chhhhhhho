@@ -56,6 +56,8 @@ export interface EquipmentDef {
   derived: Partial<DerivedStats>;
   sellPrice: number;
   description: string;
+  /** Display label of the gear set this piece belongs to (雷鳴/凍晶/…). */
+  series?: string;
 }
 
 interface ItemsFile {

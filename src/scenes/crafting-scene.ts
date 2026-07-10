@@ -15,6 +15,22 @@ import { TEX } from '@/assets/gen/textures';
  */
 type CraftTab = 'weapon' | 'armor' | 'tool';
 
+/** One gear set on the list (MH-style row: name + piece icons, tap to open). */
+interface SeriesGroup {
+  /** Expansion key, `tab:label`. */
+  key: string;
+  label: string;
+  minLv: number;
+  rarity: number;
+  recipes: Recipe[];
+  craftable: number;
+}
+
+/** Virtualized list rows: collapsed series headers and expanded recipe rows. */
+type ListEntry =
+  | { kind: 'header'; y: number; h: number; group: SeriesGroup; band: number }
+  | { kind: 'recipe'; y: number; h: number; r: Recipe; band: number };
+
 export class CraftingScene extends Phaser.Scene {
   private content!: Phaser.GameObjects.Container;
   private goldText!: Phaser.GameObjects.Text;
@@ -38,10 +54,13 @@ export class CraftingScene extends Phaser.Scene {
   /** Attention nudge played when an overflowing chip bar first appears. */
   private chipNudge: Phaser.Tweens.Tween | null = null;
   /** All rows as data (virtualized; see render/updateWindow). */
-  private rowQueue: { r: Recipe; y: number; band: number }[] = [];
+  private rowQueue: ListEntry[] = [];
   /** Game objects of currently-materialized rows, keyed by row index. */
   private liveRows = new Map<number, Phaser.GameObjects.GameObject[]>();
-  private rowsBaseY = 0;
+  /** Expanded series groups (key = tab:label), sticky across re-renders. */
+  private expanded = new Set<string>();
+  /** Tabs whose first craftable group was auto-opened once already. */
+  private seededTabs = new Set<CraftTab>();
 
   constructor() {
     super('Crafting');
@@ -302,12 +321,36 @@ export class CraftingScene extends Phaser.Scene {
       );
       y += 28;
     }
-    // Virtualized list: only rows near the viewport exist as game objects
-    // (~12 live at once). Rows leaving the window are destroyed. Fixed 76px
-    // pitch → total height and hit positions are known without building rows.
-    this.rowsBaseY = y;
-    this.rowQueue = visible.map((r, i) => ({ r, y: y + i * 76, band: i }));
-    y += visible.length * 76;
+    // Virtualized list: only rows near the viewport exist as game objects.
+    // 武器/防具 are grouped MH-style into series rows (name + piece icons)
+    // that expand into recipe rows on tap; どうぐ stays a flat list.
+    this.rowQueue = [];
+    let band = 0;
+    if (this.tab === 'tool') {
+      for (const r of visible) {
+        this.rowQueue.push({ kind: 'recipe', y, h: 76, r, band: band++ });
+        y += 76;
+      }
+    } else {
+      const groups = this.buildGroups(visible);
+      // First visit of a tab: open the first group with something craftable
+      // so the list never reads as "all locked".
+      if (!this.seededTabs.has(this.tab)) {
+        this.seededTabs.add(this.tab);
+        const first = groups.find((g) => g.craftable > 0);
+        if (first) this.expanded.add(first.key);
+      }
+      for (const g of groups) {
+        this.rowQueue.push({ kind: 'header', y, h: 64, group: g, band: band++ });
+        y += 64;
+        if (this.expanded.has(g.key)) {
+          for (const r of g.recipes) {
+            this.rowQueue.push({ kind: 'recipe', y, h: 76, r, band: band++ });
+            y += 76;
+          }
+        }
+      }
+    }
     if (hidden > 0) {
       this.content.add(
         this.add
@@ -324,38 +367,144 @@ export class CraftingScene extends Phaser.Scene {
     this.scrollTo(this.scrollY);
   }
 
+  /** Group visible equipment recipes by their result's gear series. */
+  private buildGroups(visible: Recipe[]): SeriesGroup[] {
+    const byLabel = new Map<string, Recipe[]>();
+    for (const r of visible) {
+      const label = getEquipment(r.resultItemId)?.series ?? 'その他';
+      const arr = byLabel.get(label);
+      if (arr) arr.push(r);
+      else byLabel.set(label, [r]);
+    }
+    const groups: SeriesGroup[] = [];
+    for (const [label, recipes] of byLabel) {
+      const eqs = recipes.map((r) => getEquipment(r.resultItemId));
+      groups.push({
+        key: `${this.tab}:${label}`,
+        label,
+        minLv: Math.min(...eqs.map((e) => e?.levelRequirement ?? 1)),
+        rarity: Math.max(...eqs.map((e) => e?.rarity ?? 1)),
+        recipes,
+        craftable: recipes.filter((r) => !craftBlock(gameState, r)).length,
+      });
+    }
+    // Sets you can forge something from float up; then the usual level ladder.
+    groups.sort(
+      (a, b) =>
+        Number(b.craftable > 0) - Number(a.craftable > 0) ||
+        a.minLv - b.minLv ||
+        a.label.localeCompare(b.label),
+    );
+    return groups;
+  }
+
   /**
-   * Virtual window: create rows within ±2 rows of the viewport, destroy rows
-   * outside it. Keeps live object count constant (~12 rows × ~12 objects) no
-   * matter how many recipes exist — big lists froze the phone otherwise.
+   * Virtual window: create rows near the viewport, destroy rows outside it.
+   * Keeps live object count small no matter how many recipes exist — big
+   * lists froze the phone otherwise. Heights vary (header 64 / recipe 76) so
+   * visibility is tested per entry instead of by fixed pitch.
    */
   private updateWindow(): void {
     if (this.rowQueue.length === 0) return;
-    const pitch = 76;
-    const first = Math.max(
-      0,
-      Math.floor((this.scrollY + this.viewTop - this.rowsBaseY) / pitch) - 2,
-    );
-    const last = Math.min(
-      this.rowQueue.length - 1,
-      Math.ceil((this.scrollY + this.viewBottom - this.rowsBaseY) / pitch) + 2,
-    );
+    const top = this.scrollY + this.viewTop - 160;
+    const bottom = this.scrollY + this.viewBottom + 160;
     // Destroy rows that left the window.
     for (const [idx, objs] of this.liveRows) {
-      if (idx < first || idx > last) {
+      const q = this.rowQueue[idx];
+      if (!q || q.y + q.h < top || q.y > bottom) {
         for (const o of objs) o.destroy();
         this.liveRows.delete(idx);
       }
     }
     // Create rows that entered it (track exactly the objects each row adds).
     const w = this.scale.width;
-    for (let i = first; i <= last; i++) {
+    for (let i = 0; i < this.rowQueue.length; i++) {
       if (this.liveRows.has(i)) continue;
       const q = this.rowQueue[i];
+      if (q.y + q.h < top || q.y > bottom) continue;
       const before = this.content.length;
-      this.renderRecipe(q.r, q.y, w, q.band);
+      if (q.kind === 'header') this.renderSeriesHeader(q.group, q.y, w, q.band);
+      else this.renderRecipe(q.r, q.y, w, q.band);
       this.liveRows.set(i, this.content.list.slice(before) as Phaser.GameObjects.GameObject[]);
     }
+  }
+
+  /**
+   * MH-style series row: rarity accent + name + Lv, and one small cell per
+   * piece coloured by state (green border = owned, gold = craftable now,
+   * grey = missing materials). Tapping anywhere on the row expands/collapses
+   * the recipe rows beneath it.
+   */
+  private renderSeriesHeader(g: SeriesGroup, y: number, w: number, band: number): void {
+    const h = 64;
+    this.content.add(rowBand(this, y, h, band));
+    this.content.add(
+      this.add.rectangle(8, y + h / 2, 4, h - 14, rarityColor(g.rarity), 0.95).setOrigin(0.5),
+    );
+    const open = this.expanded.has(g.key);
+    this.content.add(
+      this.add.text(18, y + 9, open ? '▾' : '▸', {
+        fontFamily: FONT,
+        fontSize: '13px',
+        color: '#9aa0b4',
+      }),
+    );
+    this.content.add(
+      this.add.text(36, y + 7, g.label === 'その他' ? 'その他' : `${g.label}シリーズ`, {
+        fontFamily: FONT,
+        fontSize: '15px',
+        color: rarityColorHex(g.rarity),
+      }),
+    );
+    this.content.add(
+      this.add
+        .text(w - 16, y + 9, `Lv${g.minLv}`, {
+          fontFamily: FONT,
+          fontSize: '11px',
+          color: '#9aa0b4',
+        })
+        .setOrigin(1, 0),
+    );
+    if (g.craftable > 0) {
+      this.content.add(
+        this.add
+          .text(w - 52, y + 9, `作れる ${g.craftable}`, {
+            fontFamily: FONT,
+            fontSize: '11px',
+            color: '#9fd0a0',
+          })
+          .setOrigin(1, 0),
+      );
+    }
+    // Piece-state strip (max 12 cells fits 360px portrait).
+    let x = 40;
+    const iy = y + 44;
+    for (const r of g.recipes.slice(0, 12)) {
+      const blocked = !!craftBlock(gameState, r);
+      const owned = gameState.ownedEquipmentCount(r.resultItemId) > 0;
+      const border = owned ? 0x63d68a : blocked ? 0x3c4152 : 0xf5c542;
+      this.content.add(
+        this.add.rectangle(x, iy, 22, 22, 0x1c2036, 1).setStrokeStyle(1.5, border, 1),
+      );
+      const img = this.add
+        .image(x, iy, this.resultIcon(r.resultItemId))
+        .setDisplaySize(16, 16)
+        .setTint(owned ? 0xbfffce : blocked ? 0x6a7086 : 0xffe9a8);
+      this.content.add(img);
+      x += 26;
+    }
+    // Whole-row tap target (kept last so it sits above the visuals).
+    const zone = this.add
+      .rectangle(w / 2, y + h / 2, w, h - 2, 0x000000, 0.001)
+      .setInteractive({ useHandCursor: true });
+    zone.on('pointerup', () => {
+      if (this.dragged) return;
+      if (open) this.expanded.delete(g.key);
+      else this.expanded.add(g.key);
+      bus.emit('sfx:play', { id: 'ui_tap' });
+      this.render();
+    });
+    this.content.add(zone);
   }
 
   /** Icon for a recipe result (weapon type / armour slot / consumable / gem). */

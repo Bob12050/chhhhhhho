@@ -56,21 +56,24 @@ try {
 
   // ---- combat: field slime kill advances quest + bestiary + drops ----
   step = 'combat';
-  await page.evaluate(() => {
-    window.__test.powerUp(30);
-    window.__test.warp('field');
-  });
-  await page.waitForTimeout(1600);
-  await page.keyboard.down('w'); await page.waitForTimeout(2300); await page.keyboard.up('w');
-  for (let i = 0; i < 18; i++) {
-    for (const k of ['w', 'd', 'a']) {
-      await page.keyboard.down(k); await page.waitForTimeout(80); await page.keyboard.up(k);
-      await page.keyboard.down('j'); await page.waitForTimeout(90); await page.keyboard.up('j');
+  await page.evaluate(() => window.__test.powerUp(30));
+  // ランダムウォークだと足の速いコウモリを先に倒してスライムに一度も
+  // 当たらないレースがあった（フレークの正体）。マップを入り直して
+  // スポーン座標 (180,900) の真下へワープ→全方向斬りの決定的手順にする。
+  for (let attempt = 0; attempt < 8; attempt++) {
+    await page.evaluate(() => window.__test.warp('town'));
+    await page.waitForTimeout(500);
+    await page.evaluate(() => window.__test.warp('field', 180, 940));
+    await page.waitForTimeout(900);
+    for (let lap = 0; lap < 3; lap++) {
+      for (const k of ['w', 'a', 's', 'd']) {
+        await page.keyboard.down(k); await page.waitForTimeout(110); await page.keyboard.up(k);
+        await page.keyboard.down('j'); await page.waitForTimeout(120); await page.keyboard.up('j');
+      }
     }
     s = await snap(page);
     if ((s.killCounts['slime'] ?? 0) > 0) break;
   }
-  s = await snap(page);
   check('スライムを討伐できる', (s.killCounts['slime'] ?? 0) > 0);
   check('討伐が図鑑カウントに入る', Object.keys(s.killCounts).length > 0);
 
@@ -114,10 +117,11 @@ try {
   await page.waitForTimeout(1600);
   await page.keyboard.down('w'); await page.waitForTimeout(200); await page.keyboard.up('w');
   await page.keyboard.down('e'); await page.waitForTimeout(140); await page.keyboard.up('e'); await page.waitForTimeout(1200);
-  // 武器タブ→槌チップ（bar内 6番目）は座標依存が強いので「全部」のまま、
-  // craftable-first ソートで主の大槌が上位に来る前提で最初の 作る を押す。
+  // シリーズ別表示: 作れるものがあるシリーズが先頭に来て自動展開される。
+  // 1行目(136-200)はシリーズヘッダー、その直下(200-276)が最初のレシピ行で、
+  // craftable-first 順なのでそこの「作る」を押す。
   const before = await snap(page);
-  await page.mouse.click(318, 172); await page.waitForTimeout(900); // 1行目の「作る」
+  await page.mouse.click(318, 236); await page.waitForTimeout(900); // 展開済み1本目の「作る」
   s = await snap(page);
   // Upgrade recipes consume the old piece, so owned-count can stay flat;
   // gold ALWAYS drops on a successful craft. Assert on that instead.
