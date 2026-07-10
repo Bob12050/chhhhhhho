@@ -117,9 +117,9 @@ try {
   await page.waitForTimeout(1600);
   await page.keyboard.down('w'); await page.waitForTimeout(200); await page.keyboard.up('w');
   await page.keyboard.down('e'); await page.waitForTimeout(140); await page.keyboard.up('e'); await page.waitForTimeout(1200);
-  // シリーズ別表示: 作れるものがあるシリーズが先頭に来て自動展開される。
-  // 1行目(136-200)はシリーズヘッダー、その直下(200-276)が最初のレシピ行で、
-  // craftable-first 順なのでそこの「作る」を押す。
+  // シリーズ別表示（レア度順）: 初回は「作れるものがある」最初のシリーズが
+  // 自動展開され、そこへ自動スクロールする。よって画面上 1行目(136-200)が
+  // そのヘッダー、直下(200-276)が最初のレシピ行（craftable-first 順）。
   const before = await snap(page);
   await page.mouse.click(318, 236); await page.waitForTimeout(900); // 展開済み1本目の「作る」
   s = await snap(page);

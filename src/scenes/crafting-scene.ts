@@ -333,14 +333,20 @@ export class CraftingScene extends Phaser.Scene {
       }
     } else {
       const groups = this.buildGroups(visible);
-      // First visit of a tab: open the first group with something craftable
-      // so the list never reads as "all locked".
+      // First visit of a tab: open the first (lowest-rarity) group with
+      // something craftable and jump the list to it, so opening the forge
+      // always shows something makeable instead of a wall of locked sets.
+      let seededKey: string | null = null;
       if (!this.seededTabs.has(this.tab)) {
         this.seededTabs.add(this.tab);
         const first = groups.find((g) => g.craftable > 0);
-        if (first) this.expanded.add(first.key);
+        if (first) {
+          this.expanded.add(first.key);
+          seededKey = first.key;
+        }
       }
       for (const g of groups) {
+        if (g.key === seededKey) this.scrollY = Math.max(0, y - (this.viewTop + 8));
         this.rowQueue.push({ kind: 'header', y, h: 64, group: g, band: band++ });
         y += 64;
         if (this.expanded.has(g.key)) {
@@ -388,12 +394,14 @@ export class CraftingScene extends Phaser.Scene {
         craftable: recipes.filter((r) => !craftBlock(gameState, r)).length,
       });
     }
-    // Sets you can forge something from float up; then the usual level ladder.
+    // レア度順 (asc): the ladder players climb. その他 (unlabeled one-offs)
+    // always sits at the bottom regardless of rarity.
     groups.sort(
       (a, b) =>
-        Number(b.craftable > 0) - Number(a.craftable > 0) ||
+        Number(a.label === 'その他') - Number(b.label === 'その他') ||
+        a.rarity - b.rarity ||
         a.minLv - b.minLv ||
-        a.label.localeCompare(b.label),
+        a.label.localeCompare(b.label, 'ja'),
     );
     return groups;
   }
