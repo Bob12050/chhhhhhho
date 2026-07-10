@@ -5,7 +5,7 @@
 ## 技術スタック
 
 - **ゲームエンジン: Phaser 4.2.0**（Godot ではない。`<技術構成>` 指定により Web ネイティブを採用）
-- **言語: 型付き TypeScript 6.0.3**。`any` を避け、`strict` を維持する。
+- **言語: 型付き TypeScript 7.0.2**（ネイティブコンパイラ世代、2026-07 に 6.0.3 から更新）。`any` を避け、`strict` を維持する。
 - ビルド: Vite 8 / テスト: Vitest 4 / PWA: vite-plugin-pwa 1 / 保存: IndexedDB
 - 依存は `package.json` に**正確なバージョンで固定**し、`package-lock.json` をコミットする。CDN 直読み禁止。
 - Phaser の API は**推測で使わない**。`node_modules/phaser/types/phaser.d.ts` と公式 API を確認してから使う（例: Phaser 4 では `setTintFill()` は引数なし。白フラッシュは `setTint(c).setTintMode(Phaser.TintModes.FILL)`）。
