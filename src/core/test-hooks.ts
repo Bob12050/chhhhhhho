@@ -43,6 +43,8 @@ export interface TestHooks {
   addEgg(petItemId: string): boolean;
   addMaterial(id: string, qty: number): void;
   addGold(amount: number): void;
+  /** Grant owned (unequipped) equipment pieces (inventory-UI tests). */
+  addEquipment(id: string, qty?: number): void;
   /** Persist the current state to the active slot (reload-survival tests). */
   flushSave(): Promise<void>;
 }
@@ -92,6 +94,9 @@ export function installTestHooks(): void {
     addEgg: (petItemId: string) => gameState.addEgg(petItemId),
     addMaterial: (id: string, qty: number) => gameState.addMaterial(id, qty),
     addGold: (amount: number) => gameState.addGold(amount),
+    addEquipment: (id: string, qty = 1) => {
+      for (let i = 0; i < qty; i++) gameState.addEquipment(id);
+    },
     flushSave: () => saveManager.write(gameState.toSave(gameState.slot)),
   };
   (window as unknown as { __test: TestHooks }).__test = hooks;

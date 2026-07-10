@@ -3,7 +3,7 @@ import { gameState } from '@/player/game-state';
 import { getEquipment, getConsumable, getMaterial, itemDisplayName } from '@/data/items';
 import { rarityColorHex, rarityColor, rarityLabel } from '@/data/rarity';
 import { TEX } from '@/assets/gen/textures';
-import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
+import type { EquipSlot } from '@/equipment/slots';
 import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
 import { allSkills } from '@/skills/skill-defs';
@@ -14,6 +14,11 @@ import { returnToTitle } from '@/core/game-flow';
 import { ELEMENT_LABEL, ELEMENT_COLOR, isElement } from '@/combat/elements';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
+
+/** Equipment-tab virtual list rows: slot section headers + item rows. */
+type EquipEntry =
+  | { kind: 'header'; slot: string; count: number; y: number; h: number }
+  | { kind: 'row'; id: string; count: number; y: number; h: number; band: number };
 
 const SLOT_LABEL: Record<string, string> = {
   head: '頭',
@@ -64,10 +69,13 @@ export class InventoryScene extends Phaser.Scene {
   private content!: Phaser.GameObjects.Container;
   private goldText!: Phaser.GameObjects.Text;
   private tabButtons: { id: Tab; tab: TabHandle }[] = [];
-  /** Virtualized equipment rows (data + live objects); see updateEquipWindow. */
-  private eqQueue: { id: string; count: number; y: number; band: number }[] = [];
+  /** Virtualized equipment list (slot headers + rows); see updateEquipWindow. */
+  private eqQueue: EquipEntry[] = [];
   private eqLive = new Map<number, Phaser.GameObjects.GameObject[]>();
-  private eqBaseY = 0;
+  /** Slot filter for the equipment tab (null = 全部, 'accessory' = both). */
+  private slotFilter: string | null = null;
+  /** Chip row (equipment tab only), rebuilt on tab switch. */
+  private slotChipObjs: Phaser.GameObjects.GameObject[] = [];
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
@@ -278,6 +286,8 @@ export class InventoryScene extends Phaser.Scene {
     this.eqLive.clear();
     this.scrollY = 0;
     this.content.y = 0;
+    for (const o of this.slotChipObjs) o.destroy();
+    this.slotChipObjs = [];
     for (const tb of this.tabButtons) {
       tb.tab.setActive(tb.id === this.tab);
     }
@@ -287,6 +297,34 @@ export class InventoryScene extends Phaser.Scene {
     else if (this.tab === 'status') this.renderStatus();
     else this.renderSkills();
     this.updateScrollBounds();
+  }
+
+  /**
+   * Slot filter chips for the equipment tab (one static row — labels are
+   * short enough that no horizontal scrolling is needed). Sits on an opaque
+   * strip so scrolled rows never show through underneath it.
+   */
+  private buildSlotChips(): void {
+    const w = this.scale.width;
+    const strip = this.add.rectangle(0, 86, w, 30, 0x0e1020, 1).setOrigin(0).setDepth(2);
+    this.slotChipObjs.push(strip);
+    const defs: [string | null, string][] = [
+      [null, '全部'], ['main_hand', '武器'], ['head', '頭'], ['torso', '胴'], ['hands', '手'],
+      ['waist', '腰'], ['feet', '足'], ['back', '背'], ['accessory', 'アクセ'],
+    ];
+    let x = 6;
+    for (const [value, label] of defs) {
+      const chipW = label.length * 12 + 20;
+      const tab = tabChip(this, x + chipW / 2, 101, chipW, label, () => {
+        if (this.dragged) return;
+        this.slotFilter = value;
+        this.renderTab();
+      });
+      tab.setActive(value === this.slotFilter);
+      tab.root.setDepth(3);
+      this.slotChipObjs.push(tab.root);
+      x += chipW + 4;
+    }
   }
 
 
@@ -410,35 +448,64 @@ export class InventoryScene extends Phaser.Scene {
   }
 
   private renderEquipment(): void {
+    this.buildSlotChips();
     // Group identical owned pieces into one row with a count (no random
     // options yet, so duplicates are fungible).
     const counts = new Map<string, number>();
     for (const id of gameState.equipmentOwned) {
       if (getEquipment(id)) counts.set(id, (counts.get(id) ?? 0) + 1);
     }
-    let y = 100;
-    if (counts.size === 0) this.emptyNote();
-    // Stable browsing order: slot (weapon→head→…→accessories) → level → id,
-    // instead of acquisition order (which scrambles after bulk grants).
-    const slotIdx = (s: string): number => {
-      const i = (EQUIP_SLOTS as readonly string[]).indexOf(s);
-      return i < 0 ? 99 : i;
-    };
-    const sorted = [...counts.entries()].sort(([a], [b]) => {
-      const da = getEquipment(a)!;
-      const db = getEquipment(b)!;
-      return (
-        slotIdx(da.slot) - slotIdx(db.slot) ||
-        (da.levelRequirement ?? 1) - (db.levelRequirement ?? 1) ||
-        a.localeCompare(b)
+    let y = 124;
+    // 部位ごとのセクションに分け、各セクション内は「装備中 → 今そうび
+    // できる強い順（レア度→Lv）→ 職業/段階で装備不可」。取得順のごちゃ
+    // 混ぜをやめて、常に同じ場所に同じ部位が並ぶ。
+    // Display order: weapon first (the slot players re-check most), then
+    // armour top-to-bottom, then accessories — independent of EQUIP_SLOTS.
+    const DISPLAY_ORDER = [
+      'main_hand', 'head', 'torso', 'hands', 'waist', 'feet', 'back', 'accessory_1', 'accessory_2',
+    ];
+    const slots = DISPLAY_ORDER.filter((s) =>
+      this.slotFilter === null
+        ? true
+        : this.slotFilter === 'accessory'
+          ? s.startsWith('accessory')
+          : s === this.slotFilter,
+    );
+    this.eqQueue = [];
+    let band = 0;
+    let total = 0;
+    for (const slot of slots) {
+      const ids = [...counts.entries()].filter(([id]) => getEquipment(id)!.slot === slot);
+      if (ids.length === 0) continue;
+      total += ids.length;
+      ids.sort(([a], [b]) => {
+        const da = getEquipment(a)!;
+        const db = getEquipment(b)!;
+        const eqA = gameState.equipment[slot as EquipSlot] === a ? 1 : 0;
+        const eqB = gameState.equipment[slot as EquipSlot] === b ? 1 : 0;
+        const canA = eqA || gameState.canEquip(a) ? 1 : 0;
+        const canB = eqB || gameState.canEquip(b) ? 1 : 0;
+        return (
+          eqB - eqA ||
+          canB - canA ||
+          (db.rarity ?? 1) - (da.rarity ?? 1) ||
+          (db.levelRequirement ?? 1) - (da.levelRequirement ?? 1) ||
+          a.localeCompare(b)
+        );
+      });
+      this.eqQueue.push({ kind: 'header', slot, count: ids.length, y, h: 26 });
+      y += 26;
+      for (const [id, count] of ids) {
+        this.eqQueue.push({ kind: 'row', id, count, y, h: 44, band: band++ });
+        y += 44;
+      }
+      y += 6;
+    }
+    if (total === 0) {
+      this.content.add(
+        this.add.text(16, 130, '（なし）', { fontFamily: FONT, fontSize: '13px', color: '#7e8499' }),
       );
-    });
-    // Virtualized rows (fixed 44px pitch): only ~14 near the viewport exist as
-    // game objects. A god-mode inventory (340+ pieces) froze the phone when
-    // every row was built up front.
-    this.eqBaseY = y;
-    this.eqQueue = sorted.map(([id, count], i) => ({ id, count, y: y + i * 44, band: i }));
-    y += sorted.length * 44;
+    }
 
     const d = gameState.derived;
     this.content.add(
@@ -451,28 +518,54 @@ export class InventoryScene extends Phaser.Scene {
     this.updateEquipWindow();
   }
 
-  /** Create/destroy equipment rows so only those near the viewport are live. */
+  /**
+   * Create/destroy equipment entries so only those near the viewport are
+   * live (a god-mode inventory froze the phone when every row was built up
+   * front). Heights vary (header 26 / row 44) so visibility is per entry.
+   */
   private updateEquipWindow(): void {
     if (this.eqQueue.length === 0) return;
-    const pitch = 44;
-    const first = Math.max(0, Math.floor((this.scrollY + this.viewTop - this.eqBaseY) / pitch) - 2);
-    const last = Math.min(
-      this.eqQueue.length - 1,
-      Math.ceil((this.scrollY + this.viewBottom - this.eqBaseY) / pitch) + 2,
-    );
+    const top = this.scrollY + this.viewTop - 120;
+    const bottom = this.scrollY + this.viewBottom + 120;
     for (const [idx, objs] of this.eqLive) {
-      if (idx < first || idx > last) {
+      const q = this.eqQueue[idx];
+      if (!q || q.y + q.h < top || q.y > bottom) {
         for (const o of objs) o.destroy();
         this.eqLive.delete(idx);
       }
     }
-    for (let i = first; i <= last; i++) {
+    for (let i = 0; i < this.eqQueue.length; i++) {
       if (this.eqLive.has(i)) continue;
       const q = this.eqQueue[i];
+      if (q.y + q.h < top || q.y > bottom) continue;
       const before = this.content.length;
-      this.renderEquipRow(q.id, q.count, q.y, q.band);
+      if (q.kind === 'header') this.renderSlotHeader(q.slot, q.count, q.y);
+      else this.renderEquipRow(q.id, q.count, q.y, q.band);
       this.eqLive.set(i, this.content.list.slice(before) as Phaser.GameObjects.GameObject[]);
     }
+  }
+
+  /** Section divider for one slot: label, count, and what's equipped there. */
+  private renderSlotHeader(slot: string, count: number, y: number): void {
+    const w = this.scale.width;
+    this.content.add(
+      this.add.text(16, y + 12, `― ${SLOT_LABEL[slot] ?? slot} (${count}) ―`, {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#c9b27a',
+      }).setOrigin(0, 0.5),
+    );
+    const curId = gameState.equipment[slot as EquipSlot];
+    const curName = curId ? getEquipment(curId)?.name : null;
+    this.content.add(
+      this.add
+        .text(w - 16, y + 12, curName ? `装備中: ${curName}` : '装備なし', {
+          fontFamily: FONT,
+          fontSize: '11px',
+          color: curName ? '#9fe3a0' : '#7e8499',
+        })
+        .setOrigin(1, 0.5),
+    );
   }
 
   /** One equipment row at absolute y (used by the virtual window). */
@@ -492,7 +585,7 @@ export class InventoryScene extends Phaser.Scene {
       // Equipped pieces get a small green corner tick.
       if (equipped) this.content.add(this.add.circle(38, y + 4, 4, 0x9fe3a0).setDepth(1));
       this.content.add(
-        this.add.text(48, y + 3, `${SLOT_LABEL[slot] ?? slot}: ${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
+        this.add.text(48, y + 3, `${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
           fontFamily: FONT,
           fontSize: '14px',
           color: equipped ? '#9fe3a0' : canEq ? rarityColorHex(def.rarity) : '#666a78',

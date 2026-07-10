@@ -136,6 +136,11 @@ try {
   await page.mouse.click(168, 676); await page.waitForTimeout(800); // 🐾 ペット
   await page.mouse.click(302, 193); await page.waitForTimeout(900); // 孵化する
   s = await snap(page);
+  if (!s.ownedPets.includes('wolf_pet')) {
+    // シーン遷移がワンテンポ遅れてボタンがまだ無いことがある（フレーク）。
+    await page.mouse.click(302, 193); await page.waitForTimeout(900);
+    s = await snap(page);
+  }
   check('たまごを孵化してペットが仲間になる', s.ownedPets.includes('wolf_pet'));
   check('最初のペットは自動で連れ歩き', s.activePetId === 'wolf_pet');
   await page.mouse.click(180, 686); await page.waitForTimeout(500); // とじる(pet)
