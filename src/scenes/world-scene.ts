@@ -610,10 +610,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * Boss HP card. Lives in the quest tracker's slot just BELOW the player
-   * status panel — the old top-of-screen bar sat behind the panel and was
-   * invisible during every boss fight. The HUD tracker hides while this is
-   * up (boss:bar event); it returns when the boss dies.
+   * Boss HP card. Uses the open band under the compact player panel; the quest
+   * tracker yields this slot while a boss is alive.
    */
   private buildBossBar(name: string): void {
     // Rebuilding (sequential hunts in one visit) must not orphan the old bar.
@@ -625,7 +623,7 @@ export class WorldScene extends Phaser.Scene {
     }
     const w = this.scale.width;
     const x = 8;
-    const y = 116; // statusPanel bottom + margin (same slot as the tracker)
+    const y = 102; // compact status panel bottom + minimap caption clearance
     const cardW = w - 16;
     const cardH = 42;
     const bg = this.add.graphics().setScrollFactor(0).setDepth(8000);
