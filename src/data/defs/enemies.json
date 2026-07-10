@@ -814,7 +814,7 @@
       "id": "boss_zephys",
       "name": "風翔の王 ゼフィス",
       "textureKey": "gen.enemy.zephys",
-      "scale": 1.9,
+      "scale": 3.2,
       "isBoss": true,
       "maxHp": 910,
       "moveSpeed": 62,

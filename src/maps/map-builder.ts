@@ -93,7 +93,7 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     n = Math.imul(n ^ (n >>> 13), 0x5bd1e995) >>> 0;
     return n;
   };
-  const TREE_VARIANTS = [TEX.obstacle, TEX.obstacle, TEX.obstacleBush, TEX.obstaclePine];
+  const TREE_VARIANTS = [TEX.obstacle, TEX.obstacle, TEX.obstacle, TEX.obstacleBush, TEX.obstaclePine];
   const TREE_TINTS = [0xffffff, 0xf0f6ea, 0xe2ecd8, 0xd8e6d0];
   const place = (x: number, y: number, tex: string): void => {
     if (onPortal(x, y)) return;
@@ -110,17 +110,30 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
       px += ((n >> 4) % 7) - 3;
       py += ((n >> 8) % 7) - 3;
     }
+    if (tex === TEX.obstacle) {
+      // Tree art is taller than its trunk. Keep the lush crown visual separate
+      // from a small foot-level collider so the forest feels dense without
+      // turning every branch into an invisible wall.
+      const tree = scene.add
+        .image(px, py, t)
+        .setOrigin(0.5, t === TEX.obstacle ? 0.92 : 0.82)
+        .setTint(TREE_TINTS[(hash2(x, y) >> 12) % TREE_TINTS.length])
+        .setDepth(Math.round(py));
+      scene.add
+        .image(px, py + 2, TEX.groundShadow)
+        .setDisplaySize(t === TEX.obstacle ? 34 : 26, 10)
+        .setDepth(Math.round(py) - 1);
+      const trunk = obstacles
+        .create(px, py + 2, TEX.groundShadow)
+        .setVisible(false)
+        .setDisplaySize(20, 12) as Phaser.Physics.Arcade.Image;
+      trunk.refreshBody();
+      tree.setFlipX((hash2(x, y) & 1) === 1);
+      return;
+    }
     const o = obstacles.create(px, py, t) as Phaser.Physics.Arcade.Image;
-    if (tex === TEX.obstacle) o.setTint(TREE_TINTS[(hash2(x, y) >> 12) % TREE_TINTS.length]);
     o.setDepth(Math.round(py));
     o.refreshBody();
-    // Ground contact shadow (trees only; walls read as flush structure).
-    if (tex === TEX.obstacle) {
-      scene.add
-        .image(px, py + 14, TEX.groundShadow)
-        .setDisplaySize(28, 11)
-        .setDepth(Math.round(py) - 1);
-    }
   };
 
   // Border. Leave the central path opening (vertical path) and any portal

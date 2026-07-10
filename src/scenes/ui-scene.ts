@@ -190,8 +190,8 @@ export class UIScene extends Phaser.Scene {
     // ── statusPanel: HP/MP/EXP/Lv/職業/所持金 を1コンテナに統合（個別配置しない）
     const px = insets.left + 8;
     const py = insets.top + 8;
-    const PW = 174;
-    const PH = 70;
+    const PW = 158;
+    const PH = 62;
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
     const sl = UI_FRAME_SLICE;
     panel.add(
@@ -235,35 +235,35 @@ export class UIScene extends Phaser.Scene {
     const drawEmblemCell = (color: number): void => {
       cell.clear();
       cell.fillStyle(0x0b1020, 0.7);
-      cell.fillRoundedRect(15, 12, 34, 38, 8);
+      cell.fillRoundedRect(13, 10, 32, 36, 7);
       cell.fillStyle(0x202949, 1);
-      cell.fillRoundedRect(11, 8, 40, 40, 8);
+      cell.fillRoundedRect(9, 7, 38, 38, 7);
       cell.fillStyle(0xffffff, 0.1);
-      cell.fillRoundedRect(14, 11, 34, 12, { tl: 7, tr: 7, bl: 0, br: 0 });
+      cell.fillRoundedRect(12, 10, 32, 11, { tl: 6, tr: 6, bl: 0, br: 0 });
       cell.lineStyle(2, color, 0.9);
-      cell.strokeRoundedRect(11, 8, 40, 40, 8);
+      cell.strokeRoundedRect(9, 7, 38, 38, 7);
       cell.lineStyle(1, 0xffffff, 0.16);
-      cell.strokeCircle(31, 28, 13);
+      cell.strokeCircle(28, 26, 12);
     };
     drawEmblemCell(em0.color);
     panel.add(cell);
-    const jobIcon = this.add.image(31, 28, em0.tex).setScale(1.7).setTint(em0.color);
+    const jobIcon = this.add.image(28, 26, em0.tex).setScale(1.5).setTint(em0.color);
     panel.add(jobIcon);
     const lvBadge = this.add.graphics();
     lvBadge.fillStyle(0x10121c, 0.94);
-    lvBadge.fillRoundedRect(12, 52, 38, 14, 7);
+    lvBadge.fillRoundedRect(10, 47, 36, 12, 6);
     lvBadge.lineStyle(1, 0xf5c542, 0.45);
-    lvBadge.strokeRoundedRect(12, 52, 38, 14, 7);
+    lvBadge.strokeRoundedRect(10, 47, 36, 12, 6);
     panel.add(lvBadge);
     const levelText = this.add
-      .text(31, 59, '', { fontFamily: FONT, fontSize: '9px', color: '#ffd86b', fontStyle: 'bold' })
+      .text(28, 53, '', { fontFamily: FONT, fontSize: '8px', color: '#ffd86b', fontStyle: 'bold' })
       .setOrigin(0.5);
     panel.add(levelText);
 
     // Right column: job + HP/MP. The XP line is intentionally quiet.
-    const rx = 59;
-    const rw = PW - rx - 10; // 105
-    this.jobText = this.add.text(rx, 6, '', {
+    const rx = 52;
+    const rw = PW - rx - 9;
+    this.jobText = this.add.text(rx, 4, '', {
       fontFamily: FONT,
       fontSize: '11px',
       color: '#ffe9a8',
@@ -308,11 +308,11 @@ export class UIScene extends Phaser.Scene {
       return val;
     };
 
-    this.hpBar = makeBar(24, 11, 0xef8a3c);
-    this.hpText = barText(24, 11, 'HP');
-    this.mpBar = makeBar(41, 11, 0x3aa0e0);
-    this.mpText = barText(41, 11, 'MP');
-    this.expBar = makeBar(58, 5, 0xf5c542);
+    this.hpBar = makeBar(21, 10, 0xef8a3c);
+    this.hpText = barText(21, 10, 'HP');
+    this.mpBar = makeBar(36, 10, 0x3aa0e0);
+    this.mpText = barText(36, 10, 'MP');
+    this.expBar = makeBar(52, 4, 0xf5c542);
     this.expText = this.add.text(0, 0, '').setVisible(false);
     this.goldText = this.add.text(0, 0, '').setVisible(false);
 
@@ -354,8 +354,8 @@ export class UIScene extends Phaser.Scene {
     // A small framed quest card, visually tied to the status panel.
     const hudX = insets.left + 8;
     const trY = insets.top + 8 + PH + 5; // just below the statusPanel
-    const trW = 174;
-    const trH = 34;
+    const trW = PW;
+    const trH = 30;
     const trRoot = this.add.container(hudX, trY).setDepth(depth);
     trRoot.add(
       this.add
@@ -371,18 +371,18 @@ export class UIScene extends Phaser.Scene {
     );
     const trMark = this.add.graphics();
     trMark.fillStyle(0xf5c542, 0.95);
-    trMark.fillRoundedRect(9, 8, 22, 18, 7);
+    trMark.fillRoundedRect(9, 6, 22, 18, 7);
     trMark.fillStyle(0x15182a, 0.96);
-    trMark.fillRoundedRect(12, 11, 16, 12, 5);
+    trMark.fillRoundedRect(12, 9, 16, 12, 5);
     trMark.lineStyle(1, 0xffffff, 0.12);
     trMark.lineBetween(38, 7, 38, trH - 7);
     trRoot.add(trMark);
-    trRoot.add(this.add.image(20, 17, TEX.iconGem).setScale(1).setTint(0xf5c542));
+    trRoot.add(this.add.image(20, 15, TEX.iconGem).setScale(1).setTint(0xf5c542));
     const trTitle = this.add
-      .text(46, 4, '', { fontFamily: FONT, fontSize: '10px', color: '#ffe9a8', fontStyle: 'bold' })
+      .text(46, 2, '', { fontFamily: FONT, fontSize: '10px', color: '#ffe9a8', fontStyle: 'bold' })
       .setShadow(0, 1, '#000000', 2);
     const trObj = this.add
-      .text(46, 18, '', { fontFamily: FONT, fontSize: '9px', color: '#cfd3e6' })
+      .text(46, 16, '', { fontFamily: FONT, fontSize: '9px', color: '#cfd3e6' })
       .setShadow(0, 1, '#000000', 2);
     trRoot.add([trTitle, trObj]);
     // While a boss HP card is up it borrows this exact HUD slot, so the

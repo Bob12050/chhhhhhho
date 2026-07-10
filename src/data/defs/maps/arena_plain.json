@@ -8,15 +8,20 @@
   },
   "size": {
     "w": 360,
-    "h": 640
+    "h": 800
   },
   "ground": "grass",
+  "path": {
+    "axis": "v",
+    "thickness": 58,
+    "wind": 12
+  },
   "border": "trees",
   "obstacles": [],
   "spawns": {
     "default": [
       180,
-      560
+      620
     ],
     "boss": [
       180,
@@ -27,7 +32,7 @@
     {
       "rect": [
         148,
-        584,
+        744,
         64,
         32
       ],
@@ -40,7 +45,7 @@
   "npcs": [],
   "ambient": {
     "color": "#102b1b",
-    "alpha": 0.28
+    "alpha": 0.16
   },
   "landmarks": [
     {

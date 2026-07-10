@@ -101,6 +101,7 @@ export class WorldScene extends Phaser.Scene {
   private pBoltPool: Phaser.GameObjects.Arc[] = [];
   private minions: Enemy[] = [];
   private bossMaxHp = 0;
+  private baseCameraZoom = 1;
   private petAtkCd = 0;
   private bossBar: {
     bg: Phaser.GameObjects.Graphics;
@@ -154,12 +155,14 @@ export class WorldScene extends Phaser.Scene {
 
     this.physics.world.setBounds(0, 0, this.map.size.w, this.map.size.h);
     this.cameras.main.setBounds(0, 0, this.map.size.w, this.map.size.h);
-    this.cameras.main.setZoom(1);
+    this.baseCameraZoom = this.map.ground === 'grass' ? 1.04 : 1;
+    this.cameras.main.setZoom(this.baseCameraZoom);
     this.cameras.main.roundPixels = true;
 
     const built = buildMap(this, this.map);
     this.obstacles = built.obstacles;
     this.portals = built.portals;
+    if (this.map.ground === 'grass') this.addForestAtmosphere();
 
     // Ambient colour grade + corner vignette: cheap screen-space mood so zones
     // stop looking like the same flat-lit lawn (the title screen trick).
@@ -385,6 +388,34 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  /** Sparse drifting leaves keep outdoor maps alive without covering combat. */
+  private addForestAtmosphere(): void {
+    this.time.addEvent({
+      delay: 520,
+      loop: true,
+      callback: () => {
+        if (!this.scene.isActive() || this.scene.isPaused()) return;
+        const view = this.cameras.main.worldView;
+        const x = view.x + this.rng.next() * view.width;
+        const y = view.y - 6;
+        const leaf = this.add
+          .rectangle(x, y, 3, 1, this.rng.next() > 0.5 ? 0xe4d64f : 0x8fbf3f, 0.72)
+          .setAngle(this.rng.next() * 90)
+          .setDepth(7600);
+        this.tweens.add({
+          targets: leaf,
+          x: x + 18 + this.rng.next() * 22,
+          y: view.bottom + 10,
+          angle: leaf.angle + 240,
+          alpha: 0.08,
+          duration: 4200 + this.rng.next() * 1800,
+          ease: 'Sine.InOut',
+          onComplete: () => leaf.destroy(),
+        });
+      },
+    });
+  }
+
   private showBossIntro(q: QuestDef, def: EnemyDef): void {
     const durationMs = 1650;
     this.bossIntroLockMs = Math.max(this.bossIntroLockMs, durationMs);
@@ -476,7 +507,7 @@ export class WorldScene extends Phaser.Scene {
       this.boss = enemy;
       this.bossMaxHp = maxHp;
       this.buildBossBar(`${opts?.veteran ? '歴戦の' : ''}${def.name}`);
-      this.cameras.main.zoomTo(1.08, 220, 'Sine.easeOut');
+      this.cameras.main.zoomTo(1.1, 220, 'Sine.easeOut');
       if (def.attacks && def.attacks.length > 0) {
         this.bossBrain = new BossBrain(
           this.makeArena(enemy, def),
@@ -1422,7 +1453,7 @@ export class WorldScene extends Phaser.Scene {
       // death must not tear down the live one's bar/brain).
       if (!this.boss || this.boss.isDead()) {
         this.boss = null;
-        this.cameras.main.zoomTo(1, 240, 'Sine.easeOut');
+        this.cameras.main.zoomTo(this.baseCameraZoom, 240, 'Sine.easeOut');
       }
       this.floatText(x, y - 46, `${def.name} を倒した！`);
       void this.save();
