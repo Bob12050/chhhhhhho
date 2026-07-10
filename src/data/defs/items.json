@@ -7531,6 +7531,606 @@
       },
       "sellPrice": 0,
       "description": "古代機神を討った者だけが持つ紋章。世界はまだ、この狩人を覚えている。"
+    },
+    {
+      "id": "frostcrystal_sword",
+      "name": "凍晶の剣",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "sword"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "physAtk": 37,
+        "critRate": 0.07,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_katana",
+      "name": "凍晶の刀",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "katana"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "physAtk": 38,
+        "critRate": 0.05,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_axe",
+      "name": "凍晶の斧",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "axe"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "physAtk": 37,
+        "critRate": 0.06,
+        "maxHp": 18,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_spear",
+      "name": "凍晶の槍",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "spear"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "physAtk": 37,
+        "accuracy": 6,
+        "magDef": 3,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_mace",
+      "name": "凍晶のメイス",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "physAtk": 23,
+        "magAtk": 23,
+        "def": 5,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_dagger",
+      "name": "凍晶の短剣",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "dagger"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "physAtk": 35,
+        "atkSpeed": 0.5,
+        "critRate": 0.07,
+        "evasion": 14,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_whip",
+      "name": "凍晶の鞭",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "whip"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "physAtk": 35,
+        "accuracy": 6,
+        "atkSpeed": 0.3,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_bow",
+      "name": "凍晶の弓",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "bow"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "physAtk": 37,
+        "accuracy": 7,
+        "critRate": 0.06,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_shuriken",
+      "name": "凍晶の手裏剣",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shuriken"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "physAtk": 35,
+        "accuracy": 7,
+        "critRate": 0.07,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_staff",
+      "name": "凍晶の杖",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "magAtk": 37,
+        "maxMp": 34,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_wand",
+      "name": "凍晶のワンド",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "magAtk": 37,
+        "maxMp": 28,
+        "atkSpeed": 0.3,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_shield",
+      "name": "凍晶の盾",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shield"
+      ],
+      "element": "ice",
+      "levelRequirement": 58,
+      "derived": {
+        "physAtk": 11,
+        "def": 30,
+        "maxHp": 160,
+        "magDef": 6,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 350,
+      "description": "雪原の素材から鍛えた凍晶装備。斬るたび生命力をわずかに吸い上げる。"
+    },
+    {
+      "id": "frostcrystal_mail",
+      "name": "凍晶の鎧",
+      "slot": "torso",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 58,
+      "derived": {
+        "def": 29,
+        "maxHp": 78,
+        "magDef": 12
+      },
+      "sellPrice": 310,
+      "description": "凍晶を編み込んだ鎧。重さを感じさせないのに芯まで温かい。"
+    },
+    {
+      "id": "frostcrystal_crown",
+      "name": "凍晶の冠",
+      "slot": "head",
+      "rarity": 9,
+      "visualId": "helm_iron",
+      "levelRequirement": 58,
+      "derived": {
+        "def": 21,
+        "magDef": 18,
+        "maxMp": 20
+      },
+      "sellPrice": 310,
+      "description": "女王の氷片を戴く冠。魔の冷気を退ける。"
+    },
+    {
+      "id": "frostcrystal_cloak",
+      "name": "凍晶のマント",
+      "slot": "back",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 58,
+      "derived": {
+        "evasion": 12,
+        "magDef": 10,
+        "maxHp": 44,
+        "moveSpeed": 5
+      },
+      "sellPrice": 310,
+      "description": "氷狼の毛皮の裏地。吹雪の中でも足が止まらない。"
+    },
+    {
+      "id": "frostcrystal_charm",
+      "name": "凍晶のお守り",
+      "slot": "accessory_2",
+      "rarity": 9,
+      "visualId": "vest_cloth",
+      "levelRequirement": 58,
+      "derived": {
+        "maxHp": 82,
+        "magDef": 10,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 310,
+      "description": "凍った心臓を封じたお守り。持ち主の傷をゆっくり癒す。"
+    },
+    {
+      "id": "starsand_sword",
+      "name": "星砂の剣",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "sword"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 44,
+        "critRate": 0.07,
+        "goldRate": 0.04
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_katana",
+      "name": "星砂の刀",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "katana"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 45,
+        "critRate": 0.05,
+        "goldRate": 0.04
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_axe",
+      "name": "星砂の斧",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "axe"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 44,
+        "critRate": 0.06,
+        "maxHp": 18,
+        "goldRate": 0.04
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_spear",
+      "name": "星砂の槍",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "spear"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 44,
+        "accuracy": 6,
+        "magDef": 3,
+        "goldRate": 0.04
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_mace",
+      "name": "星砂のメイス",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "mace"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 28,
+        "magAtk": 28,
+        "def": 5,
+        "goldRate": 0.04
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_dagger",
+      "name": "星砂の短剣",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "dagger"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 42,
+        "atkSpeed": 0.5,
+        "critRate": 0.07,
+        "evasion": 14,
+        "goldRate": 0.04
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_whip",
+      "name": "星砂の鞭",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "whip"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 42,
+        "accuracy": 6,
+        "atkSpeed": 0.3,
+        "goldRate": 0.04
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_bow",
+      "name": "星砂の弓",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "bow"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 44,
+        "accuracy": 7,
+        "critRate": 0.06,
+        "goldRate": 0.04
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_shuriken",
+      "name": "星砂の手裏剣",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shuriken"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 42,
+        "accuracy": 7,
+        "critRate": 0.07,
+        "goldRate": 0.04
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_staff",
+      "name": "星砂の杖",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_wood",
+      "weaponTags": [
+        "staff"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "magAtk": 44,
+        "maxMp": 34,
+        "dropRate": 0.03
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_wand",
+      "name": "星砂のワンド",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "wand"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "magAtk": 44,
+        "maxMp": 28,
+        "atkSpeed": 0.3,
+        "dropRate": 0.03
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_shield",
+      "name": "星砂の盾",
+      "slot": "main_hand",
+      "rarity": 10,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "shield"
+      ],
+      "element": "none",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 13,
+        "def": 36,
+        "maxHp": 188,
+        "magDef": 6,
+        "goldRate": 0.04
+      },
+      "sellPrice": 480,
+      "description": "星砂を鍛えた武器。砂金がきらめき、倒した獲物の実入りが増える。"
+    },
+    {
+      "id": "starsand_coat",
+      "name": "星砂のコート",
+      "slot": "torso",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 76,
+      "derived": {
+        "def": 34,
+        "maxHp": 70,
+        "dropRate": 0.04
+      },
+      "sellPrice": 420,
+      "description": "星降る夜の砂漠色のコート。獲物の素材を見逃さない。"
+    },
+    {
+      "id": "starsand_hood",
+      "name": "星砂のフード",
+      "slot": "head",
+      "rarity": 10,
+      "visualId": "helm_iron",
+      "levelRequirement": 76,
+      "derived": {
+        "def": 25,
+        "accuracy": 6,
+        "goldRate": 0.05
+      },
+      "sellPrice": 420,
+      "description": "砂除けのフード。縁に縫い込まれた砂金が光る。"
+    },
+    {
+      "id": "starsand_boots",
+      "name": "星砂のブーツ",
+      "slot": "feet",
+      "rarity": 10,
+      "visualId": "plate_iron",
+      "levelRequirement": 76,
+      "derived": {
+        "moveSpeed": 11,
+        "evasion": 16,
+        "def": 25
+      },
+      "sellPrice": 420,
+      "description": "流砂の上でも沈まない軽業師のブーツ。"
+    },
+    {
+      "id": "starsand_talisman",
+      "name": "星砂の護符",
+      "slot": "accessory_1",
+      "rarity": 10,
+      "visualId": "vest_cloth",
+      "levelRequirement": 76,
+      "derived": {
+        "physAtk": 6,
+        "magAtk": 6,
+        "goldRate": 0.06,
+        "dropRate": 0.04
+      },
+      "sellPrice": 420,
+      "description": "流れ星を閉じ込めた護符。幸運は狩人に味方する。"
     }
   ]
 }

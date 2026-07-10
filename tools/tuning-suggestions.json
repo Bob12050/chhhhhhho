@@ -48,14 +48,14 @@
     "lv": 52
   },
   "boss_sandgoa": {
-    "maxHp": 22170,
-    "contactDamage": 379,
+    "maxHp": 19760,
+    "contactDamage": 387,
     "rank": 5,
     "lv": 58
   },
   "boss_knight_dread": {
     "maxHp": 27070,
-    "contactDamage": 529,
+    "contactDamage": 531,
     "rank": 6,
     "lv": 66
   },
@@ -145,13 +145,13 @@
   },
   "boss_miasma": {
     "maxHp": 26290,
-    "contactDamage": 500,
+    "contactDamage": 506,
     "rank": 6,
     "lv": 64
   },
   "boss_varganos": {
     "maxHp": 27720,
-    "contactDamage": 546,
+    "contactDamage": 548,
     "rank": 6,
     "lv": 68
   },

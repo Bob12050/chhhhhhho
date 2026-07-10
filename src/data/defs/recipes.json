@@ -6074,6 +6074,389 @@
       },
       "gold": 1500,
       "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_sword",
+      "resultItemId": "frostcrystal_sword",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "queen_ice": 1,
+        "alpha_pelt": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_katana",
+      "resultItemId": "frostcrystal_katana",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "queen_ice": 1,
+        "alpha_pelt": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_axe",
+      "resultItemId": "frostcrystal_axe",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "queen_ice": 1,
+        "alpha_pelt": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_spear",
+      "resultItemId": "frostcrystal_spear",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "queen_ice": 1,
+        "alpha_pelt": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_mace",
+      "resultItemId": "frostcrystal_mace",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "queen_ice": 1,
+        "alpha_pelt": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_dagger",
+      "resultItemId": "frostcrystal_dagger",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "queen_ice": 1,
+        "alpha_pelt": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_whip",
+      "resultItemId": "frostcrystal_whip",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "queen_ice": 1,
+        "alpha_pelt": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_bow",
+      "resultItemId": "frostcrystal_bow",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "queen_ice": 1,
+        "alpha_pelt": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_shuriken",
+      "resultItemId": "frostcrystal_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "queen_ice": 1,
+        "alpha_pelt": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_staff",
+      "resultItemId": "frostcrystal_staff",
+      "resultQty": 1,
+      "materials": {
+        "mana_stone": 6,
+        "queen_ice": 1,
+        "spore_sac": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_wand",
+      "resultItemId": "frostcrystal_wand",
+      "resultQty": 1,
+      "materials": {
+        "mana_stone": 6,
+        "queen_ice": 1,
+        "spore_sac": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_shield",
+      "resultItemId": "frostcrystal_shield",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 5,
+        "frost_heart": 1,
+        "alpha_pelt": 3
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_mail",
+      "resultItemId": "frostcrystal_mail",
+      "resultQty": 1,
+      "materials": {
+        "mythril_ore": 4,
+        "alpha_pelt": 4,
+        "queen_ice": 1
+      },
+      "gold": 560,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_crown",
+      "resultItemId": "frostcrystal_crown",
+      "resultQty": 1,
+      "materials": {
+        "mana_stone": 4,
+        "queen_ice": 1,
+        "shadow_wing": 2
+      },
+      "gold": 560,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_cloak",
+      "resultItemId": "frostcrystal_cloak",
+      "resultQty": 1,
+      "materials": {
+        "alpha_pelt": 5,
+        "shadow_wing": 3
+      },
+      "gold": 520,
+      "station": "forge"
+    },
+    {
+      "id": "craft_frostcrystal_charm",
+      "resultItemId": "frostcrystal_charm",
+      "resultQty": 1,
+      "materials": {
+        "queen_ice": 2,
+        "frost_heart": 1,
+        "mana_stone": 3
+      },
+      "gold": 620,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_sword",
+      "resultItemId": "starsand_sword",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "dragon_scale": 4,
+        "obsidian_shard": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_katana",
+      "resultItemId": "starsand_katana",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "dragon_scale": 4,
+        "obsidian_shard": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_axe",
+      "resultItemId": "starsand_axe",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "dragon_scale": 4,
+        "obsidian_shard": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_spear",
+      "resultItemId": "starsand_spear",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "dragon_scale": 4,
+        "obsidian_shard": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_mace",
+      "resultItemId": "starsand_mace",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "dragon_scale": 4,
+        "obsidian_shard": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_dagger",
+      "resultItemId": "starsand_dagger",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "dragon_scale": 4,
+        "obsidian_shard": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_whip",
+      "resultItemId": "starsand_whip",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "dragon_scale": 4,
+        "obsidian_shard": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_bow",
+      "resultItemId": "starsand_bow",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "dragon_scale": 4,
+        "obsidian_shard": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_shuriken",
+      "resultItemId": "starsand_shuriken",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "dragon_scale": 4,
+        "obsidian_shard": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_staff",
+      "resultItemId": "starsand_staff",
+      "resultQty": 1,
+      "materials": {
+        "star_fragment": 3,
+        "mana_stone": 8,
+        "sand_gold": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_wand",
+      "resultItemId": "starsand_wand",
+      "resultQty": 1,
+      "materials": {
+        "star_fragment": 3,
+        "mana_stone": 8,
+        "sand_gold": 2
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_shield",
+      "resultItemId": "starsand_shield",
+      "resultQty": 1,
+      "materials": {
+        "golem_core": 5,
+        "sand_core": 1,
+        "dragon_scale": 3
+      },
+      "gold": 1150,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_coat",
+      "resultItemId": "starsand_coat",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 6,
+        "sand_gold": 3,
+        "golem_core": 2
+      },
+      "gold": 1000,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_hood",
+      "resultItemId": "starsand_hood",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 3,
+        "star_fragment": 2,
+        "mana_stone": 4
+      },
+      "gold": 1000,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_boots",
+      "resultItemId": "starsand_boots",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 4,
+        "garo_scale": 2,
+        "obsidian_shard": 2
+      },
+      "gold": 960,
+      "station": "forge"
+    },
+    {
+      "id": "craft_starsand_talisman",
+      "resultItemId": "starsand_talisman",
+      "resultQty": 1,
+      "materials": {
+        "sand_gold": 5,
+        "star_fragment": 3,
+        "abyss_dreg": 1
+      },
+      "gold": 1200,
+      "station": "forge"
     }
   ]
 }
