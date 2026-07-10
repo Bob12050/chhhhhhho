@@ -8,6 +8,7 @@ import { FONT } from '@/ui/theme';
  */
 export class TouchButton {
   private readonly circle: Phaser.GameObjects.Arc;
+  private readonly inner: Phaser.GameObjects.Arc;
   private readonly label: Phaser.GameObjects.Text;
   private icon?: Phaser.GameObjects.Image;
   private dimmed = false;
@@ -15,6 +16,7 @@ export class TouchButton {
   private readonly cx: number;
   private readonly cy: number;
   private readonly radius: number;
+  private readonly accent: number;
 
   onChange: ((down: boolean) => void) | null = null;
 
@@ -31,8 +33,13 @@ export class TouchButton {
     this.cx = x;
     this.cy = y;
     this.radius = Math.max(radius, 24); // 48px diameter minimum
-    this.circle = scene.add.circle(x, y, this.radius, color, 0.35).setDepth(depth);
-    this.circle.setStrokeStyle(2, 0xffffff, 0.4);
+    this.accent = color;
+    // Dark metal face + colour-coded inner ring reads as a game control deck
+    // rather than five unrelated translucent circles.
+    this.circle = scene.add.circle(x, y, this.radius, 0x0a101d, 0.9).setDepth(depth);
+    this.circle.setStrokeStyle(2, 0xf5c542, 0.62);
+    this.inner = scene.add.circle(x, y, this.radius - 5, color, 0.16).setDepth(depth + 0.5);
+    this.inner.setStrokeStyle(1, color, 0.62);
     // Icon + smaller caption reads better than a bare letter; integer scale
     // only (pixel-art rule).
     if (iconTex && scene.textures.exists(iconTex)) {
@@ -69,12 +76,14 @@ export class TouchButton {
 
   private forceRelease(): void {
     this.pointerId = -1;
-    this.circle.setFillStyle(this.circle.fillColor, 0.35);
+    this.circle.setFillStyle(0x0a101d, 0.9);
+    this.inner.setFillStyle(this.accent, 0.16);
     this.onChange?.(false);
   }
 
   setVisible(v: boolean): void {
     this.circle.setVisible(v);
+    this.inner.setVisible(v);
     this.label.setVisible(v);
     this.icon?.setVisible(v);
     if (!v && this.pointerId !== -1) {
@@ -89,6 +98,7 @@ export class TouchButton {
     this.dimmed = v;
     const a = v ? 0.4 : 1;
     this.circle.setAlpha(a);
+    this.inner.setAlpha(a);
     this.label.setAlpha(a);
     this.icon?.setAlpha(a);
     if (v && this.pointerId !== -1) this.forceRelease();
@@ -101,7 +111,8 @@ export class TouchButton {
   private press(p: Phaser.Input.Pointer): void {
     if (this.dimmed || !this.circle.visible || this.pointerId !== -1) return;
     this.pointerId = p.id;
-    this.circle.setFillStyle(this.circle.fillColor, 0.6);
+    this.circle.setFillStyle(0x1c2b40, 0.98);
+    this.inner.setFillStyle(this.accent, 0.3);
     this.onChange?.(true);
   }
 
@@ -114,7 +125,8 @@ export class TouchButton {
   private release(p: Phaser.Input.Pointer): void {
     if (p.id !== this.pointerId) return;
     this.pointerId = -1;
-    this.circle.setFillStyle(this.circle.fillColor, 0.35);
+    this.circle.setFillStyle(0x0a101d, 0.9);
+    this.inner.setFillStyle(this.accent, 0.16);
     this.onChange?.(false);
   }
 }

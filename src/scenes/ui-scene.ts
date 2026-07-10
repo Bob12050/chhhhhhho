@@ -77,20 +77,28 @@ export class UIScene extends Phaser.Scene {
     const baseX = w - insets.right - 44;
     const baseY = h - bottomPad - 44;
 
-    // A quiet control deck groups the combat buttons without boxing in the
-    // playfield. Its connectors make the lower-right read as one instrument.
+    // A metal control deck keeps every action visibly related while leaving the
+    // world open. The gold arcs borrow the hunt-screen language of the boss UI.
     const actionDeck = this.add.graphics().setDepth(depth - 1);
-    const deckX = baseX - 28;
+    const deckX = baseX - 38;
     const deckY = baseY - 58;
-    actionDeck.fillStyle(0x07101c, 0.28);
-    actionDeck.fillCircle(deckX, deckY, 104);
-    actionDeck.lineStyle(1, 0x9fd0ff, 0.2);
-    actionDeck.strokeCircle(deckX, deckY, 104);
-    actionDeck.lineStyle(2, 0xf5c542, 0.38);
+    const deckR = 88;
+    actionDeck.fillStyle(0x06101a, 0.42);
+    actionDeck.fillCircle(deckX, deckY, deckR);
+    actionDeck.lineStyle(1, 0xf5c542, 0.34);
+    actionDeck.strokeCircle(deckX, deckY, deckR);
+    actionDeck.lineStyle(1, 0xffffff, 0.1);
+    actionDeck.strokeCircle(deckX, deckY, deckR - 8);
+    actionDeck.lineStyle(2, 0xf5c542, 0.5);
     actionDeck.lineBetween(baseX - 76, baseY + 6, baseX - 60, baseY - 58);
     actionDeck.lineBetween(baseX - 60, baseY - 58, baseX + 2, baseY - 76);
-    actionDeck.lineStyle(1, 0xffffff, 0.14);
+    actionDeck.lineStyle(1, 0xf5c542, 0.42);
     actionDeck.lineBetween(baseX - 64, baseY - 122, baseX - 60, baseY - 58);
+    actionDeck.lineStyle(2, 0xf5c542, 0.62);
+    actionDeck.arc(deckX, deckY, deckR, Math.PI * 0.12, Math.PI * 0.48, false);
+    actionDeck.strokePath();
+    actionDeck.arc(deckX, deckY, deckR, Math.PI * 1.12, Math.PI * 1.48, false);
+    actionDeck.strokePath();
 
     const attackBtn = new TouchButton(this, baseX, baseY, 32, '', 0xcc4444, depth, TEX.iconSword);
     attackBtn.onChange = (d) => input.setButton('attack', d);

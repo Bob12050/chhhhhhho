@@ -57,7 +57,9 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   sheet(TEX.treant, 'assets/enemy/treant.png'),
   sheet(TEX.dragon, 'assets/enemy/dragon.png'),
   // AI-art-only bosses (fallback alias in ensureGeneratedTextures).
-  sheet(TEX.zephys, 'assets/enemy/zephys.png'),
+  // Zephys is a single large illustration rather than a pose sheet, so the
+  // enemy renderer keeps it static and lets its configured scale own the arena.
+  img(TEX.zephys, 'assets/enemy/zephys-hunt.png'),
   sheet(TEX.hydra, 'assets/enemy/hydra.png'),
   sheet(TEX.sandgoa, 'assets/enemy/sandgoa.png'),
   sheet(TEX.almagia, 'assets/enemy/almagia.png'),

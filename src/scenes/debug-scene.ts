@@ -60,6 +60,8 @@ export class DebugScene extends Phaser.Scene {
     y += 40;
     this.btn(16, y, '★最強モード（Lv99・全解放）', () => this.grant(() => this.godMode()), 0x6a2a2a);
     y += 44;
+    this.btn(16, y, 'ゼフィス実演', () => this.previewZephys(), 0x365070);
+    y += 40;
     this.btn(16, y, '通し確認チェックリスト', () => {
       this.scene.stop();
       this.scene.launch('Checklist');
@@ -104,6 +106,17 @@ export class DebugScene extends Phaser.Scene {
 
   private grantAllEquipment(): void {
     for (const e of allEquipment()) gameState.addEquipment(e.id);
+  }
+
+  /** Debug-only visual route: launch the base Zephys hunt without progression gates. */
+  private previewZephys(): void {
+    const questId = 'hunt_r2_01_zephys';
+    if (!gameState.activeQuests.includes(questId)) {
+      gameState.activeQuests.push(questId);
+      gameState.questProgress[questId] = {};
+      bus.emit('quest:changed', {});
+    }
+    this.warp('arena_plain');
   }
 
   /**

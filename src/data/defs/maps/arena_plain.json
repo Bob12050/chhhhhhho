@@ -20,7 +20,7 @@
     ],
     "boss": [
       180,
-      240
+      340
     ]
   },
   "portals": [
@@ -39,8 +39,8 @@
   "enemies": [],
   "npcs": [],
   "ambient": {
-    "color": "#eaffd0",
-    "alpha": 0.04
+    "color": "#102b1b",
+    "alpha": 0.28
   },
   "landmarks": [
     {

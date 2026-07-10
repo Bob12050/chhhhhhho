@@ -134,7 +134,7 @@
       "name": "岩の番人",
       "textureKey": "gen.enemy.golem",
       "tint": "#b0a070",
-      "scale": 1.9,
+      "scale": 3,
       "isBoss": true,
       "maxHp": 390,
       "moveSpeed": 22,

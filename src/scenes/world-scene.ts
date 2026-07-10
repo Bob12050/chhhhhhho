@@ -154,6 +154,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.physics.world.setBounds(0, 0, this.map.size.w, this.map.size.h);
     this.cameras.main.setBounds(0, 0, this.map.size.w, this.map.size.h);
+    this.cameras.main.setZoom(1);
     this.cameras.main.roundPixels = true;
 
     const built = buildMap(this, this.map);
@@ -475,6 +476,7 @@ export class WorldScene extends Phaser.Scene {
       this.boss = enemy;
       this.bossMaxHp = maxHp;
       this.buildBossBar(`${opts?.veteran ? '歴戦の' : ''}${def.name}`);
+      this.cameras.main.zoomTo(1.08, 220, 'Sine.easeOut');
       if (def.attacks && def.attacks.length > 0) {
         this.bossBrain = new BossBrain(
           this.makeArena(enemy, def),
@@ -622,26 +624,30 @@ export class WorldScene extends Phaser.Scene {
       this.bossBar = null;
     }
     const w = this.scale.width;
-    const x = 8;
+    const x = 24;
     const y = 102; // compact status panel bottom + minimap caption clearance
-    const cardW = w - 16;
-    const cardH = 42;
+    const cardW = w - 48;
+    const cardH = 40;
     const bg = this.add.graphics().setScrollFactor(0).setDepth(8000);
-    bg.fillStyle(0x1a0e14, 0.88);
-    bg.fillRoundedRect(x, y, cardW, cardH, 7);
-    bg.fillStyle(0xcc3a4a, 0.95);
-    bg.fillRoundedRect(x, y, 3, cardH, { tl: 7, bl: 7, tr: 0, br: 0 });
-    bg.lineStyle(1, 0xff8090, 0.18);
-    bg.strokeRoundedRect(x, y, cardW, cardH, 7);
+    bg.fillStyle(0x080d16, 0.9);
+    bg.fillRoundedRect(x, y, cardW, cardH, 6);
+    bg.lineStyle(2, 0xf5c542, 0.68);
+    bg.strokeRoundedRect(x, y, cardW, cardH, 6);
+    bg.lineStyle(1, 0xffffff, 0.12);
+    bg.strokeRoundedRect(x + 3, y + 3, cardW - 6, cardH - 6, 4);
+    bg.fillStyle(0xf5c542, 0.9);
+    bg.fillTriangle(x + 8, y + 8, x + 13, y + 4, x + 18, y + 8);
+    bg.fillTriangle(x + cardW - 18, y + 8, x + cardW - 13, y + 4, x + cardW - 8, y + 8);
     // Empty groove under the fill so lost HP reads clearly.
     bg.fillStyle(0x000000, 0.5);
-    bg.fillRoundedRect(x + 10, y + 24, cardW - 20, 10, 4);
+    bg.fillRoundedRect(x + 12, y + 25, cardW - 24, 9, 4);
     const label = this.add
-      .text(x + 10, y + 4, name, { fontFamily: FONT, fontSize: '12px', color: '#ffd0d8' })
+      .text(x + cardW / 2, y + 6, name, { fontFamily: FONT, fontSize: '11px', color: '#ffe7a5', fontStyle: 'bold' })
+      .setOrigin(0.5, 0)
       .setScrollFactor(0)
       .setDepth(8002);
     const fill = this.add
-      .rectangle(x + 11, y + 29, cardW - 22, 8, 0xcc3a4a)
+      .rectangle(x + 13, y + 29, cardW - 26, 7, 0xd4464d)
       .setOrigin(0, 0.5)
       .setScrollFactor(0)
       .setDepth(8001);
@@ -1414,7 +1420,10 @@ export class WorldScene extends Phaser.Scene {
       gameState.flags[`${def.id}_defeated`] = true;
       // Only drop tracking if the TRACKED boss died (a stray second boss's
       // death must not tear down the live one's bar/brain).
-      if (!this.boss || this.boss.isDead()) this.boss = null;
+      if (!this.boss || this.boss.isDead()) {
+        this.boss = null;
+        this.cameras.main.zoomTo(1, 240, 'Sine.easeOut');
+      }
       this.floatText(x, y - 46, `${def.name} を倒した！`);
       void this.save();
     }
