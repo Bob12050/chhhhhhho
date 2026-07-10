@@ -61,6 +61,8 @@ export class CraftingScene extends Phaser.Scene {
   private expanded = new Set<string>();
   /** Tabs whose first craftable group was auto-opened once already. */
   private seededTabs = new Set<CraftTab>();
+  /** Scroll target of this render's seeded jump (-1 = none); extends maxScroll. */
+  private seedScroll = -1;
 
   constructor() {
     super('Crafting');
@@ -345,8 +347,9 @@ export class CraftingScene extends Phaser.Scene {
           seededKey = first.key;
         }
       }
+      this.seedScroll = -1;
       for (const g of groups) {
-        if (g.key === seededKey) this.scrollY = Math.max(0, y - (this.viewTop + 8));
+        if (g.key === seededKey) this.scrollY = this.seedScroll = Math.max(0, y - (this.viewTop + 8));
         this.rowQueue.push({ kind: 'header', y, h: 64, group: g, band: band++ });
         y += 64;
         if (this.expanded.has(g.key)) {
@@ -370,6 +373,11 @@ export class CraftingScene extends Phaser.Scene {
       y += 34;
     }
     this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
+    // The seeded jump must land its group exactly at the top of the view even
+    // when that group sits near the list's end — otherwise the clamp leaves it
+    // mid-screen (and made the E2E craft tap land on the wrong row when RNG
+    // drops changed which recipes were visible).
+    if (this.seedScroll > this.maxScroll) this.maxScroll = this.seedScroll;
     this.scrollTo(this.scrollY);
   }
 
