@@ -17,6 +17,42 @@
     "rank": 2,
     "lv": 12
   },
+  "boss_flame": {
+    "maxHp": 2640,
+    "contactDamage": 65,
+    "rank": 1,
+    "lv": 20
+  },
+  "boss_dragon": {
+    "maxHp": 3790,
+    "contactDamage": 100,
+    "rank": 1,
+    "lv": 30
+  },
+  "boss_wisp_queen": {
+    "maxHp": 20340,
+    "contactDamage": 332,
+    "rank": 5,
+    "lv": 52
+  },
+  "boss_knight_dread": {
+    "maxHp": 27070,
+    "contactDamage": 529,
+    "rank": 6,
+    "lv": 66
+  },
+  "boss_slime_abyss": {
+    "maxHp": 10350,
+    "contactDamage": 433,
+    "rank": 1,
+    "lv": 80
+  },
+  "boss_almagia": {
+    "maxHp": 13110,
+    "contactDamage": 585,
+    "rank": 1,
+    "lv": 94
+  },
   "boss_zephys": {
     "maxHp": 2510,
     "contactDamage": 47,
@@ -28,12 +64,6 @@
     "contactDamage": 53,
     "rank": 2,
     "lv": 15
-  },
-  "boss_flame": {
-    "maxHp": 4480,
-    "contactDamage": 76,
-    "rank": 3,
-    "lv": 20
   },
   "boss_obsidion": {
     "maxHp": 4910,
@@ -52,12 +82,6 @@
     "contactDamage": 99,
     "rank": 3,
     "lv": 25
-  },
-  "boss_dragon": {
-    "maxHp": 7740,
-    "contactDamage": 130,
-    "rank": 4,
-    "lv": 30
   },
   "boss_aurum": {
     "maxHp": 8290,
@@ -95,12 +119,6 @@
     "rank": 5,
     "lv": 50
   },
-  "boss_wisp_queen": {
-    "maxHp": 20340,
-    "contactDamage": 332,
-    "rank": 5,
-    "lv": 52
-  },
   "boss_skoll": {
     "maxHp": 20950,
     "contactDamage": 345,
@@ -119,12 +137,6 @@
     "rank": 6,
     "lv": 64
   },
-  "boss_knight_dread": {
-    "maxHp": 27070,
-    "contactDamage": 529,
-    "rank": 6,
-    "lv": 66
-  },
   "boss_varganos": {
     "maxHp": 27720,
     "contactDamage": 546,
@@ -136,12 +148,6 @@
     "contactDamage": 628,
     "rank": 6,
     "lv": 72
-  },
-  "boss_slime_abyss": {
-    "maxHp": 31960,
-    "contactDamage": 804,
-    "rank": 7,
-    "lv": 80
   },
   "boss_flarelis": {
     "maxHp": 31960,
@@ -160,11 +166,5 @@
     "contactDamage": 1036,
     "rank": 7,
     "lv": 90
-  },
-  "boss_almagia": {
-    "maxHp": 40470,
-    "contactDamage": 1087,
-    "rank": 7,
-    "lv": 94
   }
 }

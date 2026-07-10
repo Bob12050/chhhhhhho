@@ -230,6 +230,50 @@ for (const [label, lv, ref] of milestones) {
 }
 out();
 
+// ---------- 4b) main-story clear-time estimate ----------
+// Model: the player levels by repeating the best exp/min hunt available at
+// their level (travel+fight+turn-in ≈ 1.5 + 0.5×rank minutes), grinding field
+// mobs before any hunt unlocks, plus ~4 min per story boss. This is the FAST
+// route — casual play runs longer. Target: 25〜35 hours (tune the cubic term
+// in src/stats/leveling.ts expToNext).
+{
+  const FIELD_EXP_PER_MIN = 8 * 25;
+  const questExp = (q: QuestDef): number => {
+    let e = q.rewards.exp ?? 0;
+    const mult = q.veteran ? VETERAN_MODS.rewardMult : 1;
+    for (const o of q.objectives) e += (getEnemyDef(o.enemyId)?.expReward ?? 0) * o.count * mult;
+    return e;
+  };
+  const runMin = (q: QuestDef): number => 1.5 + 0.5 * (q.rank ?? 1);
+  const grindable = huntQuests.filter((q) => q.type !== 'main');
+  const gates = allQuests()
+    .filter((q) => q.type === 'main')
+    .map((q) => q.require?.minLevel ?? 1)
+    .sort((a, b) => a - b);
+  let cur = 1;
+  let mins = 0;
+  out('## 4b. メインストーリー想定クリア時間（最速ルート換算）');
+  out();
+  out('| 区間 | 時間 |');
+  out('|---|---|');
+  for (const g of gates) {
+    const need = totalExpForLevel(g) - totalExpForLevel(cur);
+    let seg = 0;
+    if (need > 0) {
+      const avail = grindable.filter((q) => (q.require?.minLevel ?? 1) <= cur);
+      const eff = Math.max(FIELD_EXP_PER_MIN, ...avail.map((q) => questExp(q) / runMin(q)));
+      seg = need / eff;
+    }
+    if (seg / 60 >= 0.1) out(`| Lv${cur}→${g} | ${(seg / 60).toFixed(1)}h |`);
+    mins += seg + 4;
+    cur = g;
+  }
+  const hours = mins / 60;
+  const verdict = hours < 25 ? ' ⚠️短すぎ（目標25〜35h）' : hours > 35 ? ' ⚠️長すぎ（目標25〜35h）' : '（目標25〜35h内 ✓）';
+  out(`| **合計** | **${hours.toFixed(1)}h**${verdict} |`);
+  out();
+}
+
 // ---------- 5) volume ----------
 out('## 5. ボリューム統計');
 out();

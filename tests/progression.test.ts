@@ -27,10 +27,10 @@ function requiredLevels(jobId: string, acc = new Map<string, number>()): Map<str
   return acc;
 }
 
-describe('progression budget (~20h to one 4次職)', () => {
+describe('progression budget (main story 25〜35h; 4次職はその先のやり込み)', () => {
   const ASSUMED_KILLS_PER_HOUR = 720; // 12/min steady farm in a respawning zone
 
-  it('total exp to a 4次職 path lands near a 20h grind', () => {
+  it('total exp to a 4次職 path stays in the post-story endgame band', () => {
     const acc = requiredLevels('aramikagura');
     expect(acc.size).toBeGreaterThan(0);
     let totalExp = 0;
@@ -39,9 +39,11 @@ describe('progression budget (~20h to one 4次職)', () => {
     const topExp = Math.max(...allEnemyDefs().filter((d) => !d.isBoss).map((d) => d.expReward));
     const hours = totalExp / (topExp * ASSUMED_KILLS_PER_HOUR);
 
-    // Best-case farm should be in a sane band; real play (early inefficiency)
-    // trends toward the upper end / ~20h.
-    expect(hours, `est ${hours.toFixed(1)}h (exp ${totalExp}, top ${topExp})`).toBeGreaterThan(12);
-    expect(hours, `est ${hours.toFixed(1)}h (exp ${totalExp}, top ${topExp})`).toBeLessThan(30);
+    // 2026-07: the exp curve gained a cubic term tuned so the MAIN STORY runs
+    // 25〜35h (tools/balance-sim.ts §4b is the authoritative model). A full
+    // 4次職 path is the long-tail goal beyond that — it should exceed the
+    // story budget but stay achievable (< ~60h of best-case farming).
+    expect(hours, `est ${hours.toFixed(1)}h (exp ${totalExp}, top ${topExp})`).toBeGreaterThan(25);
+    expect(hours, `est ${hours.toFixed(1)}h (exp ${totalExp}, top ${topExp})`).toBeLessThan(60);
   });
 });
