@@ -112,11 +112,11 @@ try {
     window.__test.addMaterial('lord_hardwood', 5);
     window.__test.addMaterial('iron_ore', 10);
     window.__test.addGold(1000);
-    // Illustrated-town smith now stands just outside the forge at (146, 278).
-    window.__test.warp('town', 146, 320);
+    // Approach from the road above the fountain; the painted fountain is solid.
+    window.__test.warp('town', 170, 290);
   });
   await page.waitForTimeout(1600);
-  await page.keyboard.down('w'); await page.waitForTimeout(200); await page.keyboard.up('w');
+  await page.keyboard.down('w'); await page.waitForTimeout(100); await page.keyboard.up('w');
   await page.keyboard.down('e'); await page.waitForTimeout(140); await page.keyboard.up('e'); await page.waitForTimeout(1200);
   // シリーズ別表示（レア度順）: 初回は「作れるものがある」最初のシリーズが
   // 自動展開され、そこへ自動スクロールする。よって画面上 1行目(136-200)が

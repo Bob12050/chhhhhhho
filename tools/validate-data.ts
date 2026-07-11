@@ -277,6 +277,7 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
       props?: { kind: string; dx: number; dy: number }[];
     }[];
     water?: [number, number, number, number][];
+    collisionRects?: [number, number, number, number][];
     landmarks?: { x: number; y: number; kind: string }[];
     path?: { axis: string; thickness: number; wind?: number };
     travel?: { order?: number; hidden?: boolean; unlockFlag?: string; note?: string };
@@ -321,6 +322,12 @@ function validateMaps(enemyIds: Set<string>, dialogueIds: Set<string>): Set<stri
       if (!(ww > 0) || !(wh > 0)) err(`Map ${m.id}: water[${i}] non-positive size`);
       if (x < 0 || y < 0 || x + ww > m.size.w || y + wh > m.size.h)
         err(`Map ${m.id}: water[${i}] out of bounds`);
+    }
+    for (const [i, r] of (m.collisionRects ?? []).entries()) {
+      const [x, y, ww, wh] = r;
+      if (!(ww > 0) || !(wh > 0)) err(`Map ${m.id}: collisionRects[${i}] non-positive size`);
+      if (x < 0 || y < 0 || x + ww > m.size.w || y + wh > m.size.h)
+        err(`Map ${m.id}: collisionRects[${i}] out of bounds`);
     }
     for (const [i, lm] of (m.landmarks ?? []).entries()) {
       if (!LANDMARKS.has(lm.kind)) err(`Map ${m.id}: landmark[${i}] unknown kind "${lm.kind}"`);

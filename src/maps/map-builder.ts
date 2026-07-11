@@ -16,6 +16,30 @@ const BORDER_TEX: Record<Exclude<BorderKind, 'none'>, string> = {
   walls: TEX.wall,
 };
 
+const ILLUSTRATED_MAP_TEX: Record<string, string> = {
+  town: TEX.townMap,
+  field: TEX.fieldMap,
+  forest: TEX.forestMap,
+  dungeon: TEX.dungeonMap,
+  canyon: TEX.canyonMap,
+  volcano: TEX.volcanoMap,
+  snowfield: TEX.snowfieldMap,
+  desert: TEX.desertMap,
+  boss_room: TEX.arenaMap,
+  arena_volcano: TEX.arenaMap,
+  arena_grove: TEX.arenaMap,
+  arena_marsh: TEX.arenaMap,
+  arena_cavern: TEX.arenaMap,
+  arena_peak: TEX.arenaMap,
+  arena_night: TEX.arenaMap,
+  arena_plain: TEX.arenaMap,
+  arena_swamp: TEX.arenaMap,
+  arena_canyon: TEX.arenaMap,
+  arena_frost: TEX.arenaMap,
+  arena_ruins: TEX.arenaMap,
+  arena_abyss: TEX.arenaMap,
+};
+
 export interface BuiltPortal {
   rect: Phaser.Geom.Rectangle;
   to: string;
@@ -35,7 +59,9 @@ export interface BuiltMap {
  */
 export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
   const { w, h } = map.size;
-  const illustratedTown = map.id === 'town' && scene.textures.exists(TEX.townMap);
+  const mappedTexture = ILLUSTRATED_MAP_TEX[map.id];
+  const illustratedTexture = mappedTexture && scene.textures.exists(mappedTexture) ? mappedTexture : undefined;
+  const illustratedMap = illustratedTexture !== undefined;
 
   scene.add.tileSprite(0, 0, w, h, GROUND_TEX[map.ground]).setOrigin(0).setDepth(-1000);
 
@@ -46,7 +72,7 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
   // tile scatter for colour variation (see VISUAL_GUIDE §9).
 
   const pathOff = pathOffsetFn(map, w, h);
-  if (map.path) {
+  if (map.path && !illustratedMap) {
     const t = map.path.thickness;
     const pathTex = map.ground === 'grass' ? TEX.tilePath : map.ground === 'stone' ? TEX.tileStone : TEX.tileFloor;
     if (map.path.axis === 'v') {
@@ -67,8 +93,8 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     }
     drawPathEdges(scene, map, w, h, pathOff);
   }
-  if (illustratedTown) {
-    scene.add.image(0, 0, TEX.townMap).setOrigin(0).setDisplaySize(w, h).setDepth(-996);
+  if (illustratedTexture) {
+    scene.add.image(0, 0, illustratedTexture).setOrigin(0).setDisplaySize(w, h).setDepth(-996);
   } else {
     scatterDecor(scene, map, w, h, pathOff);
   }
@@ -92,6 +118,11 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     );
 
   const obstacles = scene.physics.add.staticGroup();
+  const placeInvisible = (x: number, y: number, width: number, height: number): void => {
+    const body = scene.add.rectangle(x + width / 2, y + height / 2, width, height).setVisible(false);
+    scene.physics.add.existing(body, true);
+    obstacles.add(body);
+  };
   // Deterministic per-position hash so tree variants/jitter are stable across
   // visits (no Math.random: re-entering a map must look identical).
   const hash2 = (x: number, y: number): number => {
@@ -144,7 +175,7 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
 
   // Border. Leave the central path opening (vertical path) and any portal
   // doorway clear so they are reachable.
-  if (map.border !== 'none' && !illustratedTown) {
+  if (map.border !== 'none' && !illustratedMap) {
     const tex = BORDER_TEX[map.border];
     const opening = map.path && map.path.axis === 'v' ? map.path.thickness : 0;
     const ox = w / 2 - opening / 2;
@@ -159,17 +190,33 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     }
   }
 
-  if (!illustratedTown) {
+  if (illustratedMap) {
+    // Build the painted perimeter from small cells so every portal, including
+    // side exits, can punch a clean opening through otherwise solid scenery.
+    for (let y = 16; y < h; y += 32) {
+      if (!onPortal(16, y)) placeInvisible(0, y - 16, 48, 32);
+      if (!onPortal(w - 16, y)) placeInvisible(w - 48, y - 16, 48, 32);
+    }
+    for (let x = 16; x < w; x += 32) {
+      if (!onPortal(x, 16)) placeInvisible(x - 16, 0, 32, 48);
+      if (!onPortal(x, h - 16)) placeInvisible(x - 16, h - 48, 32, 48);
+    }
+    for (const [x, y, width, height] of map.collisionRects ?? []) {
+      placeInvisible(x, y, width, height);
+    }
+  }
+
+  if (!illustratedMap) {
     for (const [x, y] of map.obstacles ?? []) {
       place(x, y, map.border === 'walls' ? TEX.wall : TEX.obstacle);
     }
   }
 
   for (const b of map.buildings ?? []) {
-    if (illustratedTown) registerBuildingCollision(scene, obstacles, b);
+    if (illustratedMap) registerBuildingCollision(scene, obstacles, b);
     else drawBuilding(scene, obstacles, b);
   }
-  if (!illustratedTown) {
+  if (!illustratedMap) {
     for (const [wx, wy, ww, wh] of map.water ?? []) drawWater(scene, obstacles, wx, wy, ww, wh);
     for (const lm of map.landmarks ?? []) drawLandmark(scene, obstacles, lm);
   }
@@ -274,10 +321,9 @@ function registerBuildingCollision(
   obstacles: Phaser.Physics.Arcade.StaticGroup,
   b: BuildingDef,
 ): void {
-  const roofH = Math.round(b.h * 0.4);
-  const solidY = b.y + roofH - 6;
-  const solidH = b.h - roofH + 6;
-  const body = scene.add.rectangle(b.x + b.w / 2, solidY + solidH / 2, b.w, solidH).setVisible(false);
+  // A flattened background cannot y-sort a character behind its painted roof,
+  // so the complete building footprint must be solid.
+  const body = scene.add.rectangle(b.x + b.w / 2, b.y + b.h / 2, b.w, b.h).setVisible(false);
   scene.physics.add.existing(body, true);
   obstacles.add(body);
 }

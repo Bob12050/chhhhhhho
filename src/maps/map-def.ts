@@ -102,6 +102,8 @@ export interface MapDef {
   water?: [number, number, number, number][];
   /** Scenic landmarks (procedurally drawn; some collide). */
   landmarks?: { x: number; y: number; kind: LandmarkKind }[];
+  /** Invisible solid rectangles [x, y, w, h] aligned to illustrated scenery. */
+  collisionRects?: [number, number, number, number][];
   spawns: Record<string, [number, number]>;
   portals?: PortalDef[];
   enemies?: MapEnemy[];

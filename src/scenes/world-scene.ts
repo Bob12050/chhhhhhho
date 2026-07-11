@@ -190,6 +190,17 @@ export class WorldScene extends Phaser.Scene {
     // current walkable world instead of spawning beyond a shortened edge.
     gameState.x = Phaser.Math.Clamp(gameState.x, 24, this.map.size.w - 24);
     gameState.y = Phaser.Math.Clamp(gameState.y, 32, this.map.size.h - 32);
+    const savedInsideScenery = [
+      ...(this.map.buildings ?? []).map((b) => [b.x, b.y, b.w, b.h] as const),
+      ...(this.map.collisionRects ?? []),
+    ].some(([x, y, w, h]) =>
+      Phaser.Geom.Rectangle.Contains(new Phaser.Geom.Rectangle(x - 12, y - 12, w + 24, h + 24), gameState.x, gameState.y),
+    );
+    if (savedInsideScenery) {
+      const safeSpawn = spawnPoint(this.map, 'default');
+      gameState.x = safeSpawn.x;
+      gameState.y = safeSpawn.y;
+    }
     this.player = new Player(this, gameState.x, gameState.y);
     this.player.setJobAppearance(gameState.jobId);
     this.player.setMoveSpeed(gameState.derived.moveSpeed);
