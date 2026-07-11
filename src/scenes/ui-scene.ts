@@ -83,18 +83,18 @@ export class UIScene extends Phaser.Scene {
     const deckX = baseX - 38;
     const deckY = baseY - 58;
     const deckR = 88;
-    actionDeck.fillStyle(0x06101a, 0.42);
+    actionDeck.fillStyle(0x173b69, 0.24);
     actionDeck.fillCircle(deckX, deckY, deckR);
-    actionDeck.lineStyle(1, 0xf5c542, 0.34);
+    actionDeck.lineStyle(1, 0xf2c765, 0.64);
     actionDeck.strokeCircle(deckX, deckY, deckR);
     actionDeck.lineStyle(1, 0xffffff, 0.1);
     actionDeck.strokeCircle(deckX, deckY, deckR - 8);
-    actionDeck.lineStyle(2, 0xf5c542, 0.5);
+    actionDeck.lineStyle(2, 0xf2c765, 0.72);
     actionDeck.lineBetween(baseX - 76, baseY + 6, baseX - 60, baseY - 58);
     actionDeck.lineBetween(baseX - 60, baseY - 58, baseX + 2, baseY - 76);
-    actionDeck.lineStyle(1, 0xf5c542, 0.42);
+    actionDeck.lineStyle(1, 0xf2c765, 0.62);
     actionDeck.lineBetween(baseX - 64, baseY - 122, baseX - 60, baseY - 58);
-    actionDeck.lineStyle(2, 0xf5c542, 0.62);
+    actionDeck.lineStyle(2, 0xf2c765, 0.78);
     actionDeck.arc(deckX, deckY, deckR, Math.PI * 0.12, Math.PI * 0.48, false);
     actionDeck.strokePath();
     actionDeck.arc(deckX, deckY, deckR, Math.PI * 1.12, Math.PI * 1.48, false);
@@ -234,9 +234,9 @@ export class UIScene extends Phaser.Scene {
     const cell = this.add.graphics();
     const drawEmblemCell = (color: number): void => {
       cell.clear();
-      cell.fillStyle(0x0b1020, 0.7);
+      cell.fillStyle(0x193c68, 0.82);
       cell.fillRoundedRect(13, 10, 32, 36, 7);
-      cell.fillStyle(0x202949, 1);
+      cell.fillStyle(0x315f91, 1);
       cell.fillRoundedRect(9, 7, 38, 38, 7);
       cell.fillStyle(0xffffff, 0.1);
       cell.fillRoundedRect(12, 10, 32, 11, { tl: 6, tr: 6, bl: 0, br: 0 });
@@ -250,7 +250,7 @@ export class UIScene extends Phaser.Scene {
     const jobIcon = this.add.image(28, 26, em0.tex).setScale(1.5).setTint(em0.color);
     panel.add(jobIcon);
     const lvBadge = this.add.graphics();
-    lvBadge.fillStyle(0x10121c, 0.94);
+    lvBadge.fillStyle(0x173b69, 0.96);
     lvBadge.fillRoundedRect(10, 47, 36, 12, 6);
     lvBadge.lineStyle(1, 0xf5c542, 0.45);
     lvBadge.strokeRoundedRect(10, 47, 36, 12, 6);
@@ -282,7 +282,7 @@ export class UIScene extends Phaser.Scene {
       const g = this.add.graphics();
       g.fillStyle(0x000000, 0.34);
       g.fillRoundedRect(rx, by + 2, rw, bh, bh / 2);
-      g.fillStyle(0x0e1220, 0.95);
+      g.fillStyle(0x17375e, 0.95);
       g.fillRoundedRect(rx, by, rw, bh, bh / 2);
       g.fillStyle(color, 0.22);
       g.fillRoundedRect(rx + 1, by + 1, rw - 2, Math.max(2, Math.floor(bh / 2)), bh / 2);
@@ -308,9 +308,9 @@ export class UIScene extends Phaser.Scene {
       return val;
     };
 
-    this.hpBar = makeBar(21, 10, 0xef8a3c);
+    this.hpBar = makeBar(21, 10, 0xf05f67);
     this.hpText = barText(21, 10, 'HP');
-    this.mpBar = makeBar(36, 10, 0x3aa0e0);
+    this.mpBar = makeBar(36, 10, 0x36b9df);
     this.mpText = barText(36, 10, 'MP');
     this.expBar = makeBar(52, 4, 0xf5c542);
     this.expText = this.add.text(0, 0, '').setVisible(false);

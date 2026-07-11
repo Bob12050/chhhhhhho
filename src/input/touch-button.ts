@@ -36,8 +36,8 @@ export class TouchButton {
     this.accent = color;
     // Dark metal face + colour-coded inner ring reads as a game control deck
     // rather than five unrelated translucent circles.
-    this.circle = scene.add.circle(x, y, this.radius, 0x0a101d, 0.9).setDepth(depth);
-    this.circle.setStrokeStyle(2, 0xf5c542, 0.62);
+    this.circle = scene.add.circle(x, y, this.radius, 0x173b69, 0.92).setDepth(depth);
+    this.circle.setStrokeStyle(2, 0xf2c765, 0.9);
     this.inner = scene.add.circle(x, y, this.radius - 5, color, 0.16).setDepth(depth + 0.5);
     this.inner.setStrokeStyle(1, color, 0.62);
     // Icon + smaller caption reads better than a bare letter; integer scale
@@ -76,7 +76,7 @@ export class TouchButton {
 
   private forceRelease(): void {
     this.pointerId = -1;
-    this.circle.setFillStyle(0x0a101d, 0.9);
+    this.circle.setFillStyle(0x173b69, 0.92);
     this.inner.setFillStyle(this.accent, 0.16);
     this.onChange?.(false);
   }
@@ -111,7 +111,7 @@ export class TouchButton {
   private press(p: Phaser.Input.Pointer): void {
     if (this.dimmed || !this.circle.visible || this.pointerId !== -1) return;
     this.pointerId = p.id;
-    this.circle.setFillStyle(0x1c2b40, 0.98);
+    this.circle.setFillStyle(0x2f6598, 0.98);
     this.inner.setFillStyle(this.accent, 0.3);
     this.onChange?.(true);
   }
@@ -125,7 +125,7 @@ export class TouchButton {
   private release(p: Phaser.Input.Pointer): void {
     if (p.id !== this.pointerId) return;
     this.pointerId = -1;
-    this.circle.setFillStyle(0x0a101d, 0.9);
+    this.circle.setFillStyle(0x173b69, 0.92);
     this.inner.setFillStyle(this.accent, 0.16);
     this.onChange?.(false);
   }

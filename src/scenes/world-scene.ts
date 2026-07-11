@@ -178,7 +178,7 @@ export class WorldScene extends Phaser.Scene {
     const vw = this.scale.width;
     const vh = this.scale.height;
     for (let i = 0; i < 10; i++) {
-      vg.lineStyle(3, 0x0e0f1a, 0.055 * (1 - i / 10));
+      vg.lineStyle(3, 0x17385f, 0.032 * (1 - i / 10));
       vg.strokeRect(i * 3, i * 3, vw - i * 6, vh - i * 6);
     }
 

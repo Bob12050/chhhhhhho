@@ -538,24 +538,24 @@ function generateEnvTextures(scene: Phaser.Scene): void {
         ctx.closePath();
       };
       const rad = 11;
-      // Body: soft vertical gradient (lighter slate → deep navy).
+      // Bright enamel frame used by the friendlier storybook-JRPG HUD.
       const grad = ctx.createLinearGradient(0, 0, 0, 48);
-      grad.addColorStop(0, '#333c5c');
-      grad.addColorStop(1, '#1c2238');
+      grad.addColorStop(0, '#416b9b');
+      grad.addColorStop(0.45, '#294f80');
+      grad.addColorStop(1, '#17365f');
       ctx.fillStyle = grad;
       rr(1, 1, 46, 46, rad);
       ctx.fill();
       // Top sheen for a gentle glossy lift.
-      ctx.fillStyle = 'rgba(255,255,255,0.07)';
+      ctx.fillStyle = 'rgba(255,248,218,0.16)';
       rr(3, 3, 42, 15, rad - 3);
       ctx.fill();
-      // Soft light border (no hard gold hairline → far less retro).
-      ctx.strokeStyle = 'rgba(150,168,220,0.55)';
+      ctx.strokeStyle = 'rgba(255,211,112,0.88)';
       ctx.lineWidth = 1.5;
       rr(1.5, 1.5, 45, 45, rad);
       ctx.stroke();
       // Faint inner keyline for a touch of depth.
-      ctx.strokeStyle = 'rgba(10,12,22,0.5)';
+      ctx.strokeStyle = 'rgba(255,247,220,0.24)';
       ctx.lineWidth = 1;
       rr(3, 3, 42, 42, rad - 2);
       ctx.stroke();

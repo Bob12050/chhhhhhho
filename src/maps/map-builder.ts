@@ -47,18 +47,19 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
   const pathOff = pathOffsetFn(map, w, h);
   if (map.path) {
     const t = map.path.thickness;
+    const pathTex = map.ground === 'grass' ? TEX.tilePath : map.ground === 'stone' ? TEX.tileStone : TEX.tileFloor;
     if (map.path.axis === 'v') {
       // 16px strips following the meander (visual only; grass is walkable too).
       for (let y = 0; y < h; y += 16) {
         scene.add
-          .tileSprite(Math.round(w / 2 + pathOff(y) - t / 2), y, t, 16, TEX.tilePath)
+          .tileSprite(Math.round(w / 2 + pathOff(y) - t / 2), y, t, 16, pathTex)
           .setOrigin(0)
           .setDepth(-999);
       }
     } else {
       for (let x = 0; x < w; x += 16) {
         scene.add
-          .tileSprite(x, Math.round(h / 2 + pathOff(x) - t / 2), 16, t, TEX.tilePath)
+          .tileSprite(x, Math.round(h / 2 + pathOff(x) - t / 2), 16, t, pathTex)
           .setOrigin(0)
           .setDepth(-999);
       }
@@ -250,9 +251,9 @@ const BUILDING_STYLES: Record<
   BuildingDef['style'],
   { wall: number; wallLight: number; roof: number; ridge: number; trim: number }
 > = {
-  wood: { wall: 0x7a5a3a, wallLight: 0x8a6a48, roof: 0x4a3626, ridge: 0x5c452f, trim: 0x2e2318 },
-  stone: { wall: 0x8a8a94, wallLight: 0x9a9aa4, roof: 0x4a4e5c, ridge: 0x5a5f70, trim: 0x2b2b33 },
-  plaster: { wall: 0xcfc0a0, wallLight: 0xdccfae, roof: 0x8a4a3a, ridge: 0xa05a45, trim: 0x4a3a2a },
+  wood: { wall: 0xc99458, wallLight: 0xe1b774, roof: 0x2e8f91, ridge: 0x55b7ad, trim: 0x6f4b35 },
+  stone: { wall: 0xb8c4d1, wallLight: 0xd8e0e6, roof: 0x3979b8, ridge: 0x65a6d7, trim: 0x52647a },
+  plaster: { wall: 0xf4dfb8, wallLight: 0xffefcf, roof: 0xd96f61, ridge: 0xee9a78, trim: 0x8b5b48 },
 };
 
 /**
@@ -337,9 +338,9 @@ const SHOP_FRONTS: Record<
   Exclude<NonNullable<BuildingDef['shop']>, 'house'>,
   { stripe: number; cream: number; board: number; icon: NonNullable<BuildingDef['signIcon']> }
 > = {
-  general: { stripe: 0x4a8f5a, cream: 0xe8d8b0, board: 0x7a5636, icon: 'potion' },
-  craft: { stripe: 0x8a5a30, cream: 0xd8b878, board: 0x6a4a2c, icon: 'hammer' },
-  guild: { stripe: 0x3a5aa0, cream: 0xe4dcc0, board: 0x7a5636, icon: 'shield' },
+  general: { stripe: 0x55ad7a, cream: 0xffedc7, board: 0xa56e43, icon: 'potion' },
+  craft: { stripe: 0xe27a68, cream: 0xffe7bd, board: 0x98613c, icon: 'hammer' },
+  guild: { stripe: 0x4f8fd2, cream: 0xffefcf, board: 0x9b6a43, icon: 'shield' },
 };
 
 /**
@@ -510,7 +511,7 @@ function scatterDecor(scene: Phaser.Scene, map: MapDef, w: number, h: number, pa
 function drawPathEdges(scene: Phaser.Scene, map: MapDef, w: number, h: number, pathOff: (a: number) => number): void {
   if (!map.path) return;
   const g = scene.add.graphics().setDepth(-998);
-  const colors = [0x6b5a3c, 0x5f5136];
+  const colors = map.ground === 'grass' ? [0xe8c58d, 0xd9b174] : [0x99a8bb, 0x8797ad];
   const half = map.path.thickness / 2;
   const hashN = (n: number): number => {
     let v = (Math.imul(n | 0, 2654435761) ^ 0x9e37) >>> 0;

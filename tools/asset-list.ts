@@ -48,7 +48,7 @@ export const ASSET_SPECS: AssetSpec[] = [
   sheet('敵:スライム', 'assets/enemy/slime.png'),
   { label: 'タイル:草', src: 'assets/tiles/grass.png', type: 'image', w: 128, h: 128 },
   { label: 'タイル:道', src: 'assets/tiles/path.png', type: 'image', w: 128, h: 128 },
-  tile('タイル:石', 'assets/tiles/stone.png'),
+  { label: 'タイル:石', src: 'assets/tiles/stone.png', type: 'image', w: 128, h: 128 },
   tile('タイル:床', 'assets/tiles/floor.png'),
   { label: '障害物', src: 'assets/env/obstacle.png', type: 'image', w: 48, h: 64, anchor: [24, 59] },
   tile('壁', 'assets/env/wall.png'),

@@ -26,8 +26,10 @@ export class VirtualStick {
       .setInteractive();
     this.zone.setDepth(depth);
 
-    this.baseGfx = scene.add.circle(0, 0, this.radius, 0xffffff, 0.08).setDepth(depth);
-    this.thumbGfx = scene.add.circle(0, 0, 20, 0xffffff, 0.22).setDepth(depth + 1);
+    this.baseGfx = scene.add.circle(0, 0, this.radius, 0x234d79, 0.18).setDepth(depth);
+    this.baseGfx.setStrokeStyle(2, 0xf2c765, 0.7);
+    this.thumbGfx = scene.add.circle(0, 0, 20, 0xdba84f, 0.62).setDepth(depth + 1);
+    this.thumbGfx.setStrokeStyle(2, 0xffe5a3, 0.82);
     this.baseGfx.setVisible(false);
     this.thumbGfx.setVisible(false);
 
