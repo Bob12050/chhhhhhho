@@ -39,6 +39,11 @@ const tile = (label: string, src: string): AssetSpec => ({
 
 export const ASSET_SPECS: AssetSpec[] = [
   sheet('プレイヤー本体', 'assets/char/player_body.png'),
+  sheet('職業:戦士', 'assets/char/job_fighter.png'),
+  sheet('職業:魔法使い', 'assets/char/job_mage.png'),
+  sheet('職業:僧侶', 'assets/char/job_priest.png'),
+  sheet('職業:盗賊', 'assets/char/job_thief.png'),
+  sheet('職業:ペット使い', 'assets/char/job_pet_raiser.png'),
   sheet('装備:革帽子', 'assets/equip/cap_leather.png'),
   sheet('装備:鉄兜', 'assets/equip/helm_iron.png'),
   sheet('装備:布胴着', 'assets/equip/vest_cloth.png'),
@@ -69,4 +74,9 @@ export const ASSET_SPECS: AssetSpec[] = [
     h: CHAR_FRAME_H,
     anchor: [CHAR_ANCHOR_X, CHAR_ANCHOR_Y],
   },
+  { label: 'NPC:道具屋', src: 'assets/env/npc_merchant.png', type: 'image', w: 96, h: 96, anchor: [48, 84] },
+  { label: 'NPC:鍛冶屋', src: 'assets/env/npc_craft.png', type: 'image', w: 96, h: 96, anchor: [48, 84] },
+  { label: 'NPC:ギルド', src: 'assets/env/npc_guild.png', type: 'image', w: 96, h: 96, anchor: [48, 84] },
+  { label: 'NPC:村長', src: 'assets/env/npc_elder.png', type: 'image', w: 96, h: 96, anchor: [48, 84] },
+  { label: 'NPC:村人', src: 'assets/env/npc_villager.png', type: 'image', w: 96, h: 96, anchor: [48, 84] },
 ];
