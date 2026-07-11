@@ -28,7 +28,7 @@
 
 | 用途 | 置き場 |
 |---|---|
-| プレイヤー本体 | `public/assets/char/player_body.png` |
+| プレイヤー本体 | `public/assets/char/player_body-storybook-v2.png` |
 | 装備:革帽子 | `public/assets/equip/cap_leather.png` |
 | 装備:鉄兜 | `public/assets/equip/helm_iron.png` |
 | 装備:布胴着 | `public/assets/equip/vest_cloth.png` |
@@ -61,7 +61,7 @@
 | タイル:床 | `public/assets/tiles/floor.png` | 32×32 | 同上 |
 | 障害物 | `public/assets/env/obstacle.png` | 32×32 | — |
 | 壁 | `public/assets/env/wall.png` | 32×32 | — |
-| NPC | `public/assets/env/npc.png` | 96×96 | 単一絵。基準点 (48,84) |
+| NPC | `public/assets/env/npc-storybook-v2.png` | 96×96 | 単一絵。基準点 (48,84) |
 
 ## 新しい装備/敵の絵を増やすには
 

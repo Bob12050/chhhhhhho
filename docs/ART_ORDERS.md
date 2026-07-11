@@ -15,7 +15,7 @@
 - **Animations**: `Breathing Idle` と `Walking` は必須。敵・ボスは可能なら `Lead Jab`（攻撃）も
 - サイズはそのままでOK（96〜144pxどれでも僕が NEAREST で 96×96 に正規化します）
 
-**参考画像**: 既存の職業スプライト（`public/assets/char/job_fighter.png` 等）を参考画像に添えると画風が揃います。
+**参考画像**: 既存の職業スプライト（`public/assets/char/job_fighter-storybook-v2.png` 等）を参考画像に添えると画風が揃います。
 
 **進め方の推奨**: まず「バッチ1（ボス3体）」だけ作って渡してください。パイプラインと画風を確認してから残りを量産するのが安全です。
 

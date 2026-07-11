@@ -30,14 +30,14 @@ const img = (key: string, src: string): AssetEntry => ({ key, type: 'image', src
 
 export const ASSET_MANIFEST: AssetEntry[] = [
   // Paper-doll layers + enemy (pose-atlas spritesheets).
-  sheet(TEX.playerBody, 'assets/char/player_body.png'),
+  sheet(TEX.playerBody, 'assets/char/player_body-storybook-v2.png'),
   sheet(TEX.playerBodyBald, 'assets/char/player_body_bald.png'),
   // Job-fixed appearance bodies (drop these PNGs to give a job its own look).
-  sheet(TEX.jobFighter, 'assets/char/job_fighter.png'),
-  sheet(TEX.jobMage, 'assets/char/job_mage.png'),
-  sheet(TEX.jobPriest, 'assets/char/job_priest.png'),
-  sheet(TEX.jobThief, 'assets/char/job_thief.png'),
-  sheet(TEX.jobPetRaiser, 'assets/char/job_pet_raiser.png'),
+  sheet(TEX.jobFighter, 'assets/char/job_fighter-storybook-v2.png'),
+  sheet(TEX.jobMage, 'assets/char/job_mage-storybook-v2.png'),
+  sheet(TEX.jobPriest, 'assets/char/job_priest-storybook-v2.png'),
+  sheet(TEX.jobThief, 'assets/char/job_thief-storybook-v2.png'),
+  sheet(TEX.jobPetRaiser, 'assets/char/job_pet_raiser-storybook-v2.png'),
   sheet(TEX.capLeather, 'assets/equip/cap_leather.png'),
   sheet(TEX.helmIron, 'assets/equip/helm_iron.png'),
   sheet(TEX.vestCloth, 'assets/equip/vest_cloth.png'),
@@ -80,15 +80,15 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.arenaMap, 'assets/maps/arena-storybook.png'),
   img(TEX.obstacle, 'assets/env/obstacle.png'),
   img(TEX.wall, 'assets/env/wall.png'),
-  img(TEX.npc, 'assets/env/npc.png'),
+  img(TEX.npc, 'assets/env/npc-storybook-v2.png'),
   // Role-specific town NPCs (drop real art to replace the placeholders).
-  img(TEX.npcMerchant, 'assets/env/npc_merchant.png'),
-  // 鍛冶屋(craft) NPC: AI生成PNG差し替えテスト対象。public/assets/env/npc_craft.png
+  img(TEX.npcMerchant, 'assets/env/npc_merchant-storybook-v2.png'),
+  // 鍛冶屋(craft) NPC: AI生成PNG差し替えテスト対象。
   // があればそれを優先、無ければコード生成のチビにフォールバック（96×96・透明）。
-  img(TEX.npcSmith, 'assets/env/npc_craft.png'),
-  img(TEX.npcGuild, 'assets/env/npc_guild.png'),
-  img(TEX.npcElder, 'assets/env/npc_elder.png'),
-  img(TEX.npcVillager, 'assets/env/npc_villager.png'),
+  img(TEX.npcSmith, 'assets/env/npc_craft-storybook-v2.png'),
+  img(TEX.npcGuild, 'assets/env/npc_guild-storybook-v2.png'),
+  img(TEX.npcElder, 'assets/env/npc_elder-storybook-v2.png'),
+  img(TEX.npcVillager, 'assets/env/npc_villager-storybook-v2.png'),
   img(TEX.sign, 'assets/env/sign.png'),
   img(TEX.groundShadow, 'assets/env/shadow.png'),
   // UI: one 9-slice frame drives every menu panel (48x48, ~16px corners).

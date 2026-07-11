@@ -24,7 +24,7 @@ export default defineConfig({
   },
   plugins: [
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       injectRegister: null, // we register/update manually so combat is never auto-reloaded
       includeAssets: ['icons/*.png'],
       manifest: {
@@ -45,8 +45,8 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,webp,woff2,json,wav,ogg,mp3}'],
         cleanupOutdatedCaches: true,
-        clientsClaim: false,
-        skipWaiting: false,
+        clientsClaim: true,
+        skipWaiting: true,
       },
     }),
   ],
