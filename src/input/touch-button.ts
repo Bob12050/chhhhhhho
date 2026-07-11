@@ -96,7 +96,7 @@ export class TouchButton {
   setDimmed(v: boolean): void {
     if (this.dimmed === v) return;
     this.dimmed = v;
-    const a = v ? 0.4 : 1;
+    const a = v ? 0.72 : 1;
     this.circle.setAlpha(a);
     this.inner.setAlpha(a);
     this.label.setAlpha(a);

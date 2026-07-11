@@ -50,6 +50,7 @@ export const ASSET_SPECS: AssetSpec[] = [
   { label: 'タイル:道', src: 'assets/tiles/path.png', type: 'image', w: 128, h: 128 },
   { label: 'タイル:石', src: 'assets/tiles/stone.png', type: 'image', w: 128, h: 128 },
   tile('タイル:床', 'assets/tiles/floor.png'),
+  { label: '街背景', src: 'assets/maps/town-storybook.png', type: 'image', w: 360, h: 800 },
   { label: '障害物', src: 'assets/env/obstacle.png', type: 'image', w: 48, h: 64, anchor: [24, 59] },
   tile('壁', 'assets/env/wall.png'),
   {

@@ -35,6 +35,7 @@ export interface BuiltMap {
  */
 export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
   const { w, h } = map.size;
+  const illustratedTown = map.id === 'town' && scene.textures.exists(TEX.townMap);
 
   scene.add.tileSprite(0, 0, w, h, GROUND_TEX[map.ground]).setOrigin(0).setDepth(-1000);
 
@@ -66,7 +67,11 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     }
     drawPathEdges(scene, map, w, h, pathOff);
   }
-  scatterDecor(scene, map, w, h, pathOff);
+  if (illustratedTown) {
+    scene.add.image(0, 0, TEX.townMap).setOrigin(0).setDisplaySize(w, h).setDepth(-996);
+  } else {
+    scatterDecor(scene, map, w, h, pathOff);
+  }
 
   // Portal rects (resolved up front so the border can leave openings for them).
   const portals: BuiltPortal[] = (map.portals ?? []).map((p) => ({
@@ -139,7 +144,7 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
 
   // Border. Leave the central path opening (vertical path) and any portal
   // doorway clear so they are reachable.
-  if (map.border !== 'none') {
+  if (map.border !== 'none' && !illustratedTown) {
     const tex = BORDER_TEX[map.border];
     const opening = map.path && map.path.axis === 'v' ? map.path.thickness : 0;
     const ox = w / 2 - opening / 2;
@@ -154,13 +159,20 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
     }
   }
 
-  for (const [x, y] of map.obstacles ?? []) {
-    place(x, y, map.border === 'walls' ? TEX.wall : TEX.obstacle);
+  if (!illustratedTown) {
+    for (const [x, y] of map.obstacles ?? []) {
+      place(x, y, map.border === 'walls' ? TEX.wall : TEX.obstacle);
+    }
   }
 
-  for (const b of map.buildings ?? []) drawBuilding(scene, obstacles, b);
-  for (const [wx, wy, ww, wh] of map.water ?? []) drawWater(scene, obstacles, wx, wy, ww, wh);
-  for (const lm of map.landmarks ?? []) drawLandmark(scene, obstacles, lm);
+  for (const b of map.buildings ?? []) {
+    if (illustratedTown) registerBuildingCollision(scene, obstacles, b);
+    else drawBuilding(scene, obstacles, b);
+  }
+  if (!illustratedTown) {
+    for (const [wx, wy, ww, wh] of map.water ?? []) drawWater(scene, obstacles, wx, wy, ww, wh);
+    for (const lm of map.landmarks ?? []) drawLandmark(scene, obstacles, lm);
+  }
 
   // Portal gate markers: pulsing gate + a direction arrow + label, so they
   // read clearly as "walk here to travel".
@@ -255,6 +267,20 @@ const BUILDING_STYLES: Record<
   stone: { wall: 0xb8c4d1, wallLight: 0xd8e0e6, roof: 0x3979b8, ridge: 0x65a6d7, trim: 0x52647a },
   plaster: { wall: 0xf4dfb8, wallLight: 0xffefcf, roof: 0xd96f61, ridge: 0xee9a78, trim: 0x8b5b48 },
 };
+
+/** Invisible facility collision used when a flattened illustrated map owns the visuals. */
+function registerBuildingCollision(
+  scene: Phaser.Scene,
+  obstacles: Phaser.Physics.Arcade.StaticGroup,
+  b: BuildingDef,
+): void {
+  const roofH = Math.round(b.h * 0.4);
+  const solidY = b.y + roofH - 6;
+  const solidH = b.h - roofH + 6;
+  const body = scene.add.rectangle(b.x + b.w / 2, solidY + solidH / 2, b.w, solidH).setVisible(false);
+  scene.physics.add.existing(body, true);
+  obstacles.add(body);
+}
 
 /**
  * Draw a simple pixel house (roof / wall / door / windows) and register a

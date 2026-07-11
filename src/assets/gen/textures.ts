@@ -50,6 +50,7 @@ export const TEX = {
   tileStone: 'gen.tile.stone',
   tileFloor: 'gen.tile.floor',
   tileWater: 'gen.tile.water',
+  townMap: 'art.map.town.storybook',
   obstacle: 'gen.obstacle',
   obstacleBush: 'gen.obstacle.bush',
   obstaclePine: 'gen.obstacle.pine',

@@ -7,7 +7,7 @@
  },
  "size": {
   "w": 360,
-  "h": 960
+  "h": 800
  },
  "ground": "grass",
  "path": {
@@ -36,7 +36,7 @@
  "spawns": {
   "default": [
    180,
-   820
+   700
   ],
   "from_field": [
    180,
@@ -59,48 +59,48 @@
  "enemies": [],
  "npcs": [
   {
-   "x": 88,
-   "y": 240,
+   "x": 208,
+   "y": 430,
    "label": "道具屋",
    "action": "item"
   },
   {
-   "x": 88,
-   "y": 452,
+   "x": 146,
+   "y": 278,
    "label": "鍛冶屋",
    "action": "craft"
   },
   {
-   "x": 272,
-   "y": 240,
+   "x": 220,
+   "y": 270,
    "label": "ギルド",
    "action": "job"
   },
   {
    "x": 86,
-   "y": 704,
+   "y": 700,
    "label": "むらおさ",
    "dialogueId": "elder_intro"
   },
   {
    "x": 278,
-   "y": 704,
+   "y": 700,
    "label": "むらびと",
    "dialogueId": "villager_hint"
   },
   {
    "x": 180,
-   "y": 430,
+   "y": 538,
    "label": "クエスト掲示板",
    "action": "quest"
   }
  ],
  "buildings": [
   {
-   "x": 36,
-   "y": 128,
-   "w": 104,
-   "h": 84,
+   "x": 224,
+   "y": 262,
+   "w": 128,
+   "h": 178,
    "style": "plaster",
    "shop": "general",
    "npcType": "merchant",
@@ -124,10 +124,10 @@
    ]
   },
   {
-   "x": 220,
-   "y": 128,
-   "w": 104,
-   "h": 84,
+   "x": 226,
+   "y": 52,
+   "w": 126,
+   "h": 200,
    "style": "wood",
    "shop": "guild",
    "npcType": "guild",
@@ -146,10 +146,10 @@
    ]
   },
   {
-   "x": 36,
-   "y": 340,
-   "w": 104,
-   "h": 84,
+   "x": 8,
+   "y": 65,
+   "w": 136,
+   "h": 222,
    "style": "stone",
    "shop": "craft",
    "npcType": "smith",
@@ -166,48 +166,12 @@
      "dy": 94
     }
    ]
-  },
-  {
-   "x": 232,
-   "y": 600,
-   "w": 92,
-   "h": 76,
-   "style": "wood",
-   "shop": "house",
-   "props": [
-    {
-     "kind": "barrel",
-     "dx": 12,
-     "dy": 84
-    }
-   ]
-  },
-  {
-   "x": 40,
-   "y": 600,
-   "w": 92,
-   "h": 76,
-   "style": "plaster",
-   "shop": "house",
-   "props": [
-    {
-     "kind": "crate",
-     "dx": 80,
-     "dy": 84
-    }
-   ]
   }
  ],
  "ambient": {
   "color": "#ffdf9a",
   "alpha": 0.05
  },
- "landmarks": [
-  {
-   "x": 262,
-   "y": 508,
-   "kind": "campfire"
-  }
- ],
+ "landmarks": [],
  "safe": true
 }

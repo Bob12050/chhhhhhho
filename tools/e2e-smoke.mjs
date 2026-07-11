@@ -112,7 +112,8 @@ try {
     window.__test.addMaterial('lord_hardwood', 5);
     window.__test.addMaterial('iron_ore', 10);
     window.__test.addGold(1000);
-    window.__test.warp('town', 88, 480);
+    // Illustrated-town smith now stands just outside the forge at (146, 278).
+    window.__test.warp('town', 146, 320);
   });
   await page.waitForTimeout(1600);
   await page.keyboard.down('w'); await page.waitForTimeout(200); await page.keyboard.up('w');

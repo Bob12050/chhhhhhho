@@ -146,7 +146,7 @@ export class UIScene extends Phaser.Scene {
     const combatButtons = [attackBtn, skillBtn, skill2Btn, dodgeBtn, potBtn];
     const setCombatDim = (dim: boolean): void => {
       combatButtons.forEach((b) => b.setDimmed(dim));
-      actionDeck.setAlpha(dim ? 0.38 : 1);
+      actionDeck.setAlpha(dim ? 0.65 : 1);
     };
     setCombatDim(!!getMap(gameState.mapId)?.safe);
     this.busOff.push(bus.on('world:map-ready', ({ safe }) => setCombatDim(safe)));

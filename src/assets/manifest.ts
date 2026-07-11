@@ -69,6 +69,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.tilePath, 'assets/tiles/path.png'),
   img(TEX.tileStone, 'assets/tiles/stone.png'),
   img(TEX.tileFloor, 'assets/tiles/floor.png'),
+  img(TEX.townMap, 'assets/maps/town-storybook.png'),
   img(TEX.obstacle, 'assets/env/obstacle.png'),
   img(TEX.wall, 'assets/env/wall.png'),
   img(TEX.npc, 'assets/env/npc.png'),

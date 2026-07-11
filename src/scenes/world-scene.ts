@@ -186,6 +186,10 @@ export class WorldScene extends Phaser.Scene {
     this.showMapName(this.map.name);
 
     // Player. Appearance is job-fixed; equipment only changes stats.
+    // Map dimensions can change between releases; keep old saves inside the
+    // current walkable world instead of spawning beyond a shortened edge.
+    gameState.x = Phaser.Math.Clamp(gameState.x, 24, this.map.size.w - 24);
+    gameState.y = Phaser.Math.Clamp(gameState.y, 32, this.map.size.h - 32);
     this.player = new Player(this, gameState.x, gameState.y);
     this.player.setJobAppearance(gameState.jobId);
     this.player.setMoveSpeed(gameState.derived.moveSpeed);
@@ -748,6 +752,12 @@ export class WorldScene extends Phaser.Scene {
       let h = 0;
       for (const ch of label + (dialogueId ?? '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
       sprite.setTint([0xffffff, 0xffe0c8, 0xd8e4ff, 0xd8ffe0, 0xffe0f0][h % 5]);
+    }
+    // The illustrated town already carries facility pictograms in the scenery;
+    // keeping old wooden labels over that art would cover roofs and entrances.
+    if (this.map.id === 'town') {
+      this.npcs.push({ x, y, action, dialogueId });
+      return;
     }
     // Hanging wooden signboard above the head. Derived from the feet (spawn y),
     // not a hard y-80: the 96×96 NPC art's head top sits ~52px above the feet,
