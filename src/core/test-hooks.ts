@@ -19,6 +19,8 @@ export interface TestHooks {
     maxHp: number;
     gold: number;
     mapId: string;
+    x: number;
+    y: number;
     activeQuests: string[];
     completedQuests: string[];
     materials: Record<string, number>;
@@ -51,6 +53,10 @@ export interface TestHooks {
 
 export function installTestHooks(): void {
   if (!isDebugEnabled()) return;
+  let worldPosition = { x: gameState.x, y: gameState.y };
+  bus.on('world:player-position', ({ x, y }) => {
+    worldPosition = { x, y };
+  });
   const hooks: TestHooks = {
     snapshot: () => ({
       level: gameState.level,
@@ -58,6 +64,8 @@ export function installTestHooks(): void {
       maxHp: gameState.derived.maxHp,
       gold: gameState.gold,
       mapId: gameState.mapId,
+      x: worldPosition.x,
+      y: worldPosition.y,
       activeQuests: [...gameState.activeQuests],
       completedQuests: [...gameState.completedQuests],
       materials: { ...gameState.materials },

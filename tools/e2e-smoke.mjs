@@ -54,6 +54,14 @@ try {
   check('新規ゲームで町に降り立つ', s.mapId === 'town', `mapId=${s.mapId}`);
   check('初期クエストが受注済み', s.activeQuests.includes('q_apprentice'));
 
+  // The painted fountain and the storefronts must not join into a full-width
+  // invisible wall. Reproduce the phone report: walk up its narrow left lane.
+  await page.evaluate(() => window.__test.warp('town', 145, 430));
+  await page.waitForTimeout(900);
+  await page.keyboard.down('w'); await page.waitForTimeout(1400); await page.keyboard.up('w');
+  s = await snap(page);
+  check('噴水広場の左通路を通過できる', s.y < 320, `y=${Math.round(s.y)}`);
+
   // ---- combat: field slime kill advances quest + bestiary + drops ----
   step = 'combat';
   await page.evaluate(() => window.__test.powerUp(30));
