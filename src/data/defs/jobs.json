@@ -169,6 +169,7 @@
       ],
       "description": "剣技を極めた近接2次職。",
       "family": "warrior",
+      "appearance": "samurai",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -205,6 +206,7 @@
       ],
       "description": "高位魔法を操る2次職。",
       "family": "mage",
+      "appearance": "sorcerer",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -240,6 +242,7 @@
       ],
       "description": "聖なる力で守る重装支援職。",
       "family": "cleric",
+      "appearance": "holy_knight",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -277,6 +280,7 @@
       ],
       "description": "忍術と速攻を併せ持つ2次職。",
       "family": "thief",
+      "appearance": "ninja",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -310,6 +314,7 @@
       ],
       "description": "ペットと連携する遠隔・狩人職。",
       "family": "tamer",
+      "appearance": "ranger",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -342,6 +347,7 @@
       ],
       "description": "剣の頂に立つ3次職。",
       "family": "warrior",
+      "appearance": "sword_kaiser",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -372,6 +378,7 @@
       ],
       "description": "魔法の極致を体現する3次職。",
       "family": "mage",
+      "appearance": "grand_magia",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -401,6 +408,7 @@
       ],
       "description": "盾と聖剣の守護3次職。",
       "family": "cleric",
+      "appearance": "shield_saber",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -432,6 +440,7 @@
       ],
       "description": "影と刃を究めた3次職。",
       "family": "thief",
+      "appearance": "avengista",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -462,6 +471,7 @@
       ],
       "description": "ペットと一心同体の狩人3次職。",
       "family": "tamer",
+      "appearance": "dual_star",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -489,6 +499,7 @@
       ],
       "description": "剣の系譜が至る最終職。高難度クエスト踏破が条件。",
       "family": "warrior",
+      "appearance": "aramikagura",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -523,6 +534,7 @@
       ],
       "description": "魔法の系譜が至る最終職。高難度クエスト踏破が条件。",
       "family": "mage",
+      "appearance": "alvride",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -556,6 +568,7 @@
       ],
       "description": "守護の系譜が至る最終職。高難度クエスト踏破が条件。",
       "family": "cleric",
+      "appearance": "nirvadio",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -591,6 +604,7 @@
       ],
       "description": "影の系譜が至る最終職。高難度クエスト踏破が条件。",
       "family": "thief",
+      "appearance": "noxtia",
       "unlockConditions": [
         {
           "type": "jobLevel",
@@ -625,6 +639,7 @@
       ],
       "description": "狩人の系譜が至る最終職。高難度クエスト踏破が条件。",
       "family": "tamer",
+      "appearance": "oltarie",
       "unlockConditions": [
         {
           "type": "jobLevel",

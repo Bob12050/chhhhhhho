@@ -5,6 +5,7 @@
  * imports aren't reachable from the page. Players never get this object.
  */
 import { gameState } from '@/player/game-state';
+import { getJob } from '@/jobs/job-defs';
 import { acceptQuest, isComplete, turnInQuest, recordKill } from '@/quests/quests';
 import { getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
@@ -19,6 +20,7 @@ export interface TestHooks {
     maxHp: number;
     gold: number;
     mapId: string;
+    jobId: string;
     x: number;
     y: number;
     activeQuests: string[];
@@ -40,6 +42,8 @@ export interface TestHooks {
   turnInQuest(id: string): boolean;
   /** Credit a kill toward active quests without fighting (E2E scenario setup). */
   recordKill(enemyId: string): void;
+  /** Visual QA only: bypass unlock requirements and swap the active job look. */
+  forceJob(id: string): boolean;
   /** Warp to a map's default spawn (or x/y) via the real travel path. */
   warp(mapId: string, x?: number, y?: number): boolean;
   addEgg(petItemId: string): boolean;
@@ -64,6 +68,7 @@ export function installTestHooks(): void {
       maxHp: gameState.derived.maxHp,
       gold: gameState.gold,
       mapId: gameState.mapId,
+      jobId: gameState.jobId,
       x: worldPosition.x,
       y: worldPosition.y,
       activeQuests: [...gameState.activeQuests],
@@ -88,6 +93,12 @@ export function installTestHooks(): void {
     turnInQuest: (id: string) => turnInQuest(gameState, id),
     recordKill: (enemyId: string) => {
       recordKill(gameState, enemyId);
+    },
+    forceJob: (id: string) => {
+      if (!getJob(id)) return false;
+      gameState.jobId = id;
+      bus.emit('job:changed', { jobId: id });
+      return true;
     },
     warp: (mapId: string, x?: number, y?: number) => {
       const m = getMap(mapId);

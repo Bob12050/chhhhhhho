@@ -62,6 +62,21 @@ try {
   s = await snap(page);
   check('噴水広場の左通路を通過できる', s.y < 320, `y=${Math.round(s.y)}`);
 
+  const advancedJobs = [
+    'samurai', 'sorcerer', 'holy_knight', 'ninja', 'ranger',
+    'sword_kaiser', 'grand_magia', 'shield_saber', 'avengista', 'dual_star',
+    'aramikagura', 'alvride', 'nirvadio', 'noxtia', 'oltarie',
+  ];
+  let allAdvancedLooks = true;
+  for (const id of advancedJobs) {
+    const changed = await page.evaluate((jobId) => window.__test.forceJob(jobId), id);
+    await page.waitForTimeout(50);
+    s = await snap(page);
+    allAdvancedLooks &&= changed && s.jobId === id;
+  }
+  check('2・3・4次職15種の外見を切り替えられる', allAdvancedLooks);
+  await page.evaluate(() => window.__test.forceJob('adventurer'));
+
   // ---- combat: field slime kill advances quest + bestiary + drops ----
   step = 'combat';
   await page.evaluate(() => window.__test.powerUp(30));

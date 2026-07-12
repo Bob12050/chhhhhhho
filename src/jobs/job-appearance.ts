@@ -13,6 +13,21 @@ export const APPEARANCE_TEX: Record<JobAppearanceId, string> = {
   priest: TEX.jobPriest,
   thief: TEX.jobThief,
   pet_raiser: TEX.jobPetRaiser,
+  samurai: TEX.jobSamurai,
+  sorcerer: TEX.jobSorcerer,
+  holy_knight: TEX.jobHolyKnight,
+  ninja: TEX.jobNinja,
+  ranger: TEX.jobRanger,
+  sword_kaiser: TEX.jobSwordKaiser,
+  grand_magia: TEX.jobGrandMagia,
+  shield_saber: TEX.jobShieldSaber,
+  avengista: TEX.jobAvengista,
+  dual_star: TEX.jobDualStar,
+  aramikagura: TEX.jobAramikagura,
+  alvride: TEX.jobAlvride,
+  nirvadio: TEX.jobNirvadio,
+  noxtia: TEX.jobNoxtia,
+  oltarie: TEX.jobOltarie,
 };
 
 /** Texture key for an appearance id, or null if unknown/unset. */
