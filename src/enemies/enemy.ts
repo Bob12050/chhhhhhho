@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { frameIndex, ANIMATIONS, type AnimName } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
 import type { Direction } from '@/config/layers';
+import { CHAR_FRAME_H, CHAR_FRAME_W } from '@/config/resolution';
 import { STATUS_CATEGORY, STATUS_COLOR, type Element, type StatusType } from '@/combat/elements';
 
 /**
@@ -10,6 +11,8 @@ import { STATUS_CATEGORY, STATUS_COLOR, type Element, type StatusType } from '@/
  * The same pose-atlas frame layout is reused for placeholder animation.
  */
 export type EnemyState = 'idle' | 'wander' | 'chase' | 'attack' | 'hurt' | 'return' | 'dead';
+
+const ENEMY_ART_SCALE = 0.55;
 
 export interface EnemyConfig {
   readonly textureKey: string;
@@ -89,9 +92,10 @@ export class Enemy {
     this.hp = cfg.maxHp;
     this.homeX = x;
     this.homeY = y;
-    // Ignore Phaser's internal __BASE frame and count only playable frames.
-    // A one-cell enemy sheet stays static while pose atlases keep animating.
-    this.staticSheet = scene.textures.get(cfg.textureKey).getFrameNames().length <= 1;
+    // Frame-name counts can briefly retain stale entries during Vite HMR.
+    // Source dimensions are stable: one-cell enemy art is exactly 96x96.
+    const source = scene.textures.get(cfg.textureKey).getSourceImage() as HTMLImageElement;
+    this.staticSheet = source.width <= CHAR_FRAME_W && source.height <= CHAR_FRAME_H;
     const frame0 = this.staticSheet ? 0 : frameIndex('down', 'idle', 0);
     this.sprite = scene.physics.add.image(x, y, cfg.textureKey, frame0);
     this.sprite.setOrigin(0.5, 0.875);
@@ -102,12 +106,13 @@ export class Enemy {
 
     this.visual = scene.add.sprite(x, y, cfg.textureKey, frame0);
     this.visual.setOrigin(0.5, 0.875);
-    if (cfg.scale) this.visual.setScale(cfg.scale);
+    const sc = (cfg.scale ?? 1) * ENEMY_ART_SCALE;
+    this.visual.setScale(sc);
     if (cfg.tint !== undefined) this.visual.setTint(cfg.tint);
-    const sc = cfg.scale ?? 1;
+    const shadowScale = Math.max(0.8, sc);
     this.shadow = scene.add
       .image(x, y + 2, TEX.groundShadow)
-      .setDisplaySize(Math.round(24 * sc), Math.round(9 * sc))
+      .setDisplaySize(Math.round(24 * shadowScale), Math.round(9 * shadowScale))
       .setDepth(4);
   }
 
