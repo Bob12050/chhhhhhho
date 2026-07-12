@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ensureGeneratedTextures } from '@/assets/gen/textures';
 import { ASSET_MANIFEST } from '@/assets/manifest';
+import { shouldShowStartupNotice } from '@/core/startup-notice';
 
 /**
  * Boot: preload any real-art PNGs that exist (manifest), then generate
@@ -32,6 +33,6 @@ export class BootScene extends Phaser.Scene {
 
   create(): void {
     ensureGeneratedTextures(this); // fills only the keys no real asset provided
-    this.scene.start('Notice');
+    this.scene.start(shouldShowStartupNotice() ? 'Notice' : 'Title');
   }
 }

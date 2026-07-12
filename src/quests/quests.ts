@@ -39,6 +39,7 @@ export function acceptQuest(gs: GameState, id: string): boolean {
   gs.activeQuests.push(id);
   gs.questProgress[id] = {};
   bus.emit('quest:changed', {});
+  bus.emit('quest:accepted', { questId: id });
   return true;
 }
 

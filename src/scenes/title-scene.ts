@@ -6,6 +6,8 @@ import { FONT_PIXEL as FONT } from '@/ui/theme';
 import { bgm } from '@/audio/bgm-engine';
 import { TEX } from '@/assets/gen/textures';
 import { frameIndex } from '@/paperdoll/pose-atlas';
+import { saveManager } from '@/save/save-manager';
+import { beginGame } from '@/core/game-flow';
 
 /** Displayed game title (single source; swap here when the real name lands). */
 const GAME_TITLE = 'Pixel Action RPG';
@@ -230,12 +232,20 @@ export class TitleScene extends Phaser.Scene {
     }
   }
 
-  /** Start button + sound toggle + version, fading in after the logo. */
+  /** Fast continue + save management + settings, fading in after the logo. */
   private buildMenu(w: number, h: number): void {
-    const startBtn = this.makeButton(w / 2, h * 0.52, '▶ ゲームをはじめる', true, () =>
+    const menuY = h * 0.5;
+    const startBtn = this.makeButton(w / 2, menuY, '▶ ゲームをはじめる', true, () =>
       this.scene.start('SaveSelect'),
     );
-    const soundBtn = this.makeButton(w / 2, h * 0.52 + 58, '⚙ 設定', false, () => {
+    const continueDetail = this.add
+      .text(w / 2, menuY + 27, '', { fontFamily: FONT, fontSize: '10px', color: '#d8e6ff' })
+      .setOrigin(0.5)
+      .setDepth(30);
+    const savesBtn = this.makeButton(w / 2, menuY + 60, 'セーブを選ぶ', false, () =>
+      this.scene.start('SaveSelect'),
+    );
+    const soundBtn = this.makeButton(w / 2, menuY + 104, '⚙ 設定', false, () => {
       this.scene.pause();
       this.scene.launch('Options', { from: 'Title' });
     });
@@ -246,7 +256,16 @@ export class TitleScene extends Phaser.Scene {
       .setAlpha(0.8);
 
     // Fade the menu in slightly after the logo drop.
-    for (const o of [startBtn.frame, startBtn.label, soundBtn.frame, soundBtn.label, ver]) {
+    for (const o of [
+      startBtn.frame,
+      startBtn.label,
+      continueDetail,
+      savesBtn.frame,
+      savesBtn.label,
+      soundBtn.frame,
+      soundBtn.label,
+      ver,
+    ]) {
       const a = o.alpha;
       o.setAlpha(0);
       this.tweens.add({ targets: o, alpha: a, duration: 380, delay: 340 });
@@ -261,6 +280,18 @@ export class TitleScene extends Phaser.Scene {
       repeat: -1,
       ease: 'Sine.InOut',
     });
+
+    // Returning players skip the save picker: resume the most recently saved
+    // slot in one tap. Save management remains a separate explicit command.
+    void saveManager.summaries().then((summaries) => {
+      const latest = summaries
+        .filter((s) => s.exists)
+        .sort((a, b) => (b.savedAt ?? 0) - (a.savedAt ?? 0))[0];
+      if (!latest || !startBtn.frame.active || !this.scene.isActive()) return;
+      startBtn.label.setText('▶ つづきから');
+      startBtn.setAction(() => void beginGame(this, latest.slot, 'load'));
+      continueDetail.setText(`スロット${latest.slot + 1}  Lv ${latest.level ?? '?'}`);
+    });
   }
 
   private makeButton(
@@ -269,7 +300,11 @@ export class TitleScene extends Phaser.Scene {
     label: string,
     primary: boolean,
     onTap: () => void,
-  ): { frame: Phaser.GameObjects.Rectangle; label: Phaser.GameObjects.Text } {
+  ): {
+    frame: Phaser.GameObjects.Rectangle;
+    label: Phaser.GameObjects.Text;
+    setAction: (next: () => void) => void;
+  } {
     const bw = primary ? 216 : 172;
     const bh = primary ? 44 : 36;
     const frame = this.add
@@ -285,8 +320,9 @@ export class TitleScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(26);
-    frame.on('pointerup', onTap);
-    return { frame, label: text };
+    let action = onTap;
+    frame.on('pointerup', () => action());
+    return { frame, label: text, setAction: (next) => (action = next) };
   }
 
   update(_time: number, delta: number): void {

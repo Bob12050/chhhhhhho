@@ -30,6 +30,11 @@ import { npcHintFor, npcHintFlag } from '@/tutorial/tutorial-defs';
 import { bgm, bgmForMap } from '@/audio/bgm-engine';
 import { craftableEquipmentIds, type QuestResultData, type QuestResultItem } from '@/scenes/quest-result-scene';
 import {
+  INTRO_ACCEPTED_FLAG,
+  INTRO_PENDING_FLAG,
+  INTRO_QUEST_ID,
+} from '@/tutorial/onboarding';
+import {
   elementMultiplier,
   statusFromElement,
   elementColorHex,
@@ -321,6 +326,23 @@ export class WorldScene extends Phaser.Scene {
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
     bus.emit('player:mp-changed', { current: gameState.mp, max: gameState.derived.maxMp });
     bus.emit('gold:changed', { current: gameState.gold });
+
+    // A brand-new slot begins with the village elder's request, not an
+    // unexplained pre-accepted objective. The world is already visible behind
+    // the dialogue, so this reads as an in-world handoff into play.
+    if (
+      this.map.id === 'town' &&
+      gameState.flags[INTRO_PENDING_FLAG] &&
+      !gameState.flags[INTRO_ACCEPTED_FLAG] &&
+      !gameState.activeQuests.includes(INTRO_QUEST_ID) &&
+      !gameState.completedQuests.includes(INTRO_QUEST_ID)
+    ) {
+      this.time.delayedCall(420, () => {
+        if (this.scene.isActive() && !this.scene.isPaused()) {
+          this.openMenu('Dialogue', { id: 'elder_intro' });
+        }
+      });
+    }
   }
 
   private showMapName(name: string): void {
@@ -1931,7 +1953,16 @@ export class WorldScene extends Phaser.Scene {
     else if (npc.action === 'craft') this.openMenu('Crafting');
     else if (npc.action === 'job') this.openMenu('JobChange');
     else if (npc.action === 'quest') this.openMenu('QuestBoard');
-    else if (npc.dialogueId) this.openMenu('Dialogue', { id: npc.dialogueId });
+    else if (npc.dialogueId) this.openMenu('Dialogue', { id: this.dialogueFor(npc.dialogueId) });
+  }
+
+  private dialogueFor(id: string): string {
+    if (id !== 'elder_intro') return id;
+    if (gameState.completedQuests.includes(INTRO_QUEST_ID)) return 'elder_after_intro';
+    if (gameState.activeQuests.includes(INTRO_QUEST_ID)) {
+      return isComplete(gameState, INTRO_QUEST_ID) ? 'elder_report_intro' : 'elder_active_intro';
+    }
+    return id;
   }
 
   /** Pause the world and launch a modal overlay scene by key. */

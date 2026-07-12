@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
 import { FONT, UI } from '@/ui/theme';
+import { markStartupNoticeSeen } from '@/core/startup-notice';
 
 /**
- * Startup notice (JP mobile-game "ご注意" screen). Shown once per launch,
- * between Boot and Title. Tap (or key) to continue; auto-advances after a few
- * seconds so it is never a hard gate. Because Boot only runs on a cold start,
- * returning to the title from in-game skips this.
+ * First-install notice between Boot and Title. It is intentionally short and
+ * does not claim that paid items exist. Completion is persisted locally so a
+ * returning player can reach the title immediately on later cold launches.
  */
 export class NoticeScene extends Phaser.Scene {
   private done = false;
@@ -37,7 +37,7 @@ export class NoticeScene extends Phaser.Scene {
 
     line('● ご注意 ●', 15, '#ffffff', 18, false);
     line(
-      'このアプリは最後まで無料で遊ぶことができますが、一部有料のアイテムを買うこともできます。',
+      'このゲームは無料で最後まで遊べます。\nプレイデータは、この端末の中に自動で保存されます。',
       12,
       '#cfd3e6',
       34,
@@ -46,7 +46,7 @@ export class NoticeScene extends Phaser.Scene {
     line(
       'ゲームを始めるには、保護者（お父さんやお母さんなど）の許可（お許し）が必要です。\n' +
         'ゲームの利用方法（利用時間等）は、保護者とよく相談して決めてください。\n' +
-        'また、有料のアイテムを買うときは、保護者に許可をもらうか、一緒に買うようにしてください。',
+        '長い時間つづけて遊ばず、ときどき休憩してください。',
       12,
       '#cfd3e6',
       24,
@@ -60,6 +60,7 @@ export class NoticeScene extends Phaser.Scene {
     const go = (): void => {
       if (this.done) return;
       this.done = true;
+      markStartupNoticeSeen();
       this.cameras.main.fadeOut(150);
       this.time.delayedCall(160, () => this.scene.start('Title'));
     };

@@ -4,19 +4,37 @@
       "id": "elder_intro",
       "speaker": "むらおさ",
       "lines": [
-        "おお、目を覚ましたか。",
-        "この先の洞窟に わるい主が すみついておる。",
-        "そうびを ととのえ、討伐を たのむぞ。"
+        "おお、目を覚ましたか。新しい冒険者だな。",
+        "北の草原で スライムが増えておる。\nまずは5体、追い払ってきてくれ。",
+        "北門から草原へ向かえる。\n戻ったら掲示板で報告するのじゃ。"
       ],
       "choices": [
-        { "text": "まかせろ", "setFlag": "accepted_quest" },
-        { "text": "こわいよ…" }
+        {
+          "text": "依頼を受ける",
+          "setFlag": "onboarding.intro.accepted",
+          "acceptQuest": "q_apprentice"
+        }
       ]
     },
     {
       "id": "villager_hint",
       "speaker": "むらびと",
       "lines": ["鍛冶屋でそうびが作れるよ。", "スライムの素材をあつめるといい。"]
+    },
+    {
+      "id": "elder_active_intro",
+      "speaker": "むらおさ",
+      "lines": ["北門の先が草原じゃ。スライムを5体追い払ってきてくれ。"]
+    },
+    {
+      "id": "elder_report_intro",
+      "speaker": "むらおさ",
+      "lines": ["よくやった。町のクエスト掲示板で報告すれば、正式な報酬を受け取れるぞ。"]
+    },
+    {
+      "id": "elder_after_intro",
+      "speaker": "むらおさ",
+      "lines": ["立派な第一歩じゃった。掲示板には次の依頼も届いておるぞ。"]
     }
   ]
 }

@@ -40,14 +40,20 @@ try {
   const pageErrors = [];
   page.on('pageerror', (e) => pageErrors.push(String(e)));
 
-  // ---- boot: notice → title → slot 1 → (skip tutorial) ----
+  // ---- boot: first-run notice → title → slot 1 → elder quest → skip tutorial ----
   step = 'boot';
   await page.goto(URL, { waitUntil: 'load' });
   await page.waitForTimeout(2500);
-  await page.mouse.click(180, 400); await page.waitForTimeout(400);
-  await page.mouse.click(180, 400); await page.waitForTimeout(400);
-  await page.mouse.click(180, 374); await page.waitForTimeout(900);
+  await page.mouse.click(180, 400); await page.waitForTimeout(1200);
+  await page.mouse.click(180, 360); await page.waitForTimeout(900);
   await page.mouse.click(294, 156); await page.waitForTimeout(1800);
+  // Three elder lines, then tap inside (not on the top edge of) the single
+  // 「依頼を受ける」 choice hit area.
+  for (let i = 0; i < 3; i++) {
+    await page.mouse.click(180, 680); await page.waitForTimeout(220);
+  }
+  await page.mouse.click(180, 650); await page.waitForTimeout(300);
+  await page.waitForTimeout(500);
   await page.mouse.click(64, 610); await page.waitForTimeout(800);
   await page.waitForFunction(() => !!window.__test, undefined, { timeout: 10000 });
   let s = await snap(page);
@@ -200,10 +206,7 @@ try {
   await page.waitForTimeout(600);
   await page.reload({ waitUntil: 'load' });
   await page.waitForTimeout(2500);
-  await page.mouse.click(180, 400); await page.waitForTimeout(400);
-  await page.mouse.click(180, 400); await page.waitForTimeout(400);
-  await page.mouse.click(180, 374); await page.waitForTimeout(900);
-  await page.mouse.click(315, 131); await page.waitForTimeout(1800); // slot 1 つづき
+  await page.mouse.click(180, 360); await page.waitForTimeout(1800); // latest save: one-tap continue
   await page.waitForFunction(() => !!window.__test, undefined, { timeout: 10000 });
   s = await snap(page);
   check('リロード後もレベルが残る', s.level === beforeReload.level, `${beforeReload.level}→${s.level}`);

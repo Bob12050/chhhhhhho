@@ -1,3 +1,5 @@
+import { INTRO_PENDING_FLAG } from '@/tutorial/onboarding';
+
 /**
  * Save data schema. Versioned with a migration path. Phase 0 stores a subset;
  * Phase 1 fields (jobs, skills, pets, quest flags...) extend this same shape.
@@ -85,10 +87,10 @@ export function createDefaultSave(slot: number): SaveData {
       consumables: { potion_hp: 3, potion_mp: 2 },
       equipmentOwned: ['wood_sword', 'leather_cap', 'cloth_vest'],
     },
-    flags: {},
-    // New games start with the intro quest already accepted so the HUD tracker
-    // gives an immediate goal (onboarding: kill slimes -> report at the board).
-    quests: { active: ['q_apprentice'], completed: [], progress: { q_apprentice: {} } },
+    flags: { [INTRO_PENDING_FLAG]: true },
+    // The village elder offers the first hunt in-world. Existing saves retain
+    // their quest state through migration; only a brand-new slot starts empty.
+    quests: { active: [], completed: [], progress: {} },
     settings: { sfx: true, bgm: true },
   };
 }

@@ -3,6 +3,7 @@ import { gameState } from '@/player/game-state';
 import { getDialogue, type DialogueDef } from '@/dialogue/dialogue-defs';
 import { bus } from '@/core/event-bus';
 import { FONT } from '@/ui/theme';
+import { acceptQuest } from '@/quests/quests';
 
 /**
  * Simple conversation overlay. Shows a speaker + lines (tap to advance), then
@@ -56,7 +57,7 @@ export class DialogueScene extends Phaser.Scene {
         fontFamily: FONT,
         fontSize: '15px',
         color: '#ffffff',
-        wordWrap: { width: w - 32 },
+        wordWrap: { width: w - 32, useAdvancedWrap: true },
         lineSpacing: 4,
       })
       .setDepth(2);
@@ -110,13 +111,14 @@ export class DialogueScene extends Phaser.Scene {
         .setOrigin(0.5, 0)
         .setDepth(3)
         .setInteractive({ useHandCursor: true });
-      t.on('pointerup', () => this.finish(c.setFlag));
+      t.on('pointerup', () => this.finish(c.setFlag, c.acceptQuest));
       this.choiceObjs.push(t);
     });
   }
 
-  private finish(setFlag?: string): void {
+  private finish(setFlag?: string, questId?: string): void {
     if (setFlag) gameState.flags[setFlag] = true;
+    if (questId) acceptQuest(gameState, questId);
     this.close();
   }
 

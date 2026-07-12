@@ -58,6 +58,7 @@ export interface GameEvents {
 
   // Quests (accepted / progressed / turned in)
   'quest:changed': Record<string, never>;
+  'quest:accepted': { questId: string };
 
   /** Boss HP bar shown/hidden — the HUD quest tracker yields its slot. */
   'boss:bar': { active: boolean };

@@ -8,6 +8,8 @@ import dialogueJson from '@/data/defs/dialogue.json';
 export interface DialogueChoice {
   text: string;
   setFlag?: string;
+  /** Optional quest accepted when this choice is selected. */
+  acceptQuest?: string;
 }
 
 export interface DialogueDef {

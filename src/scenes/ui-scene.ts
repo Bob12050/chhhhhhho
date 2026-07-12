@@ -16,6 +16,7 @@ import { FONT, HUD_DEPTH } from '@/ui/theme';
 import { TEX, UI_FRAME_SLICE } from '@/assets/gen/textures';
 import { TutorialCoach } from '@/ui/tutorial-coach';
 import { isUpdateReady } from '@/core/pwa';
+import { INTRO_PENDING_FLAG, INTRO_QUEST_ID } from '@/tutorial/onboarding';
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
@@ -43,6 +44,7 @@ export class UIScene extends Phaser.Scene {
   private usePotionByKey: (() => void) | null = null;
   private coach: TutorialCoach | null = null;
   private bossIntroRoot: Phaser.GameObjects.Container | null = null;
+  private questStartRoot: Phaser.GameObjects.Container | null = null;
 
   constructor() {
     super('UI');
@@ -425,6 +427,7 @@ export class UIScene extends Phaser.Scene {
     };
     refreshTracker();
     this.busOff.push(bus.on('quest:changed', refreshTracker));
+    this.busOff.push(bus.on('quest:accepted', ({ questId }) => this.showQuestStart(questId)));
     this.busOff.push(
       bus.on('boss:bar', ({ active }) => {
         bossBarActive = active;
@@ -532,9 +535,15 @@ export class UIScene extends Phaser.Scene {
 
     this.installKeyboardDev();
 
-    // First-run guided tutorial (move → attack → bag → goal). Only for a save
-    // that hasn't seen it; the coach persists the flag itself on finish/skip.
-    if (TutorialCoach.shouldShow()) {
+    // The coach begins only after the elder has handed over the first quest.
+    // This keeps dialogue, QUEST START, and control instructions in one order.
+    const startCoachWhenReady = (): void => {
+      if (this.coach || !TutorialCoach.shouldShow()) return;
+      const waitingForIntro =
+        !!gameState.flags[INTRO_PENDING_FLAG] &&
+        !gameState.activeQuests.includes(INTRO_QUEST_ID) &&
+        !gameState.completedQuests.includes(INTRO_QUEST_ID);
+      if (waitingForIntro) return;
       this.coach = new TutorialCoach(
         this,
         {
@@ -545,15 +554,82 @@ export class UIScene extends Phaser.Scene {
         depth + 20,
       );
       this.coach.start();
-    }
+    };
+    startCoachWhenReady();
+    this.busOff.push(bus.on('quest:changed', startCoachWhenReady));
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.busOff) off();
       this.busOff = [];
       this.coach?.destroy();
       this.coach = null;
+      this.questStartRoot?.destroy(true);
+      this.questStartRoot = null;
       this.bossIntroRoot?.destroy();
       this.bossIntroRoot = null;
+    });
+  }
+
+  private showQuestStart(questId: string): void {
+    const quest = getQuest(questId);
+    if (!quest) return;
+    this.questStartRoot?.destroy(true);
+
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const panelW = Math.min(w - 36, 304);
+    const panelH = 76;
+    const root = this.add.container(w + panelW / 2, Math.min(170, h * 0.24)).setDepth(HUD_DEPTH + 850);
+    this.questStartRoot = root;
+
+    const shadow = this.add.rectangle(3, 4, panelW, panelH, 0x050711, 0.7);
+    const panel = this.add
+      .rectangle(0, 0, panelW, panelH, 0x132442, 0.96)
+      .setStrokeStyle(2, 0xf5c542, 0.92);
+    const accent = this.add.rectangle(-panelW / 2 + 5, 0, 6, panelH - 10, 0xf5c542, 0.95);
+    const tag = this.add
+      .text(-panelW / 2 + 20, -27, 'QUEST START', {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#ffd86b',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+    const title = this.add
+      .text(-panelW / 2 + 20, -7, quest.name, {
+        fontFamily: FONT,
+        fontSize: '16px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+    const objective = quest.objectives
+      .map((o) => `${getEnemyDef(o.enemyId)?.name ?? o.enemyId} ×${o.count}`)
+      .join('・');
+    const body = this.add
+      .text(-panelW / 2 + 20, 19, objective, {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#cfe3ff',
+      })
+      .setOrigin(0, 0.5);
+    root.add([shadow, panel, accent, tag, title, body]);
+    bus.emit('sfx:play', { id: 'ui_tap' });
+
+    this.tweens.add({ targets: root, x: w / 2, duration: 280, ease: 'Cubic.Out' });
+    this.time.delayedCall(1650, () => {
+      if (!root.active) return;
+      this.tweens.add({
+        targets: root,
+        x: -panelW / 2,
+        alpha: 0,
+        duration: 260,
+        ease: 'Cubic.In',
+        onComplete: () => {
+          if (this.questStartRoot === root) this.questStartRoot = null;
+          root.destroy(true);
+        },
+      });
     });
   }
 

@@ -18,8 +18,12 @@ describe('dialogue', () => {
     }
   });
 
-  it('choices can carry a flag to set', () => {
+  it('the elder choice starts the onboarding quest and records its flag', () => {
     const d = getDialogue('elder_intro')!;
-    expect(d.choices?.some((c) => c.setFlag === 'accepted_quest')).toBe(true);
+    expect(
+      d.choices?.some(
+        (c) => c.setFlag === 'onboarding.intro.accepted' && c.acceptQuest === 'q_apprentice',
+      ),
+    ).toBe(true);
   });
 });
