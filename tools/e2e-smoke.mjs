@@ -124,6 +124,13 @@ try {
           && fieldGuide.questGuide.hint.includes('スライム'),
         JSON.stringify(fieldGuide.questGuide),
       );
+      check(
+        '近くの通常敵にターゲットHP表示が出る',
+        fieldGuide.combatTarget?.active === true
+          && fieldGuide.combatTarget.enemyId === 'slime'
+          && fieldGuide.combatTarget.current === fieldGuide.combatTarget.max,
+        JSON.stringify(fieldGuide.combatTarget),
+      );
     }
     for (let lap = 0; lap < 3; lap++) {
       for (const k of ['w', 'a', 's', 'd']) {
@@ -139,6 +146,13 @@ try {
   for (let i = 0; i < 5; i++) await page.evaluate(() => window.__test.recordKill('slime'));
   await page.waitForTimeout(350);
   s = await snap(page);
+  check(
+    '討伐進捗通知が目標達成を伝える',
+    s.questProgress?.enemyId === 'slime'
+      && s.questProgress.current === s.questProgress.total
+      && s.questProgress.complete === true,
+    JSON.stringify(s.questProgress),
+  );
   check(
     '達成後は町への帰還案内に切り替わる',
     s.questGuide?.active === true && s.questGuide.hint.includes('町へ'),

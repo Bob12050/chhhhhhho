@@ -14,6 +14,9 @@ export interface GameEvents {
 
   // Combat
   'combat:damage-dealt': { x: number; y: number; amount: number; crit: boolean };
+  'combat:target':
+    | { active: false }
+    | { active: true; enemyId: string; name: string; current: number; max: number };
   'enemy:died': { enemyId: string; x: number; y: number };
 
   // Loot / inventory
@@ -59,6 +62,14 @@ export interface GameEvents {
   // Quests (accepted / progressed / turned in)
   'quest:changed': Record<string, never>;
   'quest:accepted': { questId: string };
+  /** One objective advanced; drives the short combat progress toast. */
+  'quest:progress': {
+    questId: string;
+    enemyId: string;
+    current: number;
+    total: number;
+    complete: boolean;
+  };
   /** Live navigation target for the pinned quest tracker and minimap. */
   'quest:guide':
     | { active: false }

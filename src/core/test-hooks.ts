@@ -38,6 +38,8 @@ export interface TestHooks {
     petExp: Record<string, number>;
     killCounts: Record<string, number>;
     questGuide: GameEvents['quest:guide'] | null;
+    combatTarget: GameEvents['combat:target'] | null;
+    questProgress: GameEvents['quest:progress'] | null;
   };
   /** Level up + pump VIT/STR (fight-capable test player). */
   powerUp(level: number): void;
@@ -64,11 +66,19 @@ export function installTestHooks(game: Phaser.Game): void {
   if (!isDebugEnabled()) return;
   let worldPosition = { x: gameState.x, y: gameState.y };
   let questGuide: GameEvents['quest:guide'] | null = null;
+  let combatTarget: GameEvents['combat:target'] | null = null;
+  let questProgress: GameEvents['quest:progress'] | null = null;
   bus.on('world:player-position', ({ x, y }) => {
     worldPosition = { x, y };
   });
   bus.on('quest:guide', (guide) => {
     questGuide = guide;
+  });
+  bus.on('combat:target', (target) => {
+    combatTarget = target;
+  });
+  bus.on('quest:progress', (progress) => {
+    questProgress = progress;
   });
   const hooks: TestHooks = {
     activeScenes: () => game.scene.getScenes(true).map((scene) => scene.scene.key),
@@ -113,6 +123,8 @@ export function installTestHooks(game: Phaser.Game): void {
       petExp: { ...gameState.petExp },
       killCounts: { ...gameState.killCounts },
       questGuide: questGuide ? { ...questGuide } : null,
+      combatTarget: combatTarget ? { ...combatTarget } : null,
+      questProgress: questProgress ? { ...questProgress } : null,
     }),
     powerUp: (level: number) => {
       gameState.gainExp(Math.max(0, totalExpForLevel(level)));

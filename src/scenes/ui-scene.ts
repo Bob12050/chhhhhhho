@@ -45,6 +45,7 @@ export class UIScene extends Phaser.Scene {
   private coach: TutorialCoach | null = null;
   private bossIntroRoot: Phaser.GameObjects.Container | null = null;
   private questStartRoot: Phaser.GameObjects.Container | null = null;
+  private questProgressRoot: Phaser.GameObjects.Container | null = null;
 
   constructor() {
     super('UI');
@@ -161,25 +162,60 @@ export class UIScene extends Phaser.Scene {
       { x: baseX - 64, y: baseY - 122, r: 24 }, // potion (slot 3)
     ];
     const cdGfx = cdGeom.map(() => this.add.graphics().setDepth(depth + 1));
+    const cdLabels = cdGeom.map(({ x, y }) =>
+      this.add
+        .text(x, y, '', { fontFamily: FONT, fontSize: '12px', color: '#ffffff', fontStyle: 'bold' })
+        .setOrigin(0.5)
+        .setDepth(depth + 2)
+        .setShadow(0, 1, '#000000', 3)
+        .setVisible(false),
+    );
+    const cdReady = cdGeom.map(({ x, y }) => this.add.graphics().setPosition(x, y).setDepth(depth + 2));
+    const cdTweens: Array<Phaser.Tweens.Tween | null> = cdGeom.map(() => null);
     this.busOff.push(
       bus.on('skill:cooldown', ({ slot, duration }) => {
         const g = cdGfx[slot];
         const geom = cdGeom[slot];
-        if (!g || !geom || duration <= 0) return;
-        this.tweens.killTweensOf(g);
-        const prog = { t: 1 };
-        this.tweens.add({
+        const label = cdLabels[slot];
+        const ready = cdReady[slot];
+        if (!g || !geom || !label || !ready || duration <= 0) return;
+        cdTweens[slot]?.stop();
+        ready.clear().setAlpha(0).setScale(1);
+        const prog = { remaining: duration };
+        const drawCooldown = (): void => {
+          const ratio = Phaser.Math.Clamp(prog.remaining / duration, 0, 1);
+          g.clear();
+          g.fillStyle(0x000000, 0.58);
+          g.slice(geom.x, geom.y, geom.r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * ratio, false);
+          g.fillPath();
+          const seconds = prog.remaining / 1000;
+          label.setText(seconds >= 1 ? `${Math.ceil(seconds)}` : seconds.toFixed(1)).setVisible(true);
+        };
+        drawCooldown();
+        cdTweens[slot] = this.tweens.add({
           targets: prog,
-          t: 0,
+          remaining: 0,
           duration,
           ease: 'Linear',
-          onUpdate: () => {
+          onUpdate: drawCooldown,
+          onComplete: () => {
             g.clear();
-            g.fillStyle(0x000000, 0.5);
-            g.slice(geom.x, geom.y, geom.r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * prog.t, false);
-            g.fillPath();
+            label.setVisible(false);
+            ready.clear();
+            ready.lineStyle(2, 0xffe27a, 0.95);
+            ready.strokeCircle(0, 0, geom.r + 3);
+            ready.setAlpha(1).setScale(0.78);
+            this.tweens.add({
+              targets: ready,
+              alpha: 0,
+              scaleX: 1.28,
+              scaleY: 1.28,
+              duration: 360,
+              ease: 'Cubic.Out',
+              onComplete: () => ready.clear(),
+            });
+            cdTweens[slot] = null;
           },
-          onComplete: () => g.clear(),
         });
       }),
     );
@@ -448,6 +484,7 @@ export class UIScene extends Phaser.Scene {
     refreshTracker();
     this.busOff.push(bus.on('quest:changed', refreshTracker));
     this.busOff.push(bus.on('quest:accepted', ({ questId }) => this.showQuestStart(questId)));
+    this.busOff.push(bus.on('quest:progress', (data) => this.showQuestProgress(data)));
     this.busOff.push(
       bus.on('boss:bar', ({ active }) => {
         bossBarActive = active;
@@ -630,8 +667,79 @@ export class UIScene extends Phaser.Scene {
       this.coach = null;
       this.questStartRoot?.destroy(true);
       this.questStartRoot = null;
+      this.questProgressRoot?.destroy(true);
+      this.questProgressRoot = null;
       this.bossIntroRoot?.destroy();
       this.bossIntroRoot = null;
+    });
+  }
+
+  private showQuestProgress(data: GameEvents['quest:progress']): void {
+    const quest = getQuest(data.questId);
+    const enemy = getEnemyDef(data.enemyId);
+    if (!quest || !enemy) return;
+    this.questProgressRoot?.destroy(true);
+
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const panelW = Math.min(w - 52, 216);
+    const panelH = 48;
+    const root = this.add
+      .container(w / 2, Math.min(148, h * 0.2) - 8)
+      .setDepth(HUD_DEPTH + 840)
+      .setAlpha(0);
+    this.questProgressRoot = root;
+
+    const panel = this.add
+      .rectangle(0, 0, panelW, panelH, 0x101a2f, 0.94)
+      .setStrokeStyle(1.5, data.complete ? 0xffd86b : 0x7eb8e8, 0.9);
+    const accent = this.add.rectangle(-panelW / 2 + 4, 0, 5, panelH - 8, data.complete ? 0xffd86b : 0x5aa6dc, 0.95);
+    const tag = this.add
+      .text(-panelW / 2 + 16, -15, data.complete ? 'OBJECTIVE COMPLETE' : 'QUEST PROGRESS', {
+        fontFamily: FONT,
+        fontSize: '8px',
+        color: data.complete ? '#ffd86b' : '#8fd0ff',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+    const value = this.add
+      .text(panelW / 2 - 14, -15, `${data.current}/${data.total}`, {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      })
+      .setOrigin(1, 0.5);
+    const title = this.add
+      .text(-panelW / 2 + 16, 1, `${enemy.name}を討伐`, {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+    const barBg = this.add.rectangle(0, 16, panelW - 28, 4, 0x050711, 0.8);
+    const fillW = panelW - 30;
+    const bar = this.add
+      .rectangle(-fillW / 2, 16, fillW, 2, data.complete ? 0xffd86b : 0x69bce8, 1)
+      .setOrigin(0, 0.5)
+      .setScale(Phaser.Math.Clamp(data.current / data.total, 0, 1), 1);
+    root.add([panel, accent, tag, value, title, barBg, bar]);
+
+    this.tweens.add({ targets: root, alpha: 1, y: root.y + 8, duration: 180, ease: 'Cubic.Out' });
+    this.time.delayedCall(data.complete ? 1450 : 1050, () => {
+      if (!root.active) return;
+      this.tweens.add({
+        targets: root,
+        alpha: 0,
+        y: root.y - 8,
+        duration: 260,
+        ease: 'Cubic.In',
+        onComplete: () => {
+          if (this.questProgressRoot === root) this.questProgressRoot = null;
+          root.destroy(true);
+        },
+      });
     });
   }
 

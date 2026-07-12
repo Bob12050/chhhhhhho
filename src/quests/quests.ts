@@ -58,7 +58,15 @@ export function recordKill(gs: GameState, enemyId: string): boolean {
       if (obj.enemyId !== enemyId) continue;
       const cur = gs.questProgress[qid]?.[enemyId] ?? 0;
       if (cur >= obj.count) continue;
-      (gs.questProgress[qid] ??= {})[enemyId] = cur + 1;
+      const current = cur + 1;
+      (gs.questProgress[qid] ??= {})[enemyId] = current;
+      bus.emit('quest:progress', {
+        questId: qid,
+        enemyId,
+        current,
+        total: obj.count,
+        complete: current >= obj.count,
+      });
       changed = true;
     }
   }

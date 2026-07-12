@@ -116,6 +116,16 @@ export class WorldScene extends Phaser.Scene {
     fill: Phaser.GameObjects.Rectangle;
     label: Phaser.GameObjects.Text;
   } | null = null;
+  private combatTarget: Enemy | null = null;
+  private combatTargetScanMs = 0;
+  private combatTargetLockMs = 0;
+  private lastCombatTargetKey = '';
+  private combatTargetUi: {
+    ring: Phaser.GameObjects.Ellipse;
+    hpBg: Phaser.GameObjects.Rectangle;
+    hpFill: Phaser.GameObjects.Rectangle;
+    name: Phaser.GameObjects.Text;
+  } | null = null;
 
   constructor() {
     super('World');
@@ -149,6 +159,12 @@ export class WorldScene extends Phaser.Scene {
     this.boss = null;
     this.bossMaxHp = 0;
     this.bossBar = null;
+    this.combatTarget = null;
+    this.combatTargetScanMs = 0;
+    this.combatTargetLockMs = 0;
+    this.lastCombatTargetKey = '';
+    this.combatTargetUi = null;
+    bus.emit('combat:target', { active: false });
     // Leaving an arena mid-fight must hand the HUD slot back to the tracker.
     bus.emit('boss:bar', { active: false });
     this.bossBrain = null;
@@ -877,11 +893,14 @@ export class WorldScene extends Phaser.Scene {
     knockback: number,
     element: Element,
   ): { killed: boolean; crit: boolean } {
+    this.combatTarget = e;
+    this.combatTargetLockMs = 1200;
     const crit = Math.random() < gameState.derived.critRate;
     const elemMult = elementMultiplier(element, e.cfg.weakness, e.cfg.resist);
     const weak = elemMult > 1;
     const amount = Math.max(1, Math.round(atk * mult * (crit ? 1.6 : 1) * elemMult));
     const killed = e.takeDamage(amount, this.player.x, this.player.y, knockback);
+    this.updateCombatTargetUi();
     // Elemental hits color the number; a super-effective hit reads red.
     const color = element !== 'none' ? elementColorHex(element) : undefined;
     const sparkColor = weak ? 0xff5a5a : element !== 'none' ? ELEMENT_COLOR[element] : 0xffffff;
@@ -1460,6 +1479,7 @@ export class WorldScene extends Phaser.Scene {
     bus.emit('sfx:play', { id: 'enemy_down' });
     gameState.flags['killed_any'] = true;
     gameState.addKill(def.id); // bestiary discovery + lifetime counter
+    bus.emit('enemy:died', { enemyId: def.id, x, y });
     recordKill(gameState, def.id); // advance active quest objectives
     const completedHunt = this.completedHuntQuestFor(def);
     if (completedHunt) this.showQuestClearBanner(completedHunt.name);
@@ -1825,6 +1845,7 @@ export class WorldScene extends Phaser.Scene {
     this.pet?.update(delta, this.player.x, this.player.y);
     this.updatePetAssist(delta);
     for (const e of this.enemies) e.update(delta, this.player.x, this.player.y);
+    this.updateCombatTarget(delta);
     this.questGuideTimer -= delta;
     if (this.questGuideTimer <= 0) {
       this.questGuideTimer = 180;
@@ -1905,6 +1926,102 @@ export class WorldScene extends Phaser.Scene {
       this.activeNpc = nearest;
       this.ui.showInteract(nearest !== null);
       if (nearest) this.maybeShowNpcHint(nearest);
+    }
+  }
+
+  /** Keep one nearby normal enemy visually selected, with a compact live HP bar. */
+  private updateCombatTarget(delta: number): void {
+    this.combatTargetScanMs -= delta;
+    this.combatTargetLockMs = Math.max(0, this.combatTargetLockMs - delta);
+    const currentInvalid = !this.combatTarget
+      || this.combatTarget.isDead()
+      || Phaser.Math.Distance.Between(this.player.x, this.player.y, this.combatTarget.x, this.combatTarget.y) > 190;
+    if (currentInvalid) {
+      this.combatTarget = null;
+      this.combatTargetLockMs = 0;
+    }
+
+    if (this.combatTargetScanMs <= 0 && this.combatTargetLockMs <= 0) {
+      this.combatTargetScanMs = 120;
+      let nearest: Enemy | null = null;
+      let best = 150;
+      for (const enemy of this.enemies) {
+        if (enemy.isDead()) continue;
+        const def = getEnemyDef(this.enemyTypes.get(enemy) ?? '');
+        if (!def || def.isBoss) continue;
+        const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, enemy.x, enemy.y);
+        if (distance < best) {
+          best = distance;
+          nearest = enemy;
+        }
+      }
+      this.combatTarget = nearest;
+    }
+
+    this.updateCombatTargetUi();
+  }
+
+  private updateCombatTargetUi(): void {
+    const target = this.combatTarget;
+    const def = target ? getEnemyDef(this.enemyTypes.get(target) ?? '') : undefined;
+    if (!target || target.isDead() || !def || def.isBoss) {
+      if (this.combatTargetUi) {
+        this.combatTargetUi.ring.setVisible(false);
+        this.combatTargetUi.hpBg.setVisible(false);
+        this.combatTargetUi.hpFill.setVisible(false);
+        this.combatTargetUi.name.setVisible(false);
+      }
+      if (this.lastCombatTargetKey !== 'off') {
+        this.lastCombatTargetKey = 'off';
+        bus.emit('combat:target', { active: false });
+      }
+      return;
+    }
+
+    if (!this.combatTargetUi) {
+      const ring = this.add
+        .ellipse(0, 0, 58, 22, 0xffd86b, 0.12)
+        .setStrokeStyle(2, 0xffd86b, 0.95);
+      const hpBg = this.add
+        .rectangle(0, 0, 68, 7, 0x090b14, 0.9)
+        .setStrokeStyle(1, 0xffffff, 0.28);
+      const hpFill = this.add.rectangle(0, 0, 64, 3, 0xf05f67, 1).setOrigin(0, 0.5);
+      const name = this.add
+        .text(0, 0, '', { fontFamily: FONT, fontSize: '9px', color: '#fff2bf', fontStyle: 'bold' })
+        .setOrigin(0.5, 1)
+        .setShadow(0, 1, '#000000', 2);
+      this.combatTargetUi = { ring, hpBg, hpFill, name };
+      this.tweens.add({
+        targets: ring,
+        alpha: 0.42,
+        scaleX: 1.08,
+        scaleY: 1.08,
+        duration: 520,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    }
+
+    const ui = this.combatTargetUi;
+    const ratio = Phaser.Math.Clamp(target.hp / target.cfg.maxHp, 0, 1);
+    const top = Math.round(target.y - target.visual.displayHeight * 0.88 - 4);
+    const depth = Math.round(target.y) + 8;
+    ui.ring.setPosition(Math.round(target.x), Math.round(target.y) + 1).setDepth(Math.round(target.y) - 2).setVisible(true);
+    ui.hpBg.setPosition(Math.round(target.x), top).setDepth(depth).setVisible(true);
+    ui.hpFill.setPosition(Math.round(target.x) - 32, top).setDepth(depth + 1).setScale(ratio, 1).setVisible(true);
+    ui.name.setPosition(Math.round(target.x), top - 6).setDepth(depth + 1).setText(def.name).setVisible(true);
+
+    const key = `${def.id}|${Math.max(0, Math.ceil(target.hp))}|${target.cfg.maxHp}`;
+    if (key !== this.lastCombatTargetKey) {
+      this.lastCombatTargetKey = key;
+      bus.emit('combat:target', {
+        active: true,
+        enemyId: def.id,
+        name: def.name,
+        current: Math.max(0, Math.ceil(target.hp)),
+        max: target.cfg.maxHp,
+      });
     }
   }
 
