@@ -36,6 +36,14 @@ const tile = (label: string, src: string): AssetSpec => ({
   w: TILE_SIZE,
   h: TILE_SIZE,
 });
+const enemySprite = (label: string, src: string): AssetSpec => ({
+  label,
+  src,
+  type: 'image',
+  w: CHAR_FRAME_W,
+  h: CHAR_FRAME_H,
+  anchor: [CHAR_ANCHOR_X, CHAR_ANCHOR_Y],
+});
 
 export const ASSET_SPECS: AssetSpec[] = [
   sheet('プレイヤー本体', 'assets/char/player_body-storybook-v2.png'),
@@ -65,7 +73,20 @@ export const ASSET_SPECS: AssetSpec[] = [
   sheet('装備:鉄胸当て', 'assets/equip/plate_iron.png'),
   sheet('装備:木剣', 'assets/equip/sword_wood.png'),
   sheet('装備:鉄剣', 'assets/equip/sword_iron.png'),
-  sheet('敵:スライム', 'assets/enemy/slime.png'),
+  enemySprite('敵:スライム', 'assets/enemy/slime-storybook-v2.png'),
+  enemySprite('敵:こうもり', 'assets/enemy/bat-storybook-v2.png'),
+  enemySprite('敵:狼', 'assets/enemy/wolf-storybook-v2.png'),
+  enemySprite('敵:キノコ', 'assets/enemy/mushroom-storybook-v2.png'),
+  enemySprite('敵:ゴーレム', 'assets/enemy/golem-storybook-v2.png'),
+  enemySprite('敵:岩トカゲ', 'assets/enemy/lizard-storybook-v2.png'),
+  enemySprite('敵:ウィスプ', 'assets/enemy/wisp-storybook-v2.png'),
+  enemySprite('敵:影の騎士', 'assets/enemy/knight-storybook-v2.png'),
+  enemySprite('敵:トレント', 'assets/enemy/treant-storybook-v2.png'),
+  enemySprite('敵:ドラゴン', 'assets/enemy/dragon-storybook-v2.png'),
+  enemySprite('ボス:風翔の王ゼフィス', 'assets/enemy/zephys-storybook-v2.png'),
+  enemySprite('ボス:ヒュドラ', 'assets/enemy/hydra-storybook-v2.png'),
+  enemySprite('ボス:サンドゴア', 'assets/enemy/sandgoa-storybook-v2.png'),
+  enemySprite('ボス:アルマギア', 'assets/enemy/almagia-storybook-v2.png'),
   { label: 'タイル:草', src: 'assets/tiles/grass.png', type: 'image', w: 128, h: 128 },
   { label: 'タイル:道', src: 'assets/tiles/path.png', type: 'image', w: 128, h: 128 },
   { label: 'タイル:石', src: 'assets/tiles/stone.png', type: 'image', w: 128, h: 128 },

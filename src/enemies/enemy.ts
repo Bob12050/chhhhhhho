@@ -89,9 +89,9 @@ export class Enemy {
     this.hp = cfg.maxHp;
     this.homeX = x;
     this.homeY = y;
-    // A dropped-in AI PNG loads as a single 96×96 frame (no frame '1'); the
-    // procedural sheet has the full pose grid. Static sheets skip frame-cycling.
-    this.staticSheet = !scene.textures.get(cfg.textureKey).has('1');
+    // Ignore Phaser's internal __BASE frame and count only playable frames.
+    // A one-cell enemy sheet stays static while pose atlases keep animating.
+    this.staticSheet = scene.textures.get(cfg.textureKey).getFrameNames().length <= 1;
     const frame0 = this.staticSheet ? 0 : frameIndex('down', 'idle', 0);
     this.sprite = scene.physics.add.image(x, y, cfg.textureKey, frame0);
     this.sprite.setOrigin(0.5, 0.875);

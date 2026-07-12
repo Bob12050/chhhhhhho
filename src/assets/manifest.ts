@@ -61,23 +61,22 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   sheet(TEX.swordIron, 'assets/equip/sword_iron.png'),
   // Enemies. A single 96×96 PNG drops in as a static sprite (Enemy detects the
   // single frame and skips frame-cycling); a full pose-atlas sheet animates.
-  sheet(TEX.slime, 'assets/enemy/slime.png'),
-  sheet(TEX.bat, 'assets/enemy/bat.png'),
-  sheet(TEX.wolf, 'assets/enemy/wolf.png'),
-  sheet(TEX.mushroom, 'assets/enemy/mushroom.png'),
-  sheet(TEX.golem, 'assets/enemy/golem.png'),
-  sheet(TEX.lizard, 'assets/enemy/lizard.png'),
-  sheet(TEX.wisp, 'assets/enemy/wisp.png'),
-  sheet(TEX.knight, 'assets/enemy/knight.png'),
-  sheet(TEX.treant, 'assets/enemy/treant.png'),
-  sheet(TEX.dragon, 'assets/enemy/dragon.png'),
+  sheet(TEX.slime, 'assets/enemy/slime-storybook-v2.png'),
+  sheet(TEX.bat, 'assets/enemy/bat-storybook-v2.png'),
+  sheet(TEX.wolf, 'assets/enemy/wolf-storybook-v2.png'),
+  sheet(TEX.mushroom, 'assets/enemy/mushroom-storybook-v2.png'),
+  sheet(TEX.golem, 'assets/enemy/golem-storybook-v2.png'),
+  sheet(TEX.lizard, 'assets/enemy/lizard-storybook-v2.png'),
+  sheet(TEX.wisp, 'assets/enemy/wisp-storybook-v2.png'),
+  sheet(TEX.knight, 'assets/enemy/knight-storybook-v2.png'),
+  sheet(TEX.treant, 'assets/enemy/treant-storybook-v2.png'),
+  sheet(TEX.dragon, 'assets/enemy/dragon-storybook-v2.png'),
   // AI-art-only bosses (fallback alias in ensureGeneratedTextures).
-  // Zephys is a single large illustration rather than a pose sheet, so the
-  // enemy renderer keeps it static and lets its configured scale own the arena.
-  img(TEX.zephys, 'assets/enemy/zephys-hunt.png'),
-  sheet(TEX.hydra, 'assets/enemy/hydra.png'),
-  sheet(TEX.sandgoa, 'assets/enemy/sandgoa.png'),
-  sheet(TEX.almagia, 'assets/enemy/almagia.png'),
+  // Zephys is loaded as a static image; its configured scale owns the arena size.
+  img(TEX.zephys, 'assets/enemy/zephys-storybook-v2.png'),
+  sheet(TEX.hydra, 'assets/enemy/hydra-storybook-v2.png'),
+  sheet(TEX.sandgoa, 'assets/enemy/sandgoa-storybook-v2.png'),
+  sheet(TEX.almagia, 'assets/enemy/almagia-storybook-v2.png'),
   // Environment (single images).
   img(TEX.tileGrass, 'assets/tiles/grass.png'),
   img(TEX.tileGrass2, 'assets/tiles/grass2.png'),
