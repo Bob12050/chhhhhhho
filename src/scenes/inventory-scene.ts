@@ -170,12 +170,12 @@ export class InventoryScene extends Phaser.Scene {
     });
 
     const toPets = this.add
-      .text(152, h - 44, '🐾 ペット', {
+      .text(w - 112, h - 44, '🐾 ペット', {
         fontFamily: FONT,
         fontSize: '12px',
         color: '#9aa0b5',
       })
-      .setOrigin(0, 0.5)
+      .setOrigin(0.5)
       .setDepth(3)
       .setInteractive({ useHandCursor: true });
     toPets.on('pointerup', () => {

@@ -4,6 +4,7 @@
  * game state and set up scenarios against PRODUCTION builds, where module
  * imports aren't reachable from the page. Players never get this object.
  */
+import type Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { getJob } from '@/jobs/job-defs';
 import { acceptQuest, isComplete, turnInQuest, recordKill } from '@/quests/quests';
@@ -14,6 +15,7 @@ import { isDebugEnabled } from '@/core/debug';
 import { saveManager } from '@/save/save-manager';
 
 export interface TestHooks {
+  activeScenes(): string[];
   snapshot(): {
     level: number;
     hp: number;
@@ -55,13 +57,14 @@ export interface TestHooks {
   flushSave(): Promise<void>;
 }
 
-export function installTestHooks(): void {
+export function installTestHooks(game: Phaser.Game): void {
   if (!isDebugEnabled()) return;
   let worldPosition = { x: gameState.x, y: gameState.y };
   bus.on('world:player-position', ({ x, y }) => {
     worldPosition = { x, y };
   });
   const hooks: TestHooks = {
+    activeScenes: () => game.scene.getScenes(true).map((scene) => scene.scene.key),
     snapshot: () => ({
       level: gameState.level,
       hp: gameState.hp,

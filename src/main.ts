@@ -106,7 +106,7 @@ function startGame(): void {
   bgm.setVolume(settings.bgmVol);
   installOrientationGuard(game);
   installLifecycle(game);
-  installTestHooks(); // no-op unless the debug flag is on
+  installTestHooks(game); // no-op unless the debug flag is on
   void registerServiceWorker();
 }
 

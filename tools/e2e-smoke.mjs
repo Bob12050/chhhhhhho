@@ -77,6 +77,19 @@ try {
   check('2・3・4次職15種の外見を切り替えられる', allAdvancedLooks);
   await page.evaluate(() => window.__test.forceJob('adventurer'));
 
+  // The footer used to place 「とじる」 directly over 「ペット」, so a
+  // single tap closed Inventory and launched PetScreen at the same time.
+  await page.mouse.click(250, 28); await page.waitForTimeout(500);
+  await page.mouse.click(180, 676); await page.waitForTimeout(500);
+  const scenesAfterBagClose = await page.evaluate(() => window.__test.activeScenes());
+  check(
+    'もちものの閉じるボタンがペット画面へ貫通しない',
+    scenesAfterBagClose.includes('World')
+      && !scenesAfterBagClose.includes('Inventory')
+      && !scenesAfterBagClose.includes('PetScreen'),
+    `active=${scenesAfterBagClose.join(',')}`,
+  );
+
   // ---- combat: field slime kill advances quest + bestiary + drops ----
   step = 'combat';
   await page.evaluate(() => window.__test.powerUp(30));
@@ -157,7 +170,7 @@ try {
   step = 'pets';
   await page.evaluate(() => window.__test.addEgg('pet_egg_wolf'));
   await page.mouse.click(250, 28); await page.waitForTimeout(900); // bag
-  await page.mouse.click(168, 676); await page.waitForTimeout(800); // 🐾 ペット
+  await page.mouse.click(248, 676); await page.waitForTimeout(800); // 🐾 ペット
   await page.mouse.click(302, 193); await page.waitForTimeout(900); // 孵化する
   s = await snap(page);
   if (!s.ownedPets.includes('wolf_pet')) {
