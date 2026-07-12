@@ -386,10 +386,24 @@ export class UIScene extends Phaser.Scene {
     const trObj = this.add
       .text(46, 16, '', { fontFamily: FONT, fontSize: '9px', color: '#cfd3e6' })
       .setShadow(0, 1, '#000000', 2);
-    trRoot.add([trTitle, trObj]);
+    const trGuideDivider = this.add.graphics().setVisible(false);
+    trGuideDivider.lineStyle(1, 0xffffff, 0.16);
+    trGuideDivider.lineBetween(trW - 48, 5, trW - 48, trH - 5);
+    const trGuideArrow = this.add
+      .triangle(trW - 23, 9, 0, 8, 8, 8, 4, 0, 0xffd86b, 1)
+      .setOrigin(0.5)
+      .setVisible(false);
+    const trGuideDistance = this.add
+      .text(trW - 23, 19, '', { fontFamily: FONT, fontSize: '7px', color: '#fff2bf' })
+      .setOrigin(0.5, 0)
+      .setShadow(0, 1, '#000000', 2)
+      .setVisible(false);
+    trRoot.add([trTitle, trObj, trGuideDivider, trGuideArrow, trGuideDistance]);
     // While a boss HP card is up it borrows this exact HUD slot, so the
     // tracker yields (the objective IS the boss on screen anyway).
     let bossBarActive = false;
+    let currentGuide: GameEvents['quest:guide'] | null = null;
+    const trackerTextWidth = trW - 96;
     const setTrackerVisible = (v: boolean): void => {
       trRoot.setVisible(v && !bossBarActive);
     };
@@ -407,21 +421,27 @@ export class UIScene extends Phaser.Scene {
       }
       setTrackerVisible(true);
       if (isComplete(gameState, current.id)) {
-        fitText(trTitle, current.name, trW - 52);
-        fitText(trObj, '達成！ 掲示板で報告しよう', trW - 52);
+        fitText(trTitle, current.name, trackerTextWidth);
+        fitText(
+          trObj,
+          currentGuide?.active ? currentGuide.hint : '達成！ 掲示板で報告',
+          trackerTextWidth,
+        );
         trObj.setColor('#ffd86b');
       } else {
-        fitText(trTitle, current.name, trW - 52);
+        fitText(trTitle, current.name, trackerTextWidth);
         trObj.setColor('#cfd3e6');
         fitText(
           trObj,
-          current.objectives
-              .map((o) => {
-                const name = getEnemyDef(o.enemyId)?.name ?? o.enemyId;
-                return `${name} ${objectiveProgress(gameState, current.id, o.enemyId)}/${o.count}`;
-              })
-              .join('・'),
-          trW - 52,
+          currentGuide?.active
+            ? currentGuide.hint
+            : current.objectives
+                .map((o) => {
+                  const name = getEnemyDef(o.enemyId)?.name ?? o.enemyId;
+                  return `${name} ${objectiveProgress(gameState, current.id, o.enemyId)}/${o.count}`;
+                })
+                .join('・'),
+          trackerTextWidth,
         );
       }
     };
@@ -443,6 +463,14 @@ export class UIScene extends Phaser.Scene {
     const miniX = w - insets.right - 46;
     const miniY = insets.top + 46;
     const miniG = this.add.graphics();
+    const miniGuideRing = this.add
+      .circle(0, 0, 5)
+      .setStrokeStyle(1.5, 0xffd86b, 0.95)
+      .setVisible(false);
+    const miniGuideDot = this.add
+      .circle(0, 0, 2.5, 0xffd86b, 1)
+      .setStrokeStyle(1, 0x2a1820, 1)
+      .setVisible(false);
     const miniDot = this.add.circle(0, 0, 3.5, 0xffe16a).setStrokeStyle(1.5, 0x2a1820, 1);
     const miniNorth = this.add
       .text(0, -31, 'N', { fontFamily: FONT, fontSize: '8px', color: '#d9e8ff', fontStyle: 'bold' })
@@ -451,13 +479,35 @@ export class UIScene extends Phaser.Scene {
       .text(0, 48, '', { fontFamily: FONT, fontSize: '8px', color: '#d9e8ff' })
       .setOrigin(0.5)
       .setShadow(0, 1, '#000000', 2);
-    const miniRoot = this.add.container(miniX, miniY, [miniG, miniDot, miniNorth, miniName]).setDepth(depth);
+    const miniRoot = this.add
+      .container(miniX, miniY, [miniG, miniGuideRing, miniGuideDot, miniDot, miniNorth, miniName])
+      .setDepth(depth);
     miniRoot.setSize(miniSize, miniSize).setInteractive({ useHandCursor: true });
     miniRoot.on('pointerup', () => bus.emit('ui:open-map', {}));
 
     let miniMap = getMap(gameState.mapId);
     let miniWidth = miniMap?.size.w ?? 1;
     let miniHeight = miniMap?.size.h ?? 1;
+    const positionGuideMarker = (): void => {
+      if (!currentGuide?.active || currentGuide.mapId !== miniMap?.id) {
+        miniGuideRing.setVisible(false);
+        miniGuideDot.setVisible(false);
+        return;
+      }
+      const half = miniInner / 2;
+      const gx = Phaser.Math.Clamp(
+        (currentGuide.targetX / miniWidth - 0.5) * miniInner,
+        -half + 4,
+        half - 4,
+      );
+      const gy = Phaser.Math.Clamp(
+        (currentGuide.targetY / miniHeight - 0.5) * miniInner,
+        -half + 4,
+        half - 4,
+      );
+      miniGuideRing.setPosition(gx, gy).setVisible(true);
+      miniGuideDot.setPosition(gx, gy).setVisible(true);
+    };
     const drawMiniMap = (x: number, y: number): void => {
       const half = miniInner / 2;
       const ground = miniMap?.ground === 'stone' ? 0x536172 : miniMap?.ground === 'floor' ? 0x62515e : 0x45694a;
@@ -486,6 +536,7 @@ export class UIScene extends Phaser.Scene {
         Phaser.Math.Clamp((x / miniWidth - 0.5) * miniInner, -half + 4, half - 4),
         Phaser.Math.Clamp((y / miniHeight - 0.5) * miniInner, -half + 4, half - 4),
       );
+      positionGuideMarker();
     };
     const refreshMiniMap = (data: {
       mapId: string;
@@ -508,6 +559,20 @@ export class UIScene extends Phaser.Scene {
       ),
     );
     this.busOff.push(bus.on('world:player-position', ({ mapId, x, y }) => refreshMiniMap({ mapId, x, y })));
+    this.busOff.push(
+      bus.on('quest:guide', (guide) => {
+        currentGuide = guide.active ? guide : null;
+        trGuideDivider.setVisible(guide.active);
+        trGuideArrow.setVisible(guide.active);
+        trGuideDistance.setVisible(guide.active);
+        if (guide.active) {
+          trGuideArrow.setRotation(guide.angle + Math.PI / 2);
+          trGuideDistance.setText(`${guide.distance}m`);
+        }
+        positionGuideMarker();
+        refreshTracker();
+      }),
+    );
 
     // Bag button stays beside the minimap, so map navigation and inventory
     // read as a compact utility strip instead of two floating controls.

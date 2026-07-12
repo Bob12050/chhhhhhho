@@ -9,7 +9,7 @@ import { gameState } from '@/player/game-state';
 import { getJob } from '@/jobs/job-defs';
 import { acceptQuest, isComplete, turnInQuest, recordKill } from '@/quests/quests';
 import { getMap, spawnPoint } from '@/maps/map-def';
-import { bus } from '@/core/event-bus';
+import { bus, type GameEvents } from '@/core/event-bus';
 import { totalExpForLevel } from '@/stats/leveling';
 import { isDebugEnabled } from '@/core/debug';
 import { saveManager } from '@/save/save-manager';
@@ -35,6 +35,7 @@ export interface TestHooks {
     petEggs: Record<string, number>;
     petExp: Record<string, number>;
     killCounts: Record<string, number>;
+    questGuide: GameEvents['quest:guide'] | null;
   };
   /** Level up + pump VIT/STR (fight-capable test player). */
   powerUp(level: number): void;
@@ -60,8 +61,12 @@ export interface TestHooks {
 export function installTestHooks(game: Phaser.Game): void {
   if (!isDebugEnabled()) return;
   let worldPosition = { x: gameState.x, y: gameState.y };
+  let questGuide: GameEvents['quest:guide'] | null = null;
   bus.on('world:player-position', ({ x, y }) => {
     worldPosition = { x, y };
+  });
+  bus.on('quest:guide', (guide) => {
+    questGuide = guide;
   });
   const hooks: TestHooks = {
     activeScenes: () => game.scene.getScenes(true).map((scene) => scene.scene.key),
@@ -84,6 +89,7 @@ export function installTestHooks(game: Phaser.Game): void {
       petEggs: { ...gameState.petEggs },
       petExp: { ...gameState.petExp },
       killCounts: { ...gameState.killCounts },
+      questGuide: questGuide ? { ...questGuide } : null,
     }),
     powerUp: (level: number) => {
       gameState.gainExp(Math.max(0, totalExpForLevel(level)));

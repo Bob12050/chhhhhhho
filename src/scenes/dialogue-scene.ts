@@ -99,6 +99,7 @@ export class DialogueScene extends Phaser.Scene {
   private showChoices(): void {
     if (!this.def?.choices) return;
     this.hint.setVisible(false);
+    this.bodyText.setVisible(false);
     const w = this.scale.width;
     const h = this.scale.height;
     this.def.choices.forEach((c, i) => {

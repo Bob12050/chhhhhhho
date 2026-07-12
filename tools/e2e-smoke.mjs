@@ -59,6 +59,14 @@ try {
   let s = await snap(page);
   check('新規ゲームで町に降り立つ', s.mapId === 'town', `mapId=${s.mapId}`);
   check('初期クエストが受注済み', s.activeQuests.includes('q_apprentice'));
+  check(
+    '町では北門への矢印と距離が出る',
+    s.questGuide?.active === true
+      && s.questGuide.mapId === 'town'
+      && s.questGuide.hint === '北門へ'
+      && s.questGuide.distance > 0,
+    JSON.stringify(s.questGuide),
+  );
 
   // The painted fountain and the storefronts must not join into a full-width
   // invisible wall. Reproduce the phone report: walk up its narrow left lane.
@@ -107,6 +115,16 @@ try {
     await page.waitForTimeout(500);
     await page.evaluate(() => window.__test.warp('field', 180, 940));
     await page.waitForTimeout(900);
+    if (attempt === 0) {
+      const fieldGuide = await snap(page);
+      check(
+        '草原では最寄りのスライムへ案内が切り替わる',
+        fieldGuide.questGuide?.active === true
+          && fieldGuide.questGuide.mapId === 'field'
+          && fieldGuide.questGuide.hint.includes('スライム'),
+        JSON.stringify(fieldGuide.questGuide),
+      );
+    }
     for (let lap = 0; lap < 3; lap++) {
       for (const k of ['w', 'a', 's', 'd']) {
         await page.keyboard.down(k); await page.waitForTimeout(110); await page.keyboard.up(k);
@@ -118,6 +136,22 @@ try {
   }
   check('スライムを討伐できる', (s.killCounts['slime'] ?? 0) > 0);
   check('討伐が図鑑カウントに入る', Object.keys(s.killCounts).length > 0);
+  for (let i = 0; i < 5; i++) await page.evaluate(() => window.__test.recordKill('slime'));
+  await page.waitForTimeout(350);
+  s = await snap(page);
+  check(
+    '達成後は町への帰還案内に切り替わる',
+    s.questGuide?.active === true && s.questGuide.hint.includes('町へ'),
+    JSON.stringify(s.questGuide),
+  );
+  await page.evaluate(() => window.__test.warp('town', 180, 700));
+  await page.waitForTimeout(900);
+  s = await snap(page);
+  check(
+    '町では掲示板への報告案内に切り替わる',
+    s.questGuide?.active === true && s.questGuide.hint.includes('掲示板'),
+    JSON.stringify(s.questGuide),
+  );
 
   // ---- hunt quest: sequential waves via the real arena flow ----
   step = 'hunt';

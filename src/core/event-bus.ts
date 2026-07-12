@@ -59,6 +59,18 @@ export interface GameEvents {
   // Quests (accepted / progressed / turned in)
   'quest:changed': Record<string, never>;
   'quest:accepted': { questId: string };
+  /** Live navigation target for the pinned quest tracker and minimap. */
+  'quest:guide':
+    | { active: false }
+    | {
+        active: true;
+        mapId: string;
+        targetX: number;
+        targetY: number;
+        distance: number;
+        angle: number;
+        hint: string;
+      };
 
   /** Boss HP bar shown/hidden — the HUD quest tracker yields its slot. */
   'boss:bar': { active: boolean };

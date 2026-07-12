@@ -13,13 +13,13 @@ import { TEX } from '@/assets/gen/textures';
 import { Rng } from '@/core/rng';
 import { getDropTable, rollDrops } from '@/loot/drop-table';
 import { getSkill } from '@/skills/skill-defs';
-import { recordKill, isComplete } from '@/quests/quests';
+import { recordKill, isComplete, objectiveProgress } from '@/quests/quests';
 import { getQuest, type QuestDef } from '@/quests/quest-defs';
 import { currentWave, concurrentSpawnCount, VETERAN_MODS } from '@/quests/hunt-logic';
 import { PET_EXP_SHARE, petAttackDamage } from '@/pets/pet-growth';
 import { mitigateDamage } from '@/combat/mitigation';
 import { input } from '@/input/input-state';
-import { bus } from '@/core/event-bus';
+import { bus, type GameEvents } from '@/core/event-bus';
 import { saveManager } from '@/save/save-manager';
 import { getMap, spawnPoint, type MapDef } from '@/maps/map-def';
 import { buildMap, type BuiltPortal } from '@/maps/map-builder';
@@ -67,6 +67,7 @@ const LOOT_MAGNET_SPEED = 260;
 export class WorldScene extends Phaser.Scene {
   private player!: Player;
   private enemies: Enemy[] = [];
+  private enemyTypes = new Map<Enemy, string>();
   /** Alive hunt-wave spawns → their enemyId (drives 連続狩猟 top-ups). */
   private huntLive = new Map<Enemy, string>();
   private obstacles!: Phaser.Physics.Arcade.StaticGroup;
@@ -91,6 +92,8 @@ export class WorldScene extends Phaser.Scene {
   private portalGuard = 0; // ms; blocks walk-on portals right after taking a hit
   private bossIntroLockMs = 0;
   private hudPositionTimer = 0;
+  private questGuideTimer = 0;
+  private lastQuestGuideKey = '';
   private transitioning = false;
   private npcBob = false;
   private busOff: Array<() => void> = [];
@@ -121,6 +124,7 @@ export class WorldScene extends Phaser.Scene {
   create(): void {
     // Reset per-session state (Phaser reuses the scene instance on restart).
     this.enemies = [];
+    this.enemyTypes.clear();
     this.huntLive.clear();
     this.portals = [];
     this.npcs = [];
@@ -136,6 +140,8 @@ export class WorldScene extends Phaser.Scene {
     this.portalGuard = 0;
     this.bossIntroLockMs = 0;
     this.hudPositionTimer = 0;
+    this.questGuideTimer = 0;
+    this.lastQuestGuideKey = '';
     this.petAtkCd = 0;
     this.transitioning = false;
     this.rng = new Rng((Date.now() ^ 0x9e3779b9) >>> 0);
@@ -326,6 +332,7 @@ export class WorldScene extends Phaser.Scene {
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
     bus.emit('player:mp-changed', { current: gameState.mp, max: gameState.derived.maxMp });
     bus.emit('gold:changed', { current: gameState.gold });
+    this.updateQuestGuide();
 
     // A brand-new slot begins with the village elder's request, not an
     // unexplained pre-accepted objective. The world is already visible behind
@@ -528,6 +535,7 @@ export class WorldScene extends Phaser.Scene {
     this.physics.add.overlap(this.player.body, enemy.sprite, () => this.onContact(enemy));
     enemy.onDeath = (dx, dy) => {
       this.huntLive.delete(enemy);
+      this.enemyTypes.delete(enemy);
       this.onEnemyDeath(dx, dy, def, opts?.veteran === true);
       // Normal enemies respawn at their post so zones stay farmable (needed for
       // the time-based progression budget). Bosses only return on re-entry.
@@ -540,6 +548,7 @@ export class WorldScene extends Phaser.Scene {
       }
     };
     this.enemies.push(enemy);
+    this.enemyTypes.set(enemy, type);
     if (def.isBoss) {
       this.boss = enemy;
       this.bossMaxHp = maxHp;
@@ -1816,6 +1825,11 @@ export class WorldScene extends Phaser.Scene {
     this.pet?.update(delta, this.player.x, this.player.y);
     this.updatePetAssist(delta);
     for (const e of this.enemies) e.update(delta, this.player.x, this.player.y);
+    this.questGuideTimer -= delta;
+    if (this.questGuideTimer <= 0) {
+      this.questGuideTimer = 180;
+      this.updateQuestGuide();
+    }
     if (this.boss && !this.boss.isDead()) this.bossBrain?.update(delta);
     this.updateBullets(delta);
     this.updatePlayerBolts(delta);
@@ -1892,6 +1906,108 @@ export class WorldScene extends Phaser.Scene {
       this.ui.showInteract(nearest !== null);
       if (nearest) this.maybeShowNpcHint(nearest);
     }
+  }
+
+  /**
+   * Navigation for the first hunt: town gate -> nearest live target -> town
+   * return -> quest board. Targets are recomputed because enemies wander.
+   */
+  private updateQuestGuide(): void {
+    if (!gameState.activeQuests.includes(INTRO_QUEST_ID)) {
+      this.publishQuestGuide({ active: false });
+      return;
+    }
+    const quest = getQuest(INTRO_QUEST_ID);
+    if (!quest) {
+      this.publishQuestGuide({ active: false });
+      return;
+    }
+
+    let target: { x: number; y: number; hint: string } | null = null;
+    if (isComplete(gameState, INTRO_QUEST_ID)) {
+      if (this.map.id === 'town') {
+        const board = this.npcs.find((npc) => npc.action === 'quest');
+        if (board) target = { x: board.x, y: board.y, hint: '掲示板で報告' };
+      } else {
+        const portal =
+          this.portals.find((p) => p.to === 'town') ??
+          this.portals.find((p) => p.to === 'field');
+        if (portal) {
+          target = { x: portal.rect.centerX, y: portal.rect.centerY, hint: '町へ戻ろう' };
+        }
+      }
+    } else {
+      const objective = quest.objectives.find(
+        (o) => objectiveProgress(gameState, INTRO_QUEST_ID, o.enemyId) < o.count,
+      );
+      if (objective) {
+        let nearest: Enemy | null = null;
+        let nearestDistance = Number.POSITIVE_INFINITY;
+        for (const enemy of this.enemies) {
+          if (enemy.isDead() || this.enemyTypes.get(enemy) !== objective.enemyId) continue;
+          const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, enemy.x, enemy.y);
+          if (distance < nearestDistance) {
+            nearest = enemy;
+            nearestDistance = distance;
+          }
+        }
+        const progress = objectiveProgress(gameState, INTRO_QUEST_ID, objective.enemyId);
+        const enemyName = getEnemyDef(objective.enemyId)?.name ?? objective.enemyId;
+        if (nearest) {
+          target = { x: nearest.x, y: nearest.y, hint: `${enemyName} ${progress}/${objective.count}` };
+        } else {
+          const spawn = (this.map.enemies ?? []).find((enemy) => enemy.type === objective.enemyId);
+          if (spawn) {
+            target = { x: spawn.x, y: spawn.y, hint: `${enemyName} ${progress}/${objective.count}` };
+          }
+        }
+      }
+
+      if (!target) {
+        const portal =
+          this.portals.find((p) => p.to === 'field') ??
+          this.portals.find((p) => p.to === 'town');
+        if (portal) {
+          target = {
+            x: portal.rect.centerX,
+            y: portal.rect.centerY,
+            hint: this.map.id === 'town' ? '北門へ' : '草原へ戻ろう',
+          };
+        }
+      }
+    }
+
+    if (!target) {
+      this.publishQuestGuide({ active: false });
+      return;
+    }
+    const dx = target.x - this.player.x;
+    const dy = target.y - this.player.y;
+    this.publishQuestGuide({
+      active: true,
+      mapId: this.map.id,
+      targetX: target.x,
+      targetY: target.y,
+      distance: Math.max(1, Math.round(Math.hypot(dx, dy) / 16)),
+      angle: Math.atan2(dy, dx),
+      hint: target.hint,
+    });
+  }
+
+  private publishQuestGuide(guide: GameEvents['quest:guide']): void {
+    const key = guide.active
+      ? [
+          guide.mapId,
+          guide.hint,
+          guide.distance,
+          Math.round(guide.angle * 20),
+          Math.round(guide.targetX / 4),
+          Math.round(guide.targetY / 4),
+        ].join('|')
+      : 'off';
+    if (key === this.lastQuestGuideKey) return;
+    this.lastQuestGuideKey = key;
+    bus.emit('quest:guide', guide);
   }
 
   /**
