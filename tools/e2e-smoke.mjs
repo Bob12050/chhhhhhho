@@ -211,16 +211,15 @@ try {
   await page.evaluate(() => window.__test.addEgg('pet_egg_wolf'));
   await page.mouse.click(250, 28); await page.waitForTimeout(900); // bag
   await page.mouse.click(248, 676); await page.waitForTimeout(800); // 🐾 ペット
-  await page.mouse.click(302, 193); await page.waitForTimeout(900); // 孵化する
+  await page.waitForFunction(() => window.__test.activeScenes().includes('PetScreen'));
+  const hatchPressed = await page.evaluate(() => window.__test.activateText('PetScreen', '孵化する'));
+  check('ペット画面の孵化ボタンを操作できる', hatchPressed === true);
+  await page.waitForTimeout(900);
   s = await snap(page);
-  if (!s.ownedPets.includes('wolf_pet')) {
-    // シーン遷移がワンテンポ遅れてボタンがまだ無いことがある（フレーク）。
-    await page.mouse.click(302, 193); await page.waitForTimeout(900);
-    s = await snap(page);
-  }
   check('たまごを孵化してペットが仲間になる', s.ownedPets.includes('wolf_pet'));
   check('最初のペットは自動で連れ歩き', s.activePetId === 'wolf_pet');
-  await page.mouse.click(180, 686); await page.waitForTimeout(500); // とじる(pet)
+  await page.evaluate(() => window.__test.activateText('PetScreen', 'とじる'));
+  await page.waitForTimeout(500);
   await page.keyboard.press('Escape'); await page.waitForTimeout(600);
 
   // ---- bestiary opens ----

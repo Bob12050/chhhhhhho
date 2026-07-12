@@ -16,6 +16,8 @@ import { saveManager } from '@/save/save-manager';
 
 export interface TestHooks {
   activeScenes(): string[];
+  /** Activate an interactive text control without relying on font-dependent coordinates. */
+  activateText(sceneKey: string, label: string): boolean;
   snapshot(): {
     level: number;
     hp: number;
@@ -70,6 +72,27 @@ export function installTestHooks(game: Phaser.Game): void {
   });
   const hooks: TestHooks = {
     activeScenes: () => game.scene.getScenes(true).map((scene) => scene.scene.key),
+    activateText: (sceneKey: string, label: string) => {
+      const scene = game.scene.getScene(sceneKey);
+      if (!scene?.scene.isActive()) return false;
+      const pending = [...scene.children.list];
+      while (pending.length) {
+        const child = pending.shift();
+        if (!child) continue;
+        if (
+          child.type === 'Text'
+          && 'text' in child
+          && typeof child.text === 'string'
+          && child.text.includes(label)
+          && child.input?.enabled
+        ) {
+          child.emit('pointerup');
+          return true;
+        }
+        if ('list' in child && Array.isArray(child.list)) pending.push(...child.list);
+      }
+      return false;
+    },
     snapshot: () => ({
       level: gameState.level,
       hp: gameState.hp,
