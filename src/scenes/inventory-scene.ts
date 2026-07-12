@@ -78,6 +78,8 @@ export class InventoryScene extends Phaser.Scene {
   private slotFilter: string | null = null;
   /** Chip row (equipment tab only), rebuilt on tab switch. */
   private slotChipObjs: Phaser.GameObjects.GameObject[] = [];
+  /** Fixed job profile card (equipment/status); never moves with list scroll. */
+  private profileObjs: Phaser.GameObjects.GameObject[] = [];
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
@@ -295,6 +297,8 @@ export class InventoryScene extends Phaser.Scene {
     this.content.y = 0;
     for (const o of this.slotChipObjs) o.destroy();
     this.slotChipObjs = [];
+    for (const o of this.profileObjs) o.destroy();
+    this.profileObjs = [];
     for (const tb of this.tabButtons) {
       tb.tab.setActive(tb.id === this.tab);
     }
@@ -347,44 +351,37 @@ export class InventoryScene extends Phaser.Scene {
     panel.strokeRoundedRect(8, y, w - 16, height, 8);
     panel.fillStyle(0xffffff, 0.06);
     panel.fillRoundedRect(10, y + 2, w - 20, 24, { tl: 7, tr: 7, bl: 0, br: 0 });
-    this.content.add(panel);
+    panel.setDepth(2);
+    this.profileObjs.push(panel);
 
-    this.content.add(
-      this.add
-        .sprite(60, y + height - 7, texture, frameIndex('down', 'idle', 0))
-        .setOrigin(0.5, 0.875)
-        .setScale(0.72),
-    );
-    this.content.add(
-      this.add.text(108, y + 12, job?.name ?? gs.jobId, {
+    const portrait = this.add
+      .sprite(60, y + height - 7, texture, frameIndex('down', 'idle', 0))
+      .setOrigin(0.5, 0.875)
+      .setScale(0.72)
+      .setDepth(3);
+    const name = this.add.text(108, y + 12, job?.name ?? gs.jobId, {
         fontFamily: FONT,
         fontSize: '16px',
         color: '#ffe5a3',
-      }),
-    );
-    this.content.add(
-      this.add.text(108, y + 36, `Lv ${gs.level}  ${tierLabel}`, {
+      }).setDepth(3);
+    const level = this.add.text(108, y + 36, `Lv ${gs.level}  ${tierLabel}`, {
         fontFamily: FONT,
         fontSize: '12px',
         color: '#cdd8ef',
-      }),
-    );
-    this.content.add(
-      this.add.text(108, y + 56, `HP ${gs.hp}/${gs.derived.maxHp}   MP ${gs.mp}/${gs.derived.maxMp}`, {
+      }).setDepth(3);
+    const resources = this.add.text(108, y + 56, `HP ${gs.hp}/${gs.derived.maxHp}   MP ${gs.mp}/${gs.derived.maxMp}`, {
         fontFamily: FONT,
         fontSize: '12px',
         color: '#9fe3d0',
-      }),
-    );
-    this.content.add(
-      this.add.text(w - 16, y + 16, `物攻 ${gs.derived.physAtk}\n防御 ${gs.derived.def}`, {
+      }).setDepth(3);
+    const combat = this.add.text(w - 16, y + 16, `物攻 ${gs.derived.physAtk}\n防御 ${gs.derived.def}`, {
         fontFamily: FONT,
         fontSize: '12px',
         color: '#c9d6f0',
         align: 'right',
         lineSpacing: 5,
-      }).setOrigin(1, 0),
-    );
+      }).setOrigin(1, 0).setDepth(3);
+    this.profileObjs.push(portrait, name, level, resources, combat);
   }
 
   private emptyNote(kind: 'items' | 'consumables' | 'equipment', y = 118): void {
