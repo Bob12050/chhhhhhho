@@ -8,6 +8,8 @@ import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
 import { allSkills } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
+import { appearanceTexKey } from '@/jobs/job-appearance';
+import { frameIndex } from '@/paperdoll/pose-atlas';
 import { bus } from '@/core/event-bus';
 import { FONT, addPanelChrome, rowBand, tabChip, pillButton, type TabHandle } from '@/ui/theme';
 import { returnToTitle } from '@/core/game-flow';
@@ -109,19 +111,19 @@ export class InventoryScene extends Phaser.Scene {
       .setDepth(3);
 
     // Tabs — wider, taller pills with a lit underline on the active one.
-    const tabs: { id: Tab; label: string }[] = [
-      { id: 'items', label: '素材' },
-      { id: 'consumables', label: '消耗' },
-      { id: 'equipment', label: '装備' },
-      { id: 'status', label: '能力' },
-      { id: 'skill', label: '技' },
+    const tabs: { id: Tab; label: string; icon: string }[] = [
+      { id: 'items', label: '素材', icon: TEX.iconGem },
+      { id: 'consumables', label: '消耗', icon: TEX.iconFlask },
+      { id: 'equipment', label: '装備', icon: TEX.iconArmor },
+      { id: 'status', label: '能力', icon: TEX.iconShield },
+      { id: 'skill', label: '技', icon: TEX.iconStaff },
     ];
     const tabW = Math.floor((w - 16) / tabs.length);
     tabs.forEach((t, i) => {
       const tab = tabChip(this, 8 + i * tabW + tabW / 2, 66, tabW, t.label, () => {
         this.tab = t.id;
         this.renderTab();
-      });
+      }, { icon: t.icon });
       tab.root.setDepth(3);
       this.tabButtons.push({ id: t.id, tab });
     });
@@ -130,7 +132,12 @@ export class InventoryScene extends Phaser.Scene {
     this.viewBottom = h - 76;
     // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1) so
     // rows never overlap the tabs or the close row.
-    addPanelChrome(this, this.viewTop, this.viewBottom);
+    addPanelChrome(this, this.viewTop, this.viewBottom, {
+      backdropAlpha: 0.84,
+      chromeColor: 0x111d36,
+      chromeAlpha: 0.97,
+    });
+    this.add.rectangle(0, 49, w, 1, 0xd8b45b, 0.7).setOrigin(0).setDepth(3);
     this.setupScroll();
 
     // Close + return-to-title.
@@ -299,42 +306,115 @@ export class InventoryScene extends Phaser.Scene {
     this.updateScrollBounds();
   }
 
-  /**
-   * Slot filter chips for the equipment tab (one static row — labels are
-   * short enough that no horizontal scrolling is needed). Sits on an opaque
-   * strip so scrolled rows never show through underneath it.
-   */
+  /** Two fixed rows keep every equipment slot visible on a 360px screen. */
   private buildSlotChips(): void {
     const w = this.scale.width;
-    const strip = this.add.rectangle(0, 86, w, 30, 0x0e1020, 1).setOrigin(0).setDepth(2);
+    const strip = this.add.rectangle(0, 180, w, 72, 0x11182b, 0.98).setOrigin(0).setDepth(2);
     this.slotChipObjs.push(strip);
     const defs: [string | null, string][] = [
       [null, '全部'], ['main_hand', '武器'], ['head', '頭'], ['torso', '胴'], ['hands', '手'],
       ['waist', '腰'], ['feet', '足'], ['back', '背'], ['accessory', 'アクセ'],
     ];
-    let x = 6;
-    for (const [value, label] of defs) {
-      const chipW = label.length * 12 + 20;
-      const tab = tabChip(this, x + chipW / 2, 101, chipW, label, () => {
-        if (this.dragged) return;
-        this.slotFilter = value;
-        this.renderTab();
+    const rows = [defs.slice(0, 5), defs.slice(5)];
+    rows.forEach((row, rowIndex) => {
+      const gap = 4;
+      const chipW = Math.floor((w - 12 - gap * (row.length - 1)) / row.length);
+      row.forEach(([value, label], column) => {
+        const x = 6 + column * (chipW + gap) + chipW / 2;
+        const tab = tabChip(this, x, 198 + rowIndex * 36, chipW, label, () => {
+          if (this.dragged) return;
+          this.slotFilter = value;
+          this.renderTab();
+        });
+        tab.setActive(value === this.slotFilter);
+        tab.root.setDepth(3);
+        this.slotChipObjs.push(tab.root);
       });
-      tab.setActive(value === this.slotFilter);
-      tab.root.setDepth(3);
-      this.slotChipObjs.push(tab.root);
-      x += chipW + 4;
-    }
+    });
   }
 
+  private renderProfileCard(y: number, height: number): void {
+    const w = this.scale.width;
+    const gs = gameState;
+    const job = getJob(gs.jobId);
+    const tierLabel = job ? (job.tier === 0 ? '初期職' : `${job.tier}次職`) : '';
+    const art = appearanceTexKey(job?.appearance);
+    const texture = art && this.textures.exists(art) ? art : TEX.playerBody;
+    const panel = this.add.graphics();
+    panel.fillStyle(0x142342, 0.94);
+    panel.fillRoundedRect(8, y, w - 16, height, 8);
+    panel.lineStyle(1.5, 0xd8b45b, 0.72);
+    panel.strokeRoundedRect(8, y, w - 16, height, 8);
+    panel.fillStyle(0xffffff, 0.06);
+    panel.fillRoundedRect(10, y + 2, w - 20, 24, { tl: 7, tr: 7, bl: 0, br: 0 });
+    this.content.add(panel);
 
-  private emptyNote(): void {
     this.content.add(
-      this.add.text(16, 110, '（なし）', {
+      this.add
+        .sprite(60, y + height - 7, texture, frameIndex('down', 'idle', 0))
+        .setOrigin(0.5, 0.875)
+        .setScale(0.72),
+    );
+    this.content.add(
+      this.add.text(108, y + 12, job?.name ?? gs.jobId, {
         fontFamily: FONT,
-        fontSize: '13px',
-        color: '#7e8499',
+        fontSize: '16px',
+        color: '#ffe5a3',
       }),
+    );
+    this.content.add(
+      this.add.text(108, y + 36, `Lv ${gs.level}  ${tierLabel}`, {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#cdd8ef',
+      }),
+    );
+    this.content.add(
+      this.add.text(108, y + 56, `HP ${gs.hp}/${gs.derived.maxHp}   MP ${gs.mp}/${gs.derived.maxMp}`, {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#9fe3d0',
+      }),
+    );
+    this.content.add(
+      this.add.text(w - 16, y + 16, `物攻 ${gs.derived.physAtk}\n防御 ${gs.derived.def}`, {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#c9d6f0',
+        align: 'right',
+        lineSpacing: 5,
+      }).setOrigin(1, 0),
+    );
+  }
+
+  private emptyNote(kind: 'items' | 'consumables' | 'equipment', y = 118): void {
+    const info = kind === 'items'
+      ? { icon: TEX.iconGem, title: '素材はまだありません', body: '敵を倒したり、採集するとここに並びます。' }
+      : kind === 'consumables'
+        ? { icon: TEX.iconFlask, title: '消耗品はまだありません', body: '道具屋やクエスト報酬で入手できます。' }
+        : { icon: TEX.iconArmor, title: '装備はまだありません', body: '鍛冶屋で素材から装備を作ってみましょう。' };
+    const card = this.add.graphics();
+    card.fillStyle(0x162440, 0.9);
+    card.fillRoundedRect(16, y, this.scale.width - 32, 156, 8);
+    card.lineStyle(1, 0xd8b45b, 0.52);
+    card.strokeRoundedRect(16, y, this.scale.width - 32, 156, 8);
+    this.content.add(card);
+    this.content.add(this.add.image(this.scale.width / 2, y + 42, info.icon).setDisplaySize(32, 32).setTint(0xffd86b));
+    this.content.add(
+      this.add.text(this.scale.width / 2, y + 70, info.title, {
+        fontFamily: FONT,
+        fontSize: '15px',
+        color: '#ffffff',
+      }).setOrigin(0.5, 0),
+    );
+    this.content.add(
+      this.add.text(this.scale.width / 2, y + 101, info.body, {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#b9c3d9',
+        align: 'center',
+        wordWrap: { width: this.scale.width - 72 },
+      }).setOrigin(0.5, 0),
     );
   }
 
@@ -368,7 +448,7 @@ export class InventoryScene extends Phaser.Scene {
 
   private renderItems(): void {
     const entries = Object.entries(gameState.materials).filter(([, q]) => q > 0);
-    if (entries.length === 0) return this.emptyNote();
+    if (entries.length === 0) return this.emptyNote('items');
     let y = 100;
     let band = 0;
     const rowH = 40;
@@ -398,7 +478,7 @@ export class InventoryScene extends Phaser.Scene {
 
   private renderConsumables(): void {
     const entries = Object.entries(gameState.consumables).filter(([, q]) => q > 0);
-    if (entries.length === 0) return this.emptyNote();
+    if (entries.length === 0) return this.emptyNote('consumables');
     let y = 100;
     let band = 0;
     const rowH = 46;
@@ -448,6 +528,7 @@ export class InventoryScene extends Phaser.Scene {
   }
 
   private renderEquipment(): void {
+    this.renderProfileCard(94, 82);
     this.buildSlotChips();
     // Group identical owned pieces into one row with a count (no random
     // options yet, so duplicates are fungible).
@@ -455,7 +536,7 @@ export class InventoryScene extends Phaser.Scene {
     for (const id of gameState.equipmentOwned) {
       if (getEquipment(id)) counts.set(id, (counts.get(id) ?? 0) + 1);
     }
-    let y = 124;
+    let y = 258;
     // 部位ごとのセクションに分け、各セクション内は「装備中 → 今そうび
     // できる強い順（レア度→Lv）→ 職業/段階で装備不可」。取得順のごちゃ
     // 混ぜをやめて、常に同じ場所に同じ部位が並ぶ。
@@ -502,9 +583,8 @@ export class InventoryScene extends Phaser.Scene {
       y += 6;
     }
     if (total === 0) {
-      this.content.add(
-        this.add.text(16, 130, '（なし）', { fontFamily: FONT, fontSize: '13px', color: '#7e8499' }),
-      );
+      this.emptyNote('equipment', 264);
+      y = 430;
     }
 
     const d = gameState.derived;
@@ -661,22 +741,23 @@ export class InventoryScene extends Phaser.Scene {
   private renderStatus(): void {
     const w = this.scale.width;
     const gs = gameState;
+    this.renderProfileCard(94, 92);
     this.content.add(
-      this.add.text(16, 96, `Lv ${gs.level}  ${getJob(gs.jobId)?.name ?? gs.jobId}`, {
+      this.add.text(16, 198, 'ステータス振り分け', {
         fontFamily: FONT,
         fontSize: '14px',
-        color: '#fff',
+        color: '#ffe5a3',
       }),
     );
     this.content.add(
-      this.add.text(w - 16, 96, `EXP ${gs.exp}/${expToNext(gs.level)}`, {
+      this.add.text(w - 16, 199, `EXP ${gs.exp}/${expToNext(gs.level)}`, {
         fontFamily: FONT,
         fontSize: '12px',
         color: '#9aa0b5',
       }).setOrigin(1, 0),
     );
     this.content.add(
-      this.add.text(16, 118, `余りポイント: ${gs.statPoints}`, {
+      this.add.text(16, 220, `余りポイント: ${gs.statPoints}`, {
         fontFamily: FONT,
         fontSize: '13px',
         color: gs.statPoints > 0 ? '#ffe9a8' : '#9aa0b5',
@@ -690,7 +771,7 @@ export class InventoryScene extends Phaser.Scene {
       { key: 'DEX', label: '器 DEX' },
       { key: 'LUK', label: '運 LUK' },
     ];
-    let y = 148;
+    let y = 248;
     let band = 0;
     for (const s of stats) {
       this.content.add(rowBand(this, y, 30, band++));

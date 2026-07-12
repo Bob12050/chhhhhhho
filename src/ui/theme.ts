@@ -171,14 +171,18 @@ export function tabChip(
   width: number,
   label: string,
   onTap: () => void,
+  opts?: { icon?: string },
 ): TabHandle {
   const h = 34; // finger-sized (30 was too easy to miss on device)
   const bw = width - 4;
   const txt = scene.add
-    .text(0, 0, label, { fontFamily: FONT, fontSize: '13px', color: '#fff' })
+    .text(opts?.icon ? 8 : 0, 0, label, { fontFamily: FONT, fontSize: '13px', color: '#fff' })
     .setOrigin(0.5);
   const g = scene.add.graphics();
-  const root = scene.add.container(cx, cy, [g, txt]);
+  const icon = opts?.icon && scene.textures.exists(opts.icon)
+    ? scene.add.image(-14, 0, opts.icon).setDisplaySize(14, 14)
+    : null;
+  const root = scene.add.container(cx, cy, icon ? [g, icon, txt] : [g, txt]);
   // Argless setInteractive derives the hit rect from setSize — correct for
   // Phaser 4 containers, whose displayOrigin is size/2 and gets ADDED to the
   // hit-test point. A manual centred Rectangle(-bw/2, -h/2, …) here shifted
@@ -198,6 +202,7 @@ export function tabChip(
     g.lineStyle(1, 0xffffff, active ? 0.18 : 0.06);
     g.strokeRoundedRect(-bw / 2, -h / 2, bw, h, { tl: r, tr: r, bl: 4, br: 4 });
     txt.setColor(active ? '#ffffff' : '#a7adc2');
+    icon?.setTint(active ? 0xffd86b : 0x8992ad);
   };
   draw(false);
   return { root, setActive: draw };
@@ -257,12 +262,19 @@ export function pillButton(
  * title/tabs or the close row. Header/footer text/buttons should be depth >= 3.
  * (Geometry masks proved unreliable in this Phaser build, so we cover instead.)
  */
-export function addPanelChrome(scene: Phaser.Scene, viewTop: number, viewBottom: number): void {
+export function addPanelChrome(
+  scene: Phaser.Scene,
+  viewTop: number,
+  viewBottom: number,
+  opts?: { backdropAlpha?: number; chromeColor?: number; chromeAlpha?: number },
+): void {
   const w = scene.scale.width;
   const h = scene.scale.height;
-  scene.add.rectangle(0, 0, w, h, UI.overlay, 1).setOrigin(0).setDepth(0);
-  scene.add.rectangle(0, 0, w, viewTop, UI.overlay, 1).setOrigin(0).setDepth(2);
-  scene.add.rectangle(0, viewBottom, w, h - viewBottom, UI.overlay, 1).setOrigin(0).setDepth(2);
+  const chromeColor = opts?.chromeColor ?? UI.overlay;
+  const chromeAlpha = opts?.chromeAlpha ?? 1;
+  scene.add.rectangle(0, 0, w, h, UI.overlay, opts?.backdropAlpha ?? 1).setOrigin(0).setDepth(0);
+  scene.add.rectangle(0, 0, w, viewTop, chromeColor, chromeAlpha).setOrigin(0).setDepth(2);
+  scene.add.rectangle(0, viewBottom, w, h - viewBottom, chromeColor, chromeAlpha).setOrigin(0).setDepth(2);
   // Soft light dividers along the header/footer edges (subtle, not a hard gold
   // hairline — that read as dated).
   scene.add.rectangle(0, viewTop - 1, w, 1, 0xffffff, 0.1).setOrigin(0).setDepth(3);
