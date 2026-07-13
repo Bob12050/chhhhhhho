@@ -109,11 +109,11 @@ try {
   await page.evaluate(() => window.__test.powerUp(30));
   // ランダムウォークだと足の速いコウモリを先に倒してスライムに一度も
   // 当たらないレースがあった（フレークの正体）。マップを入り直して
-  // スポーン座標 (180,900) の真下へワープ→全方向斬りの決定的手順にする。
+  // スポーン座標 (320,720) の真下へワープ→全方向斬りの決定的手順にする。
   for (let attempt = 0; attempt < 8; attempt++) {
     await page.evaluate(() => window.__test.warp('town'));
     await page.waitForTimeout(500);
-    await page.evaluate(() => window.__test.warp('field', 180, 940));
+    await page.evaluate(() => window.__test.warp('field', 320, 760));
     await page.waitForTimeout(900);
     if (attempt === 0) {
       const fieldGuide = await snap(page);
@@ -131,6 +131,18 @@ try {
           && fieldGuide.combatTarget.current === fieldGuide.combatTarget.max,
         JSON.stringify(fieldGuide.combatTarget),
       );
+      await page.keyboard.down('d'); await page.waitForTimeout(1600); await page.keyboard.up('d');
+      const wideField = await snap(page);
+      check('草原を旧マップ幅より右まで探索できる', wideField.x > 430, `x=${Math.round(wideField.x)}`);
+
+      await page.evaluate(() => window.__test.warp('field', 72, 444));
+      await page.waitForTimeout(600);
+      await page.keyboard.down('a'); await page.waitForTimeout(900); await page.keyboard.up('a');
+      await page.waitForTimeout(900);
+      const sideExit = await snap(page);
+      check('広い草原の横道から森へ移動できる', sideExit.mapId === 'forest', `mapId=${sideExit.mapId}`);
+      await page.evaluate(() => window.__test.warp('field', 320, 760));
+      await page.waitForTimeout(900);
     }
     for (let lap = 0; lap < 3; lap++) {
       for (const k of ['w', 'a', 's', 'd']) {
