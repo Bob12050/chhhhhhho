@@ -242,8 +242,8 @@ export function buildMap(scene: Phaser.Scene, map: MapDef): BuiltMap {
       ease: 'Sine.InOut',
     });
 
-    // Arrow points off the nearer edge (top exit -> up, bottom exit -> down).
-    const exitUp = cy < h / 2;
+    // Interior gates can override the usual top/bottom arrow direction.
+    const exitUp = p.direction ? p.direction === 'up' : cy < h / 2;
     const arrow = scene.add
       .text(cx, exitUp ? cy + ph : cy - ph, exitUp ? '▲' : '▼', {
         fontFamily: FONT,

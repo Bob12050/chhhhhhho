@@ -200,6 +200,54 @@ try {
         canyonEntrance.mapId === 'dungeon' && canyonEntrance.x > 190,
         `mapId=${canyonEntrance.mapId} x=${Math.round(canyonEntrance.x)}`,
       );
+      await page.evaluate(() => window.__test.warp('canyon'));
+      await page.waitForTimeout(700);
+      const canyonTexture = await page.evaluate(() =>
+        window.__test.textureSize('art.map.canyon.storybook'));
+      check(
+        '渓谷背景が拡張版640×960で読み込まれる',
+        canyonTexture?.width === 640 && canyonTexture?.height === 960,
+        JSON.stringify(canyonTexture),
+      );
+      await page.evaluate(() => window.__test.warp('canyon', 320, 830));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
+      const caveMouth = await snap(page);
+      check('渓谷の洞穴から洞窟へ戻れる', caveMouth.mapId === 'dungeon', `mapId=${caveMouth.mapId}`);
+      await page.evaluate(() => window.__test.warp('canyon', 320, 870));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(400); await page.keyboard.up('w');
+      await page.keyboard.down('a'); await page.waitForTimeout(1500); await page.keyboard.up('a');
+      await page.keyboard.down('w'); await page.waitForTimeout(1100); await page.keyboard.up('w');
+      const mesaTrail = await snap(page);
+      check(
+        '洞窟前広場から左の高台道へ上がれる',
+        mesaTrail.mapId === 'canyon' && mesaTrail.x < 210 && mesaTrail.y < 740,
+        `mapId=${mesaTrail.mapId} x=${Math.round(mesaTrail.x)} y=${Math.round(mesaTrail.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('canyon', 545, 445));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('a'); await page.waitForTimeout(1400); await page.keyboard.up('a');
+      const lowerBridge = await snap(page);
+      check(
+        '渓谷の下側吊り橋を渡れる',
+        lowerBridge.mapId === 'canyon' && lowerBridge.x < 430,
+        `mapId=${lowerBridge.mapId} x=${Math.round(lowerBridge.x)}`,
+      );
+      await page.evaluate(() => window.__test.warp('canyon', 535, 300));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('a'); await page.waitForTimeout(1300); await page.keyboard.up('a');
+      const upperBridge = await snap(page);
+      check(
+        '渓谷の上側吊り橋を渡れる',
+        upperBridge.mapId === 'canyon' && upperBridge.x < 430,
+        `mapId=${upperBridge.mapId} x=${Math.round(upperBridge.x)}`,
+      );
+      await page.evaluate(() => window.__test.warp('canyon', 320, 116));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
+      const volcanoPass = await snap(page);
+      check('渓谷上部から火山へ進める', volcanoPass.mapId === 'volcano', `mapId=${volcanoPass.mapId}`);
       await page.evaluate(() => window.__test.warp('field', 320, 760));
       await page.waitForTimeout(900);
     }
