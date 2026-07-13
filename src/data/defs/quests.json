@@ -858,6 +858,9 @@
         "minLevel": 80
       },
       "huntMap": "arena_abyss",
+      "huntModifiers": {
+        "hpMult": 1.35
+      },
       "rewards": {
         "gold": 1000,
         "exp": 10000,
@@ -2377,6 +2380,9 @@
         "questDone": "hunt_knight_dread"
       },
       "huntMap": "arena_ruins",
+      "huntModifiers": {
+        "hpMult": 1.5
+      },
       "rewards": {
         "gold": 2300,
         "exp": 12000,
@@ -2433,6 +2439,9 @@
         "questDone": "hunt_r7_03_crimson"
       },
       "huntMap": "arena_abyss",
+      "huntModifiers": {
+        "hpMult": 1.55
+      },
       "rewards": {
         "gold": 3000,
         "exp": 15500,
@@ -2466,6 +2475,9 @@
         "questDone": "hunt_slime_abyss"
       },
       "huntMap": "arena_abyss",
+      "huntModifiers": {
+        "hpMult": 1.4
+      },
       "rewards": {
         "gold": 2400,
         "exp": 12500,
@@ -2499,6 +2511,9 @@
         "questDone": "hunt_r7_01_flarelis"
       },
       "huntMap": "arena_frost",
+      "huntModifiers": {
+        "dmgMult": 0.9
+      },
       "rewards": {
         "gold": 3200,
         "exp": 16000,
@@ -2586,6 +2601,9 @@
         "questDone": "hunt_r7_04_almagia"
       },
       "huntMap": "arena_abyss",
+      "huntModifiers": {
+        "dmgMult": 0.9
+      },
       "rewards": {
         "gold": 3800,
         "exp": 19000,
