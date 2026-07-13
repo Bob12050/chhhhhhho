@@ -215,6 +215,16 @@ export class WorldScene extends Phaser.Scene {
     // Player. Appearance is job-fixed; equipment only changes stats.
     // Map dimensions can change between releases; keep old saves inside the
     // current walkable world instead of spawning beyond a shortened edge.
+    if (this.map.id === 'town' && !gameState.flags['town_wide_v1']) {
+      const atCurrentSpawn = Object.values(this.map.spawns).some(
+        ([x, y]) => Math.abs(gameState.x - x) < 2 && Math.abs(gameState.y - y) < 2,
+      );
+      if (!atCurrentSpawn) {
+        gameState.x = 250 + (gameState.x - 180) * (this.map.size.w / 360);
+        gameState.y *= this.map.size.h / 800;
+      }
+      gameState.flags['town_wide_v1'] = true;
+    }
     // The original field was 360x1280. Saves parked near its lower gate would
     // otherwise clamp into the wide map's lower-left scenery after the resize.
     if (this.map.id === 'field' && gameState.y >= this.map.size.h - 32) {
