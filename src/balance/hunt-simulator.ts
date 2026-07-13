@@ -1,8 +1,8 @@
 import { mitigateDamage, MITIGATION_K } from '@/combat/mitigation';
 import { allRecipes } from '@/crafting/recipes';
 import { Rng } from '@/core/rng';
-import { allEquipment, getEquipment, itemDisplayName, type EquipmentDef } from '@/data/items';
-import { allEnemyDefs, getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
+import { allEquipment, itemDisplayName, type EquipmentDef } from '@/data/items';
+import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
 import { EQUIP_SLOTS } from '@/equipment/slots';
 import { getDropTable, type DropEntry } from '@/loot/drop-table';
 import {
@@ -66,6 +66,7 @@ export interface HuntSimulationResult {
     defense: number;
     effectiveDps: number;
     dropBonus: number;
+    gearIds: string[];
     gearNames: string[];
   };
   encounter: {
@@ -139,17 +140,84 @@ interface DropAccumulator {
   runsWithDrop: number;
 }
 
-const craftable = new Set(allRecipes().map((recipe) => recipe.resultItemId));
-const droppable = new Set<string>();
-for (const enemy of allEnemyDefs()) {
-  const table = enemy.dropTableId ? getDropTable(enemy.dropTableId) : undefined;
-  for (const entry of table?.entries ?? []) {
-    if (getEquipment(entry.itemId)) droppable.add(entry.itemId);
+const recipes = allRecipes();
+const recipeResults = new Set(recipes.map((recipe) => recipe.resultItemId));
+const sourceLevelByItem = new Map<string, number>();
+const quests = allQuests();
+const questLevelById = new Map(
+  quests.map((quest) => [quest.id, quest.require?.minLevel ?? 1]),
+);
+
+// A quest cannot provide materials before its prerequisite is itself reachable.
+for (let pass = 0; pass < quests.length; pass++) {
+  let changed = false;
+  for (const quest of quests) {
+    const prerequisite = quest.require?.questDone
+      ? questLevelById.get(quest.require.questDone)
+      : undefined;
+    if (prerequisite === undefined) continue;
+    const current = questLevelById.get(quest.id) ?? 1;
+    const next = Math.max(current, prerequisite);
+    if (next === current) continue;
+    questLevelById.set(quest.id, next);
+    changed = true;
+  }
+  if (!changed) break;
+}
+
+function recordItemSource(itemId: string, level: number): void {
+  const current = sourceLevelByItem.get(itemId);
+  if (current === undefined || level < current) sourceLevelByItem.set(itemId, level);
+}
+
+for (const quest of quests) {
+  const sourceLevel = questLevelById.get(quest.id) ?? 1;
+  for (const itemId of Object.keys(quest.rewards.items ?? {})) {
+    recordItemSource(itemId, sourceLevel);
+  }
+  for (const objective of quest.objectives) {
+    const enemy = getEnemyDef(objective.enemyId);
+    const table = enemy?.dropTableId ? getDropTable(enemy.dropTableId) : undefined;
+    for (const entry of table?.entries ?? []) {
+      if (entry.dropRate > 0 || entry.bossFirstGuaranteed) {
+        recordItemSource(entry.itemId, sourceLevel);
+      }
+    }
   }
 }
 
-function isObtainable(equipment: EquipmentDef): boolean {
-  return craftable.has(equipment.id) || droppable.has(equipment.id);
+// Resolve crafting chains. Unknown raw materials are treated as starter-world
+// resources; known boss materials retain the earliest quest level that yields them.
+for (let pass = 0; pass <= recipes.length; pass++) {
+  let changed = false;
+  for (const recipe of recipes) {
+    const ingredients = [
+      ...Object.keys(recipe.materials),
+      ...(recipe.consumeEquipment ?? []),
+    ];
+    let sourceLevel = 1;
+    let resolved = true;
+    for (const itemId of ingredients) {
+      const knownLevel = sourceLevelByItem.get(itemId);
+      if (knownLevel !== undefined) {
+        sourceLevel = Math.max(sourceLevel, knownLevel);
+      } else if (recipeResults.has(itemId)) {
+        resolved = false;
+        break;
+      }
+    }
+    if (!resolved) continue;
+    const current = sourceLevelByItem.get(recipe.resultItemId);
+    if (current !== undefined && current <= sourceLevel) continue;
+    sourceLevelByItem.set(recipe.resultItemId, sourceLevel);
+    changed = true;
+  }
+  if (!changed) break;
+}
+
+function isObtainableAtLevel(equipment: EquipmentDef, level: number): boolean {
+  const sourceLevel = sourceLevelByItem.get(equipment.id);
+  return sourceLevel !== undefined && sourceLevel <= level;
 }
 
 function gearScore(equipment: EquipmentDef): number {
@@ -173,7 +241,7 @@ function bestSwordGear(level: number): EquipmentDef[] {
       (entry) =>
         entry.slot === slot &&
         entry.levelRequirement <= level &&
-        isObtainable(entry) &&
+        isObtainableAtLevel(entry, level) &&
         (slot !== 'main_hand' || (entry.weaponTags ?? []).includes('sword')),
     );
     pool.sort((a, b) => gearScore(b) - gearScore(a));
@@ -534,6 +602,7 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
       defense: derived.def,
       effectiveDps,
       dropBonus: derived.dropRate,
+      gearIds: gear.map((entry) => entry.id),
       gearNames: gear.map((entry) => entry.name),
     },
     encounter: {

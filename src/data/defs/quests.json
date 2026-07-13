@@ -798,6 +798,9 @@
         "minLevel": 56
       },
       "huntMap": "arena_frost",
+      "huntModifiers": {
+        "hpMult": 1.5
+      },
       "rewards": {
         "gold": 500,
         "exp": 5000,
@@ -1814,6 +1817,9 @@
         "questDone": "hunt_wolf_alpha"
       },
       "huntMap": "arena_plain",
+      "huntModifiers": {
+        "hpMult": 1.4
+      },
       "rewards": {
         "gold": 1050,
         "exp": 5400,
@@ -1874,6 +1880,9 @@
         "questDone": "hunt_wisp_queen"
       },
       "huntMap": "arena_frost",
+      "huntModifiers": {
+        "hpMult": 1.4
+      },
       "rewards": {
         "gold": 1100,
         "exp": 5600,
@@ -1907,6 +1916,9 @@
         "questDone": "hunt_r5_01_azvurm"
       },
       "huntMap": "arena_volcano",
+      "huntModifiers": {
+        "hpMult": 1.2
+      },
       "rewards": {
         "gold": 1400,
         "exp": 7000,
@@ -1936,6 +1948,9 @@
         "questDone": "hunt_lizard_king"
       },
       "huntMap": "arena_frost",
+      "huntModifiers": {
+        "hpMult": 1.3
+      },
       "rewards": {
         "gold": 900,
         "exp": 4600,
@@ -1963,6 +1978,9 @@
         "minLevel": 48
       },
       "huntMap": "arena_frost",
+      "huntModifiers": {
+        "hpMult": 2.0
+      },
       "rewards": {
         "gold": 700,
         "exp": 3800,

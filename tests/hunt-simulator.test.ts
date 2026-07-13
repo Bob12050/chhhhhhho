@@ -33,6 +33,14 @@ describe('hunt balance simulator', () => {
     );
   });
 
+  it('does not equip gear before its material source is reachable', () => {
+    const queen = simulateHunt({ questId: 'hunt_wisp_queen', runs: 10, seed: 1 });
+    const veteran = simulateHunt({ questId: 'hunt_r5_08_veteran_wisp', runs: 10, seed: 1 });
+
+    expect(queen.player.gearIds).not.toContain('sandgoa_plate');
+    expect(veteran.player.gearIds.some((id) => id.startsWith('thunderpeal_'))).toBe(false);
+  });
+
   it('exposes repeatable hunts grouped across all seven ranks', () => {
     const quests = huntSimulationQuests();
     const ranks = new Set(quests.map((quest) => quest.rank));
@@ -70,9 +78,9 @@ describe('hunt balance simulator', () => {
     expect(multi.target.ttkSec).toBeGreaterThan(boss.target.ttkSec);
   });
 
-  it('keeps all rank 1-4 hunts out of urgent tuning at the benchmark', () => {
+  it('keeps all rank 1-5 hunts out of urgent tuning at the benchmark', () => {
     const early = simulateHuntBatch({ runs: 300 }).entries.filter(
-      (entry) => entry.result.rank <= 4,
+      (entry) => entry.result.rank <= 5,
     );
     expect(early).not.toHaveLength(0);
     expect(early.every((entry) => entry.status === 'good')).toBe(true);
