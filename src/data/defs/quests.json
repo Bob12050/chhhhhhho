@@ -828,6 +828,9 @@
         "minLevel": 68
       },
       "huntMap": "arena_ruins",
+      "huntModifiers": {
+        "hpMult": 1.65
+      },
       "rewards": {
         "gold": 700,
         "exp": 7000,
@@ -2067,6 +2070,9 @@
         "questDone": "hunt_mushroom"
       },
       "huntMap": "arena_swamp",
+      "huntModifiers": {
+        "hpMult": 1.5
+      },
       "rewards": {
         "gold": 1500,
         "exp": 7500,
@@ -2156,6 +2162,9 @@
         "questDone": "hunt_knight_dread"
       },
       "huntMap": "arena_ruins",
+      "huntModifiers": {
+        "hpMult": 1.4
+      },
       "rewards": {
         "gold": 1650,
         "exp": 8400,
@@ -2189,6 +2198,9 @@
         "questDone": "hunt_r6_02_varganos"
       },
       "huntMap": "arena_ruins",
+      "huntModifiers": {
+        "dmgMult": 0.75
+      },
       "rewards": {
         "gold": 2200,
         "exp": 11000,
@@ -2218,6 +2230,9 @@
         "questDone": "hunt_r5_03_sandgoa"
       },
       "huntMap": "arena_ruins",
+      "huntModifiers": {
+        "hpMult": 1.3
+      },
       "rewards": {
         "gold": 1400,
         "exp": 7000,
@@ -2245,6 +2260,9 @@
         "minLevel": 62
       },
       "huntMap": "arena_ruins",
+      "huntModifiers": {
+        "hpMult": 2.0
+      },
       "rewards": {
         "gold": 1200,
         "exp": 6200,
