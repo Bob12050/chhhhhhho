@@ -164,6 +164,42 @@ try {
         forestLoop.mapId === 'forest' && forestLoop.y < 390,
         `mapId=${forestLoop.mapId} y=${Math.round(forestLoop.y)}`,
       );
+      await page.evaluate(() => window.__test.warp('dungeon'));
+      await page.waitForTimeout(700);
+      const dungeonTexture = await page.evaluate(() =>
+        window.__test.textureSize('art.map.dungeon.storybook'));
+      check(
+        '洞窟背景が拡張版640×960で読み込まれる',
+        dungeonTexture?.width === 640 && dungeonTexture?.height === 960,
+        JSON.stringify(dungeonTexture),
+      );
+      await page.evaluate(() => window.__test.warp('dungeon', 320, 340));
+      await page.waitForTimeout(500);
+      await page.keyboard.down('d'); await page.waitForTimeout(1500); await page.keyboard.up('d');
+      const crystalBranch = await snap(page);
+      check(
+        '洞窟の水晶泉側へ分岐して探索できる',
+        crystalBranch.mapId === 'dungeon' && crystalBranch.x > 430,
+        `mapId=${crystalBranch.mapId} x=${Math.round(crystalBranch.x)}`,
+      );
+      await page.evaluate(() => window.__test.warp('dungeon', 200, 520));
+      await page.waitForTimeout(500);
+      await page.keyboard.down('w'); await page.waitForTimeout(1500); await page.keyboard.up('w');
+      const mineBranch = await snap(page);
+      check(
+        '洞窟の採掘坑道を北へ通り抜けられる',
+        mineBranch.mapId === 'dungeon' && mineBranch.y < 400,
+        `mapId=${mineBranch.mapId} y=${Math.round(mineBranch.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('dungeon', 78, 328));
+      await page.waitForTimeout(500);
+      await page.keyboard.down('d'); await page.waitForTimeout(1500); await page.keyboard.up('d');
+      const canyonEntrance = await snap(page);
+      check(
+        '渓谷側の横穴から洞窟中央へ入れる',
+        canyonEntrance.mapId === 'dungeon' && canyonEntrance.x > 190,
+        `mapId=${canyonEntrance.mapId} x=${Math.round(canyonEntrance.x)}`,
+      );
       await page.evaluate(() => window.__test.warp('field', 320, 760));
       await page.waitForTimeout(900);
     }

@@ -241,6 +241,19 @@ export class WorldScene extends Phaser.Scene {
       gameState.y = entry.y;
       gameState.flags['forest_wide_v1'] = true;
     }
+    // The old cave used a 360x1280 corridor. Preserve a freshly selected
+    // portal spawn, but move an old in-cave save to the new grassland entrance.
+    if (this.map.id === 'dungeon' && !gameState.flags['dungeon_wide_v1']) {
+      const atCurrentSpawn = Object.values(this.map.spawns).some(
+        ([x, y]) => Math.abs(gameState.x - x) < 2 && Math.abs(gameState.y - y) < 2,
+      );
+      if (!atCurrentSpawn) {
+        const entry = spawnPoint(this.map, 'from_field');
+        gameState.x = entry.x;
+        gameState.y = entry.y;
+      }
+      gameState.flags['dungeon_wide_v1'] = true;
+    }
     gameState.x = Phaser.Math.Clamp(gameState.x, 24, this.map.size.w - 24);
     gameState.y = Phaser.Math.Clamp(gameState.y, 32, this.map.size.h - 32);
     const savedInsideScenery = [

@@ -88,7 +88,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.townMap, 'assets/maps/town-storybook-wide-v2.png'),
   img(TEX.fieldMap, 'assets/maps/field-storybook-wide-v2.png'),
   img(TEX.forestMap, 'assets/maps/forest-storybook-wide-v2.png'),
-  img(TEX.dungeonMap, 'assets/maps/dungeon-storybook.png'),
+  img(TEX.dungeonMap, 'assets/maps/dungeon-storybook-wide-v2.png'),
   img(TEX.canyonMap, 'assets/maps/canyon-storybook.png'),
   img(TEX.volcanoMap, 'assets/maps/volcano-storybook.png'),
   img(TEX.snowfieldMap, 'assets/maps/snowfield-storybook.png'),
