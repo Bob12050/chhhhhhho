@@ -73,6 +73,7 @@ export class InventoryScene extends Phaser.Scene {
   private profileObjs: Phaser.GameObjects.GameObject[] = [];
   private skillView: 'loadout' | 'learn' = 'loadout';
   private selectedSkillSlot = 0;
+  private skillRefreshPending = false;
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
@@ -87,6 +88,7 @@ export class InventoryScene extends Phaser.Scene {
     this.tab = data.tab ?? 'items';
     this.skillView = 'loadout';
     this.selectedSkillSlot = 0;
+    this.skillRefreshPending = false;
   }
 
   create(): void {
@@ -853,6 +855,16 @@ export class InventoryScene extends Phaser.Scene {
     return '習得不可';
   }
 
+  /** Coalesce taps and rebuild after Phaser has finished dispatching input. */
+  private refreshSkillTab(): void {
+    if (this.skillRefreshPending) return;
+    this.skillRefreshPending = true;
+    this.time.delayedCall(16, () => {
+      this.skillRefreshPending = false;
+      if (this.scene.isActive()) this.renderTab();
+    });
+  }
+
   private renderSkillModeBar(): void {
     const w = this.scale.width;
     const strip = this.add
@@ -862,12 +874,14 @@ export class InventoryScene extends Phaser.Scene {
       .setInteractive();
     const divider = this.add.rectangle(0, 149, w, 1, 0xffffff, 0.1).setOrigin(0).setDepth(3);
     const loadout = tabChip(this, 60, 116, 104, 'セット', () => {
+      if (this.skillView === 'loadout') return;
       this.skillView = 'loadout';
-      this.renderTab();
+      this.refreshSkillTab();
     });
     const learn = tabChip(this, 168, 116, 104, '習得', () => {
+      if (this.skillView === 'learn') return;
       this.skillView = 'learn';
-      this.renderTab();
+      this.refreshSkillTab();
     });
     loadout.setActive(this.skillView === 'loadout');
     learn.setActive(this.skillView === 'learn');
@@ -908,11 +922,18 @@ export class InventoryScene extends Phaser.Scene {
       const x = 8 + i * (cardW + gap);
       const selected = this.selectedSkillSlot === i;
       const def = gs.skillSlots[i] ? getSkill(gs.skillSlots[i]!) : undefined;
-      const card = this.add.graphics().setDepth(3);
-      card.fillStyle(selected ? 0x213d5a : 0x191e31, 1);
-      card.fillRoundedRect(x, cardY, cardW, cardH, 7);
-      card.lineStyle(selected ? 2 : 1, selected ? 0xf5c542 : 0xffffff, selected ? 0.95 : 0.12);
-      card.strokeRoundedRect(x, cardY, cardW, cardH, 7);
+      const card = this.add
+        .rectangle(
+          x + cardW / 2,
+          cardY + cardH / 2,
+          cardW,
+          cardH,
+          selected ? 0x213d5a : 0x191e31,
+          1,
+        )
+        .setStrokeStyle(selected ? 2 : 1, selected ? 0xf5c542 : 0xffffff, selected ? 0.95 : 0.12)
+        .setDepth(3)
+        .setInteractive({ useHandCursor: true });
       const slot = this.add
         .text(x + 10, cardY + 9, `S${i + 1}`, {
           fontFamily: FONT,
@@ -946,16 +967,12 @@ export class InventoryScene extends Phaser.Scene {
           color: '#9fb5cf',
         })
         .setDepth(3);
-      const hit = this.add
-        .rectangle(x, cardY, cardW, cardH, 0xffffff, 0.001)
-        .setOrigin(0)
-        .setDepth(4)
-        .setInteractive({ useHandCursor: true });
-      hit.on('pointerup', () => {
+      card.on('pointerup', () => {
+        if (this.selectedSkillSlot === i) return;
         this.selectedSkillSlot = i;
-        this.renderTab();
+        this.refreshSkillTab();
       });
-      this.profileObjs.push(card, slot, state, name, meta, hit);
+      this.profileObjs.push(card, slot, state, name, meta);
     }
     const fixedDivider = this.add.rectangle(0, 273, w, 1, 0xffffff, 0.1).setOrigin(0).setDepth(3);
     this.profileObjs.push(fixedDivider);
@@ -1001,7 +1018,7 @@ export class InventoryScene extends Phaser.Scene {
       );
       const learn = pillButton(this, w / 2, y + 60, '技を習得', () => {
         this.skillView = 'learn';
-        this.renderTab();
+        this.refreshSkillTab();
       }, { size: 12, bg: '#304b70', color: '#ffffff' });
       this.content.add(learn);
       return;
@@ -1011,11 +1028,10 @@ export class InventoryScene extends Phaser.Scene {
     for (const def of available) {
       const slot = gs.skillSlots.indexOf(def.id);
       const equippedHere = slot === this.selectedSkillSlot;
-      const bg = this.add.graphics();
-      bg.fillStyle(equippedHere ? 0x1f3a3b : 0x191e31, 0.96);
-      bg.fillRoundedRect(8, y, w - 16, rowH - 4, 7);
-      bg.lineStyle(1, equippedHere ? 0x79d6ad : 0xffffff, equippedHere ? 0.72 : 0.08);
-      bg.strokeRoundedRect(8, y, w - 16, rowH - 4, 7);
+      const bg = this.add
+        .rectangle(w / 2, y + (rowH - 4) / 2, w - 16, rowH - 4, equippedHere ? 0x1f3a3b : 0x191e31, 0.96)
+        .setStrokeStyle(1, equippedHere ? 0x79d6ad : 0xffffff, equippedHere ? 0.72 : 0.08)
+        .setInteractive({ useHandCursor: true });
       this.content.add(bg);
       this.content.add(
         this.add.text(18, y + 8, def.name, {
@@ -1053,16 +1069,11 @@ export class InventoryScene extends Phaser.Scene {
           })
           .setOrigin(1, 0.5),
       );
-      const hit = this.add
-        .rectangle(8, y, w - 16, rowH - 4, 0xffffff, 0.001)
-        .setOrigin(0)
-        .setInteractive({ useHandCursor: true });
-      hit.on('pointerup', () => {
+      bg.on('pointerup', () => {
         if (this.dragged || equippedHere) return;
         gs.assignSkill(this.selectedSkillSlot, def.id);
-        this.renderTab();
+        this.refreshSkillTab();
       });
-      this.content.add(hit);
       y += rowH;
     }
   }
@@ -1092,11 +1103,9 @@ export class InventoryScene extends Phaser.Scene {
         const learned = !!gs.skills[def.id];
         const block = learned ? 'known' : gs.skillLearnBlock(def.id);
         const rowH = 64;
-        const bg = this.add.graphics();
-        bg.fillStyle(learned ? 0x1c3032 : 0x191e31, 0.96);
-        bg.fillRoundedRect(8, y, w - 16, rowH - 4, 7);
-        bg.lineStyle(1, learned ? 0x66b58f : 0xffffff, learned ? 0.4 : 0.08);
-        bg.strokeRoundedRect(8, y, w - 16, rowH - 4, 7);
+        const bg = this.add
+          .rectangle(w / 2, y + (rowH - 4) / 2, w - 16, rowH - 4, learned ? 0x1c3032 : 0x191e31, 0.96)
+          .setStrokeStyle(1, learned ? 0x66b58f : 0xffffff, learned ? 0.4 : 0.08);
         this.content.add(bg);
         this.content.add(
           this.add.text(18, y + 8, def.name, {
@@ -1135,16 +1144,12 @@ export class InventoryScene extends Phaser.Scene {
             .setOrigin(1, 0.5),
         );
         if (!learned && block === null) {
-          const hit = this.add
-            .rectangle(8, y, w - 16, rowH - 4, 0xffffff, 0.001)
-            .setOrigin(0)
-            .setInteractive({ useHandCursor: true });
-          hit.on('pointerup', () => {
+          bg.setInteractive({ useHandCursor: true });
+          bg.on('pointerup', () => {
             if (this.dragged) return;
             gs.learnSkill(def.id);
-            this.renderTab();
+            this.refreshSkillTab();
           });
-          this.content.add(hit);
         }
         y += rowH;
       }
