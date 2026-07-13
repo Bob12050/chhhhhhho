@@ -93,7 +93,7 @@ export const ASSET_SPECS: AssetSpec[] = [
   tile('タイル:床', 'assets/tiles/floor.png'),
   { label: '街背景', src: 'assets/maps/town-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
   { label: '草原背景', src: 'assets/maps/field-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
-  { label: '森背景', src: 'assets/maps/forest-storybook.png', type: 'image', w: 360, h: 1024 },
+  { label: '森背景', src: 'assets/maps/forest-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
   { label: '洞窟背景', src: 'assets/maps/dungeon-storybook.png', type: 'image', w: 360, h: 1280 },
   { label: '渓谷背景', src: 'assets/maps/canyon-storybook.png', type: 'image', w: 360, h: 1152 },
   { label: '火山背景', src: 'assets/maps/volcano-storybook.png', type: 'image', w: 360, h: 1280 },

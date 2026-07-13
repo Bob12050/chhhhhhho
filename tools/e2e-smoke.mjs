@@ -148,6 +148,22 @@ try {
       await page.waitForTimeout(900);
       const sideExit = await snap(page);
       check('広い草原の横道から森へ移動できる', sideExit.mapId === 'forest', `mapId=${sideExit.mapId}`);
+      const forestTexture = await page.evaluate(() =>
+        window.__test.textureSize('art.map.forest.storybook'));
+      check(
+        '森背景が拡張版640×960で読み込まれる',
+        forestTexture?.width === 640 && forestTexture?.height === 960,
+        JSON.stringify(forestTexture),
+      );
+      await page.evaluate(() => window.__test.warp('forest', 430, 520));
+      await page.waitForTimeout(700);
+      await page.keyboard.down('w'); await page.waitForTimeout(1700); await page.keyboard.up('w');
+      const forestLoop = await snap(page);
+      check(
+        '森の大樹右側を回り込んで探索できる',
+        forestLoop.mapId === 'forest' && forestLoop.y < 390,
+        `mapId=${forestLoop.mapId} y=${Math.round(forestLoop.y)}`,
+      );
       await page.evaluate(() => window.__test.warp('field', 320, 760));
       await page.waitForTimeout(900);
     }

@@ -232,6 +232,15 @@ export class WorldScene extends Phaser.Scene {
       gameState.x = Phaser.Math.Clamp(gameState.x * (this.map.size.w / 360), 56, this.map.size.w - 56);
       gameState.y = entry.y;
     }
+    // The original forest was a narrow 360x1024 corridor. Its coordinates do
+    // not map cleanly onto the new looped grove, so place old saves at the new
+    // entrance once instead of letting them spawn inside a painted tree.
+    if (this.map.id === 'forest' && !gameState.flags['forest_wide_v1']) {
+      const entry = spawnPoint(this.map, 'from_field');
+      gameState.x = entry.x;
+      gameState.y = entry.y;
+      gameState.flags['forest_wide_v1'] = true;
+    }
     gameState.x = Phaser.Math.Clamp(gameState.x, 24, this.map.size.w - 24);
     gameState.y = Phaser.Math.Clamp(gameState.y, 32, this.map.size.h - 32);
     const savedInsideScenery = [
