@@ -66,6 +66,11 @@ export class DebugScene extends Phaser.Scene {
       this.scene.stop();
       this.scene.launch('Checklist');
     });
+    y += 40;
+    this.btn(16, y, '周回バランスラボ', () => {
+      this.scene.pause();
+      this.scene.launch('BalanceLab');
+    }, 0x275b55);
     y += 48;
 
     this.btn(w / 2 - 44, y, 'とじる', () => this.close(), 0xffd86b);
