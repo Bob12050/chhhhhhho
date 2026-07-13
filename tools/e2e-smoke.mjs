@@ -113,7 +113,10 @@ try {
 
   // ---- combat: field slime kill advances quest + bestiary + drops ----
   step = 'combat';
-  await page.evaluate(() => window.__test.powerUp(30));
+  // This suite validates combat flow, drops, quests and persistence rather
+  // than rank-2 balance. Extra durability keeps boss movement/attack RNG from
+  // killing the automation player before its keyboard path reaches melee.
+  await page.evaluate(() => window.__test.powerUp(60));
   // ランダムウォークだと足の速いコウモリを先に倒してスライムに一度も
   // 当たらないレースがあった（フレークの正体）。マップを入り直して
   // スポーン座標 (320,720) の真下へワープ→全方向斬りの決定的手順にする。
