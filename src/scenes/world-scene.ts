@@ -293,6 +293,19 @@ export class WorldScene extends Phaser.Scene {
       }
       gameState.flags['snowfield_wide_v1'] = true;
     }
+    // The old desert was a narrow 360x1280 trail. Preserve new portal arrivals,
+    // while moving old in-desert saves to the snowy southern gate.
+    if (this.map.id === 'desert' && !gameState.flags['desert_wide_v1']) {
+      const atCurrentSpawn = Object.values(this.map.spawns).some(
+        ([x, y]) => Math.abs(gameState.x - x) < 2 && Math.abs(gameState.y - y) < 2,
+      );
+      if (!atCurrentSpawn) {
+        const entry = spawnPoint(this.map, 'from_snowfield');
+        gameState.x = entry.x;
+        gameState.y = entry.y;
+      }
+      gameState.flags['desert_wide_v1'] = true;
+    }
     gameState.x = Phaser.Math.Clamp(gameState.x, 24, this.map.size.w - 24);
     gameState.y = Phaser.Math.Clamp(gameState.y, 32, this.map.size.h - 32);
     const savedInsideScenery = [

@@ -355,6 +355,56 @@ try {
         desertGateLanding.mapId === 'snowfield' && desertGateLanding.y > 220,
         `mapId=${desertGateLanding.mapId} y=${Math.round(desertGateLanding.y)}`,
       );
+      await page.evaluate(() => window.__test.warp('desert'));
+      await page.waitForTimeout(700);
+      const desertTexture = await page.evaluate(() =>
+        window.__test.textureSize('art.map.desert.storybook'));
+      check(
+        '砂漠背景が拡張版640×960で読み込まれる',
+        desertTexture?.width === 640 && desertTexture?.height === 960,
+        JSON.stringify(desertTexture),
+      );
+      await page.evaluate(() => window.__test.warp('desert', 320, 790));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('s'); await page.waitForTimeout(700); await page.keyboard.up('s');
+      const snowfieldGate = await snap(page);
+      check('砂漠南門から雪原へ戻れる', snowfieldGate.mapId === 'snowfield', `mapId=${snowfieldGate.mapId}`);
+      await page.evaluate(() => window.__test.warp('desert', 320, 790));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(1800); await page.keyboard.up('w');
+      const caravanRoad = await snap(page);
+      check(
+        '砂漠の隊商街道を北へ進める',
+        caravanRoad.mapId === 'desert' && caravanRoad.y < 660,
+        `mapId=${caravanRoad.mapId} x=${Math.round(caravanRoad.x)} y=${Math.round(caravanRoad.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('desert', 250, 650));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(2200); await page.keyboard.up('w');
+      const oasisMarket = await snap(page);
+      check(
+        'オアシス市場の東岸を北へ抜けられる',
+        oasisMarket.mapId === 'desert' && oasisMarket.y < 490,
+        `mapId=${oasisMarket.mapId} x=${Math.round(oasisMarket.x)} y=${Math.round(oasisMarket.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('desert', 440, 650));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(2200); await page.keyboard.up('w');
+      const quicksandBank = await snap(page);
+      check(
+        '流砂西岸の石道を北へ抜けられる',
+        quicksandBank.mapId === 'desert' && quicksandBank.y < 490,
+        `mapId=${quicksandBank.mapId} x=${Math.round(quicksandBank.x)} y=${Math.round(quicksandBank.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('desert', 320, 300));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(1400); await page.keyboard.up('w');
+      const palacePlaza = await snap(page);
+      check(
+        '星見宮殿前の広場まで進める',
+        palacePlaza.mapId === 'desert' && palacePlaza.y < 210,
+        `mapId=${palacePlaza.mapId} x=${Math.round(palacePlaza.x)} y=${Math.round(palacePlaza.y)}`,
+      );
       await page.evaluate(() => window.__test.warp('field', 320, 760));
       await page.waitForTimeout(900);
     }
