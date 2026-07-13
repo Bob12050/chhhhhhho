@@ -1,39 +1,60 @@
 /**
- * Debug-tools gating. `debug` is true when ANY of:
- *   - URL `?debug=1`
- *   - `localStorage.debug === "1"`
- * ...UNLESS `?debug=0` is present, which forces it OFF. Dev server alone does
- * not enable the overlay; local art review should look player-facing by default.
- * `?debug=1` / `?debug=0` also persist to `localStorage.debug`. A normal
- * published URL resolves to false, so players never see the DEV button, warp
- * menu, or any debug overlay.
- *
- * Computed once at load (the URL/flag can't change without a reload).
+ * Debug-tools gating. The persisted flag is controlled from the options screen;
+ * `?debug=1` and `?debug=0` remain as convenient startup overrides for device
+ * testing and automated checks. Debug mode is off by default.
  */
 
 /** Dev-overlay render depth: above ALL game UI (HUD_DEPTH = 100000). */
 export const DEBUG_DEPTH = 999999;
+export const DEBUG_STORAGE_KEY = 'debug';
+
+type WritableDebugStorage = Pick<Storage, 'setItem' | 'removeItem'>;
 
 function compute(): boolean {
   try {
     const q = new URLSearchParams(window.location.search).get('debug');
     if (q === '0') {
-      localStorage.removeItem('debug');
+      window.localStorage.removeItem(DEBUG_STORAGE_KEY);
       return false; // explicit off wins over DEV (clean screenshots)
     }
     if (q === '1') {
-      localStorage.setItem('debug', '1');
+      window.localStorage.setItem(DEBUG_STORAGE_KEY, '1');
       return true;
     }
-    if (localStorage.getItem('debug') === '1') return true;
+    if (window.localStorage.getItem(DEBUG_STORAGE_KEY) === '1') return true;
   } catch {
     /* no window (SSR / tests) */
   }
   return false;
 }
 
-const DEBUG = compute();
+let debugEnabled = compute();
 
 export function isDebugEnabled(): boolean {
-  return DEBUG;
+  return debugEnabled;
+}
+
+/** Apply the setting immediately and remember it for the next launch. */
+export function setDebugEnabled(enabled: boolean, storage?: WritableDebugStorage): void {
+  debugEnabled = enabled;
+
+  try {
+    const target = storage ?? (typeof window !== 'undefined' ? window.localStorage : undefined);
+    if (enabled) target?.setItem(DEBUG_STORAGE_KEY, '1');
+    else target?.removeItem(DEBUG_STORAGE_KEY);
+  } catch {
+    /* private mode etc. - the live setting still applies */
+  }
+
+  // Once the player uses the in-game setting, it becomes authoritative. Strip
+  // a startup override so their choice also survives a refresh of that URL.
+  if (typeof window === 'undefined') return;
+  try {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('debug')) return;
+    url.searchParams.delete('debug');
+    window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+  } catch {
+    /* URL replacement is optional; persistence above is the important part */
+  }
 }

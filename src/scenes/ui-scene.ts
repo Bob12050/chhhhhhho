@@ -620,8 +620,8 @@ export class UIScene extends Phaser.Scene {
       if (down) bus.emit('ui:open-inventory', {});
     };
 
-    // (Debug entry is a separate dev overlay — see DebugOverlayScene. It is never
-    // shown in normal play, so nothing debug-related is created here.)
+    // Debug entry is a separate, opt-in dev overlay; nothing debug-related is
+    // mixed into the regular HUD here.
 
     // PWA update notice (applied later, never mid-combat).
     this.updateText = this.add

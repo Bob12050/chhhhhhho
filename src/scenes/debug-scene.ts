@@ -11,8 +11,8 @@ import { FONT, addBackdrop } from '@/ui/theme';
 
 /**
  * Debug menu (gated by core/debug.isDebugEnabled). Warp between maps and grant
- * resources to exercise the full Phase 1 loop quickly on device. Not shown for
- * normal players.
+ * resources to exercise the full Phase 1 loop quickly on device. Available from
+ * the DEV button while the player has enabled debug mode in settings.
  */
 export class DebugScene extends Phaser.Scene {
   private status!: Phaser.GameObjects.Text;
@@ -121,8 +121,7 @@ export class DebugScene extends Phaser.Scene {
 
   /**
    * 最強モード: one tap to end-game state for testing. Lv99, every job/skill/
-   * recipe/quest/map unlocked, full inventory and riches. Debug-only by nature
-   * (this scene is unreachable without ?debug=1).
+   * recipe/quest/map unlocked, full inventory and riches. Debug-only by nature.
    */
   private godMode(): void {
     const gs = gameState;

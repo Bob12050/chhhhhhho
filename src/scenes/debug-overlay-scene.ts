@@ -8,8 +8,8 @@ import { DEBUG_DEPTH } from '@/core/debug';
  * Developer overlay — launched ONLY when debug is enabled (see core/debug). It is
  * a separate scene kept on top of everything (game UI is never mixed with dev
  * tools) at DEBUG_DEPTH. Hosts the small "DEV" button in the top-right that opens
- * the existing debug menu (warp / grant). Normal play never launches this scene,
- * so screenshots/art-review stay clean.
+ * the existing debug menu (warp / grant). It stays absent while the setting is
+ * off, so screenshots and regular play remain clean by default.
  */
 export class DebugOverlayScene extends Phaser.Scene {
   constructor() {

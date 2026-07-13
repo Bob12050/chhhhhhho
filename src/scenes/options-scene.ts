@@ -4,11 +4,12 @@ import { loadSettings, saveSettings, type Settings } from '@/core/settings';
 import { soundEngine } from '@/audio/sound-engine';
 import { bgm } from '@/audio/bgm-engine';
 import { bus } from '@/core/event-bus';
+import { isDebugEnabled, setDebugEnabled } from '@/core/debug';
 
 /**
- * Options overlay: BGM / SE volume in 25% steps, persisted to localStorage and
- * applied to the audio engines live. Launched over Title or Inventory (the
- * caller pauses itself and passes its key in `data.from`); closing resumes it.
+ * Options overlay: BGM / SE volume and debug-mode toggle, persisted locally and
+ * applied live. Launched over Title or Inventory (the caller pauses itself and
+ * passes its key in `data.from`); closing resumes it.
  */
 export class OptionsScene extends Phaser.Scene {
   private from = 'Title';
@@ -47,8 +48,13 @@ export class OptionsScene extends Phaser.Scene {
       bus.emit('sfx:play', { id: 'ui_tap' }); // audible feedback at the new level
     });
 
+    this.toggleRow(335, 'デバッグモード', isDebugEnabled(), (enabled) => {
+      setDebugEnabled(enabled);
+      this.syncDebugScenes(enabled);
+    });
+
     this.add
-      .text(w / 2, 300, '設定は自動で保存されます', { fontFamily: FONT, fontSize: '11px', color: '#9aa0b5' })
+      .text(w / 2, 390, '設定は自動で保存されます', { fontFamily: FONT, fontSize: '11px', color: '#9aa0b5' })
       .setOrigin(0.5);
 
     pillButton(this, w / 2, h - 60, 'とじる', () => this.close(), {
@@ -113,6 +119,62 @@ export class OptionsScene extends Phaser.Scene {
     });
     draw(value);
     void w;
+  }
+
+  /** Full-row binary setting with a familiar switch control. */
+  private toggleRow(y: number, label: string, value: boolean, onChange: (enabled: boolean) => void): void {
+    const w = this.scale.width;
+    const trackX = w - 58;
+    let current = value;
+
+    const row = this.add.graphics();
+    row.fillStyle(0x171b2d, 0.92);
+    row.fillRoundedRect(24, y - 27, w - 48, 54, 8);
+    row.lineStyle(1, 0xffffff, 0.07);
+    row.strokeRoundedRect(24, y - 27, w - 48, 54, 8);
+
+    this.add
+      .text(36, y, label, { fontFamily: FONT, fontSize: '14px', color: '#ffffff' })
+      .setOrigin(0, 0.5);
+    const state = this.add
+      .text(trackX - 35, y, '', { fontFamily: FONT, fontSize: '11px', color: '#9aa0b5' })
+      .setOrigin(1, 0.5);
+    const track = this.add.graphics();
+    const knob = this.add.circle(trackX, y, 10, 0xffffff, 1);
+
+    const draw = (): void => {
+      track.clear();
+      track.fillStyle(current ? 0x46508a : 0x292d42, 1);
+      track.fillRoundedRect(trackX - 24, y - 14, 48, 28, 14);
+      track.lineStyle(1, current ? 0xf5c542 : 0xffffff, current ? 0.75 : 0.12);
+      track.strokeRoundedRect(trackX - 24, y - 14, 48, 28, 14);
+      knob.setPosition(trackX + (current ? 10 : -10), y);
+      knob.setFillStyle(current ? 0xffe9a8 : 0xb6bbca, 1);
+      state.setText(current ? 'ON' : 'OFF');
+      state.setColor(current ? '#ffe9a8' : '#9aa0b5');
+    };
+
+    this.add
+      .zone(w / 2, y, w - 48, 54)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerup', () => {
+        current = !current;
+        onChange(current);
+        draw();
+        bus.emit('sfx:play', { id: 'ui_tap' });
+      });
+    draw();
+  }
+
+  private syncDebugScenes(enabled: boolean): void {
+    if (!enabled) {
+      this.scene.stop('Debug');
+      this.scene.stop('DebugOverlay');
+      return;
+    }
+    if (this.from === 'Inventory' && !this.scene.isActive('DebugOverlay')) {
+      this.scene.launch('DebugOverlay');
+    }
   }
 
   private close(): void {
