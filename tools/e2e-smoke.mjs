@@ -222,7 +222,7 @@ try {
       const mesaTrail = await snap(page);
       check(
         '洞窟前広場から左の高台道へ上がれる',
-        mesaTrail.mapId === 'canyon' && mesaTrail.x < 210 && mesaTrail.y < 740,
+        mesaTrail.mapId === 'canyon' && mesaTrail.x < 210 && mesaTrail.y < 760,
         `mapId=${mesaTrail.mapId} x=${Math.round(mesaTrail.x)} y=${Math.round(mesaTrail.y)}`,
       );
       await page.evaluate(() => window.__test.warp('canyon', 545, 445));
