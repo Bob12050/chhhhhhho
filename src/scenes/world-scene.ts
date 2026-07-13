@@ -267,6 +267,19 @@ export class WorldScene extends Phaser.Scene {
       }
       gameState.flags['canyon_wide_v1'] = true;
     }
+    // The old volcano was a narrow 360x1280 route. Preserve fresh portal
+    // arrivals, while returning old mid-map saves to the canyon entrance.
+    if (this.map.id === 'volcano' && !gameState.flags['volcano_wide_v1']) {
+      const atCurrentSpawn = Object.values(this.map.spawns).some(
+        ([x, y]) => Math.abs(gameState.x - x) < 2 && Math.abs(gameState.y - y) < 2,
+      );
+      if (!atCurrentSpawn) {
+        const entry = spawnPoint(this.map, 'from_canyon');
+        gameState.x = entry.x;
+        gameState.y = entry.y;
+      }
+      gameState.flags['volcano_wide_v1'] = true;
+    }
     gameState.x = Phaser.Math.Clamp(gameState.x, 24, this.map.size.w - 24);
     gameState.y = Phaser.Math.Clamp(gameState.y, 32, this.map.size.h - 32);
     const savedInsideScenery = [

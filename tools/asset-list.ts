@@ -96,7 +96,7 @@ export const ASSET_SPECS: AssetSpec[] = [
   { label: '森背景', src: 'assets/maps/forest-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
   { label: '洞窟背景', src: 'assets/maps/dungeon-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
   { label: '渓谷背景', src: 'assets/maps/canyon-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
-  { label: '火山背景', src: 'assets/maps/volcano-storybook.png', type: 'image', w: 360, h: 1280 },
+  { label: '火山背景', src: 'assets/maps/volcano-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
   { label: '雪原背景', src: 'assets/maps/snowfield-storybook.png', type: 'image', w: 360, h: 1152 },
   { label: '砂漠背景', src: 'assets/maps/desert-storybook.png', type: 'image', w: 360, h: 1280 },
   { label: '闘技場背景', src: 'assets/maps/arena-storybook.png', type: 'image', w: 360, h: 800 },

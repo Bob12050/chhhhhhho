@@ -248,6 +248,54 @@ try {
       await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
       const volcanoPass = await snap(page);
       check('渓谷上部から火山へ進める', volcanoPass.mapId === 'volcano', `mapId=${volcanoPass.mapId}`);
+      const volcanoTexture = await page.evaluate(() =>
+        window.__test.textureSize('art.map.volcano.storybook'));
+      check(
+        '火山背景が拡張版640×960で読み込まれる',
+        volcanoTexture?.width === 640 && volcanoTexture?.height === 960,
+        JSON.stringify(volcanoTexture),
+      );
+      await page.evaluate(() => window.__test.warp('volcano', 320, 900));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
+      const canyonGate = await snap(page);
+      check('火山南門から渓谷へ戻れる', canyonGate.mapId === 'canyon', `mapId=${canyonGate.mapId}`);
+      await page.evaluate(() => window.__test.warp('volcano', 230, 420));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(1700); await page.keyboard.up('w');
+      const obsidianTrail = await snap(page);
+      check(
+        '火山の黒曜石遺跡を北へ抜けられる',
+        obsidianTrail.mapId === 'volcano' && obsidianTrail.y < 310,
+        `mapId=${obsidianTrail.mapId} x=${Math.round(obsidianTrail.x)} y=${Math.round(obsidianTrail.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('volcano', 450, 700));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(1800); await page.keyboard.up('w');
+      const lowerLavaBridge = await snap(page);
+      check(
+        '火山右側の下段溶岩橋を北へ渡れる',
+        lowerLavaBridge.mapId === 'volcano' && lowerLavaBridge.y < 570,
+        `mapId=${lowerLavaBridge.mapId} x=${Math.round(lowerLavaBridge.x)} y=${Math.round(lowerLavaBridge.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('volcano', 450, 440));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(1500); await page.keyboard.up('w');
+      const upperLavaBridge = await snap(page);
+      check(
+        '火山右側の上段溶岩橋を北へ渡れる',
+        upperLavaBridge.mapId === 'volcano' && upperLavaBridge.y < 330,
+        `mapId=${upperLavaBridge.mapId} x=${Math.round(upperLavaBridge.x)} y=${Math.round(upperLavaBridge.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('volcano', 320, 145));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('s'); await page.waitForTimeout(1000); await page.keyboard.up('s');
+      const snowGateLanding = await snap(page);
+      check(
+        '雪原側の火山入口から南へ進める',
+        snowGateLanding.mapId === 'volcano' && snowGateLanding.y > 220,
+        `mapId=${snowGateLanding.mapId} y=${Math.round(snowGateLanding.y)}`,
+      );
       await page.evaluate(() => window.__test.warp('field', 320, 760));
       await page.waitForTimeout(900);
     }
