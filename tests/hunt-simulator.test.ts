@@ -70,9 +70,9 @@ describe('hunt balance simulator', () => {
     expect(multi.target.ttkSec).toBeGreaterThan(boss.target.ttkSec);
   });
 
-  it('keeps all rank 1-3 hunts out of urgent tuning at the benchmark', () => {
+  it('keeps all rank 1-4 hunts out of urgent tuning at the benchmark', () => {
     const early = simulateHuntBatch({ runs: 300 }).entries.filter(
-      (entry) => entry.result.rank <= 3,
+      (entry) => entry.result.rank <= 4,
     );
     expect(early).not.toHaveLength(0);
     expect(early.every((entry) => entry.status === 'good')).toBe(true);
