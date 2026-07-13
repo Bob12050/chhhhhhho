@@ -280,6 +280,19 @@ export class WorldScene extends Phaser.Scene {
       }
       gameState.flags['volcano_wide_v1'] = true;
     }
+    // The old snowfield was a narrow 360x1152 path. Keep new portal arrivals,
+    // while returning old mid-map saves to the warm volcanic entrance.
+    if (this.map.id === 'snowfield' && !gameState.flags['snowfield_wide_v1']) {
+      const atCurrentSpawn = Object.values(this.map.spawns).some(
+        ([x, y]) => Math.abs(gameState.x - x) < 2 && Math.abs(gameState.y - y) < 2,
+      );
+      if (!atCurrentSpawn) {
+        const entry = spawnPoint(this.map, 'from_volcano');
+        gameState.x = entry.x;
+        gameState.y = entry.y;
+      }
+      gameState.flags['snowfield_wide_v1'] = true;
+    }
     gameState.x = Phaser.Math.Clamp(gameState.x, 24, this.map.size.w - 24);
     gameState.y = Phaser.Math.Clamp(gameState.y, 32, this.map.size.h - 32);
     const savedInsideScenery = [

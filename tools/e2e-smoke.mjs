@@ -296,6 +296,65 @@ try {
         snowGateLanding.mapId === 'volcano' && snowGateLanding.y > 220,
         `mapId=${snowGateLanding.mapId} y=${Math.round(snowGateLanding.y)}`,
       );
+      await page.evaluate(() => window.__test.warp('snowfield'));
+      await page.waitForTimeout(700);
+      const snowfieldTexture = await page.evaluate(() =>
+        window.__test.textureSize('art.map.snowfield.storybook'));
+      check(
+        '雪原背景が拡張版640×960で読み込まれる',
+        snowfieldTexture?.width === 640 && snowfieldTexture?.height === 960,
+        JSON.stringify(snowfieldTexture),
+      );
+      await page.evaluate(() => window.__test.warp('snowfield', 320, 795));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('s'); await page.waitForTimeout(700); await page.keyboard.up('s');
+      const volcanoGate = await snap(page);
+      check('雪原南門から火山へ戻れる', volcanoGate.mapId === 'volcano', `mapId=${volcanoGate.mapId}`);
+      await page.evaluate(() => window.__test.warp('snowfield', 320, 790));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(1800); await page.keyboard.up('w');
+      const snowRoad = await snap(page);
+      check(
+        '雪原の中央街道を北へ進める',
+        snowRoad.mapId === 'snowfield' && snowRoad.y < 660,
+        `mapId=${snowRoad.mapId} x=${Math.round(snowRoad.x)} y=${Math.round(snowRoad.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('snowfield', 270, 450));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('a'); await page.waitForTimeout(1500); await page.keyboard.up('a');
+      const frozenLake = await snap(page);
+      check(
+        '凍った湖を横断できる',
+        frozenLake.mapId === 'snowfield' && frozenLake.x < 170,
+        `mapId=${frozenLake.mapId} x=${Math.round(frozenLake.x)} y=${Math.round(frozenLake.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('snowfield', 565, 550));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(1700); await page.keyboard.up('w');
+      const shrineTrail = await snap(page);
+      check(
+        '氷晶神殿の右側を北へ抜けられる',
+        shrineTrail.mapId === 'snowfield' && shrineTrail.y < 430,
+        `mapId=${shrineTrail.mapId} x=${Math.round(shrineTrail.x)} y=${Math.round(shrineTrail.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('snowfield', 470, 545));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
+      const shrineSteps = await snap(page);
+      check(
+        '氷晶神殿の正面階段へ上がれる',
+        shrineSteps.mapId === 'snowfield' && shrineSteps.y < 500,
+        `mapId=${shrineSteps.mapId} x=${Math.round(shrineSteps.x)} y=${Math.round(shrineSteps.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('snowfield', 320, 145));
+      await page.waitForTimeout(400);
+      await page.keyboard.down('s'); await page.waitForTimeout(1000); await page.keyboard.up('s');
+      const desertGateLanding = await snap(page);
+      check(
+        '砂漠側の雪原入口から南へ進める',
+        desertGateLanding.mapId === 'snowfield' && desertGateLanding.y > 220,
+        `mapId=${desertGateLanding.mapId} y=${Math.round(desertGateLanding.y)}`,
+      );
       await page.evaluate(() => window.__test.warp('field', 320, 760));
       await page.waitForTimeout(900);
     }
