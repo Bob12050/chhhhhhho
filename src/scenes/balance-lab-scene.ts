@@ -60,6 +60,10 @@ export class BalanceLabScene extends Phaser.Scene {
   create(): void {
     const w = this.scale.width;
     const h = this.scale.height;
+    this.rankButtons = [];
+    this.runButtons = [];
+    this.scrollY = 0;
+    this.maxScroll = 0;
     this.restoreDebugOverlay = this.scene.isActive('DebugOverlay');
     if (this.restoreDebugOverlay) this.scene.sleep('DebugOverlay');
     this.scene.bringToTop();
@@ -70,10 +74,14 @@ export class BalanceLabScene extends Phaser.Scene {
     this.add
       .text(52, 17, '周回バランスラボ', { fontFamily: FONT, fontSize: '17px', color: '#ffffff' })
       .setDepth(3);
-    this.add
-      .text(w - 14, 24, 'SAVE非依存', { fontFamily: FONT, fontSize: '9px', color: '#6fd3bd' })
+    const overview = this.add
+      .text(w - 14, 24, '全体診断 ›', { fontFamily: FONT, fontSize: '10px', color: '#9fd0ff' })
       .setOrigin(1, 0.5)
-      .setDepth(3);
+      .setDepth(3)
+      .setInteractive({ useHandCursor: true });
+    overview.on('pointerup', () => {
+      if (!this.dragged) this.openOverview();
+    });
 
     this.add
       .text(14, 67, '★', { fontFamily: FONT, fontSize: '12px', color: '#e4c96c' })
@@ -169,6 +177,16 @@ export class BalanceLabScene extends Phaser.Scene {
     this.questMeta.setText(`Lv${this.playerLevel}  ${index}/${total}${quest.veteran ? '  歴戦' : ''}`);
     this.refreshControls();
     this.runSimulation(true);
+  }
+
+  showQuest(questId: string): void {
+    const quest = this.quests.find((entry) => entry.id === questId);
+    if (!quest) return;
+    this.selectedRank = quest.rank ?? 1;
+    this.rankButtons.forEach((button, index) => button.setActive(index + 1 === this.selectedRank));
+    this.questIndex = this.questsForRank().findIndex((entry) => entry.id === questId);
+    if (this.questIndex < 0) this.questIndex = 0;
+    this.selectQuest();
   }
 
   private selectRuns(runs: number): void {
@@ -621,5 +639,11 @@ export class BalanceLabScene extends Phaser.Scene {
     if (this.restoreDebugOverlay) this.scene.wake('DebugOverlay');
     this.scene.stop();
     this.scene.resume('Debug');
+  }
+
+  private openOverview(): void {
+    if (this.scene.isActive('BalanceOverview')) return;
+    this.scene.pause();
+    this.scene.launch('BalanceOverview', { runs: this.runs });
   }
 }

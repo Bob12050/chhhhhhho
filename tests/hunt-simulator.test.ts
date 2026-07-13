@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { huntSimulationQuests, simulateHunt } from '@/balance/hunt-simulator';
+import { huntSimulationQuests, simulateHunt, simulateHuntBatch } from '@/balance/hunt-simulator';
 
 const QUEST_ID = 'hunt_r2_01_zephys';
 
@@ -42,5 +42,16 @@ describe('hunt balance simulator', () => {
       expect(result.questId).toBe(quest.id);
       expect(result.averageTtkSec).toBeGreaterThan(0);
     }
+  });
+
+  it('diagnoses every hunt and sorts the batch by tuning priority', () => {
+    const batch = simulateHuntBatch({ runs: 50, seed: 4321 });
+    expect(batch.entries).toHaveLength(huntSimulationQuests().length);
+    expect(batch.totalAttempts).toBe(batch.entries.length * 50);
+    expect(Object.values(batch.counts).reduce((sum, count) => sum + count, 0)).toBe(batch.entries.length);
+    for (let i = 1; i < batch.entries.length; i++) {
+      expect(batch.entries[i - 1]!.score).toBeGreaterThanOrEqual(batch.entries[i]!.score);
+    }
+    expect(simulateHuntBatch({ runs: 50, seed: 4321 })).toEqual(batch);
   });
 });

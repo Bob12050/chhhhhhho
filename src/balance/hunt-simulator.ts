@@ -86,6 +86,29 @@ export interface HuntSimulationResult {
   notes: string[];
 }
 
+export type HuntDiagnosticStatus = 'good' | 'watch' | 'adjust' | 'critical';
+
+export interface HuntDiagnostic {
+  result: HuntSimulationResult;
+  status: HuntDiagnosticStatus;
+  score: number;
+  ttkRatio: number;
+  rarestRunsPerItem: number | null;
+  issue: string;
+}
+
+export interface HuntBatchSimulationResult {
+  runsPerQuest: number;
+  totalAttempts: number;
+  entries: HuntDiagnostic[];
+  counts: Record<HuntDiagnosticStatus, number>;
+}
+
+export interface HuntBatchSimulationOptions {
+  runs?: number;
+  seed?: number;
+}
+
 interface EncounterWave {
   enemy: EnemyDef;
   count: number;
@@ -190,6 +213,44 @@ function verdictFor(clearRate: number, danger: number): BalanceVerdict {
   if (clearRate < 0.75 || danger > 1) return 'potion';
   if (danger > 0.6) return 'tense';
   return 'comfortable';
+}
+
+function diagnosticFor(result: HuntSimulationResult): HuntDiagnostic {
+  const ttkRatio = result.averageTtkSec / Math.max(0.01, result.target.ttkSec);
+  const rarestRunsPerItem = result.drops.reduce<number | null>((rarest, drop) => {
+    if (drop.runsPerItem === null) return rarest;
+    return rarest === null ? drop.runsPerItem : Math.max(rarest, drop.runsPerItem);
+  }, null);
+  let score = 0;
+  if (result.verdict === 'wall') score += 80;
+  else if (result.verdict === 'potion') score += 45;
+  else if (result.verdict === 'tense') score += 10;
+  if (result.clearRate < 0.75) score += Math.round((0.75 - result.clearRate) * 90);
+  if (ttkRatio > 1.35 || ttkRatio < 0.65) {
+    score += Math.min(70, Math.round(Math.abs(Math.log(ttkRatio)) * 32));
+  }
+  if (rarestRunsPerItem !== null) {
+    score += Math.min(30, Math.max(0, Math.round((rarestRunsPerItem - 30) / 2)));
+  }
+
+  const status: HuntDiagnosticStatus = score >= 80
+    ? 'critical'
+    : score >= 40
+      ? 'adjust'
+      : score >= 20
+        ? 'watch'
+        : 'good';
+  let issue = '基準内';
+  if (result.clearRate < 0.5) issue = `クリア率が低い (${Math.round(result.clearRate * 100)}%)`;
+  else if (result.danger > 2) issue = `生存困難 (危険度${result.danger.toFixed(2)})`;
+  else if (ttkRatio > 1.35) issue = `討伐が長い (目標の${Math.round(ttkRatio * 100)}%)`;
+  else if (ttkRatio < 0.65) issue = `討伐が短い (目標の${Math.round(ttkRatio * 100)}%)`;
+  else if (rarestRunsPerItem !== null && rarestRunsPerItem > 30) {
+    issue = `レアが渋い (最長${Math.round(rarestRunsPerItem)}周)`;
+  } else if (result.clearRate < 0.75) issue = `クリアが不安定 (${Math.round(result.clearRate * 100)}%)`;
+  else if (result.danger > 0.6) issue = `被弾余裕を確認 (危険度${result.danger.toFixed(2)})`;
+
+  return { result, status, score, ttkRatio, rarestRunsPerItem, issue };
 }
 
 function rollScaledDrop(entry: DropEntry, rng: Rng, chanceScale: number): number {
@@ -423,5 +484,40 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
       suggestedDamageScale,
     },
     notes,
+  };
+}
+
+export function simulateHuntBatch(
+  options: HuntBatchSimulationOptions = {},
+): HuntBatchSimulationResult {
+  const quests = huntSimulationQuests();
+  const entries = quests.map((quest, index) => {
+    const seed = options.seed === undefined
+      ? undefined
+      : (options.seed ^ Math.imul(index + 1, 0x9e3779b9)) >>> 0;
+    return diagnosticFor(simulateHunt({ questId: quest.id, runs: options.runs, seed }));
+  });
+  entries.sort(
+    (a, b) =>
+      b.score - a.score ||
+      a.result.rank - b.result.rank ||
+      a.result.playerLevel - b.result.playerLevel ||
+      a.result.questName.localeCompare(b.result.questName, 'ja'),
+  );
+  const counts: Record<HuntDiagnosticStatus, number> = {
+    good: 0,
+    watch: 0,
+    adjust: 0,
+    critical: 0,
+  };
+  for (const entry of entries) counts[entry.status]++;
+  const runsPerQuest = entries[0]?.result.runs ?? Math.round(
+    clampNumber(options.runs, DEFAULT_BALANCE_RUNS, 1, 10_000),
+  );
+  return {
+    runsPerQuest,
+    totalAttempts: runsPerQuest * entries.length,
+    entries,
+    counts,
   };
 }
