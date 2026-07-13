@@ -25,6 +25,13 @@ export interface QuestRequire {
   flag?: string;
 }
 
+export interface HuntModifiers {
+  /** Quest-local target HP multiplier, combined with the veteran modifier. */
+  hpMult?: number;
+  /** Quest-local target contact/attack damage multiplier. */
+  dmgMult?: number;
+}
+
 /** 'main' = the one-shot story line (own board tab, chained, non-repeatable). */
 export type QuestType = 'subjugation' | 'unlock' | 'hunt' | 'main';
 
@@ -46,6 +53,8 @@ export interface QuestDef {
    * Objectives are hunted IN ORDER (連続狩猟/露払い waves).
    */
   huntMap?: string;
+  /** Optional quest-local scaling for rematches that reuse an earlier enemy. */
+  huntModifiers?: HuntModifiers;
   /**
    * 歴戦 individual: hunt targets spawn with VETERAN_MODS (more HP/damage,
    * bigger kill rewards, doubled drop chances). See src/quests/hunt-logic.ts.

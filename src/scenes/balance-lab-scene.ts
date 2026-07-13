@@ -246,6 +246,12 @@ export class BalanceLabScene extends Phaser.Scene {
     this.content.removeAll(true);
     this.scrollY = 0;
     const w = this.scale.width;
+    const encounterLabel = {
+      mob: '通常討伐',
+      boss: '大型単体',
+      prelude: '露払い付き',
+      multiBoss: '連続狩猟',
+    }[result.encounter.kind];
     let y = this.viewTop + 12;
 
     this.content.add(
@@ -311,7 +317,7 @@ export class BalanceLabScene extends Phaser.Scene {
     );
     this.content.add(
       this.add
-        .text(w - 14, y, `${result.encounter.enemyCount}体`, {
+        .text(w - 14, y, `${encounterLabel} / ${result.encounter.enemyCount}体`, {
           fontFamily: FONT,
           fontSize: '10px',
           color: '#9aa8c4',

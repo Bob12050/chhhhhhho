@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { currentWave, concurrentSpawnCount, VETERAN_MODS } from '@/quests/hunt-logic';
+import {
+  currentWave,
+  concurrentSpawnCount,
+  huntStatModifiers,
+  VETERAN_MODS,
+} from '@/quests/hunt-logic';
 import { computeDerived, ZERO_BASE } from '@/stats/stats';
 
 const twoWaveQuest = {
@@ -66,6 +71,22 @@ describe('VETERAN_MODS (歴戦倍率)', () => {
   });
   it('produces integer HP when applied to real boss stats', () => {
     expect(Number.isInteger(Math.round(640 * VETERAN_MODS.hpMult))).toBe(true);
+  });
+
+  it('combines rematch and veteran combat multipliers', () => {
+    expect(huntStatModifiers({ huntModifiers: { hpMult: 2.5, dmgMult: 1.2 } })).toEqual({
+      hpMult: 2.5,
+      dmgMult: 1.2,
+      veteran: false,
+    });
+    expect(huntStatModifiers({
+      veteran: true,
+      huntModifiers: { hpMult: 2, dmgMult: 1.1 },
+    })).toEqual({
+      hpMult: 2 * VETERAN_MODS.hpMult,
+      dmgMult: 1.1 * VETERAN_MODS.dmgMult,
+      veteran: true,
+    });
   });
 });
 

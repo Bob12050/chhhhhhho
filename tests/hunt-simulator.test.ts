@@ -54,4 +54,28 @@ describe('hunt balance simulator', () => {
     }
     expect(simulateHuntBatch({ runs: 50, seed: 4321 })).toEqual(batch);
   });
+
+  it('uses encounter-specific timing targets', () => {
+    const mob = simulateHunt({ questId: 'hunt_r1_06_wolf_pack', runs: 10, seed: 1 });
+    const boss = simulateHunt({ questId: 'subj_treant', runs: 10, seed: 1 });
+    const prelude = simulateHunt({ questId: 'hunt_r1_03_grove_prelude', runs: 10, seed: 1 });
+    const multi = simulateHunt({ questId: 'hunt_r1_05_twin_guardians', runs: 10, seed: 1 });
+
+    expect(mob.encounter.kind).toBe('mob');
+    expect(boss.encounter.kind).toBe('boss');
+    expect(prelude.encounter.kind).toBe('prelude');
+    expect(multi.encounter.kind).toBe('multiBoss');
+    expect(mob.target.ttkSec).toBeLessThan(boss.target.ttkSec);
+    expect(prelude.target.ttkSec).toBeGreaterThan(boss.target.ttkSec);
+    expect(multi.target.ttkSec).toBeGreaterThan(boss.target.ttkSec);
+  });
+
+  it('keeps all rank 1-2 hunts out of urgent tuning at the benchmark', () => {
+    const early = simulateHuntBatch({ runs: 300, seed: 12345 }).entries.filter(
+      (entry) => entry.result.rank <= 2,
+    );
+    expect(early).not.toHaveLength(0);
+    expect(early.filter((entry) => entry.status === 'critical' || entry.status === 'adjust')).toEqual([]);
+    expect(early.every((entry) => entry.result.clearRate >= 0.75)).toBe(true);
+  });
 });

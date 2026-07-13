@@ -567,6 +567,7 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set
       require?: { questDone?: string };
       rewards: { items?: Record<string, number> };
       huntMap?: string;
+      huntModifiers?: { hpMult?: unknown; dmgMult?: unknown };
       rank?: number;
       veteran?: unknown;
     }[];
@@ -582,6 +583,14 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set
       err(`Quest ${q.id}: veteran must be a boolean`);
     if (q.veteran === true && !q.huntMap)
       err(`Quest ${q.id}: veteran only applies to hunt quests (needs huntMap)`);
+    if (q.huntModifiers != null && !q.huntMap)
+      err(`Quest ${q.id}: huntModifiers only apply to hunt quests (needs huntMap)`);
+    for (const [key, value] of Object.entries(q.huntModifiers ?? {})) {
+      if (key !== 'hpMult' && key !== 'dmgMult')
+        err(`Quest ${q.id}: unknown hunt modifier "${key}"`);
+      if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0)
+        err(`Quest ${q.id}: huntModifiers.${key} must be a positive number`);
+    }
     if (q.rank != null && (!Number.isInteger(q.rank) || q.rank < 1 || q.rank > 7))
       err(`Quest ${q.id}: rank must be an integer 1〜7 (got ${q.rank})`);
     if (!QTYPES.has(q.type)) err(`Quest ${q.id}: invalid type "${q.type}"`);

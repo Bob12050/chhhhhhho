@@ -17,6 +17,24 @@ export const VETERAN_MODS = {
   dropBonusAdd: 1,
 } as const;
 
+export interface HuntStatModifiers {
+  hpMult: number;
+  dmgMult: number;
+  veteran: boolean;
+}
+
+/** Resolve the exact combat multipliers used by both gameplay and diagnostics. */
+export function huntStatModifiers(
+  q: Pick<QuestDef, 'veteran' | 'huntModifiers'>,
+): HuntStatModifiers {
+  const veteran = !!q.veteran;
+  return {
+    hpMult: (q.huntModifiers?.hpMult ?? 1) * (veteran ? VETERAN_MODS.hpMult : 1),
+    dmgMult: (q.huntModifiers?.dmgMult ?? 1) * (veteran ? VETERAN_MODS.dmgMult : 1),
+    veteran,
+  };
+}
+
 export interface HuntWave {
   objectiveIndex: number;
   enemyId: string;

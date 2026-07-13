@@ -249,7 +249,7 @@
         },
         {
           "itemId": "star_fragment",
-          "dropRate": 0.03,
+          "dropRate": 0.05,
           "min": 1,
           "max": 1
         },

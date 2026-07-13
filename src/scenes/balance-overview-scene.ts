@@ -244,7 +244,7 @@ export class BalanceOverviewScene extends Phaser.Scene {
     }
     y += 6;
     this.content.add(
-      this.add.text(14, y, '剣・入手可能な最良装備 / 最低Lv / 通常攻撃 / 回復なし', {
+      this.add.text(14, y, '剣・最良装備 / 最低Lv / 回復なし / クエスト形式別の目標', {
         fontFamily: FONT,
         fontSize: '9px',
         color: '#66718a',

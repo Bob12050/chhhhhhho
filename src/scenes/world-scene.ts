@@ -15,7 +15,12 @@ import { getDropTable, rollDrops } from '@/loot/drop-table';
 import { getSkill } from '@/skills/skill-defs';
 import { recordKill, isComplete, objectiveProgress } from '@/quests/quests';
 import { getQuest, type QuestDef } from '@/quests/quest-defs';
-import { currentWave, concurrentSpawnCount, VETERAN_MODS } from '@/quests/hunt-logic';
+import {
+  currentWave,
+  concurrentSpawnCount,
+  huntStatModifiers,
+  VETERAN_MODS,
+} from '@/quests/hunt-logic';
 import { PET_EXP_SHARE, petAttackDamage } from '@/pets/pet-growth';
 import { mitigateDamage } from '@/combat/mitigation';
 import { input } from '@/input/input-state';
@@ -514,9 +519,7 @@ export class WorldScene extends Phaser.Scene {
     }
     if (alive >= want) return;
     const sp = spawnPoint(this.map, 'boss');
-    const mods = q.veteran
-      ? { hpMult: VETERAN_MODS.hpMult, dmgMult: VETERAN_MODS.dmgMult, veteran: true }
-      : {};
+    const mods = huntStatModifiers(q);
     // Trash packs fan out around the spawn point so they don't stack.
     const spread: [number, number][] = [[0, 0], [-52, 26], [52, 26], [0, 58]];
     let spawnedBoss = false;

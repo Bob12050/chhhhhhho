@@ -1082,7 +1082,7 @@
         {
           "type": "kill",
           "enemyId": "bat",
-          "count": 5
+          "count": 10
         }
       ],
       "require": {
@@ -1536,6 +1536,10 @@
         "questDone": "hunt_stone_again"
       },
       "huntMap": "arena_canyon",
+      "huntModifiers": {
+        "hpMult": 2.5,
+        "dmgMult": 1.2
+      },
       "rewards": {
         "gold": 120,
         "exp": 950,
@@ -1556,7 +1560,7 @@
         {
           "type": "kill",
           "enemyId": "cave_bat",
-          "count": 7
+          "count": 10
         }
       ],
       "require": {
