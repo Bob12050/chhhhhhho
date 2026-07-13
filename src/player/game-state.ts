@@ -417,6 +417,19 @@ export class GameState {
     return true;
   }
 
+  /** Put a learned active skill in S1/S2. Moving an equipped skill swaps slots. */
+  assignSkill(slot: number, id: string): boolean {
+    if (slot < 0 || slot >= this.skillSlots.length) return false;
+    const def = getSkill(id);
+    if (!def || def.type !== 'active' || !this.skills[id]) return false;
+
+    const current = this.skillSlots[slot];
+    const otherSlot = this.skillSlots.indexOf(id);
+    this.skillSlots[slot] = id;
+    if (otherSlot >= 0 && otherSlot !== slot) this.skillSlots[otherSlot] = current;
+    return true;
+  }
+
   consumeMaterials(req: Record<string, number>): boolean {
     for (const [id, qty] of Object.entries(req)) {
       if ((this.materials[id] ?? 0) < qty) return false;

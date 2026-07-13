@@ -6,7 +6,7 @@ import { TEX } from '@/assets/gen/textures';
 import type { EquipSlot } from '@/equipment/slots';
 import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
-import { allSkills } from '@/skills/skill-defs';
+import { allSkills, getSkill, type SkillDef } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
 import { appearanceTexKey } from '@/jobs/job-appearance';
 import { frameIndex } from '@/paperdoll/pose-atlas';
@@ -52,15 +52,6 @@ const DIFF_LABEL: Record<string, string> = {
   goldRate: '金運',
 };
 
-/** Japanese labels for class families (skill tab grouping). */
-const FAMILY_LABEL: Record<string, string> = {
-  warrior: '戦士系',
-  mage: '魔法系',
-  cleric: '僧侶系',
-  thief: '盗賊系',
-  tamer: 'テイマー系',
-};
-
 /**
  * Bag / menu overlay (replaces the old equipment-only screen). Three tabs:
  * materials, consumables (use), and equipment (equip from owned). Opened from
@@ -80,6 +71,8 @@ export class InventoryScene extends Phaser.Scene {
   private slotChipObjs: Phaser.GameObjects.GameObject[] = [];
   /** Fixed job profile card (equipment/status); never moves with list scroll. */
   private profileObjs: Phaser.GameObjects.GameObject[] = [];
+  private skillView: 'loadout' | 'learn' = 'loadout';
+  private selectedSkillSlot = 0;
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
@@ -92,6 +85,8 @@ export class InventoryScene extends Phaser.Scene {
 
   init(data: { tab?: Tab }): void {
     this.tab = data.tab ?? 'items';
+    this.skillView = 'loadout';
+    this.selectedSkillSlot = 0;
   }
 
   create(): void {
@@ -290,6 +285,7 @@ export class InventoryScene extends Phaser.Scene {
   }
 
   private renderTab(): void {
+    this.viewTop = this.tab === 'skill' ? (this.skillView === 'loadout' ? 274 : 150) : 86;
     this.content.removeAll(true);
     this.eqQueue = [];
     this.eqLive.clear();
@@ -833,117 +829,333 @@ export class InventoryScene extends Phaser.Scene {
     );
   }
 
-  private renderSkills(): void {
+  private compactSkillText(text: string, max = 23): string {
+    return text.length > max ? `${text.slice(0, max)}…` : text;
+  }
+
+  private skillMeta(def: SkillDef): string {
+    const parts: string[] = [];
+    if (isElement(def.element) && def.element !== 'none') parts.push(`${ELEMENT_LABEL[def.element]}属性`);
+    if (def.mpCost != null) parts.push(`MP ${def.mpCost}`);
+    if (def.cooldown) {
+      const sec = def.cooldown / 1000;
+      parts.push(`再使用 ${Number.isInteger(sec) ? sec.toFixed(0) : sec.toFixed(1)}秒`);
+    }
+    return parts.join('  ');
+  }
+
+  private skillBlockText(def: SkillDef, block: string | null): string {
+    if (block === 'tier') return `${def.minTier}次職から`;
+    if (block === 'level') return `Lv${def.requiredLevel}から`;
+    if (block === 'requires') return '前提技が必要';
+    if (block === 'points') return '技P不足';
+    if (block === 'job') return '現職では習得不可';
+    return '習得不可';
+  }
+
+  private renderSkillModeBar(): void {
+    const w = this.scale.width;
+    const strip = this.add
+      .rectangle(0, 86, w, 64, 0x111d36, 0.99)
+      .setOrigin(0)
+      .setDepth(2)
+      .setInteractive();
+    const divider = this.add.rectangle(0, 149, w, 1, 0xffffff, 0.1).setOrigin(0).setDepth(3);
+    const loadout = tabChip(this, 60, 116, 104, 'セット', () => {
+      this.skillView = 'loadout';
+      this.renderTab();
+    });
+    const learn = tabChip(this, 168, 116, 104, '習得', () => {
+      this.skillView = 'learn';
+      this.renderTab();
+    });
+    loadout.setActive(this.skillView === 'loadout');
+    learn.setActive(this.skillView === 'learn');
+    loadout.root.setDepth(3);
+    learn.root.setDepth(3);
+    const points = this.add
+      .text(w - 12, 116, `技P ${gameState.skillPoints}`, {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: gameState.skillPoints > 0 ? '#ffe9a8' : '#9aa0b5',
+        backgroundColor: '#202943',
+        padding: { x: 9, y: 6 },
+      })
+      .setOrigin(1, 0.5)
+      .setDepth(3);
+    this.profileObjs.push(strip, divider, loadout.root, learn.root, points);
+  }
+
+  private renderSkillLoadout(): void {
     const w = this.scale.width;
     const gs = gameState;
-    this.content.add(
-      this.add.text(16, 96, `スキルポイント: ${gs.skillPoints}`, {
-        fontFamily: FONT,
-        fontSize: '13px',
-        color: gs.skillPoints > 0 ? '#ffe9a8' : '#9aa0b5',
-      }),
-    );
-
     const myFamily = getJob(gs.jobId)?.family;
-    // Order: common skills, then the current job's family, then the rest. Within
-    // each group keep declaration order (already tiered by required level).
-    const rank = (fam?: string): number =>
-      fam == null ? 0 : fam === myFamily ? 1 : 2;
-    const ordered = allSkills()
-      .map((def, i) => ({ def, i }))
-      .sort((a, b) => rank(a.def.family) - rank(b.def.family) || a.i - b.i);
+    const fixed = this.add
+      .rectangle(0, 150, w, 124, 0x10182b, 0.99)
+      .setOrigin(0)
+      .setDepth(2)
+      .setInteractive();
+    const title = this.add
+      .text(12, 158, '使用する技', { fontFamily: FONT, fontSize: '11px', color: '#c9b27a' })
+      .setDepth(3);
+    this.profileObjs.push(fixed, title);
 
-    let y = 124;
-    let lastGroup = -1;
-    for (const { def } of ordered) {
-      const group = rank(def.family);
-      if (group !== lastGroup) {
-        lastGroup = group;
-        const header =
-          group === 0 ? '共通' : group === 1 ? `${FAMILY_LABEL[def.family!]}（現職）` : '他系統';
-        this.content.add(
-          this.add.text(16, y, `― ${header} ―`, {
-            fontFamily: FONT,
-            fontSize: '12px',
-            color: '#c9b27a',
-          }),
-        );
-        y += 22;
-      }
-
-      const learned = !!gs.skills[def.id];
-      const kind = def.type === 'active' ? 'A' : 'P';
-      const slot = gs.skillSlots.indexOf(def.id);
-      const famTag = def.family ? `《${FAMILY_LABEL[def.family]}》` : '';
-      const tag = learned ? (slot >= 0 ? `習得(S${slot + 1})` : '習得') : '';
-      const nameText = this.add.text(16, y, `[${kind}] ${def.name} ${famTag} ${tag}`.trim(), {
-        fontFamily: FONT,
-        fontSize: '14px',
-        color: learned ? '#9fe3a0' : '#fff',
-      });
-      this.content.add(nameText);
-      // Element badge for elemental active skills.
-      if (isElement(def.element) && def.element !== 'none') {
-        const hex = `#${ELEMENT_COLOR[def.element].toString(16).padStart(6, '0')}`;
-        this.content.add(
-          this.add.text(nameText.x + nameText.width + 6, y + 2, `〔${ELEMENT_LABEL[def.element]}〕`, {
-            fontFamily: FONT,
-            fontSize: '12px',
-            color: hex,
-          }),
-        );
-      }
-      this.content.add(
-        this.add.text(16, y + 18, def.description, {
+    const gap = 8;
+    const cardW = Math.floor((w - 24) / 2);
+    const cardY = 178;
+    const cardH = 82;
+    for (let i = 0; i < 2; i++) {
+      const x = 8 + i * (cardW + gap);
+      const selected = this.selectedSkillSlot === i;
+      const def = gs.skillSlots[i] ? getSkill(gs.skillSlots[i]!) : undefined;
+      const card = this.add.graphics().setDepth(3);
+      card.fillStyle(selected ? 0x213d5a : 0x191e31, 1);
+      card.fillRoundedRect(x, cardY, cardW, cardH, 7);
+      card.lineStyle(selected ? 2 : 1, selected ? 0xf5c542 : 0xffffff, selected ? 0.95 : 0.12);
+      card.strokeRoundedRect(x, cardY, cardW, cardH, 7);
+      const slot = this.add
+        .text(x + 10, cardY + 9, `S${i + 1}`, {
           fontFamily: FONT,
           fontSize: '11px',
+          color: '#ffffff',
+          fontStyle: 'bold',
+          backgroundColor: i === 0 ? '#365a9b' : '#624ba0',
+          padding: { x: 6, y: 3 },
+        })
+        .setDepth(3);
+      const state = this.add
+        .text(x + cardW - 9, cardY + 13, selected ? '選択中' : '', {
+          fontFamily: FONT,
+          fontSize: '8px',
+          color: '#ffe9a8',
+        })
+        .setOrigin(1, 0)
+        .setDepth(3);
+      const name = this.add
+        .text(x + 10, cardY + 38, this.compactSkillText(def?.name ?? '未設定', 11), {
+          fontFamily: FONT,
+          fontSize: '12px',
+          color: def ? '#ffffff' : '#7e8499',
+          fontStyle: 'bold',
+        })
+        .setDepth(3);
+      const meta = this.add
+        .text(x + 10, cardY + 61, this.compactSkillText(def ? this.skillMeta(def) : '－', 18), {
+          fontFamily: FONT,
+          fontSize: '9px',
+          color: '#9fb5cf',
+        })
+        .setDepth(3);
+      const hit = this.add
+        .rectangle(x, cardY, cardW, cardH, 0xffffff, 0.001)
+        .setOrigin(0)
+        .setDepth(4)
+        .setInteractive({ useHandCursor: true });
+      hit.on('pointerup', () => {
+        this.selectedSkillSlot = i;
+        this.renderTab();
+      });
+      this.profileObjs.push(card, slot, state, name, meta, hit);
+    }
+    const fixedDivider = this.add.rectangle(0, 273, w, 1, 0xffffff, 0.1).setOrigin(0).setDepth(3);
+    this.profileObjs.push(fixedDivider);
+
+    const available = allSkills().filter(
+      (def) =>
+        def.type === 'active'
+        && !!gs.skills[def.id]
+        && (!def.family || def.family === myFamily || gs.skillSlots.includes(def.id)),
+    );
+    let y = 284;
+    this.content.add(
+      this.add.text(16, y, `S${this.selectedSkillSlot + 1}にセット`, {
+        fontFamily: FONT,
+        fontSize: '13px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      }),
+    );
+    this.content.add(
+      this.add
+        .text(w - 16, y + 1, `${available.length}個`, {
+          fontFamily: FONT,
+          fontSize: '10px',
+          color: '#7e8499',
+        })
+        .setOrigin(1, 0),
+    );
+    y += 24;
+
+    if (available.length === 0) {
+      this.content.add(
+        this.add.rectangle(8, y, w - 16, 84, 0x191e31, 0.95).setOrigin(0).setStrokeStyle(1, 0x333a5a, 0.8),
+      );
+      this.content.add(
+        this.add
+          .text(w / 2, y + 24, 'セットできる技がありません', {
+            fontFamily: FONT,
+            fontSize: '12px',
+            color: '#9aa0b5',
+          })
+          .setOrigin(0.5),
+      );
+      const learn = pillButton(this, w / 2, y + 60, '技を習得', () => {
+        this.skillView = 'learn';
+        this.renderTab();
+      }, { size: 12, bg: '#304b70', color: '#ffffff' });
+      this.content.add(learn);
+      return;
+    }
+
+    const rowH = 66;
+    for (const def of available) {
+      const slot = gs.skillSlots.indexOf(def.id);
+      const equippedHere = slot === this.selectedSkillSlot;
+      const bg = this.add.graphics();
+      bg.fillStyle(equippedHere ? 0x1f3a3b : 0x191e31, 0.96);
+      bg.fillRoundedRect(8, y, w - 16, rowH - 4, 7);
+      bg.lineStyle(1, equippedHere ? 0x79d6ad : 0xffffff, equippedHere ? 0.72 : 0.08);
+      bg.strokeRoundedRect(8, y, w - 16, rowH - 4, 7);
+      this.content.add(bg);
+      this.content.add(
+        this.add.text(18, y + 8, def.name, {
+          fontFamily: FONT,
+          fontSize: '13px',
+          color: equippedHere ? '#bff4d4' : '#ffffff',
+          fontStyle: 'bold',
+        }),
+      );
+      this.content.add(
+        this.add.text(18, y + 27, this.compactSkillText(def.description), {
+          fontFamily: FONT,
+          fontSize: '10px',
           color: '#9aa0b5',
         }),
       );
+      this.content.add(
+        this.add.text(18, y + 46, this.skillMeta(def), {
+          fontFamily: FONT,
+          fontSize: '9px',
+          color: isElement(def.element) && def.element !== 'none'
+            ? `#${ELEMENT_COLOR[def.element].toString(16).padStart(6, '0')}`
+            : '#9fb5cf',
+        }),
+      );
+      const action = equippedHere ? 'セット中' : slot >= 0 ? '入れ替え' : 'セット';
+      this.content.add(
+        this.add
+          .text(w - 16, y + 31, action, {
+            fontFamily: FONT,
+            fontSize: '11px',
+            color: equippedHere ? '#bff4d4' : '#ffffff',
+            backgroundColor: equippedHere ? '#244b42' : '#304b70',
+            padding: { x: 9, y: 6 },
+          })
+          .setOrigin(1, 0.5),
+      );
+      const hit = this.add
+        .rectangle(8, y, w - 16, rowH - 4, 0xffffff, 0.001)
+        .setOrigin(0)
+        .setInteractive({ useHandCursor: true });
+      hit.on('pointerup', () => {
+        if (this.dragged || equippedHere) return;
+        gs.assignSkill(this.selectedSkillSlot, def.id);
+        this.renderTab();
+      });
+      this.content.add(hit);
+      y += rowH;
+    }
+  }
 
-      if (!learned) {
-        const block = gs.skillLearnBlock(def.id);
-        if (block === null) {
-          const btn = this.add
-            .text(w - 16, y + 4, '[ 覚える ]', {
+  private renderSkillLearning(): void {
+    const w = this.scale.width;
+    const gs = gameState;
+    const myFamily = getJob(gs.jobId)?.family;
+    const visible = allSkills().filter((def) => !def.family || def.family === myFamily);
+    const groups: { title: string; defs: SkillDef[] }[] = [
+      { title: 'アクティブ技', defs: visible.filter((def) => def.type === 'active') },
+      { title: 'パッシブ', defs: visible.filter((def) => def.type === 'passive') },
+    ];
+    let y = 160;
+    for (const group of groups) {
+      if (group.defs.length === 0) continue;
+      this.content.add(
+        this.add.text(16, y, group.title, {
+          fontFamily: FONT,
+          fontSize: '12px',
+          color: '#c9b27a',
+          fontStyle: 'bold',
+        }),
+      );
+      y += 22;
+      for (const def of group.defs) {
+        const learned = !!gs.skills[def.id];
+        const block = learned ? 'known' : gs.skillLearnBlock(def.id);
+        const rowH = 64;
+        const bg = this.add.graphics();
+        bg.fillStyle(learned ? 0x1c3032 : 0x191e31, 0.96);
+        bg.fillRoundedRect(8, y, w - 16, rowH - 4, 7);
+        bg.lineStyle(1, learned ? 0x66b58f : 0xffffff, learned ? 0.4 : 0.08);
+        bg.strokeRoundedRect(8, y, w - 16, rowH - 4, 7);
+        this.content.add(bg);
+        this.content.add(
+          this.add.text(18, y + 8, def.name, {
+            fontFamily: FONT,
+            fontSize: '13px',
+            color: learned ? '#bff4d4' : '#ffffff',
+            fontStyle: 'bold',
+          }),
+        );
+        this.content.add(
+          this.add.text(18, y + 28, this.compactSkillText(def.description), {
+            fontFamily: FONT,
+            fontSize: '10px',
+            color: '#9aa0b5',
+          }),
+        );
+        if (def.type === 'active') {
+          this.content.add(
+            this.add.text(18, y + 45, this.skillMeta(def), {
               fontFamily: FONT,
-              fontSize: '13px',
-              color: '#9fd0ff',
+              fontSize: '9px',
+              color: '#9fb5cf',
+            }),
+          );
+        }
+        const label = learned ? '習得済' : block === null ? '覚える' : this.skillBlockText(def, block);
+        this.content.add(
+          this.add
+            .text(w - 16, y + 30, label, {
+              fontFamily: FONT,
+              fontSize: '11px',
+              color: learned ? '#bff4d4' : block === null ? '#ffffff' : '#7e8499',
+              backgroundColor: block === null ? '#304b70' : undefined,
+              padding: block === null ? { x: 9, y: 6 } : undefined,
             })
-            .setOrigin(1, 0)
+            .setOrigin(1, 0.5),
+        );
+        if (!learned && block === null) {
+          const hit = this.add
+            .rectangle(8, y, w - 16, rowH - 4, 0xffffff, 0.001)
+            .setOrigin(0)
             .setInteractive({ useHandCursor: true });
-          btn.on('pointerup', () => {
+          hit.on('pointerup', () => {
             if (this.dragged) return;
             gs.learnSkill(def.id);
             this.renderTab();
           });
-          this.content.add(btn);
-        } else {
-          const note =
-            block === 'job'
-              ? `${FAMILY_LABEL[def.family!]}専用`
-              : block === 'tier'
-                ? `${def.minTier}次職必要`
-                : block === 'level'
-                  ? `Lv${def.requiredLevel}必要`
-                  : block === 'requires'
-                    ? '前提技が必要'
-                    : block === 'points'
-                      ? 'ポイント不足'
-                      : '';
-          this.content.add(
-            this.add
-              .text(w - 16, y + 4, note, {
-                fontFamily: FONT,
-                fontSize: '11px',
-                color: '#7e8499',
-              })
-              .setOrigin(1, 0),
-          );
+          this.content.add(hit);
         }
+        y += rowH;
       }
-      y += 50;
+      y += 8;
     }
+  }
+
+  private renderSkills(): void {
+    this.renderSkillModeBar();
+    if (this.skillView === 'loadout') this.renderSkillLoadout();
+    else this.renderSkillLearning();
   }
 
   private close(): void {

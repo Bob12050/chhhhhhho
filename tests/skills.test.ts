@@ -30,6 +30,20 @@ describe('skills', () => {
     expect(gs.skillSlots).toContain('power_strike');
   });
 
+  it('reassigns active skills by swapping S1 and S2 without duplicates', () => {
+    const gs = new GameState();
+    gs.level = 3;
+    gs.skillPoints = 3;
+    gs.learnSkill('slash');
+    gs.learnSkill('power_strike');
+
+    expect(gs.skillSlots).toEqual(['slash', 'power_strike']);
+    expect(gs.assignSkill(0, 'power_strike')).toBe(true);
+    expect(gs.skillSlots).toEqual(['power_strike', 'slash']);
+    expect(gs.assignSkill(2, 'slash')).toBe(false);
+    expect(gs.assignSkill(0, 'toughness')).toBe(false);
+  });
+
   it('passive skills modify derived stats', () => {
     const gs = new GameState();
     gs.level = 2;
