@@ -51,8 +51,11 @@ export class Player {
     this.body.setCollideWorldBounds(true);
 
     this.doll = new PaperDollAnimator(scene, x, y);
-    this.shadow = scene.add.image(x, y + 2, TEX.groundShadow).setDisplaySize(24, 9).setDepth(4);
-    this.doll.setLayer('shadow', TEX.shadow);
+    this.shadow = scene.add
+      .image(x, y + 1, TEX.groundShadow)
+      .setDisplaySize(28, 10)
+      .setAlpha(0.72)
+      .setDepth(Math.round(y) - 1);
     this.setJobAppearance(gameState.jobId);
     this.doll.play('idle');
   }
@@ -199,7 +202,9 @@ export class Player {
 
   update(dtMs: number): void {
     if (this.attackCdMs > 0) this.attackCdMs -= dtMs;
-    this.shadow.setPosition(Math.round(this.body.x), Math.round(this.body.y) + 2);
+    this.shadow
+      .setPosition(Math.round(this.body.x), Math.round(this.body.y) + 1)
+      .setDepth(Math.round(this.body.y) - 1);
     if (this.rollMs > 0) {
       this.rollMs -= dtMs;
       if (this.rollMs <= 0) this.body.setVelocity(0, 0);

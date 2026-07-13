@@ -58,6 +58,13 @@ try {
   await page.waitForFunction(() => !!window.__test, undefined, { timeout: 10000 });
   let s = await snap(page);
   check('新規ゲームで町に降り立つ', s.mapId === 'town', `mapId=${s.mapId}`);
+  const townTexture = await page.evaluate(() =>
+    window.__test.textureSize('art.map.town.storybook'));
+  check(
+    '町背景が拡張版640×960で読み込まれる',
+    townTexture?.width === 640 && townTexture?.height === 960,
+    JSON.stringify(townTexture),
+  );
   check('初期クエストが受注済み', s.activeQuests.includes('q_apprentice'));
   check(
     '町では北門への矢印と距離が出る',

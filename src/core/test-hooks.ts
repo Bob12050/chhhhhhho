@@ -16,6 +16,7 @@ import { saveManager } from '@/save/save-manager';
 
 export interface TestHooks {
   activeScenes(): string[];
+  textureSize(key: string): { width: number; height: number } | null;
   /** Activate an interactive text control without relying on font-dependent coordinates. */
   activateText(sceneKey: string, label: string): boolean;
   snapshot(): {
@@ -82,6 +83,11 @@ export function installTestHooks(game: Phaser.Game): void {
   });
   const hooks: TestHooks = {
     activeScenes: () => game.scene.getScenes(true).map((scene) => scene.scene.key),
+    textureSize: (key: string) => {
+      if (!game.textures.exists(key)) return null;
+      const source = game.textures.get(key).source[0];
+      return source ? { width: source.width, height: source.height } : null;
+    },
     activateText: (sceneKey: string, label: string) => {
       const scene = game.scene.getScene(sceneKey);
       if (!scene?.scene.isActive()) return false;

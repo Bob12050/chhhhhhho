@@ -83,8 +83,10 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.tilePath, 'assets/tiles/path.png'),
   img(TEX.tileStone, 'assets/tiles/stone.png'),
   img(TEX.tileFloor, 'assets/tiles/floor.png'),
-  img(TEX.townMap, 'assets/maps/town-storybook.png'),
-  img(TEX.fieldMap, 'assets/maps/field-storybook.png'),
+  // Versioned filenames force mobile Safari to discard the previous narrow
+  // backgrounds when the painted map dimensions change.
+  img(TEX.townMap, 'assets/maps/town-storybook-wide-v2.png'),
+  img(TEX.fieldMap, 'assets/maps/field-storybook-wide-v2.png'),
   img(TEX.forestMap, 'assets/maps/forest-storybook.png'),
   img(TEX.dungeonMap, 'assets/maps/dungeon-storybook.png'),
   img(TEX.canyonMap, 'assets/maps/canyon-storybook.png'),
