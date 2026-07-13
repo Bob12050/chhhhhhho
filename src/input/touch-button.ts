@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { FONT } from '@/ui/theme';
+import { TEX } from '@/assets/gen/textures';
 
 /**
  * Round touch button. Handles multi-touch correctly: it binds to the specific
@@ -9,8 +10,10 @@ import { FONT } from '@/ui/theme';
 export class TouchButton {
   private readonly circle: Phaser.GameObjects.Arc;
   private readonly inner: Phaser.GameObjects.Arc;
+  private readonly frame?: Phaser.GameObjects.Image;
   private readonly label: Phaser.GameObjects.Text;
   private icon?: Phaser.GameObjects.Image;
+  private frameSize = 0;
   private dimmed = false;
   private pointerId = -1;
   private readonly cx: number;
@@ -34,12 +37,18 @@ export class TouchButton {
     this.cy = y;
     this.radius = Math.max(radius, 24); // 48px diameter minimum
     this.accent = color;
-    // Dark metal face + colour-coded inner ring reads as a game control deck
-    // rather than five unrelated translucent circles.
+    const frameTex = this.radius >= 26 ? TEX.hudActionButton : TEX.hudUtilityButton;
+    const hasIllustratedFrame = scene.textures.exists(frameTex);
+    // The live colour remains code-driven beneath the illustrated metal bezel.
     this.circle = scene.add.circle(x, y, this.radius, 0x173b69, 0.92).setDepth(depth);
-    this.circle.setStrokeStyle(2, 0xf2c765, 0.9);
-    this.inner = scene.add.circle(x, y, this.radius - 5, color, 0.16).setDepth(depth + 0.5);
+    if (!hasIllustratedFrame) this.circle.setStrokeStyle(2, 0xf2c765, 0.9);
+    this.inner = scene.add.circle(x, y, this.radius - 6, color, 0.2).setDepth(depth + 0.25);
     this.inner.setStrokeStyle(1, color, 0.62);
+    if (hasIllustratedFrame) {
+      const size = this.radius * 2 + (this.radius >= 26 ? 8 : 6);
+      this.frameSize = size;
+      this.frame = scene.add.image(x, y, frameTex).setDisplaySize(size, size).setDepth(depth + 0.6);
+    }
     // Icon + smaller caption reads better than a bare letter; integer scale
     // only (pixel-art rule).
     if (iconTex && scene.textures.exists(iconTex)) {
@@ -78,12 +87,14 @@ export class TouchButton {
     this.pointerId = -1;
     this.circle.setFillStyle(0x173b69, 0.92);
     this.inner.setFillStyle(this.accent, 0.16);
+    this.frame?.clearTint().setDisplaySize(this.frameSize, this.frameSize);
     this.onChange?.(false);
   }
 
   setVisible(v: boolean): void {
     this.circle.setVisible(v);
     this.inner.setVisible(v);
+    this.frame?.setVisible(v);
     this.label.setVisible(v);
     this.icon?.setVisible(v);
     if (!v && this.pointerId !== -1) {
@@ -99,6 +110,7 @@ export class TouchButton {
     const a = v ? 0.72 : 1;
     this.circle.setAlpha(a);
     this.inner.setAlpha(a);
+    this.frame?.setAlpha(a);
     this.label.setAlpha(a);
     this.icon?.setAlpha(a);
     if (v && this.pointerId !== -1) this.forceRelease();
@@ -113,6 +125,7 @@ export class TouchButton {
     this.pointerId = p.id;
     this.circle.setFillStyle(0x2f6598, 0.98);
     this.inner.setFillStyle(this.accent, 0.3);
+    this.frame?.setTint(0xfff0bf).setDisplaySize(this.frameSize * 0.96, this.frameSize * 0.96);
     this.onChange?.(true);
   }
 
@@ -127,6 +140,7 @@ export class TouchButton {
     this.pointerId = -1;
     this.circle.setFillStyle(0x173b69, 0.92);
     this.inner.setFillStyle(this.accent, 0.16);
+    this.frame?.clearTint().setDisplaySize(this.frameSize, this.frameSize);
     this.onChange?.(false);
   }
 }

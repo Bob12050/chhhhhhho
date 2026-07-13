@@ -99,6 +99,14 @@ export const TEX = {
   // 9-slice UI panel frame. Drop assets/ui/frame.png (48x48, ~16px corners) to
   // restyle every framed menu panel with no code change (see ninePanel()).
   uiFrame: 'gen.ui.frame',
+  // Illustrated HUD skin. These are real transparent PNGs rather than canvas
+  // primitives so the always-visible game screen shares one art direction.
+  hudStatusFrame: 'art.ui.hud.status_frame',
+  hudQuestFrame: 'art.ui.hud.quest_frame',
+  hudMinimapFrame: 'art.ui.hud.minimap_frame',
+  hudStickBase: 'art.ui.hud.stick_base',
+  hudActionButton: 'art.ui.hud.action_button',
+  hudUtilityButton: 'art.ui.hud.utility_button',
   // Distinct town NPC looks by role (so the shopkeeper / smith / guild clerk /
   // elder stop being identical tinted clones). Real art drops in via manifest.
   npcMerchant: 'gen.npc.merchant',

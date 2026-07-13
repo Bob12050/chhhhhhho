@@ -112,7 +112,7 @@ export class WorldScene extends Phaser.Scene {
   private baseCameraZoom = 1;
   private petAtkCd = 0;
   private bossBar: {
-    bg: Phaser.GameObjects.Graphics;
+    bg: Phaser.GameObjects.Container;
     fill: Phaser.GameObjects.Rectangle;
     label: Phaser.GameObjects.Text;
   } | null = null;
@@ -811,27 +811,31 @@ export class WorldScene extends Phaser.Scene {
     const x = 24;
     const y = 102; // compact status panel bottom + minimap caption clearance
     const cardW = w - 48;
-    const cardH = 40;
-    const bg = this.add.graphics().setScrollFactor(0).setDepth(8000);
-    bg.fillStyle(0x080d16, 0.9);
-    bg.fillRoundedRect(x, y, cardW, cardH, 6);
-    bg.lineStyle(2, 0xf5c542, 0.68);
-    bg.strokeRoundedRect(x, y, cardW, cardH, 6);
-    bg.lineStyle(1, 0xffffff, 0.12);
-    bg.strokeRoundedRect(x + 3, y + 3, cardW - 6, cardH - 6, 4);
-    bg.fillStyle(0xf5c542, 0.9);
-    bg.fillTriangle(x + 8, y + 8, x + 13, y + 4, x + 18, y + 8);
-    bg.fillTriangle(x + cardW - 18, y + 8, x + cardW - 13, y + 4, x + cardW - 8, y + 8);
+    const cardH = 46;
+    const bg = this.add.container(0, 0).setScrollFactor(0).setDepth(8000);
+    bg.add(
+      this.add
+        .image(x + cardW / 2, y + cardH / 2 + 3, TEX.hudQuestFrame)
+        .setDisplaySize(cardW, cardH)
+        .setTint(0x000000)
+        .setAlpha(0.48),
+    );
+    bg.add(this.add.rectangle(x + cardW / 2 + 24, y + cardH / 2, cardW - 72, cardH - 18, 0x120d1b, 0.94));
+    bg.add(this.add.image(x + cardW / 2, y + cardH / 2, TEX.hudQuestFrame).setDisplaySize(cardW, cardH));
     // Empty groove under the fill so lost HP reads clearly.
-    bg.fillStyle(0x000000, 0.5);
-    bg.fillRoundedRect(x + 12, y + 25, cardW - 24, 9, 4);
+    bg.add(this.add.rectangle(x + 58 + (cardW - 72) / 2, y + 32, cardW - 72, 9, 0x05050b, 0.72));
     const label = this.add
-      .text(x + cardW / 2, y + 6, name, { fontFamily: FONT, fontSize: '11px', color: '#ffe7a5', fontStyle: 'bold' })
+      .text(x + 58 + (cardW - 72) / 2, y + 7, name, {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#fff0bd',
+        fontStyle: 'bold',
+      })
       .setOrigin(0.5, 0)
       .setScrollFactor(0)
       .setDepth(8002);
     const fill = this.add
-      .rectangle(x + 13, y + 29, cardW - 26, 7, 0xd4464d)
+      .rectangle(x + 59, y + 32, cardW - 74, 7, 0xd4464d)
       .setOrigin(0, 0.5)
       .setScrollFactor(0)
       .setDepth(8001);

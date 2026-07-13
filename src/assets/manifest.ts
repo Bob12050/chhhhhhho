@@ -109,4 +109,12 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.groundShadow, 'assets/env/shadow.png'),
   // UI: one 9-slice frame drives every menu panel (48x48, ~16px corners).
   img(TEX.uiFrame, 'assets/ui/frame.png'),
+  // Cohesive illustrated battle HUD. Dynamic values/icons remain code-driven;
+  // these transparent bezels supply the production-quality material finish.
+  img(TEX.hudStatusFrame, 'assets/ui/hud-status-frame.png'),
+  img(TEX.hudQuestFrame, 'assets/ui/hud-quest-frame.png'),
+  img(TEX.hudMinimapFrame, 'assets/ui/hud-minimap-frame.png'),
+  img(TEX.hudStickBase, 'assets/ui/hud-stick-base.png'),
+  img(TEX.hudActionButton, 'assets/ui/hud-action-button.png'),
+  img(TEX.hudUtilityButton, 'assets/ui/hud-utility-button.png'),
 ];

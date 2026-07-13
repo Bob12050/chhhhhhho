@@ -13,7 +13,7 @@ import { getEnemyDef } from '@/enemies/enemy-defs';
 import { ELEMENT_LABEL, elementColorHex, isElement } from '@/combat/elements';
 import { expToNext } from '@/stats/leveling';
 import { FONT, HUD_DEPTH } from '@/ui/theme';
-import { TEX, UI_FRAME_SLICE } from '@/assets/gen/textures';
+import { TEX } from '@/assets/gen/textures';
 import { TutorialCoach } from '@/ui/tutorial-coach';
 import { isUpdateReady } from '@/core/pwa';
 import { INTRO_PENDING_FLAG, INTRO_QUEST_ID } from '@/tutorial/onboarding';
@@ -80,28 +80,15 @@ export class UIScene extends Phaser.Scene {
     const baseX = w - insets.right - 44;
     const baseY = h - bottomPad - 44;
 
-    // A metal control deck keeps every action visibly related while leaving the
-    // world open. The gold arcs borrow the hunt-screen language of the boss UI.
-    const actionDeck = this.add.graphics().setDepth(depth - 1);
+    // A single illustrated control deck ties the individual action sockets
+    // together without adding another opaque panel over the world.
     const deckX = baseX - 38;
     const deckY = baseY - 58;
-    const deckR = 88;
-    actionDeck.fillStyle(0x173b69, 0.24);
-    actionDeck.fillCircle(deckX, deckY, deckR);
-    actionDeck.lineStyle(1, 0xf2c765, 0.64);
-    actionDeck.strokeCircle(deckX, deckY, deckR);
-    actionDeck.lineStyle(1, 0xffffff, 0.1);
-    actionDeck.strokeCircle(deckX, deckY, deckR - 8);
-    actionDeck.lineStyle(2, 0xf2c765, 0.72);
-    actionDeck.lineBetween(baseX - 76, baseY + 6, baseX - 60, baseY - 58);
-    actionDeck.lineBetween(baseX - 60, baseY - 58, baseX + 2, baseY - 76);
-    actionDeck.lineStyle(1, 0xf2c765, 0.62);
-    actionDeck.lineBetween(baseX - 64, baseY - 122, baseX - 60, baseY - 58);
-    actionDeck.lineStyle(2, 0xf2c765, 0.78);
-    actionDeck.arc(deckX, deckY, deckR, Math.PI * 0.12, Math.PI * 0.48, false);
-    actionDeck.strokePath();
-    actionDeck.arc(deckX, deckY, deckR, Math.PI * 1.12, Math.PI * 1.48, false);
-    actionDeck.strokePath();
+    const actionDeck = this.add
+      .image(deckX, deckY, TEX.hudStickBase)
+      .setDisplaySize(184, 184)
+      .setDepth(depth - 1)
+      .setAlpha(0.4);
 
     const attackBtn = new TouchButton(this, baseX, baseY, 32, '', 0xcc4444, depth, TEX.iconSword);
     attackBtn.onChange = (d) => input.setButton('attack', d);
@@ -149,7 +136,7 @@ export class UIScene extends Phaser.Scene {
     const combatButtons = [attackBtn, skillBtn, skill2Btn, dodgeBtn, potBtn];
     const setCombatDim = (dim: boolean): void => {
       combatButtons.forEach((b) => b.setDimmed(dim));
-      actionDeck.setAlpha(dim ? 0.65 : 1);
+      actionDeck.setAlpha(dim ? 0.24 : 0.4);
     };
     setCombatDim(!!getMap(gameState.mapId)?.safe);
     this.busOff.push(bus.on('world:map-ready', ({ safe }) => setCombatDim(safe)));
@@ -228,25 +215,18 @@ export class UIScene extends Phaser.Scene {
     // ── statusPanel: HP/MP/EXP/Lv/職業/所持金 を1コンテナに統合（個別配置しない）
     const px = insets.left + 8;
     const py = insets.top + 8;
-    const PW = 158;
-    const PH = 62;
+    const PW = 166;
+    const PH = 66;
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
-    const sl = UI_FRAME_SLICE;
     panel.add(
       this.add
-        .nineslice(PW / 2, PH / 2 + 4, TEX.uiFrame, undefined, PW, PH, sl, sl, sl, sl)
+        .image(PW / 2, PH / 2 + 3, TEX.hudStatusFrame)
+        .setDisplaySize(PW, PH)
         .setTint(0x000000)
-        .setAlpha(0.34),
+        .setAlpha(0.42),
     );
-    panel.add(this.add.nineslice(PW / 2, PH / 2, TEX.uiFrame, undefined, PW, PH, sl, sl, sl, sl));
-    const panelAccent = this.add.graphics();
-    panelAccent.fillStyle(0xf5c542, 0.9);
-    panelAccent.fillRoundedRect(9, 9, 3, PH - 18, 2);
-    panelAccent.fillStyle(0xffffff, 0.08);
-    panelAccent.fillRoundedRect(16, 7, PW - 24, 14, { tl: 7, tr: 7, bl: 0, br: 0 });
-    panelAccent.lineStyle(1, 0xffffff, 0.07);
-    panelAccent.lineBetween(52, 10, 52, PH - 10);
-    panel.add(panelAccent);
+    panel.add(this.add.circle(31, 34, 19, 0x10213b, 0.9));
+    panel.add(this.add.image(PW / 2, PH / 2, TEX.hudStatusFrame).setDisplaySize(PW, PH));
 
     // Low-HP danger vignette (full screen, just under the HUD).
     this.lowHpVignette = this.add.graphics().setDepth(depth - 1).setScrollFactor(0).setVisible(false);
@@ -269,88 +249,59 @@ export class UIScene extends Phaser.Scene {
       return m[fam] ?? { tex: TEX.iconGem, color: 0x9fd0ff };
     };
     const em0 = emblemFor();
-    const cell = this.add.graphics();
-    const drawEmblemCell = (color: number): void => {
-      cell.clear();
-      cell.fillStyle(0x193c68, 0.82);
-      cell.fillRoundedRect(13, 10, 32, 36, 7);
-      cell.fillStyle(0x315f91, 1);
-      cell.fillRoundedRect(9, 7, 38, 38, 7);
-      cell.fillStyle(0xffffff, 0.1);
-      cell.fillRoundedRect(12, 10, 32, 11, { tl: 6, tr: 6, bl: 0, br: 0 });
-      cell.lineStyle(2, color, 0.9);
-      cell.strokeRoundedRect(9, 7, 38, 38, 7);
-      cell.lineStyle(1, 0xffffff, 0.16);
-      cell.strokeCircle(28, 26, 12);
-    };
-    drawEmblemCell(em0.color);
-    panel.add(cell);
-    const jobIcon = this.add.image(28, 26, em0.tex).setScale(1.5).setTint(em0.color);
+    const jobIcon = this.add.image(31, 30, em0.tex).setScale(1.35).setTint(em0.color);
     panel.add(jobIcon);
-    const lvBadge = this.add.graphics();
-    lvBadge.fillStyle(0x173b69, 0.96);
-    lvBadge.fillRoundedRect(10, 47, 36, 12, 6);
-    lvBadge.lineStyle(1, 0xf5c542, 0.45);
-    lvBadge.strokeRoundedRect(10, 47, 36, 12, 6);
-    panel.add(lvBadge);
     const levelText = this.add
-      .text(28, 53, '', { fontFamily: FONT, fontSize: '8px', color: '#ffd86b', fontStyle: 'bold' })
+      .text(31, 52, '', { fontFamily: FONT, fontSize: '8px', color: '#fff1bd', fontStyle: 'bold' })
       .setOrigin(0.5);
+    levelText.setShadow(0, 1, '#08101f', 2);
     panel.add(levelText);
 
-    // Right column: job + HP/MP. The XP line is intentionally quiet.
-    const rx = 52;
-    const rw = PW - rx - 9;
-    this.jobText = this.add.text(rx, 4, '', {
+    // Right column follows the three recessed channels in the illustrated art:
+    // identity, HP, MP. EXP remains a quiet line along the lower edge.
+    const rx = 65;
+    const rw = 93;
+    this.jobText = this.add.text(rx + 4, 21, '', {
       fontFamily: FONT,
-      fontSize: '11px',
+      fontSize: '10px',
       color: '#ffe9a8',
       fontStyle: 'bold',
-    });
+    }).setOrigin(0, 0.5);
+    this.jobText.setShadow(0, 1, '#08101f', 2);
     panel.add(this.jobText);
     const refreshJob = (): void => {
       levelText.setText(`Lv${gameState.level}`);
-      fitText(this.jobText, getJob(gameState.jobId)?.name ?? gameState.jobId, rw);
+      fitText(this.jobText, getJob(gameState.jobId)?.name ?? gameState.jobId, rw - 8);
       const em = emblemFor();
       jobIcon.setTexture(em.tex).setTint(em.color);
-      drawEmblemCell(em.color);
     };
 
-    const makeBar = (by: number, bh: number, color: number): Phaser.GameObjects.Rectangle => {
-      const g = this.add.graphics();
-      g.fillStyle(0x000000, 0.34);
-      g.fillRoundedRect(rx, by + 2, rw, bh, bh / 2);
-      g.fillStyle(0x17375e, 0.95);
-      g.fillRoundedRect(rx, by, rw, bh, bh / 2);
-      g.fillStyle(color, 0.22);
-      g.fillRoundedRect(rx + 1, by + 1, rw - 2, Math.max(2, Math.floor(bh / 2)), bh / 2);
-      g.lineStyle(1, 0xffffff, 0.08);
-      g.strokeRoundedRect(rx, by, rw, bh, bh / 2);
-      panel.add(g);
-      const fill = this.add.rectangle(rx + 2, by + 2, rw - 4, bh - 4, color, 1).setOrigin(0, 0);
+    const makeBar = (cy: number, color: number): Phaser.GameObjects.Rectangle => {
+      const fill = this.add.rectangle(rx + 3, cy, rw - 7, 7, color, 0.96).setOrigin(0, 0.5);
       panel.add(fill);
       return fill;
     };
-    const barText = (by: number, bh: number, label: string): Phaser.GameObjects.Text => {
+    const barText = (cy: number, label: string): Phaser.GameObjects.Text => {
       const lab = this.add
-        .text(rx + 5, by + bh / 2, label, { fontFamily: FONT, fontSize: '8px', color: '#ffffff' })
+        .text(rx + 7, cy, label, { fontFamily: FONT, fontSize: '7px', color: '#ffffff' })
         .setOrigin(0, 0.5)
-        .setAlpha(0.76);
+        .setAlpha(0.84);
       lab.setShadow(0, 1, '#000000', 2);
       panel.add(lab);
       const val = this.add
-        .text(rx + rw - 5, by + bh / 2, '', { fontFamily: FONT, fontSize: '9px', color: '#ffffff' })
+        .text(rx + rw - 5, cy, '', { fontFamily: FONT, fontSize: '8px', color: '#ffffff' })
         .setOrigin(1, 0.5);
       val.setShadow(0, 1, '#000000', 2);
       panel.add(val);
       return val;
     };
 
-    this.hpBar = makeBar(21, 10, 0xf05f67);
-    this.hpText = barText(21, 10, 'HP');
-    this.mpBar = makeBar(36, 10, 0x36b9df);
-    this.mpText = barText(36, 10, 'MP');
-    this.expBar = makeBar(52, 4, 0xf5c542);
+    this.hpBar = makeBar(37, 0xf05f67);
+    this.hpText = barText(37, 'HP');
+    this.mpBar = makeBar(53, 0x36b9df);
+    this.mpText = barText(53, 'MP');
+    this.expBar = this.add.rectangle(rx + 2, 62, rw - 5, 2, 0x74e2c5, 0.95).setOrigin(0, 0.5);
+    panel.add(this.expBar);
     this.expText = this.add.text(0, 0, '').setVisible(false);
     this.goldText = this.add.text(0, 0, '').setVisible(false);
 
@@ -391,46 +342,38 @@ export class UIScene extends Phaser.Scene {
     // always knows what to do next ("game tells, player does, game rewards").
     // A small framed quest card, visually tied to the status panel.
     const hudX = insets.left + 8;
-    const trY = insets.top + 8 + PH + 5; // just below the statusPanel
+    const trY = insets.top + 8 + PH + 4; // just below the statusPanel
     const trW = PW;
-    const trH = 30;
+    const trH = 38;
     const trRoot = this.add.container(hudX, trY).setDepth(depth);
     trRoot.add(
       this.add
-        .nineslice(trW / 2, trH / 2 + 3, TEX.uiFrame, undefined, trW, trH, sl, sl, sl, sl)
+        .image(trW / 2, trH / 2 + 3, TEX.hudQuestFrame)
+        .setDisplaySize(trW, trH)
         .setTint(0x000000)
-        .setAlpha(0.22),
+        .setAlpha(0.36),
     );
+    trRoot.add(this.add.rectangle(102, trH / 2, 124, 25, 0x0d1c34, 0.88));
     trRoot.add(
       this.add
-        .nineslice(trW / 2, trH / 2, TEX.uiFrame, undefined, trW, trH, sl, sl, sl, sl)
-        .setTint(0x9aa6d8)
-        .setAlpha(0.9),
+        .image(trW / 2, trH / 2, TEX.hudQuestFrame)
+        .setDisplaySize(trW, trH),
     );
-    const trMark = this.add.graphics();
-    trMark.fillStyle(0xf5c542, 0.95);
-    trMark.fillRoundedRect(9, 6, 22, 18, 7);
-    trMark.fillStyle(0x15182a, 0.96);
-    trMark.fillRoundedRect(12, 9, 16, 12, 5);
-    trMark.lineStyle(1, 0xffffff, 0.12);
-    trMark.lineBetween(38, 7, 38, trH - 7);
-    trRoot.add(trMark);
-    trRoot.add(this.add.image(20, 15, TEX.iconGem).setScale(1).setTint(0xf5c542));
     const trTitle = this.add
-      .text(46, 2, '', { fontFamily: FONT, fontSize: '10px', color: '#ffe9a8', fontStyle: 'bold' })
+      .text(43, 7, '', { fontFamily: FONT, fontSize: '9px', color: '#ffe9a8', fontStyle: 'bold' })
       .setShadow(0, 1, '#000000', 2);
     const trObj = this.add
-      .text(46, 16, '', { fontFamily: FONT, fontSize: '9px', color: '#cfd3e6' })
+      .text(43, 21, '', { fontFamily: FONT, fontSize: '8px', color: '#dbe6f8' })
       .setShadow(0, 1, '#000000', 2);
     const trGuideDivider = this.add.graphics().setVisible(false);
     trGuideDivider.lineStyle(1, 0xffffff, 0.16);
-    trGuideDivider.lineBetween(trW - 48, 5, trW - 48, trH - 5);
+    trGuideDivider.lineBetween(trW - 45, 8, trW - 45, trH - 8);
     const trGuideArrow = this.add
-      .triangle(trW - 23, 9, 0, 8, 8, 8, 4, 0, 0xffd86b, 1)
+      .triangle(trW - 22, 12, 0, 8, 8, 8, 4, 0, 0xffd86b, 1)
       .setOrigin(0.5)
       .setVisible(false);
     const trGuideDistance = this.add
-      .text(trW - 23, 19, '', { fontFamily: FONT, fontSize: '7px', color: '#fff2bf' })
+      .text(trW - 22, 23, '', { fontFamily: FONT, fontSize: '7px', color: '#fff2bf' })
       .setOrigin(0.5, 0)
       .setShadow(0, 1, '#000000', 2)
       .setVisible(false);
@@ -439,7 +382,7 @@ export class UIScene extends Phaser.Scene {
     // tracker yields (the objective IS the boss on screen anyway).
     let bossBarActive = false;
     let currentGuide: GameEvents['quest:guide'] | null = null;
-    const trackerTextWidth = trW - 96;
+    const trackerTextWidth = trW - 92;
     const setTrackerVisible = (v: boolean): void => {
       trRoot.setVisible(v && !bossBarActive);
     };
@@ -495,11 +438,12 @@ export class UIScene extends Phaser.Scene {
 
     // Live minimap: intentionally compact, but it gives the upper-right a
     // recognisable RPG silhouette and makes map position visible at a glance.
-    const miniSize = 82;
-    const miniInner = 68;
-    const miniX = w - insets.right - 46;
-    const miniY = insets.top + 46;
+    const miniSize = 92;
+    const miniInner = 64;
+    const miniX = w - insets.right - 48;
+    const miniY = insets.top + 48;
     const miniG = this.add.graphics();
+    const miniFrame = this.add.image(0, 0, TEX.hudMinimapFrame).setDisplaySize(92, 104);
     const miniGuideRing = this.add
       .circle(0, 0, 5)
       .setStrokeStyle(1.5, 0xffd86b, 0.95)
@@ -509,17 +453,14 @@ export class UIScene extends Phaser.Scene {
       .setStrokeStyle(1, 0x2a1820, 1)
       .setVisible(false);
     const miniDot = this.add.circle(0, 0, 3.5, 0xffe16a).setStrokeStyle(1.5, 0x2a1820, 1);
-    const miniNorth = this.add
-      .text(0, -31, 'N', { fontFamily: FONT, fontSize: '8px', color: '#d9e8ff', fontStyle: 'bold' })
-      .setOrigin(0.5);
     const miniName = this.add
-      .text(0, 48, '', { fontFamily: FONT, fontSize: '8px', color: '#d9e8ff' })
+      .text(0, 58, '', { fontFamily: FONT, fontSize: '8px', color: '#fff1bd' })
       .setOrigin(0.5)
       .setShadow(0, 1, '#000000', 2);
     const miniRoot = this.add
-      .container(miniX, miniY, [miniG, miniGuideRing, miniGuideDot, miniDot, miniNorth, miniName])
+      .container(miniX, miniY, [miniG, miniFrame, miniGuideRing, miniGuideDot, miniDot, miniName])
       .setDepth(depth);
-    miniRoot.setSize(miniSize, miniSize).setInteractive({ useHandCursor: true });
+    miniRoot.setSize(miniSize, 104).setInteractive({ useHandCursor: true });
     miniRoot.on('pointerup', () => bus.emit('ui:open-map', {}));
 
     let miniMap = getMap(gameState.mapId);
@@ -549,8 +490,8 @@ export class UIScene extends Phaser.Scene {
       const half = miniInner / 2;
       const ground = miniMap?.ground === 'stone' ? 0x536172 : miniMap?.ground === 'floor' ? 0x62515e : 0x45694a;
       miniG.clear();
-      miniG.fillStyle(0x050912, 0.84);
-      miniG.fillRoundedRect(-miniSize / 2, -miniSize / 2, miniSize, miniSize, 10);
+      miniG.fillStyle(0x050912, 0.94);
+      miniG.fillRoundedRect(-half - 3, -half - 3, miniInner + 6, miniInner + 6, 8);
       miniG.fillStyle(ground, 0.95);
       miniG.fillRoundedRect(-half, -half, miniInner, miniInner, 7);
       if (miniMap?.path) {
@@ -565,8 +506,6 @@ export class UIScene extends Phaser.Scene {
         miniG.fillStyle(portal.requiresFlag && !gameState.flags[portal.requiresFlag] ? 0xc45a62 : 0x8ddcff, 0.95);
         miniG.fillCircle(px, py, 2);
       }
-      miniG.lineStyle(2, 0xe9c45f, 0.8);
-      miniG.strokeRoundedRect(-miniSize / 2, -miniSize / 2, miniSize, miniSize, 10);
       miniG.lineStyle(1, 0xffffff, 0.12);
       miniG.strokeRoundedRect(-half, -half, miniInner, miniInner, 7);
       miniDot.setPosition(
@@ -690,12 +629,17 @@ export class UIScene extends Phaser.Scene {
       .setAlpha(0);
     this.questProgressRoot = root;
 
-    const panel = this.add
-      .rectangle(0, 0, panelW, panelH, 0x101a2f, 0.94)
-      .setStrokeStyle(1.5, data.complete ? 0xffd86b : 0x7eb8e8, 0.9);
-    const accent = this.add.rectangle(-panelW / 2 + 4, 0, 5, panelH - 8, data.complete ? 0xffd86b : 0x5aa6dc, 0.95);
+    const shadow = this.add
+      .image(2, 3, TEX.hudQuestFrame)
+      .setDisplaySize(panelW, panelH)
+      .setTint(0x000000)
+      .setAlpha(0.48);
+    const well = this.add.rectangle(16, 0, panelW - 54, panelH - 18, 0x0c1b31, 0.94);
+    const panel = this.add.image(0, 0, TEX.hudQuestFrame).setDisplaySize(panelW, panelH);
+    if (data.complete) panel.setTint(0xfff0bd);
+    const textX = -panelW / 2 + 48;
     const tag = this.add
-      .text(-panelW / 2 + 16, -15, data.complete ? 'OBJECTIVE COMPLETE' : 'QUEST PROGRESS', {
+      .text(textX, -15, data.complete ? 'OBJECTIVE COMPLETE' : 'QUEST PROGRESS', {
         fontFamily: FONT,
         fontSize: '8px',
         color: data.complete ? '#ffd86b' : '#8fd0ff',
@@ -711,20 +655,21 @@ export class UIScene extends Phaser.Scene {
       })
       .setOrigin(1, 0.5);
     const title = this.add
-      .text(-panelW / 2 + 16, 1, `${enemy.name}を討伐`, {
+      .text(textX, 1, `${enemy.name}を討伐`, {
         fontFamily: FONT,
         fontSize: '11px',
         color: '#ffffff',
         fontStyle: 'bold',
       })
       .setOrigin(0, 0.5);
-    const barBg = this.add.rectangle(0, 16, panelW - 28, 4, 0x050711, 0.8);
-    const fillW = panelW - 30;
+    const fillW = panelW - 62;
+    const barX = textX + fillW / 2;
+    const barBg = this.add.rectangle(barX, 16, fillW, 4, 0x050711, 0.8);
     const bar = this.add
-      .rectangle(-fillW / 2, 16, fillW, 2, data.complete ? 0xffd86b : 0x69bce8, 1)
+      .rectangle(textX, 16, fillW, 2, data.complete ? 0xffd86b : 0x69bce8, 1)
       .setOrigin(0, 0.5)
       .setScale(Phaser.Math.Clamp(data.current / data.total, 0, 1), 1);
-    root.add([panel, accent, tag, value, title, barBg, bar]);
+    root.add([shadow, well, panel, tag, value, title, barBg, bar]);
 
     this.tweens.add({ targets: root, alpha: 1, y: root.y + 8, duration: 180, ease: 'Cubic.Out' });
     this.time.delayedCall(data.complete ? 1450 : 1050, () => {
@@ -755,13 +700,16 @@ export class UIScene extends Phaser.Scene {
     const root = this.add.container(w + panelW / 2, Math.min(170, h * 0.24)).setDepth(HUD_DEPTH + 850);
     this.questStartRoot = root;
 
-    const shadow = this.add.rectangle(3, 4, panelW, panelH, 0x050711, 0.7);
-    const panel = this.add
-      .rectangle(0, 0, panelW, panelH, 0x132442, 0.96)
-      .setStrokeStyle(2, 0xf5c542, 0.92);
-    const accent = this.add.rectangle(-panelW / 2 + 5, 0, 6, panelH - 10, 0xf5c542, 0.95);
+    const shadow = this.add
+      .image(3, 4, TEX.hudQuestFrame)
+      .setDisplaySize(panelW, panelH)
+      .setTint(0x000000)
+      .setAlpha(0.54);
+    const well = this.add.rectangle(25, 0, panelW - 86, panelH - 24, 0x0d203a, 0.96);
+    const panel = this.add.image(0, 0, TEX.hudQuestFrame).setDisplaySize(panelW, panelH);
+    const textX = -panelW / 2 + 70;
     const tag = this.add
-      .text(-panelW / 2 + 20, -27, 'QUEST START', {
+      .text(textX, -25, 'QUEST START', {
         fontFamily: FONT,
         fontSize: '10px',
         color: '#ffd86b',
@@ -769,9 +717,9 @@ export class UIScene extends Phaser.Scene {
       })
       .setOrigin(0, 0.5);
     const title = this.add
-      .text(-panelW / 2 + 20, -7, quest.name, {
+      .text(textX, -6, quest.name, {
         fontFamily: FONT,
-        fontSize: '16px',
+        fontSize: '14px',
         color: '#ffffff',
         fontStyle: 'bold',
       })
@@ -780,13 +728,13 @@ export class UIScene extends Phaser.Scene {
       .map((o) => `${getEnemyDef(o.enemyId)?.name ?? o.enemyId} ×${o.count}`)
       .join('・');
     const body = this.add
-      .text(-panelW / 2 + 20, 19, objective, {
+      .text(textX, 19, objective, {
         fontFamily: FONT,
         fontSize: '11px',
         color: '#cfe3ff',
       })
       .setOrigin(0, 0.5);
-    root.add([shadow, panel, accent, tag, title, body]);
+    root.add([shadow, well, panel, tag, title, body]);
     bus.emit('sfx:play', { id: 'ui_tap' });
 
     this.tweens.add({ targets: root, x: w / 2, duration: 280, ease: 'Cubic.Out' });

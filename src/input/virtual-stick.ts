@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { TEX } from '@/assets/gen/textures';
 
 /**
  * Dynamic virtual analog stick for the lower-left. The base appears wherever
@@ -11,6 +12,8 @@ export class VirtualStick {
   private readonly zone: Phaser.GameObjects.Zone;
   private readonly baseGfx: Phaser.GameObjects.Arc;
   private readonly thumbGfx: Phaser.GameObjects.Arc;
+  private readonly baseFrame?: Phaser.GameObjects.Image;
+  private readonly thumbFrame?: Phaser.GameObjects.Image;
 
   private pointerId = -1;
   private originX = 0;
@@ -30,12 +33,25 @@ export class VirtualStick {
       .setInteractive();
     this.zone.setDepth(depth);
 
-    this.baseGfx = scene.add.circle(0, 0, this.radius, 0x234d79, 0.18).setDepth(depth);
-    this.baseGfx.setStrokeStyle(2, 0xf2c765, 0.7);
-    this.thumbGfx = scene.add.circle(0, 0, 20, 0xdba84f, 0.62).setDepth(depth + 1);
-    this.thumbGfx.setStrokeStyle(2, 0xffe5a3, 0.82);
+    const hasBaseFrame = scene.textures.exists(TEX.hudStickBase);
+    const hasThumbFrame = scene.textures.exists(TEX.hudUtilityButton);
+    this.baseGfx = scene.add.circle(0, 0, this.radius, 0x173b69, 0.2).setDepth(depth);
+    if (!hasBaseFrame) this.baseGfx.setStrokeStyle(2, 0xf2c765, 0.7);
+    this.thumbGfx = scene.add.circle(0, 0, 19, 0x2b6791, 0.78).setDepth(depth + 1);
+    if (!hasThumbFrame) this.thumbGfx.setStrokeStyle(2, 0xffe5a3, 0.82);
+    if (hasBaseFrame) {
+      this.baseFrame = scene.add
+        .image(0, 0, TEX.hudStickBase)
+        .setDisplaySize(this.radius * 2 + 8, this.radius * 2 + 8)
+        .setDepth(depth + 0.5);
+    }
+    if (hasThumbFrame) {
+      this.thumbFrame = scene.add.image(0, 0, TEX.hudUtilityButton).setDisplaySize(44, 44).setDepth(depth + 1.5);
+    }
     this.baseGfx.setPosition(this.standbyX, this.standbyY).setAlpha(0.68);
     this.thumbGfx.setPosition(this.standbyX, this.standbyY).setAlpha(0.68);
+    this.baseFrame?.setPosition(this.standbyX, this.standbyY).setAlpha(0.68);
+    this.thumbFrame?.setPosition(this.standbyX, this.standbyY).setAlpha(0.68);
 
     this.zone.on('pointerdown', (p: Phaser.Input.Pointer) => this.onDown(p));
     scene.input.on('pointermove', (p: Phaser.Input.Pointer) => this.onMove(p));
@@ -60,6 +76,8 @@ export class VirtualStick {
     this.vector.set(0, 0);
     this.baseGfx.setPosition(this.standbyX, this.standbyY).setAlpha(0.68).setVisible(true);
     this.thumbGfx.setPosition(this.standbyX, this.standbyY).setAlpha(0.68).setVisible(true);
+    this.baseFrame?.setPosition(this.standbyX, this.standbyY).setAlpha(0.68).setVisible(true);
+    this.thumbFrame?.setPosition(this.standbyX, this.standbyY).setAlpha(0.68).setVisible(true);
   }
 
   private onDown(p: Phaser.Input.Pointer): void {
@@ -69,6 +87,8 @@ export class VirtualStick {
     this.originY = p.y;
     this.baseGfx.setPosition(p.x, p.y).setAlpha(1).setVisible(true);
     this.thumbGfx.setPosition(p.x, p.y).setAlpha(1).setVisible(true);
+    this.baseFrame?.setPosition(p.x, p.y).setAlpha(1).setVisible(true);
+    this.thumbFrame?.setPosition(p.x, p.y).setAlpha(1).setVisible(true);
     this.update(p.x, p.y);
   }
 
@@ -91,6 +111,7 @@ export class VirtualStick {
       dy = (dy / len) * this.radius;
     }
     this.thumbGfx.setPosition(this.originX + dx, this.originY + dy);
+    this.thumbFrame?.setPosition(this.originX + dx, this.originY + dy);
     // Dead zone to avoid jitter.
     const dead = 6;
     this.vector.set(
