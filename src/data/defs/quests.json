@@ -1450,6 +1450,10 @@
         "questDone": "hunt_r2_02_dross"
       },
       "huntMap": "arena_marsh",
+      "huntModifiers": {
+        "hpMult": 1.2,
+        "dmgMult": 1.35
+      },
       "rewards": {
         "gold": 260,
         "exp": 1500,

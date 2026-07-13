@@ -70,12 +70,12 @@ describe('hunt balance simulator', () => {
     expect(multi.target.ttkSec).toBeGreaterThan(boss.target.ttkSec);
   });
 
-  it('keeps all rank 1-2 hunts out of urgent tuning at the benchmark', () => {
-    const early = simulateHuntBatch({ runs: 300, seed: 12345 }).entries.filter(
-      (entry) => entry.result.rank <= 2,
+  it('keeps all rank 1-3 hunts out of urgent tuning at the benchmark', () => {
+    const early = simulateHuntBatch({ runs: 300 }).entries.filter(
+      (entry) => entry.result.rank <= 3,
     );
     expect(early).not.toHaveLength(0);
-    expect(early.filter((entry) => entry.status === 'critical' || entry.status === 'adjust')).toEqual([]);
+    expect(early.every((entry) => entry.status === 'good')).toBe(true);
     expect(early.every((entry) => entry.result.clearRate >= 0.75)).toBe(true);
   });
 });
