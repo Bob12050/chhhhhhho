@@ -1439,17 +1439,35 @@ export class WorldScene extends Phaser.Scene {
 
   /** Use the active skill assigned to a slot (data-driven). */
   private useSkill(slot: number): void {
-    if (this.skillCd[slot] > 0) return;
+    if (this.skillCd[slot] > 0) {
+      bus.emit('skill:failed', {
+        slot,
+        reason: 'cooldown',
+        skillId: gameState.skillSlots[slot] ?? undefined,
+        remaining: this.skillCd[slot],
+      });
+      return;
+    }
     const id = gameState.skillSlots[slot];
-    if (!id) return;
+    if (!id) {
+      bus.emit('skill:failed', { slot, reason: 'empty' });
+      return;
+    }
     const def = getSkill(id);
-    if (!def || def.type !== 'active') return;
+    if (!def || def.type !== 'active') {
+      bus.emit('skill:failed', { slot, reason: 'empty', skillId: id });
+      return;
+    }
     const cost = def.mpCost ?? 0;
-    if (gameState.mp < cost) return;
+    if (gameState.mp < cost) {
+      bus.emit('skill:failed', { slot, reason: 'mp', skillId: id });
+      return;
+    }
     gameState.mp -= cost;
     bus.emit('player:mp-changed', { current: gameState.mp, max: gameState.derived.maxMp });
     this.skillCd[slot] = def.cooldown ?? 800;
     bus.emit('skill:cooldown', { slot, duration: this.skillCd[slot] });
+    bus.emit('skill:used', { slot, skillId: id });
     this.player.play('cast');
     const dir = this.player.getDirection();
     const atk = def.scaling === 'mag' ? gameState.derived.magAtk : gameState.derived.physAtk;

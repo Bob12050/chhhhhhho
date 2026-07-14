@@ -3,6 +3,33 @@ import { renderSheet, type LayerSpec } from './placeholder';
 import { PALETTES, EQUIP_RAMPS } from './palette';
 import { CHAR_FRAME_W, CHAR_FRAME_H } from '@/config/resolution';
 
+/** Generated 16x16 combat-skill icons, keyed by the data definition id. */
+export const SKILL_TEX = {
+  slash: 'gen.skill.slash',
+  power_strike: 'gen.skill.power_strike',
+  w_cleave: 'gen.skill.w_cleave',
+  w_warcry: 'gen.skill.w_warcry',
+  w_whirl: 'gen.skill.w_whirl',
+  w_quake: 'gen.skill.w_quake',
+  w_calamity: 'gen.skill.w_calamity',
+  m_firebolt: 'gen.skill.m_firebolt',
+  m_frost: 'gen.skill.m_frost',
+  m_thunder: 'gen.skill.m_thunder',
+  m_meteor: 'gen.skill.m_meteor',
+  c_smite: 'gen.skill.c_smite',
+  c_holylight: 'gen.skill.c_holylight',
+  c_judgment: 'gen.skill.c_judgment',
+  c_genesis: 'gen.skill.c_genesis',
+  t_quickstab: 'gen.skill.t_quickstab',
+  t_doublecut: 'gen.skill.t_doublecut',
+  t_shadowfang: 'gen.skill.t_shadowfang',
+  t_phantom: 'gen.skill.t_phantom',
+  b_beastclaw: 'gen.skill.b_beastclaw',
+  b_volley: 'gen.skill.b_volley',
+  b_stampede: 'gen.skill.b_stampede',
+  b_genesis: 'gen.skill.b_genesis',
+} as const;
+
 /**
  * Texture keys for generated placeholder sheets. Keeping them in one place
  * avoids stringly typed lookups scattered around scenes.
@@ -476,6 +503,236 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     ctx.fillStyle = '#d05a6e';
     ctx.fillRect(9, 6, 2, 2); // pin
   }, 16, 16);
+
+  // Every active skill gets a compact silhouette of its own. Keeping these at
+  // 16x16 lets the HUD use integer scaling without blurring the pixel edges.
+  const skillIcon = (key: string, draw: (ctx: CanvasRenderingContext2D) => void): void => {
+    make(key, draw, 16, 16);
+  };
+  skillIcon(SKILL_TEX.slash, (ctx) => {
+    ctx.fillStyle = '#83d8ff';
+    for (let i = 0; i < 10; i++) ctx.fillRect(13 - i, 2 + i, 2, 2);
+    ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < 7; i++) ctx.fillRect(11 - i, 2 + i, 1, 1);
+    ctx.fillRect(2, 12, 5, 2);
+  });
+  skillIcon(SKILL_TEX.power_strike, (ctx) => {
+    ctx.fillStyle = '#e97462';
+    ctx.fillRect(6, 1, 4, 14);
+    ctx.fillRect(1, 6, 14, 4);
+    ctx.fillRect(3, 3, 10, 10);
+    ctx.fillStyle = '#ffd27a';
+    ctx.fillRect(5, 5, 6, 6);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(7, 7, 2, 2);
+  });
+  skillIcon(SKILL_TEX.w_cleave, (ctx) => {
+    ctx.fillStyle = '#9b6a47';
+    for (let i = 0; i < 10; i++) ctx.fillRect(4 + i, 12 - i, 2, 2);
+    ctx.fillStyle = '#f3f0df';
+    ctx.fillRect(2, 2, 7, 3);
+    ctx.fillRect(2, 5, 5, 3);
+    ctx.fillStyle = '#d26755';
+    ctx.fillRect(4, 4, 3, 2);
+  });
+  skillIcon(SKILL_TEX.w_warcry, (ctx) => {
+    ctx.fillStyle = '#f0aa55';
+    ctx.fillRect(2, 5, 5, 6);
+    ctx.fillRect(4, 3, 3, 2);
+    ctx.fillStyle = '#4b2530';
+    ctx.fillRect(5, 7, 3, 2);
+    ctx.fillStyle = '#ffd86b';
+    ctx.fillRect(9, 5, 2, 6);
+    ctx.fillRect(12, 3, 2, 10);
+  });
+  skillIcon(SKILL_TEX.w_whirl, (ctx) => {
+    ctx.fillStyle = '#8edcf2';
+    ctx.fillRect(4, 2, 7, 2);
+    ctx.fillRect(11, 4, 3, 6);
+    ctx.fillRect(5, 12, 7, 2);
+    ctx.fillRect(2, 7, 3, 5);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(7, 5, 5, 2);
+    ctx.fillRect(4, 9, 5, 2);
+  });
+  skillIcon(SKILL_TEX.w_quake, (ctx) => {
+    ctx.fillStyle = '#d5ad63';
+    ctx.fillRect(1, 10, 14, 4);
+    ctx.fillStyle = '#fff0b0';
+    ctx.fillRect(3, 8, 3, 3);
+    ctx.fillRect(10, 7, 3, 4);
+    ctx.fillStyle = '#513c42';
+    ctx.fillRect(7, 3, 2, 6);
+    ctx.fillRect(5, 5, 2, 2);
+    ctx.fillRect(9, 7, 2, 2);
+  });
+  skillIcon(SKILL_TEX.w_calamity, (ctx) => {
+    ctx.fillStyle = '#6d2841';
+    ctx.fillRect(2, 3, 12, 10);
+    ctx.fillStyle = '#f05f62';
+    ctx.fillRect(7, 1, 3, 12);
+    ctx.fillRect(4, 9, 9, 2);
+    ctx.fillStyle = '#fff1c9';
+    ctx.fillRect(8, 2, 1, 7);
+    ctx.fillStyle = '#25213a';
+    ctx.fillRect(7, 12, 3, 3);
+  });
+  skillIcon(SKILL_TEX.m_firebolt, (ctx) => {
+    ctx.fillStyle = '#b84038';
+    ctx.fillRect(2, 9, 4, 3);
+    ctx.fillRect(4, 6, 5, 5);
+    ctx.fillStyle = '#f27a38';
+    ctx.fillRect(7, 4, 6, 7);
+    ctx.fillRect(10, 2, 2, 3);
+    ctx.fillStyle = '#ffe27a';
+    ctx.fillRect(8, 6, 3, 3);
+  });
+  skillIcon(SKILL_TEX.m_frost, (ctx) => {
+    ctx.fillStyle = '#a9edff';
+    ctx.fillRect(7, 1, 2, 14);
+    ctx.fillRect(1, 7, 14, 2);
+    ctx.fillRect(3, 3, 2, 2);
+    ctx.fillRect(11, 3, 2, 2);
+    ctx.fillRect(3, 11, 2, 2);
+    ctx.fillRect(11, 11, 2, 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(7, 7, 2, 2);
+  });
+  skillIcon(SKILL_TEX.m_thunder, (ctx) => {
+    ctx.fillStyle = '#fff08a';
+    ctx.fillRect(8, 1, 5, 3);
+    ctx.fillRect(6, 4, 5, 4);
+    ctx.fillRect(4, 8, 5, 3);
+    ctx.fillRect(2, 11, 5, 3);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(9, 2, 2, 2);
+  });
+  skillIcon(SKILL_TEX.m_meteor, (ctx) => {
+    ctx.fillStyle = '#f0a34c';
+    ctx.fillRect(2, 2, 2, 6);
+    ctx.fillRect(4, 4, 2, 6);
+    ctx.fillStyle = '#f36a47';
+    ctx.fillRect(6, 6, 7, 7);
+    ctx.fillStyle = '#6a3b3a';
+    ctx.fillRect(8, 8, 5, 5);
+    ctx.fillStyle = '#ffd47a';
+    ctx.fillRect(7, 7, 2, 2);
+  });
+  skillIcon(SKILL_TEX.c_smite, (ctx) => {
+    ctx.fillStyle = '#f4dc7d';
+    ctx.fillRect(7, 1, 2, 11);
+    ctx.fillRect(3, 4, 10, 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(6, 2, 4, 3);
+    ctx.fillStyle = '#d8a84d';
+    ctx.fillRect(4, 12, 8, 2);
+  });
+  skillIcon(SKILL_TEX.c_holylight, (ctx) => {
+    ctx.fillStyle = '#8fe3a4';
+    ctx.fillRect(6, 2, 4, 12);
+    ctx.fillRect(2, 6, 12, 4);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(7, 4, 2, 8);
+    ctx.fillRect(4, 7, 8, 2);
+  });
+  skillIcon(SKILL_TEX.c_judgment, (ctx) => {
+    ctx.fillStyle = '#ffe28a';
+    ctx.fillRect(7, 1, 2, 10);
+    ctx.fillRect(4, 3, 8, 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(6, 2, 4, 3);
+    ctx.fillStyle = '#d9b85f';
+    ctx.fillRect(3, 12, 10, 2);
+    ctx.fillRect(5, 10, 6, 2);
+  });
+  skillIcon(SKILL_TEX.c_genesis, (ctx) => {
+    ctx.fillStyle = '#ffe68f';
+    ctx.fillRect(6, 1, 4, 14);
+    ctx.fillRect(1, 6, 14, 4);
+    ctx.fillRect(3, 3, 10, 10);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(6, 6, 4, 4);
+  });
+  skillIcon(SKILL_TEX.t_quickstab, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(5, 7, 9, 2);
+    ctx.fillRect(11, 6, 3, 4);
+    ctx.fillStyle = '#a99ae8';
+    ctx.fillRect(3, 6, 2, 4);
+    ctx.fillRect(1, 4, 4, 1);
+    ctx.fillRect(1, 11, 5, 1);
+  });
+  skillIcon(SKILL_TEX.t_doublecut, (ctx) => {
+    ctx.fillStyle = '#b8adff';
+    for (let i = 0; i < 9; i++) {
+      ctx.fillRect(2 + i, 2 + i, 2, 2);
+      ctx.fillRect(12 - i, 2 + i, 2, 2);
+    }
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(7, 7, 2, 2);
+  });
+  skillIcon(SKILL_TEX.t_shadowfang, (ctx) => {
+    ctx.fillStyle = '#7153a6';
+    ctx.fillRect(3, 2, 10, 6);
+    ctx.fillRect(5, 8, 3, 6);
+    ctx.fillRect(9, 8, 3, 4);
+    ctx.fillStyle = '#d4c3ff';
+    ctx.fillRect(5, 4, 2, 2);
+    ctx.fillRect(10, 4, 2, 2);
+  });
+  skillIcon(SKILL_TEX.t_phantom, (ctx) => {
+    ctx.fillStyle = '#7b67bd';
+    ctx.fillRect(3, 3, 10, 9);
+    ctx.fillRect(5, 1, 6, 2);
+    ctx.fillStyle = '#e5ddff';
+    ctx.fillRect(5, 6, 2, 2);
+    ctx.fillRect(10, 6, 2, 2);
+    ctx.fillRect(7, 10, 3, 2);
+    ctx.fillStyle = '#4b3b73';
+    ctx.fillRect(1, 5, 2, 6);
+    ctx.fillRect(13, 5, 2, 6);
+  });
+  skillIcon(SKILL_TEX.b_beastclaw, (ctx) => {
+    ctx.fillStyle = '#e0b784';
+    for (let i = 0; i < 9; i++) {
+      ctx.fillRect(3 + i, 2 + i, 2, 1);
+      ctx.fillRect(1 + i, 5 + i, 2, 1);
+      ctx.fillRect(7 + i, i, 1, 1);
+    }
+    ctx.fillStyle = '#fff0d1';
+    ctx.fillRect(10, 3, 2, 2);
+  });
+  skillIcon(SKILL_TEX.b_volley, (ctx) => {
+    ctx.fillStyle = '#d8e8ef';
+    ctx.fillRect(2, 3, 10, 1);
+    ctx.fillRect(2, 7, 12, 2);
+    ctx.fillRect(2, 12, 10, 1);
+    ctx.fillStyle = '#9dc5dd';
+    ctx.fillRect(11, 2, 3, 3);
+    ctx.fillRect(12, 6, 3, 4);
+    ctx.fillRect(11, 11, 3, 3);
+  });
+  skillIcon(SKILL_TEX.b_stampede, (ctx) => {
+    ctx.fillStyle = '#b88967';
+    ctx.fillRect(3, 4, 4, 6);
+    ctx.fillRect(9, 3, 4, 7);
+    ctx.fillStyle = '#efd0a5';
+    ctx.fillRect(4, 3, 2, 2);
+    ctx.fillRect(10, 2, 2, 2);
+    ctx.fillStyle = '#9e7b66';
+    ctx.fillRect(1, 12, 13, 2);
+    ctx.fillRect(4, 10, 2, 2);
+    ctx.fillRect(10, 10, 2, 2);
+  });
+  skillIcon(SKILL_TEX.b_genesis, (ctx) => {
+    ctx.fillStyle = '#d79bd9';
+    ctx.fillRect(5, 7, 6, 6);
+    ctx.fillRect(2, 3, 3, 4);
+    ctx.fillRect(6, 1, 3, 4);
+    ctx.fillRect(11, 3, 3, 4);
+    ctx.fillStyle = '#fff0ff';
+    ctx.fillRect(7, 8, 2, 3);
+  });
 
   // Inventory item icons (16x16, white so the cell can tint by rarity/type).
   make(TEX.iconGem, (ctx) => {

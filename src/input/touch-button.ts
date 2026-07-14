@@ -10,18 +10,22 @@ export type TouchButtonStyle = 'primary' | 'secondary' | 'utility';
  * the finger slides outside the button radius. Minimum 48 logical px.
  */
 export class TouchButton {
+  private readonly scene: Phaser.Scene;
+  private readonly depth: number;
   private readonly circle: Phaser.GameObjects.Arc;
   private readonly inner: Phaser.GameObjects.Arc;
   private readonly frame?: Phaser.GameObjects.Image;
   private readonly label: Phaser.GameObjects.Text;
   private icon?: Phaser.GameObjects.Image;
+  private hasIconContent = false;
   private frameSize = 0;
   private dimmed = false;
+  private unavailable = false;
   private pointerId = -1;
   private readonly cx: number;
   private readonly cy: number;
   private readonly radius: number;
-  private readonly accent: number;
+  private accent: number;
   private readonly style: TouchButtonStyle;
 
   onChange: ((down: boolean) => void) | null = null;
@@ -37,6 +41,8 @@ export class TouchButton {
     iconTex?: string,
     style: TouchButtonStyle = 'secondary',
   ) {
+    this.scene = scene;
+    this.depth = depth;
     this.cx = x;
     this.cy = y;
     this.radius = Math.max(radius, 24); // 48px diameter minimum
@@ -68,10 +74,11 @@ export class TouchButton {
     // Icon + smaller caption reads better than a bare letter; integer scale
     // only (pixel-art rule).
     if (iconTex && scene.textures.exists(iconTex)) {
-      const scale = this.radius >= 30 ? 2 : 1;
-      this.icon = scene.add.image(x, text ? y - 5 : y, iconTex).setScale(scale).setDepth(depth + 1);
+      const scale = this.radius >= 26 ? 2 : 1;
+      this.hasIconContent = true;
+      this.icon = scene.add.image(x, text ? y - 7 : y, iconTex).setScale(scale).setDepth(depth + 1);
       this.label = scene.add
-        .text(x, y + this.radius - 12, text, { fontFamily: FONT, fontSize: '8px', color: '#ffffff' })
+        .text(x, y + this.radius - 10, text, { fontFamily: FONT, fontSize: '8px', color: '#ffffff' })
         .setOrigin(0.5)
         .setDepth(depth + 1);
     } else {
@@ -116,13 +123,27 @@ export class TouchButton {
     const dimmedShell = this.style === 'primary' ? 0.46 : 0.34;
     const idleContent = this.style === 'primary' ? 1 : 0.82;
     const dimmedContent = this.style === 'primary' ? 0.58 : 0.46;
-    const shellAlpha = pressed ? 1 : this.dimmed ? dimmedShell : idleShell;
-    const contentAlpha = pressed ? 1 : this.dimmed ? dimmedContent : idleContent;
+    const shellAlpha = pressed
+      ? 1
+      : this.dimmed
+        ? dimmedShell
+        : this.unavailable
+          ? idleShell * 0.68
+          : idleShell;
+    const contentAlpha = pressed
+      ? 1
+      : this.dimmed
+        ? dimmedContent
+        : this.unavailable
+          ? idleContent * 0.55
+          : idleContent;
     this.circle.setAlpha(shellAlpha);
     this.inner.setAlpha(shellAlpha);
-    this.frame?.setAlpha(this.dimmed ? 0.42 : pressed ? 1 : 0.86);
+    this.frame?.setAlpha(this.dimmed ? 0.42 : this.unavailable ? 0.52 : pressed ? 1 : 0.86);
     this.label.setAlpha(contentAlpha);
     this.icon?.setAlpha(contentAlpha);
+    this.label.setColor(this.unavailable && !pressed ? '#aab3be' : '#ffffff');
+    this.icon?.setTint(this.unavailable && !pressed ? 0x98a3ae : 0xffffff);
   }
 
   private resetAppearance(): void {
@@ -130,9 +151,66 @@ export class TouchButton {
     const baseAlpha = this.style === 'primary' ? 0.9 : this.style === 'secondary' ? 0.72 : 0.64;
     const innerAlpha = this.style === 'primary' ? 0.18 : 0.1;
     this.circle.setFillStyle(baseColor, baseAlpha);
-    this.inner.setFillStyle(this.accent, innerAlpha);
+    this.circle.setStrokeStyle(
+      this.style === 'primary' ? 1.5 : 1,
+      this.style === 'primary' ? 0xe8cb79 : 0xdce8f3,
+      this.style === 'primary' ? 0.48 : 0.22,
+    );
+    this.inner.setFillStyle(this.unavailable ? 0x52606c : this.accent, innerAlpha);
+    this.inner.setStrokeStyle(1, this.unavailable ? 0x6f7c89 : this.accent, this.style === 'primary' ? 0.5 : 0.26);
     this.frame?.clearTint().setDisplaySize(this.frameSize, this.frameSize);
     this.applyOpacity(false);
+  }
+
+  /** Replace the caption/icon without rebuilding the touch target. */
+  setContent(text: string, iconTex?: string): void {
+    const hasIcon = !!iconTex && this.scene.textures.exists(iconTex);
+    this.hasIconContent = hasIcon;
+    this.label.setText(text);
+    if (hasIcon) {
+      if (!this.icon) {
+        this.icon = this.scene.add.image(this.cx, this.cy, iconTex).setDepth(this.depth + 1);
+      } else {
+        this.icon.setTexture(iconTex);
+      }
+      this.icon
+        .setPosition(this.cx, text ? this.cy - 7 : this.cy)
+        .setScale(this.radius >= 26 ? 2 : 1)
+        .setVisible(this.circle.visible);
+      this.label
+        .setPosition(this.cx, text ? this.cy + this.radius - 10 : this.cy)
+        .setFontSize(8);
+    } else {
+      this.icon?.setVisible(false);
+      this.label
+        .setPosition(this.cx, this.cy)
+        .setFontSize(this.style === 'primary' ? 13 : this.style === 'secondary' ? 11 : 10);
+    }
+    this.applyOpacity(false);
+  }
+
+  setAccent(color: number): void {
+    if (this.accent === color) return;
+    this.accent = color;
+    this.resetAppearance();
+  }
+
+  /** Muted but still tappable, so the player can receive a useful reason. */
+  setUnavailable(v: boolean): void {
+    if (this.unavailable === v) return;
+    this.unavailable = v;
+    this.resetAppearance();
+  }
+
+  flashWarning(color = 0xe16b6b): void {
+    if (this.dimmed) return;
+    this.circle.setStrokeStyle(2, color, 0.95);
+    this.inner.setFillStyle(color, 0.42).setAlpha(1);
+    this.label.setColor('#ffe0e0').setAlpha(1);
+    this.icon?.setTint(0xffc4c4).setAlpha(1);
+    this.scene.time.delayedCall(180, () => {
+      if (this.circle.active) this.resetAppearance();
+    });
   }
 
   setVisible(v: boolean): void {
@@ -140,7 +218,7 @@ export class TouchButton {
     this.inner.setVisible(v);
     this.frame?.setVisible(v);
     this.label.setVisible(v);
-    this.icon?.setVisible(v);
+    this.icon?.setVisible(v && this.hasIconContent);
     if (!v && this.pointerId !== -1) {
       this.pointerId = -1;
       this.onChange?.(false);

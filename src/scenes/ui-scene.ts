@@ -10,6 +10,8 @@ import { getMap } from '@/maps/map-def';
 import { getQuest } from '@/quests/quest-defs';
 import { isComplete, objectiveProgress } from '@/quests/quests';
 import { getEnemyDef } from '@/enemies/enemy-defs';
+import { getSkill } from '@/skills/skill-defs';
+import { getSkillVisual } from '@/skills/skill-visuals';
 import { ELEMENT_LABEL, elementColorHex, isElement } from '@/combat/elements';
 import { expToNext } from '@/stats/leveling';
 import { FONT, HUD_DEPTH } from '@/ui/theme';
@@ -119,6 +121,65 @@ export class UIScene extends Phaser.Scene {
     );
     skill2Btn.onChange = (d) => input.setButton('skill2', d);
 
+    const skillButtons = [skillBtn, skill2Btn];
+    const skillButtonGeom = [
+      { x: baseX - 76, y: baseY + 6, r: 28 },
+      { x: baseX - 60, y: baseY - 58, r: 26 },
+    ];
+    const skillCooling = [false, false];
+    const skillCostBacks = skillButtonGeom.map(({ x, y, r }) =>
+      this.add
+        .circle(x + r - 8, y - r + 8, 7, 0x06111f, 0.92)
+        .setStrokeStyle(1, 0x68bde6, 0.62)
+        .setDepth(depth + 2),
+    );
+    const skillCostLabels = skillButtonGeom.map(({ x, y, r }) =>
+      this.add
+        .text(x + r - 8, y - r + 8, '', {
+          fontFamily: FONT,
+          fontSize: '7px',
+          color: '#a8e4ff',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setDepth(depth + 3),
+    );
+    const refreshSkillButtons = (): void => {
+      for (let slot = 0; slot < skillButtons.length; slot++) {
+        const id = gameState.skillSlots[slot];
+        const def = id ? getSkill(id) : undefined;
+        const btn = skillButtons[slot];
+        const costBack = skillCostBacks[slot];
+        const costLabel = skillCostLabels[slot];
+        if (!def || def.type !== 'active') {
+          btn.setContent(`S${slot + 1}`);
+          btn.setAccent(0x637188);
+          btn.setUnavailable(true);
+          costBack.setVisible(true).setStrokeStyle(1, 0xd7bd6a, 0.7);
+          costLabel.setVisible(true).setText('+').setColor('#ffe69a');
+          continue;
+        }
+        const visual = getSkillVisual(def);
+        const cost = def.mpCost ?? 0;
+        const lowMp = gameState.mp < cost;
+        btn.setContent(`S${slot + 1}`, visual.icon);
+        btn.setAccent(visual.accent);
+        btn.setUnavailable(lowMp || skillCooling[slot]);
+        costBack
+          .setVisible(!skillCooling[slot])
+          .setStrokeStyle(1, lowMp ? 0xe17474 : 0x68bde6, 0.7);
+        costLabel
+          .setVisible(!skillCooling[slot])
+          .setText(`${cost}`)
+          .setColor(lowMp ? '#ff9999' : '#a8e4ff');
+      }
+    };
+    refreshSkillButtons();
+    this.busOff.push(bus.on('skill:slots-changed', refreshSkillButtons));
+    this.busOff.push(bus.on('game:load', refreshSkillButtons));
+    this.busOff.push(bus.on('game:new', refreshSkillButtons));
+    this.busOff.push(bus.on('player:mp-changed', refreshSkillButtons));
+
     const dodgeBtn = new TouchButton(
       this,
       baseX + 2,
@@ -206,6 +267,10 @@ export class UIScene extends Phaser.Scene {
         const ready = cdReady[slot];
         if (!g || !geom || !label || !ready || duration <= 0) return;
         cdTweens[slot]?.stop();
+        if (slot < skillCooling.length) {
+          skillCooling[slot] = true;
+          refreshSkillButtons();
+        }
         ready.clear().setAlpha(0).setScale(1);
         const prog = { remaining: duration };
         const drawCooldown = (): void => {
@@ -240,9 +305,116 @@ export class UIScene extends Phaser.Scene {
               ease: 'Cubic.Out',
               onComplete: () => ready.clear(),
             });
+            if (slot < skillCooling.length) {
+              skillCooling[slot] = false;
+              refreshSkillButtons();
+            }
             cdTweens[slot] = null;
           },
         });
+      }),
+    );
+
+    // A short cast banner bridges the button press and the world-space hit.
+    // It also carries rejected-input reasons, so no skill press fails silently.
+    const skillToastW = Math.min(138, w - 24);
+    const skillToastY = Math.max(insets.top + 118, baseY - 170);
+    const skillToastX = Phaser.Math.Clamp(
+      baseX - 42,
+      skillToastW / 2 + 8,
+      w - skillToastW / 2 - 8,
+    );
+    const skillToastPanel = this.add.graphics();
+    const skillToastIcon = this.add.image(-skillToastW / 2 + 22, 0, TEX.iconSword).setScale(2);
+    const skillToastName = this.add
+      .text(-skillToastW / 2 + 42, -6, '', {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5)
+      .setShadow(0, 1, '#000000', 2);
+    const skillToastMeta = this.add
+      .text(-skillToastW / 2 + 42, 8, '', {
+        fontFamily: FONT,
+        fontSize: '7px',
+        color: '#b9c7d8',
+      })
+      .setOrigin(0, 0.5);
+    const skillToast = this.add
+      .container(skillToastX, skillToastY, [
+        skillToastPanel,
+        skillToastIcon,
+        skillToastName,
+        skillToastMeta,
+      ])
+      .setDepth(depth + 8)
+      .setVisible(false);
+    let skillToastHide: Phaser.Time.TimerEvent | null = null;
+    const showSkillToast = (
+      slot: number,
+      title: string,
+      meta: string,
+      accent: number,
+      icon?: string,
+    ): void => {
+      this.tweens.killTweensOf(skillToast);
+      skillToastHide?.remove(false);
+      skillToastPanel.clear();
+      skillToastPanel.fillStyle(0x050d18, 0.9);
+      skillToastPanel.fillRoundedRect(-skillToastW / 2, -17, skillToastW, 34, 7);
+      skillToastPanel.fillStyle(accent, 0.95);
+      skillToastPanel.fillRoundedRect(-skillToastW / 2, -12, 3, 24, 1);
+      skillToastPanel.lineStyle(1, 0xffffff, 0.12);
+      skillToastPanel.strokeRoundedRect(-skillToastW / 2, -17, skillToastW, 34, 7);
+      skillToastIcon.setVisible(!!icon);
+      if (icon) skillToastIcon.setTexture(icon).clearTint();
+      const textX = icon ? -skillToastW / 2 + 42 : -skillToastW / 2 + 14;
+      skillToastName.setX(textX);
+      skillToastMeta.setX(textX);
+      fitText(skillToastName, title, skillToastW - (icon ? 54 : 28));
+      skillToastMeta.setText(`S${slot + 1}  ${meta}`).setColor(`#${accent.toString(16).padStart(6, '0')}`);
+      skillToast.setPosition(skillToastX, skillToastY + 5).setAlpha(0).setVisible(true);
+      this.tweens.add({
+        targets: skillToast,
+        y: skillToastY,
+        alpha: 1,
+        duration: 120,
+        ease: 'Cubic.Out',
+      });
+      skillToastHide = this.time.delayedCall(760, () => {
+        this.tweens.add({
+          targets: skillToast,
+          y: skillToastY - 4,
+          alpha: 0,
+          duration: 170,
+          ease: 'Cubic.In',
+          onComplete: () => skillToast.setVisible(false),
+        });
+      });
+    };
+    this.busOff.push(
+      bus.on('skill:used', ({ slot, skillId }) => {
+        const def = getSkill(skillId);
+        if (!def) return;
+        const visual = getSkillVisual(def);
+        showSkillToast(slot, def.name, `${def.mpCost ?? 0} MP`, visual.accent, visual.icon);
+      }),
+    );
+    this.busOff.push(
+      bus.on('skill:failed', ({ slot, reason, skillId, remaining }) => {
+        const def = skillId ? getSkill(skillId) : undefined;
+        const visual = def ? getSkillVisual(def) : undefined;
+        const title = reason === 'mp' ? 'MPが足りません' : reason === 'cooldown' ? '再使用待ち' : '技をセット';
+        const meta = reason === 'mp'
+          ? `必要 ${def?.mpCost ?? 0} MP`
+          : reason === 'cooldown'
+            ? `${Math.max(0.1, (remaining ?? 0) / 1000).toFixed(1)} 秒`
+            : 'もちもの > 技';
+        const accent = reason === 'mp' ? 0xe16b6b : visual?.accent ?? 0xd7bd6a;
+        skillButtons[slot]?.flashWarning(accent);
+        showSkillToast(slot, title, meta, accent, visual?.icon);
       }),
     );
 

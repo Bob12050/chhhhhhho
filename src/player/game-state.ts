@@ -414,6 +414,9 @@ export class GameState {
       this.recompute();
     }
     bus.emit('skill:learned', { skillId: id });
+    if (def.type === 'active') {
+      bus.emit('skill:slots-changed', { slots: [...this.skillSlots] });
+    }
     return true;
   }
 
@@ -427,6 +430,7 @@ export class GameState {
     const otherSlot = this.skillSlots.indexOf(id);
     this.skillSlots[slot] = id;
     if (otherSlot >= 0 && otherSlot !== slot) this.skillSlots[otherSlot] = current;
+    bus.emit('skill:slots-changed', { slots: [...this.skillSlots] });
     return true;
   }
 

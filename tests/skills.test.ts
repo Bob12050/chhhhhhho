@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { GameState } from '@/player/game-state';
 import { getSkill, allSkills } from '@/skills/skill-defs';
 import { CLASS_FAMILIES } from '@/jobs/job-defs';
+import { bus } from '@/core/event-bus';
 
 describe('skills', () => {
   it('gates learning by points, level, and prerequisites', () => {
@@ -42,6 +43,24 @@ describe('skills', () => {
     expect(gs.skillSlots).toEqual(['power_strike', 'slash']);
     expect(gs.assignSkill(2, 'slash')).toBe(false);
     expect(gs.assignSkill(0, 'toughness')).toBe(false);
+  });
+
+  it('publishes slot snapshots after learning and assigning active skills', () => {
+    const snapshots: (string | null)[][] = [];
+    const off = bus.on('skill:slots-changed', ({ slots }) => snapshots.push(slots));
+    const gs = new GameState();
+    gs.level = 3;
+    gs.skillPoints = 3;
+    gs.learnSkill('slash');
+    gs.learnSkill('power_strike');
+    gs.assignSkill(0, 'power_strike');
+    off();
+
+    expect(snapshots).toEqual([
+      ['slash', null],
+      ['slash', 'power_strike'],
+      ['power_strike', 'slash'],
+    ]);
   });
 
   it('passive skills modify derived stats', () => {

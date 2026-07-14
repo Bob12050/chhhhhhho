@@ -54,6 +54,17 @@ export interface GameEvents {
 
   // Skills
   'skill:learned': { skillId: string };
+  /** S1/S2 contents changed after learning or assigning a skill. */
+  'skill:slots-changed': { slots: (string | null)[] };
+  /** An active skill passed validation and began casting. */
+  'skill:used': { slot: number; skillId: string };
+  /** A skill press was rejected; the HUD explains why. */
+  'skill:failed': {
+    slot: number;
+    reason: 'empty' | 'cooldown' | 'mp';
+    skillId?: string;
+    remaining?: number;
+  };
   /** A skill in `slot` (0/1) went on cooldown for `duration` ms. */
   'skill:cooldown': { slot: number; duration: number };
 
