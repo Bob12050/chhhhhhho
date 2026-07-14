@@ -16,6 +16,7 @@ import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
 import { bus } from '@/core/event-bus';
 import { expToNext } from '@/stats/leveling';
 import type { SaveData } from '@/save/schema';
+import { syncInvestigationQuests } from '@/endgame/investigations';
 
 /**
  * Central runtime player model. Holds base stats / level / equipment /
@@ -57,6 +58,9 @@ export class GameState {
   tempBuffs: { stats: Partial<DerivedStats>; expiresAt: number }[] = [];
   completedQuests: string[] = [];
   questProgress: Record<string, Record<string, number>> = {};
+  /** Seeded post-clear contract board and lifetime clears. */
+  investigationSeed = 1;
+  investigationsCompleted = 0;
 
   hp = 1;
   mp = 0;
@@ -521,6 +525,10 @@ export class GameState {
       },
       killCounts: { ...this.killCounts },
       pets: { eggs: { ...this.petEggs }, exp: { ...this.petExp } },
+      investigations: {
+        seed: this.investigationSeed,
+        completed: this.investigationsCompleted,
+      },
       settings: { sfx: true, bgm: true },
     };
   }
@@ -554,6 +562,11 @@ export class GameState {
     // Owned equipment: keep only known ids.
     this.equipmentOwned = (data.inventory.equipmentOwned ?? []).filter((id) => !!getEquipment(id));
     this.flags = { ...data.flags };
+    this.investigationSeed = (data.investigations?.seed ?? 1) >>> 0;
+    this.investigationsCompleted = Math.max(0, Math.floor(data.investigations?.completed ?? 0));
+    // Runtime quest definitions must exist before active/completed ids are
+    // validated below, otherwise an in-progress investigation is discarded.
+    syncInvestigationQuests(this);
     // Bestiary kill counts. Legacy saves lack them: seed defeated bosses from
     // their kill flags so the bestiary isn't empty after an update.
     this.killCounts = { ...(data.killCounts ?? {}) };

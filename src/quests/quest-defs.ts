@@ -32,6 +32,14 @@ export interface HuntModifiers {
   dmgMult?: number;
 }
 
+/** Generated post-clear investigation contract metadata. */
+export interface InvestigationMeta {
+  threat: number;
+  condition: string;
+  rewardRank: number;
+  boardSeed: number;
+}
+
 /** 'main' = the one-shot story line (own board tab, chained, non-repeatable). */
 export type QuestType = 'subjugation' | 'unlock' | 'hunt' | 'main';
 
@@ -60,6 +68,8 @@ export interface QuestDef {
    * bigger kill rewards, doubled drop chances). See src/quests/hunt-logic.ts.
    */
   veteran?: boolean;
+  /** Present only on generated post-clear investigation hunts. */
+  investigation?: InvestigationMeta;
 }
 
 interface QuestsFile {
@@ -68,6 +78,7 @@ interface QuestsFile {
 
 const quests = new Map<string, QuestDef>();
 for (const q of (questsJson as unknown as QuestsFile).quests) quests.set(q.id, q);
+const runtimeGroups = new Map<string, Set<string>>();
 
 export function getQuest(id: string): QuestDef | undefined {
   return quests.get(id);
@@ -75,4 +86,15 @@ export function getQuest(id: string): QuestDef | undefined {
 
 export function allQuests(): QuestDef[] {
   return [...quests.values()];
+}
+
+/** Replace one set of generated quests without touching authored JSON data. */
+export function replaceRuntimeQuests(group: string, defs: readonly QuestDef[]): void {
+  for (const id of runtimeGroups.get(group) ?? []) quests.delete(id);
+  const ids = new Set<string>();
+  for (const def of defs) {
+    quests.set(def.id, def);
+    ids.add(def.id);
+  }
+  runtimeGroups.set(group, ids);
 }

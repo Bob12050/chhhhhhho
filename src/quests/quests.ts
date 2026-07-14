@@ -2,6 +2,7 @@ import type { GameState } from '@/player/game-state';
 import { getQuest, allQuests, type QuestDef } from '@/quests/quest-defs';
 import { getMaterial, getConsumable, getEquipment } from '@/data/items';
 import { bus } from '@/core/event-bus';
+import { advanceInvestigationBoard } from '@/endgame/investigations';
 
 /**
  * Quest logic (data-driven, Phaser-independent so it is headless-testable).
@@ -22,12 +23,18 @@ export function requireMet(gs: GameState, q: QuestDef): boolean {
 
 /** Quests the player can accept now (not active, not done unless repeatable). */
 export function availableQuests(gs: GameState): QuestDef[] {
-  return allQuests().filter(
-    (q) =>
-      !gs.activeQuests.includes(q.id) &&
-      (q.repeatable || !gs.completedQuests.includes(q.id)) &&
-      requireMet(gs, q),
-  );
+  const activeDefs = gs.activeQuests.map((id) => getQuest(id)).filter((q): q is QuestDef => !!q);
+  const hasActiveInvestigation = activeDefs.some((q) => !!q.investigation);
+  const hasActiveHunt = activeDefs.some((q) => !!q.huntMap);
+  return allQuests().filter((q) => {
+    if (q.investigation && hasActiveHunt) return false;
+    if (q.huntMap && !q.investigation && hasActiveInvestigation) return false;
+    return (
+      !gs.activeQuests.includes(q.id)
+      && (q.repeatable || !gs.completedQuests.includes(q.id))
+      && requireMet(gs, q)
+    );
+  });
 }
 
 /** Accept a quest (no-op if not available). */
@@ -36,6 +43,9 @@ export function acceptQuest(gs: GameState, id: string): boolean {
   if (!q || gs.activeQuests.includes(id)) return false;
   if (!q.repeatable && gs.completedQuests.includes(id)) return false;
   if (!requireMet(gs, q)) return false;
+  const activeDefs = gs.activeQuests.map((qid) => getQuest(qid)).filter((def): def is QuestDef => !!def);
+  if (q.investigation && activeDefs.some((def) => !!def.huntMap)) return false;
+  if (q.huntMap && !q.investigation && activeDefs.some((def) => !!def.investigation)) return false;
   gs.activeQuests.push(id);
   gs.questProgress[id] = {};
   bus.emit('quest:changed', {});
@@ -112,6 +122,7 @@ export function turnInQuest(gs: GameState, questId: string): boolean {
   if (!gs.completedQuests.includes(questId)) {
     gs.completedQuests.push(questId);
   }
+  if (q.investigation) advanceInvestigationBoard(gs);
   gs.flags['quest_turned_in_any'] = true;
   bus.emit('quest:changed', {});
   return true;

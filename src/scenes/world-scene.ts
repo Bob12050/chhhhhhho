@@ -499,7 +499,9 @@ export class WorldScene extends Phaser.Scene {
     for (const qid of gameState.activeQuests) {
       const q = getQuest(qid);
       if (!q || q.huntMap !== this.map.id || isComplete(gameState, qid)) continue;
-      if (!pick || (q.veteran && !pick.veteran)) pick = q;
+      const priority = q.investigation ? 2 : q.veteran ? 1 : 0;
+      const pickPriority = pick?.investigation ? 2 : pick?.veteran ? 1 : 0;
+      if (!pick || priority > pickPriority) pick = q;
     }
     return pick;
   }
@@ -587,6 +589,7 @@ export class WorldScene extends Phaser.Scene {
       bossName: `${q.veteran ? '歴戦の' : ''}${def.name}`,
       rank: q.rank,
       veteran: q.veteran,
+      investigationThreat: q.investigation?.threat,
       weakness: def.weakness,
       durationMs,
     });
@@ -1833,6 +1836,7 @@ export class WorldScene extends Phaser.Scene {
       questName: quest.name,
       rank: quest.rank,
       veteran: quest.veteran,
+      investigationThreat: quest.investigation?.threat,
       combatGold,
       combatExp,
       drops,

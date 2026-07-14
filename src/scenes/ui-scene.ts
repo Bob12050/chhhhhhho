@@ -1012,9 +1012,16 @@ export class UIScene extends Phaser.Scene {
     const top = this.add.rectangle(w / 2, cy - 58, w, 2, 0xf5c542, 0).setAlpha(0);
     const bottom = this.add.rectangle(w / 2, cy + 58, w, 2, 0xf5c542, 0).setAlpha(0);
     const rank = data.rank ? `★${data.rank}` : '';
-    const title = `${rank} ${data.veteran ? '歴戦個体' : '大型狩猟開始'}`.trim();
+    const title = data.investigationThreat
+      ? `調査危険度 ${data.investigationThreat}`
+      : `${rank} ${data.veteran ? '歴戦個体' : '大型狩猟開始'}`.trim();
     const titleText = this.add
-      .text(w / 2, cy - 34, title, { fontFamily: FONT, fontSize: '13px', color: '#ffd86b', fontStyle: 'bold' })
+      .text(w / 2, cy - 34, title, {
+        fontFamily: FONT,
+        fontSize: '13px',
+        color: data.investigationThreat ? '#8fe7e7' : '#ffd86b',
+        fontStyle: 'bold',
+      })
       .setOrigin(0.5)
       .setAlpha(0);
     const bossText = this.add

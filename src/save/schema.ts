@@ -50,6 +50,8 @@ export interface SaveDataV1 {
   killCounts?: Record<string, number>;
   /** Pet system v2 (eggs held + per-pet exp). Legacy saves lack it. */
   pets?: { eggs: Record<string, number>; exp: Record<string, number> };
+  /** Post-clear investigation board state. */
+  investigations: { seed: number; completed: number };
   settings: { sfx: boolean; bgm: boolean };
 }
 
@@ -91,6 +93,10 @@ export function createDefaultSave(slot: number): SaveData {
     // The village elder offers the first hunt in-world. Existing saves retain
     // their quest state through migration; only a brand-new slot starts empty.
     quests: { active: [], completed: [], progress: {} },
+    investigations: {
+      seed: (0x51f15e ^ Math.imul(slot + 1, 0x9e3779b1)) >>> 0,
+      completed: 0,
+    },
     settings: { sfx: true, bgm: true },
   };
 }
@@ -129,6 +135,12 @@ export function migrate(raw: unknown, slot: number): SaveData {
     pets: {
       eggs: { ...(data.pets?.eggs ?? {}) },
       exp: { ...(data.pets?.exp ?? {}) },
+    },
+    investigations: {
+      seed: Number.isFinite(data.investigations?.seed)
+        ? (data.investigations?.seed ?? def.investigations.seed) >>> 0
+        : def.investigations.seed,
+      completed: Math.max(0, Math.floor(data.investigations?.completed ?? 0)),
     },
     settings: { ...def.settings, ...(data.settings ?? {}) },
   };

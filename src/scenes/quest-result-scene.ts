@@ -17,6 +17,7 @@ export interface QuestResultData {
   questName: string;
   rank?: number;
   veteran?: boolean;
+  investigationThreat?: number;
   combatGold: number;
   combatExp: number;
   drops: QuestResultItem[];
@@ -55,7 +56,7 @@ export class QuestResultScene extends Phaser.Scene {
     let y = top + 22;
 
     this.add
-      .text(cx, y, 'QUEST CLEAR', {
+      .text(cx, y, this.resultData.investigationThreat ? 'INVESTIGATION CLEAR' : 'QUEST CLEAR', {
         fontFamily: FONT,
         fontSize: '22px',
         color: '#ffd86b',
@@ -65,7 +66,11 @@ export class QuestResultScene extends Phaser.Scene {
       .setDepth(depth + 2);
     y += 28;
 
-    const rank = this.resultData.rank ? `★${this.resultData.rank}` : '';
+    const rank = this.resultData.investigationThreat
+      ? `調査危険度 ${this.resultData.investigationThreat}`
+      : this.resultData.rank
+        ? `★${this.resultData.rank}`
+        : '';
     const prefix = this.resultData.veteran ? '歴戦 ' : '';
     this.add
       .text(cx, y, `${rank} ${prefix}${this.resultData.questName}`.trim(), {

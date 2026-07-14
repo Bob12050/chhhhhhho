@@ -141,7 +141,9 @@ export class ShopScene extends Phaser.Scene {
       const rows: { id: string; qty: number; price: number; kind: 'mat' | 'cons' }[] = [];
       for (const [id, qty] of Object.entries(gameState.materials)) {
         const def = getMaterial(id);
-        if (def && qty > 0) rows.push({ id, qty, price: def.sellPrice, kind: 'mat' });
+        if (def && qty > 0 && def.sellPrice > 0) {
+          rows.push({ id, qty, price: def.sellPrice, kind: 'mat' });
+        }
       }
       for (const [id, qty] of Object.entries(gameState.consumables)) {
         const def = getConsumable(id);

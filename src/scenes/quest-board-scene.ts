@@ -13,6 +13,9 @@ import {
 import { getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
 import { FONT, UI, addPanelChrome, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
+import { INVESTIGATION_SEAL_ID } from '@/endgame/investigations';
+
+type BoardTab = 'main' | 'normal' | 'hunt' | 'investigation';
 
 /**
  * Quest Board overlay (opened by the town board NPC). Lists active quests (with
@@ -26,8 +29,8 @@ export class QuestBoardScene extends Phaser.Scene {
   private dragged = false;
   private viewTop = 92;
   private viewBottom = 0;
-  private tab: 'main' | 'normal' | 'hunt' = 'main';
-  private tabButtons: { id: 'main' | 'normal' | 'hunt'; tab: TabHandle }[] = [];
+  private tab: BoardTab = 'main';
+  private tabButtons: { id: BoardTab; tab: TabHandle }[] = [];
   /** In the 大型狩猟 tab: null = show the ★rank list, else the picked rank's quests. */
   private selectedRank: number | null = null;
 
@@ -52,17 +55,20 @@ export class QuestBoardScene extends Phaser.Scene {
 
     // Category tabs: メイン / 通常 / 大型狩猟 (MH style).
     this.tabButtons = [];
-    const tabs: { id: 'main' | 'normal' | 'hunt'; label: string }[] = [
+    const tabs: { id: BoardTab; label: string }[] = [
       { id: 'main', label: 'メイン' },
       { id: 'normal', label: '通常' },
       { id: 'hunt', label: '大型狩猟' },
     ];
+    if (gameState.flags['main_story_complete']) tabs.push({ id: 'investigation', label: '調査' });
     // Land on the story tab only while it still has something to do.
-    this.tab = allQuests().some(
+    const storyPending = allQuests().some(
       (q) => q.type === 'main' && !gameState.completedQuests.includes(q.id),
-    ) ? 'main' : 'hunt';
+    );
+    this.tab = storyPending ? 'main' : gameState.flags['main_story_complete'] ? 'investigation' : 'hunt';
+    const tabW = (w - 12) / tabs.length;
     tabs.forEach((t, i) => {
-      const tab = tabChip(this, 62 + i * 98, 68, 94, t.label, () => {
+      const tab = tabChip(this, 6 + tabW * (i + 0.5), 68, tabW, t.label, () => {
         if (this.dragged) return;
         this.tab = t.id;
         this.selectedRank = null;
@@ -119,6 +125,8 @@ export class QuestBoardScene extends Phaser.Scene {
   /** メイン = story line; 大型狩猟 = arena hunts; 通常 = the rest. */
   private inTab(q: QuestDef): boolean {
     if (this.tab === 'main') return q.type === 'main';
+    if (this.tab === 'investigation') return !!q.investigation;
+    if (q.investigation) return false;
     if (q.type === 'main') return false;
     const isHunt = !!q.huntMap;
     return this.tab === 'hunt' ? isHunt : !isHunt;
@@ -141,6 +149,7 @@ export class QuestBoardScene extends Phaser.Scene {
     for (const tb of this.tabButtons) tb.tab.setActive(tb.id === this.tab);
 
     let y = this.viewTop + 8;
+    if (this.tab === 'investigation') y = this.renderInvestigationStatus(y, w);
     // 大型狩猟 tab, no rank picked yet: show the ★rank menu (drill-down).
     if (this.tab === 'hunt' && this.selectedRank === null) {
       y = this.renderRankList(y, w);
@@ -151,9 +160,45 @@ export class QuestBoardScene extends Phaser.Scene {
     this.scrollTo(this.scrollY);
   }
 
+  private renderInvestigationStatus(y: number, w: number): number {
+    const strip = this.add.graphics();
+    strip.fillStyle(0x111d2d, 0.98);
+    strip.fillRoundedRect(10, y, w - 20, 42, 5);
+    strip.fillStyle(0x72d8dc, 0.78);
+    strip.fillRect(10, y + 7, 3, 28);
+    strip.lineStyle(1, 0xffffff, 0.08);
+    strip.strokeRoundedRect(10, y, w - 20, 42, 5);
+    this.content.add(strip);
+    this.content.add(
+      this.add.text(22, y + 7, '深層調査', {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#bdeff0',
+        fontStyle: 'bold',
+      }),
+    );
+    this.content.add(
+      this.add.text(22, y + 24, `完遂 ${gameState.investigationsCompleted}`, {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#aab8c8',
+      }),
+    );
+    this.content.add(
+      this.add
+        .text(w - 22, y + 16, `調査の証 ${gameState.materials[INVESTIGATION_SEAL_ID] ?? 0}`, {
+          fontFamily: FONT,
+          fontSize: '11px',
+          color: '#ffb8c2',
+        })
+        .setOrigin(1, 0),
+    );
+    return y + 52;
+  }
+
   /** ★1〜★7 selector rows for the 大型狩猟 tab. Tapping a rank drills in. */
   private renderRankList(y: number, w: number): number {
-    const hunts = allQuests().filter((q) => !!q.huntMap);
+    const hunts = allQuests().filter((q) => !!q.huntMap && !q.investigation);
     const availSet = new Set(availableQuests(gameState).map((q) => q.id));
     const ranks = [...new Set(hunts.map((q) => q.rank ?? 1))].sort((a, b) => a - b);
     for (const r of ranks) {
@@ -205,7 +250,7 @@ export class QuestBoardScene extends Phaser.Scene {
       y += 28;
       // Direct ★rank switcher so hopping between ranks doesn't need the
       // drill-down round trip (10 quests per rank makes hopping common).
-      const ranks = [...new Set(allQuests().filter((q) => !!q.huntMap).map((q) => q.rank ?? 1))]
+      const ranks = [...new Set(allQuests().filter((q) => !!q.huntMap && !q.investigation).map((q) => q.rank ?? 1))]
         .sort((a, b) => a - b);
       let cx = 14;
       for (const r of ranks) {
@@ -300,10 +345,11 @@ export class QuestBoardScene extends Phaser.Scene {
     // MH-style star rank prefix, colored by rank (dimmed once done).
     const rank = q.rank ?? 1;
     // Story chapters carry a book mark instead of a meaningless ★1.
-    const starTxt = this.add.text(16, y, q.type === 'main' ? '📖' : `★${rank}`, {
+    const marker = q.investigation ? `◆${q.investigation.threat}` : q.type === 'main' ? '📖' : `★${rank}`;
+    const starTxt = this.add.text(16, y, marker, {
       fontFamily: FONT,
       fontSize: '15px',
-      color: state === 'done' ? '#6b7088' : this.rankColor(rank),
+      color: state === 'done' ? '#6b7088' : q.investigation ? '#72d8dc' : this.rankColor(rank),
     });
     this.content.add(starTxt);
     const nameTxt = this.add.text(16 + starTxt.width + 6, y, q.name, {
@@ -325,11 +371,18 @@ export class QuestBoardScene extends Phaser.Scene {
       );
     }
     this.content.add(
-      this.add.text(16, y + 20, this.objectiveText(q, state === 'active'), {
+      this.add.text(
+        16,
+        y + 20,
+        q.investigation
+          ? `${q.investigation.condition}  HP×${q.huntModifiers?.hpMult ?? 1} 攻×${q.huntModifiers?.dmgMult ?? 1}`
+          : this.objectiveText(q, state === 'active'),
+        {
         fontFamily: FONT,
         fontSize: '11px',
-        color: state === 'done' ? '#6b7088' : '#cfe0a0',
-      }),
+        color: state === 'done' ? '#6b7088' : q.investigation ? '#a8cbd0' : '#cfe0a0',
+        },
+      ),
     );
     const rt = this.rewardText(q);
     if (rt) {
@@ -345,7 +398,7 @@ export class QuestBoardScene extends Phaser.Scene {
     if (state === 'available') {
       // Hunt quests "depart" to their arena on accept (MH style); others just
       // join the active list and are tracked wherever you fight.
-      const label = q.huntMap ? '[ 受けて出発 ]' : '[ 受ける ]';
+      const label = q.investigation ? '[ 調査開始 ]' : q.huntMap ? '[ 受けて出発 ]' : '[ 受ける ]';
       this.actionButton(w - 16, y + 10, label, '#9fe3a0', () => {
         if (this.dragged) return;
         if (acceptQuest(gameState, q.id) && q.huntMap) this.departTo(q.huntMap);
@@ -425,7 +478,7 @@ export class QuestBoardScene extends Phaser.Scene {
       .rectangle(w / 2, cy, w - 44, panelH, UI.panel, 1)
       .setStrokeStyle(2, 0xffd86b, 0.85);
     const title = this.add
-      .text(w / 2, cy - panelH / 2 + 26, 'クエストクリア！', {
+      .text(w / 2, cy - panelH / 2 + 26, q.investigation ? '調査完了！' : 'クエストクリア！', {
         fontFamily: FONT,
         fontSize: '20px',
         color: '#ffd86b',
