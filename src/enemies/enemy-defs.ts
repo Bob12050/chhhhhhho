@@ -36,10 +36,29 @@ export interface EnemyDef {
   attacks?: BossAttackDef[];
   /** HP fraction (0..1) at which the boss enrages (faster attacks/moves). */
   enrageAtHpPct?: number;
+  /** Per-boss combat colours for readable, themed warnings and impacts. */
+  bossStyle?: BossStyleDef;
+  /** Optional named second phase with its own cadence and attack pattern. */
+  phase?: BossPhaseDef;
   /** 亜種: id of the base species this enemy is a recolored variant of. */
   variantOf?: string;
   /** Bestiary flavor text (shown once discovered). */
   description?: string;
+}
+
+export interface BossStyleDef {
+  warningColor?: string;
+  impactColor?: string;
+  projectileColor?: string;
+}
+
+export interface BossPhaseDef {
+  name: string;
+  color?: string;
+  tint?: string;
+  speedMult?: number;
+  cooldownMult?: number;
+  attacks?: BossAttackDef[];
 }
 
 /**
@@ -72,6 +91,8 @@ export type BossAttackDef =
       /** Projectile speed in px/s. */
       speed: number;
       damageMult: number;
+      /** Direction-line warning before projectiles are released. */
+      telegraphMs?: number;
       /** 'radial' = full circle, 'aim' = arc toward the player. */
       spread: 'radial' | 'aim';
       /** Arc width in degrees for 'aim' (default 50). */

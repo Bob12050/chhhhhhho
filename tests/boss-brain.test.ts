@@ -8,6 +8,8 @@ import { allEnemyDefs } from '@/enemies/enemy-defs';
  */
 interface Log {
   telegraphs: { x: number; y: number; radius: number; ms: number }[];
+  chargeTelegraphs: { x: number; y: number; targetX: number; targetY: number; ms: number }[];
+  shotTelegraphs: { angles: number[]; ms: number }[];
   explosions: { x: number; y: number; radius: number; damage: number }[];
   dashes: { speed: number; ms: number }[];
   shots: { angle: number; speed: number; damage: number }[];
@@ -19,7 +21,8 @@ interface Log {
 
 function makeArena(overrides?: Partial<Arena> & { hp?: () => number }): { arena: Arena; log: Log } {
   const log: Log = {
-    telegraphs: [], explosions: [], dashes: [], shots: [], summons: [],
+    telegraphs: [], chargeTelegraphs: [], shotTelegraphs: [],
+    explosions: [], dashes: [], shots: [], summons: [],
     holds: [], speedMult: 1, enraged: 0,
   };
   const pending: (() => void)[] = [];
@@ -30,6 +33,14 @@ function makeArena(overrides?: Partial<Arena> & { hp?: () => number }): { arena:
     telegraph: (x, y, radius, ms, onDone) => {
       log.telegraphs.push({ x, y, radius, ms });
       pending.push(onDone); // tests detonate manually via flush()
+    },
+    telegraphCharge: (x, y, targetX, targetY, _speed, _durationMs, ms, onDone) => {
+      log.chargeTelegraphs.push({ x, y, targetX, targetY, ms });
+      pending.push(onDone);
+    },
+    telegraphShots: (_x, _y, angles, ms, onDone) => {
+      log.shotTelegraphs.push({ angles: [...angles], ms });
+      pending.push(onDone);
     },
     explode: (x, y, radius, damage) => log.explosions.push({ x, y, radius, damage }),
     hold: (ms) => log.holds.push(ms),
@@ -93,6 +104,43 @@ describe('BossBrain', () => {
     expect(made.log.explosions[0].damage).toBe(30); // 20 × 1.5
   });
 
+  it('telegraphs every projectile direction before releasing a burst', () => {
+    const made = makeArena() as ReturnType<typeof makeArena> & { flush: () => void };
+    const brain = new BossBrain(
+      made.arena,
+      [{
+        type: 'shots',
+        count: 5,
+        speed: 180,
+        damageMult: 0.5,
+        telegraphMs: 650,
+        spread: 'aim',
+        arcDeg: 40,
+      }],
+      20,
+    );
+    step(brain, 1300);
+    expect(made.log.shotTelegraphs).toHaveLength(1);
+    expect(made.log.shotTelegraphs[0].angles).toHaveLength(5);
+    expect(made.log.shots).toHaveLength(0);
+    made.flush();
+    expect(made.log.shots).toHaveLength(5);
+  });
+
+  it('telegraphs the complete charge lane before the dash', () => {
+    const made = makeArena() as ReturnType<typeof makeArena> & { flush: () => void };
+    const brain = new BossBrain(
+      made.arena,
+      [{ type: 'charge', speed: 360, durationMs: 500, telegraphMs: 700 }],
+      20,
+    );
+    step(brain, 1300);
+    expect(made.log.chargeTelegraphs).toHaveLength(1);
+    expect(made.log.dashes).toHaveLength(0);
+    made.flush();
+    expect(made.log.dashes).toEqual([{ speed: 360, ms: 500 }]);
+  });
+
   it('does not attack while the player is out of engage range', () => {
     const { arena, log } = makeArena({ playerPos: () => ({ x: 9999, y: 0 }) });
     const brain = new BossBrain(
@@ -123,6 +171,31 @@ describe('BossBrain', () => {
     expect(log.enraged).toBe(1); // one-shot cue
   });
 
+  it('switches to the named phase attack set and cadence at the threshold', () => {
+    let hp = 1;
+    const { arena, log } = makeArena({ hpPct: () => hp });
+    const brain = new BossBrain(
+      arena,
+      [{ type: 'shots', count: 1, speed: 100, damageMult: 1, spread: 'radial' }],
+      10,
+      0.5,
+      {
+        name: '第二形態',
+        speedMult: 1.12,
+        cooldownMult: 0.75,
+        attacks: [
+          { type: 'shots', count: 4, speed: 120, damageMult: 0.5, spread: 'radial' },
+        ],
+      },
+    );
+    step(brain, 500);
+    hp = 0.4;
+    step(brain, 800);
+    expect(brain.isEnraged()).toBe(true);
+    expect(log.speedMult).toBe(1.12);
+    expect(log.shots).toHaveLength(4);
+  });
+
   it('summon respects the minion cap', () => {
     const { arena, log } = makeArena();
     const brain = new BossBrain(
@@ -144,6 +217,28 @@ describe('boss attack data', () => {
       for (const a of b.attacks ?? []) {
         if (a.type === 'aoe' || a.type === 'charge') {
           expect(a.telegraphMs, `${b.id} telegraph`).toBeGreaterThanOrEqual(300);
+        }
+      }
+    }
+  });
+
+  it('gives every rank-seven boss themed warnings and a telegraphed second phase', () => {
+    const ids = [
+      'boss_slime_abyss',
+      'boss_flarelis',
+      'boss_luxmordo',
+      'boss_crimson_abyss',
+      'boss_almagia',
+    ];
+    const byId = new Map(allEnemyDefs().map((boss) => [boss.id, boss]));
+    for (const id of ids) {
+      const boss = byId.get(id);
+      expect(boss?.bossStyle?.warningColor, `${id} warning colour`).toMatch(/^#[0-9a-f]{6}$/i);
+      expect(boss?.phase?.name, `${id} phase name`).toBeTruthy();
+      expect(boss?.phase?.attacks?.length, `${id} phase attacks`).toBeGreaterThanOrEqual(3);
+      for (const attack of [...(boss?.attacks ?? []), ...(boss?.phase?.attacks ?? [])]) {
+        if (attack.type === 'shots') {
+          expect(attack.telegraphMs, `${id} shot telegraph`).toBeGreaterThanOrEqual(500);
         }
       }
     }

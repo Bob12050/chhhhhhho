@@ -1,4 +1,4 @@
-import type { BossAttackDef } from '@/enemies/enemy-defs';
+import type { BossAttackDef, BossPhaseDef } from '@/enemies/enemy-defs';
 
 /**
  * Boss attack scheduler. Pure logic (no Phaser import) so it runs headless in
@@ -17,6 +17,25 @@ export interface Arena {
   hpPct(): number;
   /** Show a warning circle, then call back when it detonates. */
   telegraph(x: number, y: number, radius: number, ms: number, onDone: () => void): void;
+  /** Show the full path of a charge before movement begins. */
+  telegraphCharge(
+    x: number,
+    y: number,
+    targetX: number,
+    targetY: number,
+    speed: number,
+    durationMs: number,
+    telegraphMs: number,
+    onDone: () => void,
+  ): void;
+  /** Show every projectile direction before a burst is released. */
+  telegraphShots(
+    x: number,
+    y: number,
+    angles: readonly number[],
+    ms: number,
+    onDone: () => void,
+  ): void;
   /** Blast visual + player damage check is the scene's job. */
   explode(x: number, y: number, radius: number, damage: number): void;
   /** Hold the boss in place (cast pose) for ms. */
@@ -48,17 +67,25 @@ export class BossBrain {
   private readonly attacks: readonly BossAttackDef[];
   private readonly contactDamage: number;
   private readonly enrageAt: number;
+  private readonly phase?: BossPhaseDef;
   private readonly arena: Arena;
   private cooldown = FIRST_ATTACK_DELAY_MS;
   private nextIndex = 0;
   private enraged = false;
   private busyMs = 0;
 
-  constructor(arena: Arena, attacks: readonly BossAttackDef[], contactDamage: number, enrageAtHpPct?: number) {
+  constructor(
+    arena: Arena,
+    attacks: readonly BossAttackDef[],
+    contactDamage: number,
+    enrageAtHpPct?: number,
+    phase?: BossPhaseDef,
+  ) {
     this.arena = arena;
     this.attacks = attacks;
     this.contactDamage = contactDamage;
     this.enrageAt = enrageAtHpPct ?? 0.5;
+    this.phase = phase;
   }
 
   isEnraged(): boolean {
@@ -70,7 +97,8 @@ export class BossBrain {
 
     if (!this.enraged && this.arena.hpPct() <= this.enrageAt) {
       this.enraged = true;
-      this.arena.setSpeedMult(ENRAGE_SPEED_MULT);
+      this.nextIndex = 0;
+      this.arena.setSpeedMult(this.phase?.speedMult ?? ENRAGE_SPEED_MULT);
       this.arena.onEnrage();
     }
 
@@ -86,9 +114,14 @@ export class BossBrain {
     const dist = Math.hypot(player.x - boss.x, player.y - boss.y);
     if (dist > ENGAGE_RANGE) return; // wait until the player engages
 
-    const def = this.attacks[this.nextIndex % this.attacks.length];
+    const attacks = this.enraged && this.phase?.attacks?.length
+      ? this.phase.attacks
+      : this.attacks;
+    const def = attacks[this.nextIndex % attacks.length];
     this.nextIndex++;
-    this.cooldown = BASE_COOLDOWN_MS * (this.enraged ? ENRAGE_COOLDOWN_MULT : 1);
+    this.cooldown = BASE_COOLDOWN_MS * (
+      this.enraged ? this.phase?.cooldownMult ?? ENRAGE_COOLDOWN_MULT : 1
+    );
     this.execute(def, boss, player);
   }
 
@@ -122,19 +155,24 @@ export class BossBrain {
         // Aim at where the player stood when the windup began (dodgeable).
         const tx = player.x;
         const ty = player.y;
-        this.arena.telegraph(tx, ty, 26, def.telegraphMs, () =>
-          this.arena.dash(tx, ty, def.speed, def.durationMs),
+        this.arena.telegraphCharge(
+          boss.x,
+          boss.y,
+          tx,
+          ty,
+          def.speed,
+          def.durationMs,
+          def.telegraphMs,
+          () => this.arena.dash(tx, ty, def.speed, def.durationMs),
         );
         break;
       }
       case 'shots': {
-        const holdMs = 420;
-        this.arena.hold(holdMs);
-        this.busyMs = holdMs;
         const damage = dmg(def.damageMult);
+        const angles: number[] = [];
         if (def.spread === 'radial') {
           for (let i = 0; i < def.count; i++) {
-            this.arena.fireProjectile((i / def.count) * Math.PI * 2, def.speed, damage);
+            angles.push((i / def.count) * Math.PI * 2);
           }
         } else {
           const base = Math.atan2(player.y - boss.y, player.x - boss.x);
@@ -142,8 +180,22 @@ export class BossBrain {
           const n = Math.max(1, def.count);
           for (let i = 0; i < n; i++) {
             const t = n === 1 ? 0.5 : i / (n - 1);
-            this.arena.fireProjectile(base - arc / 2 + arc * t, def.speed, damage);
+            angles.push(base - arc / 2 + arc * t);
           }
+        }
+        const fire = (): void => {
+          for (const angle of angles) this.arena.fireProjectile(angle, def.speed, damage);
+        };
+        const telegraphMs = def.telegraphMs ?? 0;
+        if (telegraphMs > 0) {
+          this.arena.hold(telegraphMs);
+          this.busyMs = telegraphMs;
+          this.arena.telegraphShots(boss.x, boss.y, angles, telegraphMs, fire);
+        } else {
+          const holdMs = 420;
+          this.arena.hold(holdMs);
+          this.busyMs = holdMs;
+          fire();
         }
         break;
       }

@@ -425,6 +425,13 @@ export class WorldScene extends Phaser.Scene {
     this.busOff.push(bus.on('ui:open-debug', () => this.openMenu('Debug')));
     this.busOff.push(bus.on('ui:open-map', () => this.openMenu('MapSelect')));
     this.busOff.push(bus.on('debug:warp', () => this.transitionRestart(true)));
+    this.busOff.push(
+      bus.on('debug:boss-phase', () => {
+        if (!this.boss || this.boss.isDead() || !this.bossBrain) return;
+        this.boss.hp = Math.max(1, Math.floor(this.boss.cfg.maxHp * 0.34));
+        this.playerInvuln = Math.max(this.playerInvuln, 5000);
+      }),
+    );
     this.busOff.push(bus.on('player:level-up', ({ level }) => this.onLevelUp(level)));
     this.busOff.push(bus.on('map:travel', () => this.transitionRestart(true)));
     // Live pet swap (pet screen): replace the follower sprite in place.
@@ -670,6 +677,7 @@ export class WorldScene extends Phaser.Scene {
           def.attacks,
           contactDamage,
           def.enrageAtHpPct,
+          def.phase,
         );
       }
     }
@@ -678,17 +686,38 @@ export class WorldScene extends Phaser.Scene {
 
   /** Scene services handed to the (engine-independent) BossBrain. */
   private makeArena(boss: Enemy, def: EnemyDef): Arena {
+    const color = (value: string | undefined, fallback: number): number =>
+      value ? Phaser.Display.Color.HexStringToColor(value).color : fallback;
+    const warningColor = color(def.bossStyle?.warningColor, 0xff5050);
+    const impactColor = color(def.bossStyle?.impactColor, 0xffa050);
+    const projectileColor = color(def.bossStyle?.projectileColor, 0xff8a5a);
     return {
       bossPos: () => ({ x: boss.x, y: boss.y }),
       playerPos: () => ({ x: this.player.x, y: this.player.y }),
       // cfg.maxHp, NOT def.maxHp: veteran spawns scale HP ×1.6 and the
       // enrage threshold must track the scaled pool or it fires too late.
       hpPct: () => Math.max(0, boss.hp) / boss.cfg.maxHp,
-      telegraph: (x, y, r, ms, onDone) => this.telegraphFx(x, y, r, ms, onDone),
-      explode: (x, y, r, dmg) => this.explodeAt(x, y, r, dmg),
+      telegraph: (x, y, r, ms, onDone) =>
+        this.telegraphFx(x, y, r, ms, warningColor, onDone),
+      telegraphCharge: (x, y, tx, ty, speed, durationMs, telegraphMs, onDone) =>
+        this.chargeTelegraphFx(
+          x,
+          y,
+          tx,
+          ty,
+          speed,
+          durationMs,
+          telegraphMs,
+          warningColor,
+          onDone,
+        ),
+      telegraphShots: (x, y, angles, ms, onDone) =>
+        this.shotTelegraphFx(x, y, angles, ms, warningColor, onDone),
+      explode: (x, y, r, dmg) => this.explodeAt(x, y, r, dmg, impactColor),
       hold: (ms) => boss.castHold(ms),
       dash: (x, y, speed, ms) => boss.beginDash(x, y, speed, ms),
-      fireProjectile: (ang, speed, dmg) => this.fireBullet(boss.x, boss.y - 24, ang, speed, dmg),
+      fireProjectile: (ang, speed, dmg) =>
+        this.fireBullet(boss.x, boss.y - 24, ang, speed, dmg, projectileColor),
       summon: (id) => this.summonMinion(boss, id),
       minionCount: () => this.minions.filter((m) => !m.isDead()).length,
       setSpeedMult: (m) => {
@@ -700,13 +729,20 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Warning circle that fills up over `ms`, then detonates via `onDone`. */
-  private telegraphFx(x: number, y: number, radius: number, ms: number, onDone: () => void): void {
+  private telegraphFx(
+    x: number,
+    y: number,
+    radius: number,
+    ms: number,
+    color: number,
+    onDone: () => void,
+  ): void {
     const ring = this.add
-      .circle(Math.round(x), Math.round(y), radius, 0xff3030, 0.12)
-      .setStrokeStyle(2, 0xff5050, 0.9)
+      .circle(Math.round(x), Math.round(y), radius, color, 0.12)
+      .setStrokeStyle(2, color, 0.95)
       .setDepth(6);
     const fill = this.add
-      .circle(Math.round(x), Math.round(y), radius, 0xff4040, 0.26)
+      .circle(Math.round(x), Math.round(y), radius, color, 0.28)
       .setScale(0.06)
       .setDepth(6);
     this.tweens.add({ targets: fill, scale: 1, duration: ms, ease: 'Linear' });
@@ -717,9 +753,82 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
+  /** Full charge lane, including the distance the boss will actually travel. */
+  private chargeTelegraphFx(
+    x: number,
+    y: number,
+    targetX: number,
+    targetY: number,
+    speed: number,
+    durationMs: number,
+    telegraphMs: number,
+    color: number,
+    onDone: () => void,
+  ): void {
+    const angle = Math.atan2(targetY - y, targetX - x);
+    const length = Math.max(64, (speed * durationMs) / 1000);
+    const endX = x + Math.cos(angle) * length;
+    const endY = y + Math.sin(angle) * length;
+    const lane = this.add
+      .rectangle(x, y, length, 30, color, 0.12)
+      .setOrigin(0, 0.5)
+      .setRotation(angle)
+      .setStrokeStyle(2, color, 0.9)
+      .setDepth(6);
+    const fill = this.add
+      .rectangle(x, y, length, 24, color, 0.3)
+      .setOrigin(0, 0.5)
+      .setRotation(angle)
+      .setScale(0.04, 1)
+      .setDepth(6);
+    const end = this.add
+      .circle(endX, endY, 16, color, 0.12)
+      .setStrokeStyle(2, color, 0.9)
+      .setDepth(6);
+    this.tweens.add({ targets: fill, scaleX: 1, duration: telegraphMs, ease: 'Linear' });
+    this.time.delayedCall(telegraphMs, () => {
+      lane.destroy();
+      fill.destroy();
+      end.destroy();
+      onDone();
+    });
+  }
+
+  /** Direction rays make aimed fans and radial barrages readable before release. */
+  private shotTelegraphFx(
+    x: number,
+    y: number,
+    angles: readonly number[],
+    ms: number,
+    color: number,
+    onDone: () => void,
+  ): void {
+    const rays = this.add.graphics().setDepth(6).setAlpha(0.35);
+    rays.lineStyle(2, color, 0.82);
+    for (const angle of angles) {
+      rays.beginPath();
+      rays.moveTo(x, y);
+      rays.lineTo(x + Math.cos(angle) * 180, y + Math.sin(angle) * 180);
+      rays.strokePath();
+    }
+    const core = this.add
+      .circle(x, y, 20, color, 0.14)
+      .setStrokeStyle(2, color, 0.95)
+      .setDepth(6);
+    this.tweens.add({ targets: [rays, core], alpha: 0.95, duration: ms, ease: 'Linear' });
+    this.time.delayedCall(ms, () => {
+      rays.destroy();
+      core.destroy();
+      onDone();
+    });
+  }
+
   /** AoE detonation: blast visual + player range check. */
-  private explodeAt(x: number, y: number, radius: number, damage: number): void {
-    const boom = this.add.circle(Math.round(x), Math.round(y), radius, 0xffa050, 0.5).setDepth(9000);
+  private explodeAt(x: number, y: number, radius: number, damage: number, color = 0xffa050): void {
+    const boom = this.add
+      .circle(Math.round(x), Math.round(y), radius, color, 0.5)
+      .setStrokeStyle(2, color, 0.9)
+      .setDepth(9000);
     this.tweens.add({
       targets: boom,
       alpha: 0,
@@ -736,11 +845,22 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Spawn a pooled enemy projectile. */
-  private fireBullet(x: number, y: number, angle: number, speed: number, damage: number): void {
+  private fireBullet(
+    x: number,
+    y: number,
+    angle: number,
+    speed: number,
+    damage: number,
+    color = 0xff8a5a,
+  ): void {
     const obj =
       this.bulletPool.pop() ??
-      this.add.circle(0, 0, 5, 0xff8a5a, 1).setStrokeStyle(1, 0xffd0a0, 0.9).setDepth(9000);
-    obj.setPosition(Math.round(x), Math.round(y)).setVisible(true);
+      this.add.circle(0, 0, 5, color, 1).setDepth(9000);
+    obj
+      .setFillStyle(color, 1)
+      .setStrokeStyle(1, 0xffffff, 0.88)
+      .setPosition(Math.round(x), Math.round(y))
+      .setVisible(true);
     this.bullets.push({
       obj,
       vx: Math.cos(angle) * speed,
@@ -785,17 +905,66 @@ export class WorldScene extends Phaser.Scene {
     return true;
   }
 
-  /** One-shot enrage cue: roar, shake, red flash, and a lasting reddened tint. */
+  /** One-shot phase cue with a named state, themed colour, pulse, and lasting tint. */
   private onBossEnrage(boss: Enemy, def: EnemyDef): void {
-    const base = def.tint ? Phaser.Display.Color.HexStringToColor(def.tint).color : 0xffffff;
-    const r = Math.min(255, ((base >> 16) & 0xff) / 2 + 200);
-    const g = ((base >> 8) & 0xff) * 0.55;
-    const b = (base & 0xff) * 0.55;
-    boss.enrageVisual((Math.round(r) << 16) | (Math.round(g) << 8) | Math.round(b));
-    this.floatText(boss.x, boss.y - 76, '怒り状態！', '#ff6a5a');
+    const phase = def.phase;
+    const phaseColor = phase?.color
+      ? Phaser.Display.Color.HexStringToColor(phase.color).color
+      : 0xff3020;
+    let phaseTint: number;
+    if (phase?.tint) {
+      phaseTint = Phaser.Display.Color.HexStringToColor(phase.tint).color;
+    } else {
+      const base = def.tint ? Phaser.Display.Color.HexStringToColor(def.tint).color : 0xffffff;
+      const r = Math.min(255, ((base >> 16) & 0xff) / 2 + 200);
+      const g = ((base >> 8) & 0xff) * 0.55;
+      const b = (base & 0xff) * 0.55;
+      phaseTint = (Math.round(r) << 16) | (Math.round(g) << 8) | Math.round(b);
+    }
+    boss.enrageVisual(phaseTint);
+    if (phase) this.showBossPhaseBanner(phase.name, phase.color ?? '#ff6a5a');
+    else this.floatText(boss.x, boss.y - 76, '怒り状態！', '#ff6a5a');
+    const pulse = this.add
+      .circle(boss.x, boss.y - 18, 26, phaseColor, 0.12)
+      .setStrokeStyle(3, phaseColor, 0.95)
+      .setDepth(9000);
+    this.tweens.add({
+      targets: pulse,
+      scale: 3,
+      alpha: 0,
+      duration: 520,
+      ease: 'Quad.easeOut',
+      onComplete: () => pulse.destroy(),
+    });
+    this.bossBar?.fill.setFillStyle(phaseColor);
     this.cameras.main.shake(240, 0.008);
-    this.flashScreen(0xff3020, 0.18, 260);
+    this.flashScreen(phaseColor, 0.18, 260);
     bus.emit('sfx:play', { id: 'roar' });
+  }
+
+  private showBossPhaseBanner(name: string, color: string): void {
+    const banner = this.add
+      .text(this.scale.width / 2, 174, `PHASE 2\n${name}`, {
+        fontFamily: FONT,
+        fontSize: '16px',
+        fontStyle: 'bold',
+        color,
+        align: 'center',
+        stroke: '#090711',
+        strokeThickness: 5,
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(9002);
+    this.tweens.add({
+      targets: banner,
+      y: 162,
+      alpha: 0,
+      delay: 720,
+      duration: 520,
+      ease: 'Quad.easeIn',
+      onComplete: () => banner.destroy(),
+    });
   }
 
   /**

@@ -746,6 +746,11 @@
       "dropTableId": "boss_slime_abyss",
       "weakness": "holy",
       "resist": "dark",
+      "bossStyle": {
+        "warningColor": "#b58cff",
+        "impactColor": "#7047b8",
+        "projectileColor": "#c9a8ff"
+      },
       "attacks": [
         {
           "type": "aoe",
@@ -765,9 +770,40 @@
           "count": 12,
           "speed": 150,
           "damageMult": 0.55,
+          "telegraphMs": 900,
           "spread": "radial"
         }
       ],
+      "phase": {
+        "name": "深淵氾濫",
+        "color": "#c89cff",
+        "tint": "#7650b8",
+        "speedMult": 1.15,
+        "cooldownMult": 0.72,
+        "attacks": [
+          {
+            "type": "aoe",
+            "radius": 56,
+            "damageMult": 0.9,
+            "telegraphMs": 900,
+            "count": 5
+          },
+          {
+            "type": "shots",
+            "count": 16,
+            "speed": 155,
+            "damageMult": 0.45,
+            "telegraphMs": 900,
+            "spread": "radial"
+          },
+          {
+            "type": "summon",
+            "enemyId": "slime",
+            "count": 3,
+            "maxMinions": 5
+          }
+        ]
+      },
       "enrageAtHpPct": 0.5,
       "description": "深淵の底に沈む名も無きもの。見た者は少なく、帰った者はさらに少ない。"
     },
@@ -1321,12 +1357,18 @@
       "expReward": 10500,
       "goldReward": 2100,
       "dropTableId": "boss_flarelis",
+      "bossStyle": {
+        "warningColor": "#ff9b45",
+        "impactColor": "#ff5638",
+        "projectileColor": "#ffd06b"
+      },
       "attacks": [
         {
           "type": "shots",
           "count": 12,
           "speed": 150,
           "damageMult": 0.6,
+          "telegraphMs": 850,
           "spread": "radial"
         },
         {
@@ -1341,10 +1383,44 @@
           "count": 5,
           "speed": 200,
           "damageMult": 0.7,
+          "telegraphMs": 650,
           "spread": "aim",
           "arcDeg": 40
         }
       ],
+      "phase": {
+        "name": "灼熱戴冠",
+        "color": "#ffcf66",
+        "tint": "#ff4f32",
+        "speedMult": 1.2,
+        "cooldownMult": 0.68,
+        "attacks": [
+          {
+            "type": "shots",
+            "count": 7,
+            "speed": 220,
+            "damageMult": 0.55,
+            "telegraphMs": 650,
+            "spread": "aim",
+            "arcDeg": 55
+          },
+          {
+            "type": "aoe",
+            "radius": 54,
+            "damageMult": 0.9,
+            "telegraphMs": 850,
+            "count": 4
+          },
+          {
+            "type": "shots",
+            "count": 16,
+            "speed": 165,
+            "damageMult": 0.45,
+            "telegraphMs": 850,
+            "spread": "radial"
+          }
+        ]
+      },
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_wisp_queen",
       "weakness": "ice",
@@ -1367,6 +1443,11 @@
       "expReward": 11500,
       "goldReward": 2300,
       "dropTableId": "boss_luxmordo",
+      "bossStyle": {
+        "warningColor": "#ffe48a",
+        "impactColor": "#fff0b8",
+        "projectileColor": "#fff6cf"
+      },
       "attacks": [
         {
           "type": "charge",
@@ -1386,10 +1467,42 @@
           "count": 8,
           "speed": 190,
           "damageMult": 0.6,
+          "telegraphMs": 650,
           "spread": "aim",
           "arcDeg": 80
         }
       ],
+      "phase": {
+        "name": "聖光断罪",
+        "color": "#fff0a0",
+        "tint": "#fff2bb",
+        "speedMult": 1.3,
+        "cooldownMult": 0.72,
+        "attacks": [
+          {
+            "type": "charge",
+            "speed": 400,
+            "durationMs": 520,
+            "telegraphMs": 650
+          },
+          {
+            "type": "shots",
+            "count": 10,
+            "speed": 210,
+            "damageMult": 0.5,
+            "telegraphMs": 650,
+            "spread": "aim",
+            "arcDeg": 90
+          },
+          {
+            "type": "aoe",
+            "radius": 60,
+            "damageMult": 1.0,
+            "telegraphMs": 850,
+            "count": 4
+          }
+        ]
+      },
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_knight_dread",
       "weakness": "dark",
@@ -1412,6 +1525,11 @@
       "expReward": 13000,
       "goldReward": 2600,
       "dropTableId": "boss_crimson_abyss",
+      "bossStyle": {
+        "warningColor": "#ff5978",
+        "impactColor": "#d7194d",
+        "projectileColor": "#ff8da3"
+      },
       "attacks": [
         {
           "type": "aoe",
@@ -1431,9 +1549,40 @@
           "count": 14,
           "speed": 150,
           "damageMult": 0.55,
+          "telegraphMs": 900,
           "spread": "radial"
         }
       ],
+      "phase": {
+        "name": "緋海決壊",
+        "color": "#ff6684",
+        "tint": "#ff294f",
+        "speedMult": 1.18,
+        "cooldownMult": 0.7,
+        "attacks": [
+          {
+            "type": "aoe",
+            "radius": 55,
+            "damageMult": 0.85,
+            "telegraphMs": 850,
+            "count": 6
+          },
+          {
+            "type": "shots",
+            "count": 18,
+            "speed": 165,
+            "damageMult": 0.45,
+            "telegraphMs": 850,
+            "spread": "radial"
+          },
+          {
+            "type": "summon",
+            "enemyId": "slime",
+            "count": 4,
+            "maxMinions": 6
+          }
+        ]
+      },
       "enrageAtHpPct": 0.5,
       "variantOf": "boss_slime_abyss",
       "weakness": "holy",
@@ -1455,12 +1604,18 @@
       "expReward": 15000,
       "goldReward": 3000,
       "dropTableId": "boss_almagia",
+      "bossStyle": {
+        "warningColor": "#5fe4ff",
+        "impactColor": "#258cff",
+        "projectileColor": "#d1f8ff"
+      },
       "attacks": [
         {
           "type": "shots",
           "count": 3,
           "speed": 240,
           "damageMult": 0.8,
+          "telegraphMs": 750,
           "spread": "aim",
           "arcDeg": 10
         },
@@ -1469,6 +1624,7 @@
           "count": 16,
           "speed": 140,
           "damageMult": 0.5,
+          "telegraphMs": 950,
           "spread": "radial"
         },
         {
@@ -1485,6 +1641,45 @@
           "telegraphMs": 700
         }
       ],
+      "phase": {
+        "name": "全砲門解放",
+        "color": "#77ecff",
+        "tint": "#72eaff",
+        "speedMult": 1.1,
+        "cooldownMult": 0.72,
+        "attacks": [
+          {
+            "type": "shots",
+            "count": 5,
+            "speed": 260,
+            "damageMult": 0.65,
+            "telegraphMs": 750,
+            "spread": "aim",
+            "arcDeg": 18
+          },
+          {
+            "type": "shots",
+            "count": 20,
+            "speed": 150,
+            "damageMult": 0.4,
+            "telegraphMs": 950,
+            "spread": "radial"
+          },
+          {
+            "type": "aoe",
+            "radius": 66,
+            "damageMult": 1.05,
+            "telegraphMs": 1050,
+            "count": 3
+          },
+          {
+            "type": "charge",
+            "speed": 320,
+            "durationMs": 650,
+            "telegraphMs": 800
+          }
+        ]
+      },
       "enrageAtHpPct": 0.5,
       "weakness": "thunder",
       "description": "深淵の底で目覚めた古代兵器。製作者はもういない。命令だけが残った。"

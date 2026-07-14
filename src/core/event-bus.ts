@@ -30,6 +30,7 @@ export interface GameEvents {
   'ui:open-debug': Record<string, never>;
   'ui:open-map': Record<string, never>;
   'debug:warp': Record<string, never>;
+  'debug:boss-phase': Record<string, never>;
   'map:travel': Record<string, never>;
   /** Fired when a map finishes building; drives the town-mode HUD and minimap. */
   'world:map-ready': {

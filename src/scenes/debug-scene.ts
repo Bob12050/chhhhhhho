@@ -61,6 +61,15 @@ export class DebugScene extends Phaser.Scene {
     this.btn(16, y, '★最強モード（Lv99・全解放）', () => this.grant(() => this.godMode()), 0x6a2a2a);
     y += 44;
     this.btn(16, y, 'ゼフィス実演', () => this.previewZephys(), 0x365070);
+    this.btn(
+      142,
+      y,
+      'アルマギア実演',
+      () => this.previewHunt('hunt_r7_04_almagia', 'arena_abyss', 180, 500),
+      0x365070,
+    );
+    y += 40;
+    this.btn(16, y, '第二形態を即確認', () => this.triggerBossPhase(), 0x6a2a52);
     y += 40;
     this.btn(16, y, '通し確認チェックリスト', () => {
       this.scene.stop();
@@ -77,13 +86,13 @@ export class DebugScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-ESC', () => this.close());
   }
 
-  private warp(mapId: string): void {
+  private warp(mapId: string, x?: number, y?: number): void {
     const m = getMap(mapId);
     if (!m) return;
     const sp = spawnPoint(m, 'default');
     gameState.mapId = mapId;
-    gameState.x = sp.x;
-    gameState.y = sp.y;
+    gameState.x = x ?? sp.x;
+    gameState.y = y ?? sp.y;
     this.scene.stop();
     this.scene.resume('World');
     bus.emit('debug:warp', {});
@@ -115,13 +124,21 @@ export class DebugScene extends Phaser.Scene {
 
   /** Debug-only visual route: launch the base Zephys hunt without progression gates. */
   private previewZephys(): void {
-    const questId = 'hunt_r2_01_zephys';
+    this.previewHunt('hunt_r2_01_zephys', 'arena_plain');
+  }
+
+  private previewHunt(questId: string, mapId: string, x?: number, y?: number): void {
     if (!gameState.activeQuests.includes(questId)) {
       gameState.activeQuests.push(questId);
-      gameState.questProgress[questId] = {};
-      bus.emit('quest:changed', {});
     }
-    this.warp('arena_plain');
+    gameState.questProgress[questId] = {};
+    bus.emit('quest:changed', {});
+    this.warp(mapId, x, y);
+  }
+
+  private triggerBossPhase(): void {
+    bus.emit('debug:boss-phase', {});
+    this.close();
   }
 
   /**
