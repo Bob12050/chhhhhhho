@@ -57,7 +57,8 @@ export interface QuestDef {
   /**
    * Monster-Hunter style hunt: while this quest is active, its target
    * enemies spawn in `huntMap`. Accepting it departs the player to that map.
-   * The target despawns/returns on quest turn-in (re-accept to re-hunt).
+   * Victory pays out immediately; defeat abandons the attempt. Re-accept the
+   * contract from the board to hunt again.
    * Objectives are hunted IN ORDER (連続狩猟/露払い waves).
    */
   huntMap?: string;

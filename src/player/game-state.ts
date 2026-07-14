@@ -211,8 +211,11 @@ export class GameState {
           if (!this.flags[c.flag]) return 'flag';
           break;
         case 'quest':
-          // Quest content is TBD; until quests exist a cleared flag stands in.
-          if (!this.flags[`quest_${c.questId}`]) return 'quest';
+          // Completion history is canonical. Keep the old flag check so saves
+          // created before quest completion was persisted still remain valid.
+          if (!this.completedQuests.includes(c.questId) && !this.flags[`quest_${c.questId}`]) {
+            return 'quest';
+          }
           break;
       }
     }

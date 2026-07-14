@@ -99,7 +99,7 @@
       "id": "tier4_trial",
       "name": "極みの試練",
       "type": "unlock",
-      "description": "全ての主を超えし者の証。キングスライムを討ち、4次職への道を開く。",
+      "description": "最終章を越えた者にのみ許される極限狩猟。真なるキングスライムを討ち、4次職への道を開く。",
       "objectives": [
         {
           "type": "kill",
@@ -108,22 +108,22 @@
         }
       ],
       "require": {
-        "questDone": "subj_stone",
-        "minLevel": 30
+        "questDone": "main_09_finale",
+        "minLevel": 94
       },
       "rewards": {
-        "gold": 500,
-        "exp": 1800,
+        "gold": 4000,
+        "exp": 20000,
         "setFlags": [
           "quest_tier4_trial"
         ]
       },
       "huntMap": "arena_marsh",
       "huntModifiers": {
-        "hpMult": 1.4,
-        "dmgMult": 1.15
+        "hpMult": 6.6,
+        "dmgMult": 7.8
       },
-      "rank": 4
+      "rank": 7
     },
     {
       "id": "q_apprentice",

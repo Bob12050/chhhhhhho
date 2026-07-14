@@ -26,6 +26,8 @@ export interface QuestResultData {
   reportExp: number;
   reportItems: QuestResultItem[];
   craftableEquipment: string[];
+  jobUnlock?: boolean;
+  ending?: boolean;
 }
 
 export class QuestResultScene extends Phaser.Scene {
@@ -90,8 +92,9 @@ export class QuestResultScene extends Phaser.Scene {
     y = this.itemRows(left + 18, right - 18, y, this.resultData.drops, depth + 2, 'ドロップなし');
 
     y += 6;
-    y = this.section(left + 18, y, '報告報酬', depth + 2);
+    y = this.section(left + 18, y, 'クリア報酬', depth + 2);
     const report = [
+      ...(this.resultData.jobUnlock ? [{ label: '4次職への道 解放', color: '#ffe98f' }] : []),
       ...(this.resultData.reportGold > 0 ? [{ label: `${this.resultData.reportGold}G`, color: UI.gold }] : []),
       ...(this.resultData.reportExp > 0 ? [{ label: `EXP ${this.resultData.reportExp}`, color: '#9fd0ff' }] : []),
       ...(this.resultData.investigationRewardRank
@@ -105,7 +108,7 @@ export class QuestResultScene extends Phaser.Scene {
         color: rarityColorHex(this.itemRarity(i.itemId)),
       })),
     ];
-    y = this.chipRows(left + 18, right - 18, y, report, depth + 2, '町の掲示板で受け取り');
+    y = this.chipRows(left + 18, right - 18, y, report, depth + 2, '追加報酬なし');
 
     y += 8;
     y = this.section(left + 18, y, 'クラフト解放', depth + 2);
@@ -116,26 +119,29 @@ export class QuestResultScene extends Phaser.Scene {
     y = this.chipRows(left + 18, right - 18, y, craftRows, depth + 2, '新しく作れる装備はまだなし');
 
     this.add
-      .text(cx, Math.min(y + 16, top + panelH - 86), '町で報告すると正式な報酬を受け取れます', {
-        fontFamily: FONT,
-        fontSize: '10px',
-        color: UI.sub,
-      })
+      .text(
+        cx,
+        Math.min(y + 16, top + panelH - 86),
+        this.resultData.jobUnlock ? '4次職への道が開かれました' : '報酬は受け取り済みです',
+        {
+          fontFamily: FONT,
+          fontSize: '10px',
+          color: UI.sub,
+        },
+      )
       .setOrigin(0.5)
       .setDepth(depth + 2);
 
-    pillButton(this, left + panelW * 0.32, top + panelH - 38, '続ける', () => this.close(), {
-      color: '#ffffff',
-      bg: '#39406a',
-      size: 14,
-    }).setDepth(depth + 2);
-    pillButton(this, left + panelW * 0.72, top + panelH - 38, '町へ戻る', () => this.returnToTown(), {
-      color: '#ffe9a8',
-      bg: '#7a4d22',
-      size: 14,
-    }).setDepth(depth + 2);
+    pillButton(
+      this,
+      cx,
+      top + panelH - 38,
+      this.resultData.ending ? 'エンディングへ' : '町へ戻る',
+      () => this.returnToTown(),
+      { color: '#ffe9a8', bg: '#7a4d22', size: 14 },
+    ).setDepth(depth + 2);
 
-    this.input.keyboard?.on('keydown-ESC', () => this.close());
+    this.input.keyboard?.on('keydown-ESC', () => this.returnToTown());
   }
 
   private statStrip(left: number, right: number, y: number, depth: number): void {
@@ -219,30 +225,22 @@ export class QuestResultScene extends Phaser.Scene {
     return y + 26;
   }
 
-  private close(): void {
-    this.scene.stop();
-    this.scene.resume('World');
-  }
-
   private itemRarity(itemId: string): number | undefined {
     return getMaterial(itemId)?.rarity ?? getEquipment(itemId)?.rarity;
   }
 
   private returnToTown(): void {
     const town = getMap('town');
-    const sp = town ? spawnPoint(town, 'default') : { x: 180, y: 820 };
+    const sp = town ? spawnPoint(town, 'respawn') : { x: 320, y: 735 };
     gameState.mapId = 'town';
-    gameState.x = 180;
-    gameState.y = 462;
-    if (!town) {
-      gameState.x = sp.x;
-      gameState.y = sp.y;
-    }
+    gameState.x = sp.x;
+    gameState.y = sp.y;
     void saveManager.write(gameState.toSave(gameState.slot));
     this.scene.stop();
     const world = this.scene.get('World');
     world.scene.resume();
     world.scene.restart();
+    if (this.resultData.ending) this.scene.launch('Ending');
   }
 }
 

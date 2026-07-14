@@ -44,11 +44,11 @@ describe('jobs / job change', () => {
     expect(gs.jobChangeBlock('samurai')).toBeNull();
   });
 
-  it('gates a 4次職 on the (TBD) high-difficulty quest', () => {
+  it('gates a 4次職 on the completed high-difficulty trial', () => {
     const gs = new GameState();
     gs.jobLevels.sword_kaiser = 80;
     expect(gs.jobChangeBlock('aramikagura')).toBe('quest');
-    gs.flags['quest_tier4_trial'] = true;
+    gs.completedQuests.push('tier4_trial');
     expect(gs.jobChangeBlock('aramikagura')).toBeNull();
   });
 

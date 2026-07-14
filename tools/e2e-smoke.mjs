@@ -468,20 +468,27 @@ try {
       await page.keyboard.down(k); await page.waitForTimeout(85); await page.keyboard.up(k);
       await page.keyboard.down('j'); await page.waitForTimeout(95); await page.keyboard.up('j');
     }
-    if (i % 5 === 4 && (await page.evaluate(() => window.__test.isQuestComplete('hunt_r2_01_zephys')))) break;
+    if (
+      i % 5 === 4
+      && (await page.evaluate(() => window.__test.snapshot().completedQuests.includes('hunt_r2_01_zephys')))
+    ) break;
   }
-  const huntDone = await page.evaluate(() => window.__test.isQuestComplete('hunt_r2_01_zephys'));
-  check('ボスを倒して狩猟クエスト達成', huntDone === true);
+  s = await snap(page);
+  check(
+    '勝利時に狩猟クエストがその場で完了する',
+    s.completedQuests.includes('hunt_r2_01_zephys') && !s.activeQuests.includes('hunt_r2_01_zephys'),
+  );
   // Sweep the arena to hoover up the loot the boss dropped.
   for (const k of ['w', 'a', 's', 'd', 'w', 'd', 's', 'a', 'w']) {
     await page.keyboard.down(k); await page.waitForTimeout(320); await page.keyboard.up(k);
   }
   s = await snap(page);
   check('ボス素材がドロップする', (s.materials['gale_feather'] ?? 0) > 0);
-  await page.keyboard.press('Escape'); await page.waitForTimeout(700); // close quest result
-  const turnedIn = await page.evaluate(() => window.__test.turnInQuest('hunt_r2_01_zephys'));
-  check('報酬を受け取れる（turn-in）', turnedIn === true);
+  const resultOpen = await page.evaluate(() => window.__test.activeScenes().includes('QuestResult'));
+  check('勝利後にクエスト結果が表示される', resultOpen);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(900); // result always returns to town
   s = await snap(page);
+  check('結果画面を閉じると町へ戻る', s.mapId === 'town', `mapId=${s.mapId}`);
   check('repeatable でも完了が記録される（歴戦解放の前提）', s.completedQuests.includes('hunt_r2_01_zephys'));
 
   // ---- crafting via the real crafting scene ----

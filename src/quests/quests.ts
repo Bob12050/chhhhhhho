@@ -25,11 +25,9 @@ export function requireMet(gs: GameState, q: QuestDef): boolean {
 /** Quests the player can accept now (not active, not done unless repeatable). */
 export function availableQuests(gs: GameState): QuestDef[] {
   const activeDefs = gs.activeQuests.map((id) => getQuest(id)).filter((q): q is QuestDef => !!q);
-  const hasActiveInvestigation = activeDefs.some((q) => !!q.investigation);
   const hasActiveHunt = activeDefs.some((q) => !!q.huntMap);
   return allQuests().filter((q) => {
-    if (q.investigation && hasActiveHunt) return false;
-    if (q.huntMap && !q.investigation && hasActiveInvestigation) return false;
+    if (q.huntMap && hasActiveHunt) return false;
     return (
       !gs.activeQuests.includes(q.id)
       && (q.repeatable || !gs.completedQuests.includes(q.id))
@@ -45,12 +43,20 @@ export function acceptQuest(gs: GameState, id: string): boolean {
   if (!q.repeatable && gs.completedQuests.includes(id)) return false;
   if (!requireMet(gs, q)) return false;
   const activeDefs = gs.activeQuests.map((qid) => getQuest(qid)).filter((def): def is QuestDef => !!def);
-  if (q.investigation && activeDefs.some((def) => !!def.huntMap)) return false;
-  if (q.huntMap && !q.investigation && activeDefs.some((def) => !!def.investigation)) return false;
+  if (q.huntMap && activeDefs.some((def) => !!def.huntMap)) return false;
   gs.activeQuests.push(id);
   gs.questProgress[id] = {};
   bus.emit('quest:changed', {});
   bus.emit('quest:accepted', { questId: id });
+  return true;
+}
+
+/** End an accepted quest without rewards or completion credit. */
+export function abandonQuest(gs: GameState, questId: string): boolean {
+  if (!gs.activeQuests.includes(questId)) return false;
+  gs.activeQuests = gs.activeQuests.filter((id) => id !== questId);
+  delete gs.questProgress[questId];
+  bus.emit('quest:changed', {});
   return true;
 }
 
@@ -132,4 +138,38 @@ export function turnInQuest(gs: GameState, questId: string): boolean {
   gs.flags['quest_turned_in_any'] = true;
   bus.emit('quest:changed', {});
   return true;
+}
+
+export interface ReconciledHuntAttempts {
+  completed: string[];
+  abandoned: string[];
+}
+
+/**
+ * Upgrade legacy quest logs to the one-at-a-time hunt model. Finished hunts
+ * are paid out immediately; only the newest unfinished hunt for the current
+ * arena survives. Everything else is an attempt that already ended.
+ */
+export function reconcileHuntAttempts(gs: GameState, currentMapId: string): ReconciledHuntAttempts {
+  const result: ReconciledHuntAttempts = { completed: [], abandoned: [] };
+  const activeHunts = gs.activeQuests
+    .map((id) => getQuest(id))
+    .filter((q): q is QuestDef => !!q?.huntMap);
+
+  for (const q of activeHunts) {
+    if (isComplete(gs, q.id) && turnInQuest(gs, q.id)) result.completed.push(q.id);
+  }
+
+  let keptCurrentAttempt = false;
+  for (const questId of [...gs.activeQuests].reverse()) {
+    const q = getQuest(questId);
+    if (!q?.huntMap) continue;
+    if (!keptCurrentAttempt && q.huntMap === currentMapId) {
+      keptCurrentAttempt = true;
+      continue;
+    }
+    if (abandonQuest(gs, questId)) result.abandoned.push(questId);
+  }
+
+  return result;
 }

@@ -4,8 +4,10 @@ import { createDefaultSave, migrate } from '@/save/schema';
 import {
   availableQuests,
   acceptQuest,
+  abandonQuest,
   recordKill,
   isComplete,
+  reconcileHuntAttempts,
   turnInQuest,
   requireMet,
 } from '@/quests/quests';
@@ -63,14 +65,52 @@ describe('quests', () => {
     expect(requireMet(gs, getQuest('subj_stone')!)).toBe(true);
   });
 
-  it('unlock quest sets the 4次職 flag the job tree reads', () => {
+  it('places the 4次職 trial in ★7 and settles a cleared legacy attempt', () => {
     const gs = fresh();
-    gs.level = 30;
-    gs.completedQuests.push('subj_stone');
+    gs.level = 94;
+    gs.completedQuests.push('main_09_finale');
+    expect(getQuest('tier4_trial')?.rank).toBe(7);
     expect(acceptQuest(gs, 'tier4_trial')).toBe(true);
     recordKill(gs, 'boss_slime');
-    expect(turnInQuest(gs, 'tier4_trial')).toBe(true);
+    expect(reconcileHuntAttempts(gs, 'town').completed).toEqual(['tier4_trial']);
     expect(gs.flags['quest_tier4_trial']).toBe(true);
+    expect(gs.completedQuests).toContain('tier4_trial');
+    expect(gs.activeQuests).not.toContain('tier4_trial');
+  });
+
+  it('repairs an old cleared 4次職 trial even without the new story gate', () => {
+    const gs = fresh();
+    gs.level = 30;
+    gs.activeQuests.push('tier4_trial');
+    gs.questProgress.tier4_trial = { boss_slime: 1 };
+
+    expect(reconcileHuntAttempts(gs, 'town').completed).toEqual(['tier4_trial']);
+    expect(gs.flags.quest_tier4_trial).toBe(true);
+    expect(gs.completedQuests).toContain('tier4_trial');
+  });
+
+  it('allows only one arena quest at a time and resets an abandoned attempt', () => {
+    const gs = fresh();
+    gs.level = 99;
+    expect(acceptQuest(gs, 'hunt_flame_lord')).toBe(true);
+    gs.questProgress.hunt_flame_lord = { flame_wisp: 2 };
+    expect(acceptQuest(gs, 'hunt_bat_lord')).toBe(false);
+    expect(availableQuests(gs).filter((q) => q.huntMap)).toHaveLength(0);
+
+    expect(abandonQuest(gs, 'hunt_flame_lord')).toBe(true);
+    expect(gs.questProgress.hunt_flame_lord).toBeUndefined();
+    expect(acceptQuest(gs, 'hunt_bat_lord')).toBe(true);
+  });
+
+  it('abandons an unfinished hunt after leaving its arena', () => {
+    const gs = fresh();
+    gs.level = 99;
+    expect(acceptQuest(gs, 'hunt_flame_lord')).toBe(true);
+
+    const result = reconcileHuntAttempts(gs, 'town');
+
+    expect(result.abandoned).toEqual(['hunt_flame_lord']);
+    expect(gs.activeQuests).not.toContain('hunt_flame_lord');
   });
 
   it('hunt quest: repeatable boss hunt with a huntMap, re-acceptable after turn-in', () => {

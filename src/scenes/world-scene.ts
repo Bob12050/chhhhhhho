@@ -13,7 +13,14 @@ import { TEX } from '@/assets/gen/textures';
 import { Rng } from '@/core/rng';
 import { getDropTable, rollDrops } from '@/loot/drop-table';
 import { getSkill } from '@/skills/skill-defs';
-import { recordKill, isComplete, objectiveProgress } from '@/quests/quests';
+import {
+  abandonQuest,
+  isComplete,
+  objectiveProgress,
+  reconcileHuntAttempts,
+  recordKill,
+  turnInQuest,
+} from '@/quests/quests';
 import { getQuest, type QuestDef } from '@/quests/quest-defs';
 import {
   currentWave,
@@ -180,6 +187,10 @@ export class WorldScene extends Phaser.Scene {
     this.minions = [];
 
     this.map = getMap(gameState.mapId) ?? getMap('town')!;
+    const reconciledHunts = reconcileHuntAttempts(gameState, this.map.id);
+    if (reconciledHunts.completed.length || reconciledHunts.abandoned.length) {
+      void this.persist();
+    }
     gameState.flags[`visited_${this.map.id}`] = true;
     bgm.play(bgmForMap(this.map.id));
     this.ui = this.scene.get('UI') as UIScene;
@@ -1149,6 +1160,10 @@ export class WorldScene extends Phaser.Scene {
 
   private onPlayerDown(): void {
     if (this.playerDead) return;
+    const failedHunt = this.currentHuntQuest();
+    if (failedHunt && abandonQuest(gameState, failedHunt.id)) {
+      this.floatText(this.player.x, this.player.y - 64, `${failedHunt.name} 失敗`, '#ff8f8f');
+    }
     this.playerDead = true;
     this.playerInvuln = 999999;
     this.ui.resetControls();
@@ -1830,9 +1845,13 @@ export class WorldScene extends Phaser.Scene {
         this.cameras.main.zoomTo(this.baseCameraZoom, 240, 'Sine.easeOut');
       }
       this.floatText(x, y - 46, `${def.name} を倒した！`);
-      void this.save();
     }
-    if (completedHunt) this.scheduleQuestResult(completedHunt, combatGold, expGain, earnedDrops);
+    const huntSettled = completedHunt ? turnInQuest(gameState, completedHunt.id) : false;
+    if (huntSettled && completedHunt) {
+      this.playerInvuln = Math.max(this.playerInvuln, 2000);
+      this.scheduleQuestResult(completedHunt, combatGold, expGain, earnedDrops);
+    }
+    if (def.isBoss || huntSettled) void this.save();
   }
 
   private completedHuntQuestFor(def: EnemyDef): QuestDef | null {
@@ -1859,6 +1878,8 @@ export class WorldScene extends Phaser.Scene {
       reportExp: quest.rewards.exp ?? 0,
       reportItems,
       craftableEquipment: craftableEquipmentIds(),
+      jobUnlock: quest.rewards.setFlags?.includes('quest_tier4_trial'),
+      ending: quest.rewards.setFlags?.includes('main_story_complete'),
     };
     this.time.delayedCall(1050, () => {
       if (this.transitioning || this.playerDead || !this.scene.isActive() || this.scene.isPaused()) return;

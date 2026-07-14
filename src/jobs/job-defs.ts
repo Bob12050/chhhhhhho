@@ -17,7 +17,7 @@ export type UnlockCondition =
   | { type: 'skill'; skillId: string }
   /** A save flag must be set (e.g. boss defeated). */
   | { type: 'flag'; flag: string }
-  /** A quest must be cleared. Quest content is TBD (high-difficulty trial). */
+  /** A quest must be cleared. */
   | { type: 'quest'; questId: string };
 
 /**
