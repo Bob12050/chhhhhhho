@@ -4,6 +4,8 @@ import { readInsets } from '@/core/safe-area';
 import { FONT } from '@/ui/theme';
 import { DEBUG_DEPTH } from '@/core/debug';
 
+const PLAY_HUD_SCENES = new Set(['World', 'UI', 'DebugOverlay']);
+
 /**
  * Developer overlay — launched ONLY when debug is enabled (see core/debug). It is
  * a separate scene kept on top of everything (game UI is never mixed with dev
@@ -12,6 +14,8 @@ import { DEBUG_DEPTH } from '@/core/debug';
  * off, so screenshots and regular play remain clean by default.
  */
 export class DebugOverlayScene extends Phaser.Scene {
+  private button?: Phaser.GameObjects.Text;
+
   constructor() {
     super('DebugOverlay');
   }
@@ -36,6 +40,17 @@ export class DebugOverlayScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(DEBUG_DEPTH)
       .setInteractive({ useHandCursor: true });
+    this.button = btn;
     btn.on('pointerup', () => bus.emit('ui:open-debug', {}));
+  }
+
+  update(): void {
+    // The developer shortcut belongs to the play HUD. Full-screen menus have
+    // their own structured headers, so hiding DEV there prevents it from
+    // covering currency, counters, and title controls.
+    const hasFullScreenMenu = this.scene.manager
+      .getScenes(true)
+      .some((scene) => !PLAY_HUD_SCENES.has(scene.scene.key));
+    this.button?.setVisible(!hasFullScreenMenu);
   }
 }

@@ -12,7 +12,7 @@ import {
 } from '@/quests/quests';
 import { getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
-import { FONT, UI, addPanelChrome, tabChip, pillButton, type TabHandle } from '@/ui/theme';
+import { FONT, UI, addPanelChrome, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
 
 /**
  * Quest Board overlay (opened by the town board NPC). Lists active quests (with
@@ -39,12 +39,15 @@ export class QuestBoardScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
+    ninePanel(this, 112, 24, 208, 40).setDepth(2.5);
     this.add
-      .text(16, 24, 'クエストボード', {
+      .text(22, 24, 'クエストボード', {
         fontFamily: FONT,
         fontSize: '18px',
         color: '#fff',
+        fontStyle: 'bold',
       })
+      .setOrigin(0, 0.5)
       .setDepth(3);
 
     // Category tabs: メイン / 通常 / 大型狩猟 (MH style).
@@ -59,7 +62,7 @@ export class QuestBoardScene extends Phaser.Scene {
       (q) => q.type === 'main' && !gameState.completedQuests.includes(q.id),
     ) ? 'main' : 'hunt';
     tabs.forEach((t, i) => {
-      const tab = tabChip(this, 62 + i * 98, 56, 94, t.label, () => {
+      const tab = tabChip(this, 62 + i * 98, 68, 94, t.label, () => {
         if (this.dragged) return;
         this.tab = t.id;
         this.selectedRank = null;

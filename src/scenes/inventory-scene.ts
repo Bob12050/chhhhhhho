@@ -96,16 +96,18 @@ export class InventoryScene extends Phaser.Scene {
     const h = this.scale.height;
     this.tabButtons = [];
 
-    // Header band with a bag icon, title, and a coin+gold readout.
-    this.add.rectangle(0, 0, w, 50, 0x10121c, 1).setOrigin(0).setDepth(2);
-    this.add.image(20, 25, TEX.iconBag).setScale(1.6).setDepth(3);
+    // Two distinct header frames: screen identity on the left, live currency
+    // on the right. Neither competes with the tab row below.
+    ninePanel(this, 102, 25, 184, 40).setDepth(2.5);
+    ninePanel(this, w - 78, 25, 148, 40).setDepth(2.5);
+    this.add.image(26, 25, TEX.iconBag).setScale(1.6).setTint(0xffdf85).setDepth(3);
     this.add
-      .text(38, 24, 'もちもの', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
+      .text(46, 24, 'もちもの', { fontFamily: FONT, fontSize: '18px', color: '#fff', fontStyle: 'bold' })
       .setOrigin(0, 0.5)
       .setDepth(3);
-    this.add.circle(w - 60, 25, 6, 0xf5c542).setStrokeStyle(1.5, 0x8a6a1a, 1).setDepth(3);
+    this.add.circle(w - 128, 25, 6, 0xf5c542).setStrokeStyle(1.5, 0x8a6a1a, 1).setDepth(3);
     this.goldText = this.add
-      .text(w - 50, 25, '', { fontFamily: FONT, fontSize: '14px', color: '#ffd86b' })
+      .text(w - 116, 25, '', { fontFamily: FONT, fontSize: '13px', color: '#ffd86b' })
       .setOrigin(0, 0.5)
       .setDepth(3);
 

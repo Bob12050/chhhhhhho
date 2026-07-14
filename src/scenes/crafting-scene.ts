@@ -5,7 +5,7 @@ import { rarityColorHex, rarityColor } from '@/data/rarity';
 import { allRecipes, type Recipe } from '@/crafting/recipes';
 import { craft, craftBlock, visibleRecipes } from '@/crafting/crafting';
 import { bus } from '@/core/event-bus';
-import { FONT, addPanelChrome, rowBand, tabChip, pillButton, type TabHandle } from '@/ui/theme';
+import { FONT, addPanelChrome, rowBand, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
 
 /**
@@ -79,14 +79,15 @@ export class CraftingScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
-    this.add.rectangle(0, 0, w, 46, 0x10121c, 1).setOrigin(0).setDepth(2);
+    ninePanel(this, 102, 23, 184, 38).setDepth(2.5);
+    ninePanel(this, w - 78, 23, 148, 38).setDepth(2.5);
     this.add
-      .text(16, 23, 'クラフト', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
+      .text(22, 23, 'クラフト', { fontFamily: FONT, fontSize: '18px', color: '#fff', fontStyle: 'bold' })
       .setOrigin(0, 0.5)
       .setDepth(3);
-    this.add.circle(w - 62, 23, 6, 0xf5c542).setStrokeStyle(1.5, 0x8a6a1a, 1).setDepth(3);
+    this.add.circle(w - 128, 23, 6, 0xf5c542).setStrokeStyle(1.5, 0x8a6a1a, 1).setDepth(3);
     this.goldText = this.add
-      .text(w - 52, 23, '', { fontFamily: FONT, fontSize: '14px', color: '#ffd86b' })
+      .text(w - 116, 23, '', { fontFamily: FONT, fontSize: '13px', color: '#ffd86b' })
       .setOrigin(0, 0.5)
       .setDepth(3);
 

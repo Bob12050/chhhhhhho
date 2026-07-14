@@ -11,7 +11,7 @@ import {
   PET_MAX_LEVEL,
 } from '@/pets/pet-growth';
 import { bus } from '@/core/event-bus';
-import { FONT, addPanelChrome, rowBand, pillButton } from '@/ui/theme';
+import { FONT, addPanelChrome, rowBand, pillButton, ninePanel } from '@/ui/theme';
 
 /** Short labels for the passive summary line. */
 const STAT_LABEL: Record<string, string> = {
@@ -55,13 +55,15 @@ export class PetScene extends Phaser.Scene {
     this.viewBottom = h - 64;
     this.scrollY = 0;
 
+    ninePanel(this, 106, 24, 194, 40).setDepth(2.5);
+    ninePanel(this, w - 54, 24, 92, 40).setDepth(2.5);
     this.add
-      .text(16, 24, '🐾 ペット', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
+      .text(22, 24, '🐾 ペット', { fontFamily: FONT, fontSize: '18px', color: '#fff', fontStyle: 'bold' })
       .setOrigin(0, 0.5)
       .setDepth(3);
     this.countText = this.add
-      .text(w - 16, 24, '', { fontFamily: FONT, fontSize: '13px', color: '#ffd86b' })
-      .setOrigin(1, 0.5)
+      .text(w - 54, 24, '', { fontFamily: FONT, fontSize: '13px', color: '#ffd86b' })
+      .setOrigin(0.5)
       .setDepth(3);
 
     this.content = this.add.container(0, 0).setDepth(1);

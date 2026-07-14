@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { allJobs, getJob, type JobDef } from '@/jobs/job-defs';
-import { FONT, UI } from '@/ui/theme';
+import { FONT, UI, ninePanel, pillButton } from '@/ui/theme';
 
 type JobStatus = 'current' | 'unlocked' | 'reachable' | 'locked';
 
@@ -35,12 +35,15 @@ export class JobTreeScene extends Phaser.Scene {
       .setOrigin(0)
       .setDepth(0)
       .setInteractive();
+    ninePanel(this, 102, 26, 184, 40).setDepth(2.5);
     this.add
-      .text(16, 22, '職業ツリー', {
+      .text(22, 26, '職業ツリー', {
         fontFamily: FONT,
         fontSize: '18px',
         color: '#fff',
+        fontStyle: 'bold',
       })
+      .setOrigin(0, 0.5)
       .setDepth(3);
 
     this.content = this.add.container(0, 0).setDepth(1);
@@ -48,18 +51,11 @@ export class JobTreeScene extends Phaser.Scene {
     this.add.rectangle(0, 0, w, this.viewTop, UI.overlay, 1).setOrigin(0).setDepth(2);
     this.add.rectangle(0, this.viewBottom, w, h - this.viewBottom, UI.overlay, 1).setOrigin(0).setDepth(2);
 
-    const close = this.add
-      .text(w / 2, h - 30, 'とじる', {
-        fontFamily: FONT,
-        fontSize: '16px',
-        color: '#ffd86b',
-        backgroundColor: '#2a3050',
-        padding: { x: 10, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    close.on('pointerup', () => this.close());
+    pillButton(this, w / 2, h - 30, 'とじる', () => this.close(), {
+      color: '#ffe9a8',
+      bg: '#39406a',
+      size: 15,
+    }).setDepth(3);
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
     this.render(w);

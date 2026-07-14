@@ -356,12 +356,12 @@ export function addPanelChrome(
   addIllustratedBackdrop(scene, opts?.backdropKey ?? TEX.uiMenuBackdrop, opts?.backdropAlpha ?? 0.68);
   scene.add.rectangle(0, viewTop, w, viewBottom - viewTop, UI.overlay, 0.16).setOrigin(0).setDepth(0);
   const hasRibbon = scene.textures.exists(TEX.uiRibbonFrame);
-  if (hasRibbon && opts?.imageHeader !== false) {
+  if (hasRibbon && opts?.imageHeader === true) {
     titlePlate(scene, w / 2, viewTop / 2, w - 10, Math.max(44, viewTop - 8), 2, chromeAlpha);
   } else {
     scene.add.rectangle(0, 0, w, viewTop, chromeColor, chromeAlpha).setOrigin(0).setDepth(2);
   }
-  if (hasRibbon && opts?.imageFooter !== false) {
+  if (hasRibbon && opts?.imageFooter === true) {
     titlePlate(scene, w / 2, viewBottom + (h - viewBottom) / 2, w - 10, Math.max(44, h - viewBottom - 8), 2, chromeAlpha);
   } else {
     scene.add.rectangle(0, viewBottom, w, h - viewBottom, chromeColor, chromeAlpha).setOrigin(0).setDepth(2);

@@ -31,6 +31,7 @@ export class MapSelectScene extends Phaser.Scene {
     const h = this.scale.height;
     this.viewBottom = h - 60;
 
+    ninePanel(this, 112, 31, 210, 46).setDepth(2.5);
     this.add.image(25, 31, TEX.iconMap).setScale(1.6).setTint(0xffdf85).setDepth(3);
     this.add
       .text(46, 30, 'マップ移動', {

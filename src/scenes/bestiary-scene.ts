@@ -3,7 +3,7 @@ import { gameState } from '@/player/game-state';
 import { allEnemyDefs, type EnemyDef } from '@/enemies/enemy-defs';
 import { getDropTable } from '@/loot/drop-table';
 import { itemDisplayName, getEquipment } from '@/data/items';
-import { FONT, addPanelChrome, rowBand, tabChip, pillButton, type TabHandle } from '@/ui/theme';
+import { FONT, addPanelChrome, rowBand, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
 import { ELEMENT_LABEL, elementColorHex, isElement } from '@/combat/elements';
 
 /**
@@ -34,8 +34,14 @@ export class BestiaryScene extends Phaser.Scene {
     this.scrollY = 0;
     this.detail = null;
 
+    ninePanel(this, 111, 24, 202, 40).setDepth(2.5);
     this.add
-      .text(16, 24, 'モンスター図鑑', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
+      .text(22, 24, 'モンスター図鑑', {
+        fontFamily: FONT,
+        fontSize: '18px',
+        color: '#fff',
+        fontStyle: 'bold',
+      })
       .setOrigin(0, 0.5)
       .setDepth(3);
 
@@ -45,7 +51,7 @@ export class BestiaryScene extends Phaser.Scene {
       { id: 'boss', label: 'ボス' },
     ];
     tabs.forEach((t, i) => {
-      const tab = tabChip(this, 60 + i * 96, 62, 92, t.label, () => {
+      const tab = tabChip(this, 60 + i * 96, 68, 92, t.label, () => {
         if (this.dragged) return;
         this.tab = t.id;
         this.scrollY = 0;
@@ -58,9 +64,10 @@ export class BestiaryScene extends Phaser.Scene {
     // Completion counter (discovered / total).
     const all = allEnemyDefs();
     const found = all.filter((e) => (gameState.killCounts[e.id] ?? 0) > 0).length;
+    ninePanel(this, w - 54, 68, 92, 34).setDepth(2.5);
     this.add
-      .text(w - 16, 62, `${found} / ${all.length}`, { fontFamily: FONT, fontSize: '13px', color: '#ffd86b' })
-      .setOrigin(1, 0.5)
+      .text(w - 54, 68, `${found} / ${all.length}`, { fontFamily: FONT, fontSize: '13px', color: '#ffd86b' })
+      .setOrigin(0.5)
       .setDepth(3);
 
     this.content = this.add.container(0, 0).setDepth(1);

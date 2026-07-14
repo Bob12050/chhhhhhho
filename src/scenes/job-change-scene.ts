@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { allJobs, getJob, type JobDef } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
-import { FONT, addPanelChrome, rowBand, pillButton } from '@/ui/theme';
+import { FONT, addPanelChrome, rowBand, pillButton, ninePanel } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
 
 /** Emblem (icon + colour) per class family for the job list. */
@@ -34,8 +34,10 @@ export class JobChangeScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
     this.viewBottom = h - 64;
+    ninePanel(this, 70, 24, 120, 40).setDepth(2.5);
     this.add
-      .text(16, 24, '転職', { fontFamily: FONT, fontSize: '18px', color: '#fff' })
+      .text(24, 24, '転職', { fontFamily: FONT, fontSize: '18px', color: '#fff', fontStyle: 'bold' })
+      .setOrigin(0, 0.5)
       .setDepth(3);
 
     pillButton(this, w - 58, 30, 'ツリーを見る', () => {
