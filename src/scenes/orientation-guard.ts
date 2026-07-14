@@ -2,10 +2,9 @@ import Phaser from 'phaser';
 import { bus } from '@/core/event-bus';
 
 /**
- * Landscape guard. The game is portrait-only; in landscape we pause the loop
- * and show a full-screen overlay asking the user to rotate the device. Built
- * as a DOM overlay (not a Phaser scene) so it works even before the game is
- * fully ready and respects safe-area insets.
+ * Landscape guard for touch-first devices. Desktop browsers keep running in a
+ * centred portrait frame even when the monitor is landscape; phones/tablets
+ * still pause and ask the player to rotate the device.
  */
 export function installOrientationGuard(game: Phaser.Game): void {
   const overlay = document.createElement('div');
@@ -29,10 +28,11 @@ export function installOrientationGuard(game: Phaser.Game): void {
   document.body.appendChild(overlay);
 
   const evaluate = (): void => {
-    const landscape = window.innerWidth > window.innerHeight;
-    overlay.style.display = landscape ? 'flex' : 'none';
-    bus.emit('app:orientation-blocked', { blocked: landscape });
-    if (landscape) {
+    const coarsePointer = window.matchMedia?.('(pointer: coarse)').matches ?? navigator.maxTouchPoints > 0;
+    const blocked = coarsePointer && window.innerWidth > window.innerHeight;
+    overlay.style.display = blocked ? 'flex' : 'none';
+    bus.emit('app:orientation-blocked', { blocked });
+    if (blocked) {
       game.loop.sleep();
     } else {
       game.loop.wake();
