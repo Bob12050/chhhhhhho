@@ -2,7 +2,9 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { travelMaps, getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
-import { FONT, addPanelChrome, pillButton } from '@/ui/theme';
+import { illustratedMapTextureKey } from '@/maps/map-builder';
+import { TEX } from '@/assets/gen/textures';
+import { FONT, addPanelChrome, pillButton, ninePanel } from '@/ui/theme';
 
 /**
  * Fast-travel map list. Opened from the HUD map button anywhere. Picking a
@@ -17,7 +19,7 @@ export class MapSelectScene extends Phaser.Scene {
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
-  private viewTop = 64;
+  private viewTop = 72;
   private viewBottom = 0;
 
   constructor() {
@@ -29,8 +31,9 @@ export class MapSelectScene extends Phaser.Scene {
     const h = this.scale.height;
     this.viewBottom = h - 60;
 
+    this.add.image(25, 31, TEX.iconMap).setScale(1.6).setTint(0xffdf85).setDepth(3);
     this.add
-      .text(16, 22, 'マップ移動', {
+      .text(46, 30, 'マップ移動', {
         fontFamily: FONT,
         fontSize: '18px',
         color: '#fff',
@@ -38,7 +41,10 @@ export class MapSelectScene extends Phaser.Scene {
       .setDepth(3);
 
     this.content = this.add.container(0, 0).setDepth(1);
-    addPanelChrome(this, this.viewTop, this.viewBottom);
+    addPanelChrome(this, this.viewTop, this.viewBottom, {
+      backdropAlpha: 0.46,
+      backdropKey: TEX.uiMapBackdrop,
+    });
     this.setupScroll();
 
     pillButton(this, w / 2, h - 36, 'とじる', () => {
@@ -52,19 +58,37 @@ export class MapSelectScene extends Phaser.Scene {
 
   private render(): void {
     const w = this.scale.width;
-    let y = this.viewTop + 8;
+    let y = this.viewTop + 10;
     for (const m of travelMaps()) {
       const current = m.id === gameState.mapId;
       const locked = !!m.travel?.unlockFlag && !gameState.flags[m.travel.unlockFlag];
 
-      const row = this.add
-        .rectangle(w / 2, y + 22, w - 24, 48, current ? 0x2c3a2c : 0x20233a, 1)
-        .setOrigin(0.5, 0)
-        .setStrokeStyle(1, current ? 0x6fcf6f : 0x39406a);
-      this.content.add(row);
+      const rowH = 70;
+      const cy = y + rowH / 2;
+      const panel = ninePanel(this, w / 2, cy, w - 18, rowH, { active: !locked });
+      this.content.add(panel);
+
+      const texture = illustratedMapTextureKey(m.id);
+      if (texture && this.textures.exists(texture)) {
+        const thumb = this.add.image(53, cy, texture);
+        const side = Math.min(thumb.frame.realWidth, thumb.frame.realHeight);
+        thumb.setCrop(
+          Math.floor((thumb.frame.realWidth - side) / 2),
+          Math.floor((thumb.frame.realHeight - side) / 2),
+          side,
+          side,
+        );
+        thumb.setDisplaySize(54, 54).setTint(locked ? 0x677080 : 0xffffff);
+        this.content.add(thumb);
+        const rim = this.add.rectangle(53, cy, 57, 57, 0x000000, 0).setStrokeStyle(2, current ? 0x8ee3a6 : 0xd8b45b, 0.8);
+        this.content.add(rim);
+      } else {
+        const icon = this.add.image(53, cy, TEX.iconMap).setScale(2.2).setTint(locked ? 0x667080 : 0xffdf85);
+        this.content.add(icon);
+      }
 
       this.content.add(
-        this.add.text(24, y + 16, m.name, {
+        this.add.text(92, y + 15, m.name, {
           fontFamily: FONT,
           fontSize: '15px',
           color: locked ? '#7e8499' : '#fff',
@@ -72,7 +96,7 @@ export class MapSelectScene extends Phaser.Scene {
       );
       const sub = current ? '現在地' : locked ? 'ロック中' : (m.travel?.note ?? '');
       this.content.add(
-        this.add.text(24, y + 38, sub, {
+        this.add.text(92, y + 42, sub, {
           fontFamily: FONT,
           fontSize: '11px',
           color: current ? '#9fe3a0' : '#9aa0b5',
@@ -81,21 +105,21 @@ export class MapSelectScene extends Phaser.Scene {
 
       if (!current && !locked) {
         const go = this.add
-          .text(w - 28, y + 22, '[ 移動 ]', {
+          .text(w - 25, cy, '›', {
             fontFamily: FONT,
-            fontSize: '14px',
-            color: '#9fd0ff',
+            fontSize: '30px',
+            color: '#ffe29a',
           })
           .setOrigin(1, 0.5);
         this.content.add(go);
-        // Whole row is tappable.
-        row.setInteractive({ useHandCursor: true });
-        row.on('pointerup', () => {
+        const hit = this.add.zone(w / 2, cy, w - 18, rowH).setInteractive({ useHandCursor: true });
+        hit.on('pointerup', () => {
           if (this.dragged) return;
           this.travelTo(m.id);
         });
+        this.content.add(hit);
       }
-      y += 60;
+      y += 78;
     }
     this.maxScroll = Math.max(0, y + 8 - this.viewBottom);
     this.scrollTo(this.scrollY);

@@ -99,6 +99,11 @@ export const TEX = {
   // 9-slice UI panel frame. Drop assets/ui/frame.png (48x48, ~16px corners) to
   // restyle every framed menu panel with no code change (see ninePanel()).
   uiFrame: 'gen.ui.frame',
+  // Generated storybook menu art. Text and live values stay code-driven while
+  // these raster layers provide the shared material/world finish.
+  uiMenuBackdrop: 'art.ui.menu.backdrop',
+  uiMapBackdrop: 'art.ui.map.backdrop',
+  uiRibbonFrame: 'art.ui.ribbon.frame',
   // Illustrated HUD skin. These are real transparent PNGs rather than canvas
   // primitives so the always-visible game screen shares one art direction.
   hudStatusFrame: 'art.ui.hud.status_frame',

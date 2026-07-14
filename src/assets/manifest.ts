@@ -107,8 +107,12 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.npcVillager, 'assets/env/npc_villager-storybook-v2.png'),
   img(TEX.sign, 'assets/env/sign.png'),
   img(TEX.groundShadow, 'assets/env/shadow.png'),
-  // UI: one 9-slice frame drives every menu panel (48x48, ~16px corners).
-  img(TEX.uiFrame, 'assets/ui/frame.png'),
+  // Generated menu skin. The frame is a 48x48 nine-slice; the ribbon is a
+  // transparent horizontal nine-slice used by headers and command buttons.
+  img(TEX.uiFrame, 'assets/ui/frame-storybook-v1.png'),
+  img(TEX.uiMenuBackdrop, 'assets/ui/menu-backdrop-storybook-v1.webp'),
+  img(TEX.uiMapBackdrop, 'assets/ui/map-backdrop-storybook-v1.webp'),
+  img(TEX.uiRibbonFrame, 'assets/ui/ribbon-frame-storybook-v1.png'),
   // Cohesive illustrated battle HUD. Dynamic values/icons remain code-driven;
   // these transparent bezels supply the production-quality material finish.
   img(TEX.hudStatusFrame, 'assets/ui/hud-status-frame.png'),

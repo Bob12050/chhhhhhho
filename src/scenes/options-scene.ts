@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { FONT, addBackdrop, pillButton } from '@/ui/theme';
+import { FONT, addBackdrop, pillButton, titlePlate } from '@/ui/theme';
 import { loadSettings, saveSettings, type Settings } from '@/core/settings';
 import { soundEngine } from '@/audio/sound-engine';
 import { bgm } from '@/audio/bgm-engine';
@@ -25,6 +25,7 @@ export class OptionsScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
     addBackdrop(this);
+    titlePlate(this, w / 2, 60, w - 72, 62, 0, 0.96);
 
     this.add
       .text(w / 2, 60, '設定', {

@@ -26,6 +26,9 @@ export const FONT_PIXEL = "'DotGothic16', system-ui, sans-serif";
  */
 export const HUD_DEPTH = 100000;
 
+const RIBBON_SIDE_SLICE = 48;
+const RIBBON_VERTICAL_SLICE = 20;
+
 /** Shared palette. Numbers are for Phaser fills; strings for text colors. */
 export const UI = {
   // Fills (numbers)
@@ -54,9 +57,36 @@ export const TEXT = {
   button: { fontFamily: FONT, fontSize: '16px', color: UI.gold },
 } satisfies Record<string, Phaser.Types.GameObjects.Text.TextStyle>;
 
-/** Full-screen opaque backdrop (depth 0). For simple, non-scrolling menus. */
+/** Cover the viewport without distorting a portrait illustration. */
+function addCoverImage(scene: Phaser.Scene, key: string, depth: number): Phaser.GameObjects.Image | null {
+  if (!scene.textures.exists(key)) return null;
+  const w = scene.scale.width;
+  const h = scene.scale.height;
+  const frame = scene.textures.getFrame(key);
+  const scale = Math.max(w / frame.realWidth, h / frame.realHeight);
+  return scene.add
+    .image(w / 2, h / 2, key)
+    .setScale(scale)
+    .setDepth(depth);
+}
+
+/** Shared illustrated background plus a readability wash. */
+function addIllustratedBackdrop(scene: Phaser.Scene, key: string, dim: number): void {
+  const w = scene.scale.width;
+  const h = scene.scale.height;
+  if (!addCoverImage(scene, key, -100)) {
+    if (scene.textures.exists(TEX.tileGrass)) {
+      scene.add.tileSprite(0, 0, w, h, TEX.tileGrass).setOrigin(0).setDepth(-100);
+    } else {
+      scene.add.rectangle(0, 0, w, h, UI.overlay, 1).setOrigin(0).setDepth(-100);
+    }
+  }
+  scene.add.rectangle(0, 0, w, h, UI.overlay, dim).setOrigin(0).setDepth(-99);
+}
+
+/** Full-screen illustrated backdrop for simple, non-scrolling menus. */
 export function addBackdrop(scene: Phaser.Scene): void {
-  scene.add.rectangle(0, 0, scene.scale.width, scene.scale.height, UI.overlay, 1).setOrigin(0).setDepth(0);
+  addIllustratedBackdrop(scene, TEX.uiMenuBackdrop, 0.5);
 }
 
 /**
@@ -66,26 +96,40 @@ export function addBackdrop(scene: Phaser.Scene): void {
  * controls how dark the top reads (higher = more readable text over it).
  */
 export function addSceneBackdrop(scene: Phaser.Scene, dim = 0.72): void {
-  const w = scene.scale.width;
-  const h = scene.scale.height;
-  if (scene.textures.exists(TEX.tileGrass)) {
-    scene.add.tileSprite(0, 0, w, h, TEX.tileGrass).setOrigin(0).setDepth(-100);
-  } else {
-    scene.add.rectangle(0, 0, w, h, UI.overlay, 1).setOrigin(0).setDepth(-100);
+  addIllustratedBackdrop(scene, TEX.uiMenuBackdrop, dim * 0.58);
+}
+
+/** Ornate image plate behind a menu title or fixed information band. */
+export function titlePlate(
+  scene: Phaser.Scene,
+  cx: number,
+  cy: number,
+  width: number,
+  height: number,
+  depth = 1,
+  alpha = 1,
+): Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Depth {
+  if (scene.textures.exists(TEX.uiRibbonFrame)) {
+    return scene.add
+      .nineslice(
+        cx,
+        cy,
+        TEX.uiRibbonFrame,
+        undefined,
+        width,
+        height,
+        RIBBON_SIDE_SLICE,
+        RIBBON_SIDE_SLICE,
+        RIBBON_VERTICAL_SLICE,
+        RIBBON_VERTICAL_SLICE,
+      )
+      .setAlpha(alpha)
+      .setDepth(depth);
   }
-  // Vertical navy gradient (fine bands read as a smooth wash, not stripes).
-  const g = scene.add.graphics().setDepth(-99);
-  const bands = 48;
-  for (let i = 0; i < bands; i++) {
-    g.fillStyle(0x0e0f1a, dim * (1 - (i / bands) * 0.55));
-    g.fillRect(0, Math.floor((i * h) / bands), w, Math.ceil(h / bands) + 1);
-  }
-  // Corner vignette.
-  const vg = scene.add.graphics().setDepth(-98);
-  for (let i = 0; i < 10; i++) {
-    vg.lineStyle(3, 0x0e0f1a, 0.06 * (1 - i / 10));
-    vg.strokeRect(i * 3, i * 3, w - i * 6, h - i * 6);
-  }
+  return scene.add
+    .rectangle(cx, cy, width, height, 0x142342, alpha)
+    .setStrokeStyle(2, 0xd8b45b, 0.8)
+    .setDepth(depth);
 }
 
 /**
@@ -108,10 +152,11 @@ export function ninePanel(
   opts?: { active?: boolean; alpha?: number; tint?: number },
 ): Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Depth {
   if (scene.textures.exists(TEX.uiFrame)) {
-    // Soft drop shadow behind the panel (same frame, dark + offset) for depth.
+    // A container keeps the shadow and face together when a scrolling scene
+    // moves the returned panel.
     const shadow = scene.add.nineslice(
-      cx,
-      cy + 4,
+      0,
+      4,
       TEX.uiFrame,
       undefined,
       width,
@@ -123,8 +168,8 @@ export function ninePanel(
     );
     shadow.setTint(0x000000).setAlpha(0.28 * (opts?.alpha ?? 1));
     const n = scene.add.nineslice(
-      cx,
-      cy,
+      0,
+      0,
       TEX.uiFrame,
       undefined,
       width,
@@ -137,15 +182,13 @@ export function ninePanel(
     const tint = opts?.tint ?? (opts?.active === false ? 0x8890a8 : undefined);
     if (tint !== undefined) n.setTint(tint);
     if (opts?.alpha !== undefined) n.setAlpha(opts.alpha);
-    // Keep the shadow pinned just under the panel (depth set by the caller).
-    n.on('destroy', () => shadow.destroy());
-    return n;
+    return scene.add.container(cx, cy, [shadow, n]);
   }
   // Fallback: the original flat card so menus still render without a frame tex.
   const r = scene.add
-    .rectangle(cx, cy, width, height, 0x141726, opts?.alpha ?? 0.94)
+    .rectangle(0, 0, width, height, 0x141726, opts?.alpha ?? 0.94)
     .setStrokeStyle(2, opts?.active === false ? 0x333a5a : 0x46508a, 0.9);
-  return r;
+  return scene.add.container(cx, cy, [r]);
 }
 
 /** Parse a #rrggbb string to a Phaser fill number. */
@@ -229,24 +272,55 @@ export function pillButton(
     .setOrigin(0.5);
   const padX = 14;
   const padY = 9;
-  const w = Math.ceil(txt.width) + padX * 2;
-  const h = Math.ceil(txt.height) + padY * 2;
-  const r = Math.min(h / 2, 12);
-  const g = scene.add.graphics();
-  // Drop line under the button for a little lift.
-  g.fillStyle(0x000000, 0.25);
-  g.fillRoundedRect(-w / 2, -h / 2 + 2, w, h, r);
-  // Body.
-  g.fillStyle(bg, 1);
-  g.fillRoundedRect(-w / 2, -h / 2, w, h, r);
-  // Top sheen.
-  g.fillStyle(0xffffff, 0.1);
-  g.fillRoundedRect(-w / 2 + 2, -h / 2 + 2, w - 4, h / 2 - 2, { tl: r, tr: r, bl: 0, br: 0 });
-  // Border.
-  g.lineStyle(1.5, 0xffffff, 0.16);
-  g.strokeRoundedRect(-w / 2, -h / 2, w, h, r);
-  const c = scene.add.container(x, y, [g, txt]);
-  c.setSize(w, h).setInteractive({ useHandCursor: true });
+  const w = Math.max(92, Math.ceil(txt.width) + padX * 2);
+  const h = Math.max(40, Math.ceil(txt.height) + padY * 2);
+  const children: Phaser.GameObjects.GameObject[] = [];
+  if (scene.textures.exists(TEX.uiFrame)) {
+    const shadow = scene.add
+      .nineslice(
+        0,
+        3,
+        TEX.uiFrame,
+        undefined,
+        w,
+        h,
+        UI_FRAME_SLICE,
+        UI_FRAME_SLICE,
+        UI_FRAME_SLICE,
+        UI_FRAME_SLICE,
+      )
+      .setTint(0x000000)
+      .setAlpha(0.3);
+    const plate = scene.add.nineslice(
+      0,
+      0,
+      TEX.uiFrame,
+      undefined,
+      w,
+      h,
+      UI_FRAME_SLICE,
+      UI_FRAME_SLICE,
+      UI_FRAME_SLICE,
+      UI_FRAME_SLICE,
+    );
+    children.push(shadow, plate);
+  } else {
+    const r = Math.min(h / 2, 12);
+    const g = scene.add.graphics();
+    g.fillStyle(0x000000, 0.25);
+    g.fillRoundedRect(-w / 2, -h / 2 + 2, w, h, r);
+    g.fillStyle(bg, 1);
+    g.fillRoundedRect(-w / 2, -h / 2, w, h, r);
+    g.fillStyle(0xffffff, 0.1);
+    g.fillRoundedRect(-w / 2 + 2, -h / 2 + 2, w - 4, h / 2 - 2, { tl: r, tr: r, bl: 0, br: 0 });
+    g.lineStyle(1.5, 0xffffff, 0.16);
+    g.strokeRoundedRect(-w / 2, -h / 2, w, h, r);
+    children.push(g);
+  }
+  children.push(txt);
+  const c = scene.add.container(x, y, children);
+  c.setSize(w, h).setInteractive();
+  if (c.input) c.input.cursor = 'pointer';
   c.on('pointerup', onTap);
   // Press feedback.
   c.on('pointerdown', () => c.setScale(0.96));
@@ -266,15 +340,21 @@ export function addPanelChrome(
   scene: Phaser.Scene,
   viewTop: number,
   viewBottom: number,
-  opts?: { backdropAlpha?: number; chromeColor?: number; chromeAlpha?: number },
+  opts?: { backdropAlpha?: number; chromeColor?: number; chromeAlpha?: number; backdropKey?: string },
 ): void {
   const w = scene.scale.width;
   const h = scene.scale.height;
   const chromeColor = opts?.chromeColor ?? UI.overlay;
   const chromeAlpha = opts?.chromeAlpha ?? 1;
-  scene.add.rectangle(0, 0, w, h, UI.overlay, opts?.backdropAlpha ?? 1).setOrigin(0).setDepth(0);
-  scene.add.rectangle(0, 0, w, viewTop, chromeColor, chromeAlpha).setOrigin(0).setDepth(2);
-  scene.add.rectangle(0, viewBottom, w, h - viewBottom, chromeColor, chromeAlpha).setOrigin(0).setDepth(2);
+  addIllustratedBackdrop(scene, opts?.backdropKey ?? TEX.uiMenuBackdrop, opts?.backdropAlpha ?? 0.68);
+  scene.add.rectangle(0, viewTop, w, viewBottom - viewTop, UI.overlay, 0.16).setOrigin(0).setDepth(0);
+  if (scene.textures.exists(TEX.uiRibbonFrame)) {
+    titlePlate(scene, w / 2, viewTop / 2, w - 10, Math.max(44, viewTop - 8), 2, chromeAlpha);
+    titlePlate(scene, w / 2, viewBottom + (h - viewBottom) / 2, w - 10, Math.max(44, h - viewBottom - 8), 2, chromeAlpha);
+  } else {
+    scene.add.rectangle(0, 0, w, viewTop, chromeColor, chromeAlpha).setOrigin(0).setDepth(2);
+    scene.add.rectangle(0, viewBottom, w, h - viewBottom, chromeColor, chromeAlpha).setOrigin(0).setDepth(2);
+  }
   // Soft light dividers along the header/footer edges (subtle, not a hard gold
   // hairline — that read as dated).
   scene.add.rectangle(0, viewTop - 1, w, 1, 0xffffff, 0.1).setOrigin(0).setDepth(3);
@@ -296,9 +376,11 @@ export function rowBand(
   const g = scene.add.graphics();
   // Soft rounded card per row (alternating tint) — reads far less "spreadsheet"
   // than hard full-width bands.
-  g.fillStyle(index % 2 ? 0x222741 : 0x1a1e33, 0.92);
+  g.fillStyle(index % 2 ? 0x17314b : 0x142842, 0.9);
   g.fillRoundedRect(8, y - 4, w, height, 8);
-  g.lineStyle(1, 0xffffff, 0.05);
+  g.fillStyle(index % 2 ? 0x3fa2b8 : 0xd3aa4f, 0.58);
+  g.fillRoundedRect(8, y + 3, 3, height - 14, 2);
+  g.lineStyle(1, 0xe8c76b, 0.22);
   g.strokeRoundedRect(8, y - 4, w, height, 8);
   return g;
 }

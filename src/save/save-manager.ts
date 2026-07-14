@@ -18,6 +18,7 @@ export interface SlotSummary {
   slot: number;
   exists: boolean;
   level?: number;
+  jobId?: string;
   mapId?: string;
   savedAt?: number;
 }
@@ -82,7 +83,14 @@ export class SaveManager {
       const raw = await idbGet<SaveData>(mainKey(i));
       out.push(
         raw
-          ? { slot: i, exists: true, level: raw.player?.level, mapId: raw.mapId, savedAt: raw.savedAt }
+          ? {
+              slot: i,
+              exists: true,
+              level: raw.player?.level,
+              jobId: raw.player?.jobId,
+              mapId: raw.mapId,
+              savedAt: raw.savedAt,
+            }
           : { slot: i, exists: false },
       );
     }

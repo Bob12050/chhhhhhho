@@ -11,7 +11,7 @@ import { getJob } from '@/jobs/job-defs';
 import { appearanceTexKey } from '@/jobs/job-appearance';
 import { frameIndex } from '@/paperdoll/pose-atlas';
 import { bus } from '@/core/event-bus';
-import { FONT, addPanelChrome, rowBand, tabChip, pillButton, type TabHandle } from '@/ui/theme';
+import { FONT, addPanelChrome, rowBand, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
 import { returnToTitle } from '@/core/game-flow';
 import { ELEMENT_LABEL, ELEMENT_COLOR, isElement } from '@/combat/elements';
 
@@ -132,7 +132,7 @@ export class InventoryScene extends Phaser.Scene {
     // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1) so
     // rows never overlap the tabs or the close row.
     addPanelChrome(this, this.viewTop, this.viewBottom, {
-      backdropAlpha: 0.84,
+      backdropAlpha: 0.62,
       chromeColor: 0x111d36,
       chromeAlpha: 0.97,
     });
@@ -342,14 +342,7 @@ export class InventoryScene extends Phaser.Scene {
     const tierLabel = job ? (job.tier === 0 ? '初期職' : `${job.tier}次職`) : '';
     const art = appearanceTexKey(job?.appearance);
     const texture = art && this.textures.exists(art) ? art : TEX.playerBody;
-    const panel = this.add.graphics();
-    panel.fillStyle(0x142342, 0.94);
-    panel.fillRoundedRect(8, y, w - 16, height, 8);
-    panel.lineStyle(1.5, 0xd8b45b, 0.72);
-    panel.strokeRoundedRect(8, y, w - 16, height, 8);
-    panel.fillStyle(0xffffff, 0.06);
-    panel.fillRoundedRect(10, y + 2, w - 20, 24, { tl: 7, tr: 7, bl: 0, br: 0 });
-    panel.setDepth(2);
+    const panel = ninePanel(this, w / 2, y + height / 2, w - 16, height).setDepth(2);
     this.profileObjs.push(panel);
 
     const portrait = this.add
@@ -388,11 +381,7 @@ export class InventoryScene extends Phaser.Scene {
       : kind === 'consumables'
         ? { icon: TEX.iconFlask, title: '消耗品はまだありません', body: '道具屋やクエスト報酬で入手できます。' }
         : { icon: TEX.iconArmor, title: '装備はまだありません', body: '鍛冶屋で素材から装備を作ってみましょう。' };
-    const card = this.add.graphics();
-    card.fillStyle(0x162440, 0.9);
-    card.fillRoundedRect(16, y, this.scale.width - 32, 156, 8);
-    card.lineStyle(1, 0xd8b45b, 0.52);
-    card.strokeRoundedRect(16, y, this.scale.width - 32, 156, 8);
+    const card = ninePanel(this, this.scale.width / 2, y + 78, this.scale.width - 32, 156);
     this.content.add(card);
     this.content.add(this.add.image(this.scale.width / 2, y + 42, info.icon).setDisplaySize(32, 32).setTint(0xffd86b));
     this.content.add(
@@ -810,7 +799,7 @@ export class InventoryScene extends Phaser.Scene {
     const d = gs.derived;
     const panelY = y + 10;
     this.content.add(
-      this.add.rectangle(8, panelY, w - 16, 96, 0x14172a, 0.9).setOrigin(0, 0).setStrokeStyle(1, 0x333a5a, 0.8),
+      ninePanel(this, w / 2, panelY + 48, w - 16, 96),
     );
     this.content.add(
       this.add.text(16, panelY + 6, '派生ステータス', { fontFamily: FONT, fontSize: '11px', color: '#c9b27a' }),

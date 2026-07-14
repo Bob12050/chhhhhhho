@@ -40,6 +40,11 @@ const ILLUSTRATED_MAP_TEX: Record<string, string> = {
   arena_abyss: TEX.arenaMap,
 };
 
+/** Illustrated texture key used by both the world and fast-travel thumbnails. */
+export function illustratedMapTextureKey(mapId: string): string | undefined {
+  return ILLUSTRATED_MAP_TEX[mapId];
+}
+
 export interface BuiltPortal {
   rect: Phaser.Geom.Rectangle;
   to: string;

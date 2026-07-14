@@ -2,7 +2,11 @@ import Phaser from 'phaser';
 import { saveManager, SLOT_COUNT, type SlotSummary } from '@/save/save-manager';
 import { beginGame } from '@/core/game-flow';
 import { getMap } from '@/maps/map-def';
-import { FONT, addSceneBackdrop, pillButton, ninePanel } from '@/ui/theme';
+import { getJob } from '@/jobs/job-defs';
+import { appearanceTexKey } from '@/jobs/job-appearance';
+import { frameIndex } from '@/paperdoll/pose-atlas';
+import { TEX } from '@/assets/gen/textures';
+import { FONT, addSceneBackdrop, pillButton, ninePanel, titlePlate } from '@/ui/theme';
 
 /**
  * Save-slot selection. Shows each slot's summary; an empty slot starts a new
@@ -17,11 +21,11 @@ export class SaveSelectScene extends Phaser.Scene {
   create(): void {
     const w = this.scale.width;
     const h = this.scale.height;
-    addSceneBackdrop(this, 0.8);
+    addSceneBackdrop(this, 0.7);
 
-    // Title + gold rule (title-screen language).
+    titlePlate(this, w / 2, 48, w - 38, 58, 1, 0.98);
     this.add
-      .text(w / 2, 42, 'セーブを選択', {
+      .text(w / 2, 48, 'セーブを選択', {
         fontFamily: FONT,
         fontSize: '22px',
         color: '#ffffff',
@@ -31,10 +35,8 @@ export class SaveSelectScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(2);
-    this.add.rectangle(w / 2, 64, 150, 2, 0xf5c542, 0.7).setDepth(2);
-
     this.add
-      .text(w / 2, 80, '読み込み中…', { fontFamily: FONT, fontSize: '12px', color: '#9aa0b5' })
+      .text(w / 2, 84, '読み込み中…', { fontFamily: FONT, fontSize: '12px', color: '#b9c7dc' })
       .setOrigin(0.5)
       .setDepth(2)
       .setName('loading');
@@ -49,21 +51,20 @@ export class SaveSelectScene extends Phaser.Scene {
     const summaries = await saveManager.summaries();
     this.children.getByName('loading')?.destroy();
     const w = this.scale.width;
-    let y = 116;
+    let y = 106;
     for (let slot = 0; slot < SLOT_COUNT; slot++) {
       this.buildRow(summaries[slot], slot, y, w);
-      y += 96;
+      y += 104;
     }
   }
 
   private buildRow(summary: SlotSummary, slot: number, y: number, w: number): void {
-    const cardH = 80;
+    const cardH = 90;
     const cy = y + cardH / 2;
     // Card panel (9-slice frame) + gold left-edge accent + slot chip.
-    ninePanel(this, w / 2, cy, w - 32, cardH, { active: summary.exists }).setDepth(1);
-    this.add.rectangle(17, cy, 4, cardH, summary.exists ? 0xf5c542 : 0x555a78, 1).setOrigin(0, 0.5).setDepth(2);
+    ninePanel(this, w / 2, cy, w - 24, cardH, { active: summary.exists }).setDepth(1);
     this.add
-      .text(28, y + 10, `スロット ${slot + 1}`, {
+      .text(90, y + 10, `スロット ${slot + 1}`, {
         fontFamily: FONT,
         fontSize: '13px',
         color: '#cfd3e6',
@@ -72,36 +73,44 @@ export class SaveSelectScene extends Phaser.Scene {
       .setDepth(2);
 
     if (summary.exists) {
-      // Character emblem (round chip) — reads as "a save with a hero in it".
-      this.add.circle(w - 118, cy, 15, 0x2a2d44).setStrokeStyle(2, 0x46508a, 1).setDepth(2);
-      this.add.circle(w - 118, cy - 3, 6, 0xf0c8a0).setDepth(3); // head
-      this.add.rectangle(w - 118, cy + 8, 14, 8, 0x6a4ea0).setDepth(3); // body
+      const job = summary.jobId ? getJob(summary.jobId) : undefined;
+      const art = appearanceTexKey(job?.appearance);
+      const texture = art && this.textures.exists(art) ? art : TEX.playerBody;
+      this.add
+        .ellipse(54, y + 76, 44, 12, 0x050814, 0.52)
+        .setDepth(2);
+      this.add
+        .sprite(54, y + 82, texture, frameIndex('down', 'idle', 0))
+        .setOrigin(0.5, 0.875)
+        .setScale(0.64)
+        .setDepth(3);
       const mapName = summary.mapId ? getMap(summary.mapId)?.name ?? summary.mapId : '';
       this.add
-        .text(28, y + 32, `Lv ${summary.level ?? '?'}`, {
+        .text(90, y + 32, `Lv ${summary.level ?? '?'}  ${job?.name ?? '冒険者'}`, {
           fontFamily: FONT,
           fontSize: '16px',
           color: '#9fd0ff',
           fontStyle: 'bold',
         })
         .setDepth(2);
-      this.add
-        .text(78, y + 36, mapName, { fontFamily: FONT, fontSize: '12px', color: '#cfd3e6' })
-        .setDepth(2);
+      this.add.text(90, y + 55, mapName, { fontFamily: FONT, fontSize: '11px', color: '#d8e6ff' }).setDepth(2);
       const when = summary.savedAt ? new Date(summary.savedAt).toLocaleString('ja-JP') : '';
       this.add
-        .text(28, y + 56, when, { fontFamily: FONT, fontSize: '10px', color: '#7e8499' })
+        .text(90, y + 72, when, { fontFamily: FONT, fontSize: '9px', color: '#8fa0b8' })
         .setDepth(2);
-      pillButton(this, w - 62, y + 20, 'つづき', () => void beginGame(this, slot, 'load'), {
+      pillButton(this, w - 62, y + 27, 'つづき', () => void beginGame(this, slot, 'load'), {
         color: '#bfffce',
         bg: '#274a30',
         size: 13,
       }).setDepth(3);
-      this.makeDeleteButton(slot, w - 62, y + 56);
+      this.makeDeleteButton(slot, w - 62, y + 67);
     } else {
+      this.add.circle(54, cy, 23, 0x10264a, 0.95).setStrokeStyle(2, 0xd8b45b, 0.75).setDepth(2);
+      this.add.image(54, cy, TEX.iconSword).setScale(2).setTint(0xffdf85).setDepth(3);
       this.add
-        .text(28, y + 38, '（空き）', { fontFamily: FONT, fontSize: '13px', color: '#7e8499' })
+        .text(90, y + 31, '新しい冒険', { fontFamily: FONT, fontSize: '15px', color: '#e8eefc' })
         .setDepth(2);
+      this.add.text(90, y + 55, '最初から始める', { fontFamily: FONT, fontSize: '10px', color: '#8fa0b8' }).setDepth(2);
       pillButton(this, w - 66, cy, '＋ はじめる', () => void beginGame(this, slot, 'new'), {
         color: '#ffe9a8',
         bg: '#3a3050',
