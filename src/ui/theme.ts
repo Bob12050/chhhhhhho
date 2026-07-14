@@ -340,7 +340,14 @@ export function addPanelChrome(
   scene: Phaser.Scene,
   viewTop: number,
   viewBottom: number,
-  opts?: { backdropAlpha?: number; chromeColor?: number; chromeAlpha?: number; backdropKey?: string },
+  opts?: {
+    backdropAlpha?: number;
+    chromeColor?: number;
+    chromeAlpha?: number;
+    backdropKey?: string;
+    imageHeader?: boolean;
+    imageFooter?: boolean;
+  },
 ): void {
   const w = scene.scale.width;
   const h = scene.scale.height;
@@ -348,11 +355,15 @@ export function addPanelChrome(
   const chromeAlpha = opts?.chromeAlpha ?? 1;
   addIllustratedBackdrop(scene, opts?.backdropKey ?? TEX.uiMenuBackdrop, opts?.backdropAlpha ?? 0.68);
   scene.add.rectangle(0, viewTop, w, viewBottom - viewTop, UI.overlay, 0.16).setOrigin(0).setDepth(0);
-  if (scene.textures.exists(TEX.uiRibbonFrame)) {
+  const hasRibbon = scene.textures.exists(TEX.uiRibbonFrame);
+  if (hasRibbon && opts?.imageHeader !== false) {
     titlePlate(scene, w / 2, viewTop / 2, w - 10, Math.max(44, viewTop - 8), 2, chromeAlpha);
-    titlePlate(scene, w / 2, viewBottom + (h - viewBottom) / 2, w - 10, Math.max(44, h - viewBottom - 8), 2, chromeAlpha);
   } else {
     scene.add.rectangle(0, 0, w, viewTop, chromeColor, chromeAlpha).setOrigin(0).setDepth(2);
+  }
+  if (hasRibbon && opts?.imageFooter !== false) {
+    titlePlate(scene, w / 2, viewBottom + (h - viewBottom) / 2, w - 10, Math.max(44, h - viewBottom - 8), 2, chromeAlpha);
+  } else {
     scene.add.rectangle(0, viewBottom, w, h - viewBottom, chromeColor, chromeAlpha).setOrigin(0).setDepth(2);
   }
   // Soft light dividers along the header/footer edges (subtle, not a hard gold

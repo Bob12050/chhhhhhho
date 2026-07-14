@@ -503,7 +503,7 @@ try {
   step = 'pets';
   await page.evaluate(() => window.__test.addEgg('pet_egg_wolf'));
   await page.mouse.click(250, 28); await page.waitForTimeout(900); // bag
-  await page.mouse.click(248, 676); await page.waitForTimeout(800); // 🐾 ペット
+  await page.mouse.click(222, 632); await page.waitForTimeout(800); // framed ペット action
   await page.waitForFunction(() => window.__test.activeScenes().includes('PetScreen'));
   const hatchPressed = await page.evaluate(() => window.__test.activateText('PetScreen', '孵化する'));
   check('ペット画面の孵化ボタンを操作できる', hatchPressed === true);
@@ -518,7 +518,7 @@ try {
   // ---- bestiary opens ----
   step = 'bestiary';
   await page.mouse.click(250, 28); await page.waitForTimeout(900);
-  await page.mouse.click(100, 676); await page.waitForTimeout(800); // 📖 図鑑
+  await page.mouse.click(138, 632); await page.waitForTimeout(800); // framed 図鑑 action
   // Detail for the first (slime) row must open without errors.
   await page.mouse.click(180, 134); await page.waitForTimeout(600);
   await page.keyboard.press('Escape'); await page.waitForTimeout(400);

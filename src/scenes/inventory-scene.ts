@@ -128,18 +128,69 @@ export class InventoryScene extends Phaser.Scene {
     });
 
     this.content = this.add.container(0, 0).setDepth(1);
-    this.viewBottom = h - 76;
+    this.viewBottom = h - 116;
     // Opaque header/footer bars (depth 2) hide the scrolling list (depth 1) so
     // rows never overlap the tabs or the close row.
     addPanelChrome(this, this.viewTop, this.viewBottom, {
       backdropAlpha: 0.62,
       chromeColor: 0x111d36,
       chromeAlpha: 0.97,
+      imageFooter: false,
     });
     this.add.rectangle(0, 49, w, 1, 0xd8b45b, 0.7).setOrigin(0).setDepth(3);
     this.setupScroll();
 
-    // Close + return-to-title.
+    // Utility commands get their own fixed frames above the primary close
+    // action. This keeps every destination legible and prevents overlap.
+    const footerActions = [
+      {
+        icon: '⚙',
+        label: '設定',
+        onTap: (): void => {
+          this.scene.pause();
+          this.scene.launch('Options', { from: 'Inventory' });
+        },
+      },
+      {
+        icon: '▤',
+        label: '図鑑',
+        onTap: (): void => {
+          this.scene.pause();
+          this.scene.launch('Bestiary');
+        },
+      },
+      {
+        icon: '🐾',
+        label: 'ペット',
+        onTap: (): void => {
+          this.scene.pause();
+          this.scene.launch('PetScreen');
+        },
+      },
+      {
+        icon: '⌂',
+        label: 'タイトル',
+        onTap: (): void => {
+          bus.emit('save:written', { slot: -1 });
+          this.time.delayedCall(60, () => returnToTitle(this));
+        },
+      },
+    ];
+    const footerButtonW = 80;
+    const footerGap = 4;
+    const footerWidth = footerActions.length * footerButtonW + (footerActions.length - 1) * footerGap;
+    const footerLeft = (w - footerWidth) / 2;
+    footerActions.forEach((action, index) => {
+      this.makeFooterAction(
+        footerLeft + footerButtonW / 2 + index * (footerButtonW + footerGap),
+        h - 88,
+        footerButtonW,
+        action.icon,
+        action.label,
+        action.onTap,
+      );
+    });
+
     pillButton(this, w / 2, h - 44, 'とじる', () => this.close(), {
       color: '#ffe9a8',
       bg: '#39406a',
@@ -147,67 +198,46 @@ export class InventoryScene extends Phaser.Scene {
     }).setDepth(3);
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
-    const toOptions = this.add
-      .text(16, h - 44, '⚙ 設定', {
-        fontFamily: FONT,
-        fontSize: '12px',
-        color: '#9aa0b5',
-      })
-      .setOrigin(0, 0.5)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    toOptions.on('pointerup', () => {
-      this.scene.pause();
-      this.scene.launch('Options', { from: 'Inventory' });
-    });
-
-    const toBestiary = this.add
-      .text(84, h - 44, '📖 図鑑', {
-        fontFamily: FONT,
-        fontSize: '12px',
-        color: '#9aa0b5',
-      })
-      .setOrigin(0, 0.5)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    toBestiary.on('pointerup', () => {
-      this.scene.pause();
-      this.scene.launch('Bestiary');
-    });
-
-    const toPets = this.add
-      .text(w - 112, h - 44, '🐾 ペット', {
-        fontFamily: FONT,
-        fontSize: '12px',
-        color: '#9aa0b5',
-      })
-      .setOrigin(0.5)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    toPets.on('pointerup', () => {
-      this.scene.pause();
-      this.scene.launch('PetScreen');
-    });
-
-    const toTitle = this.add
-      .text(w - 16, h - 44, 'タイトルへ', {
-        fontFamily: FONT,
-        fontSize: '12px',
-        color: '#9aa0b5',
-      })
-      .setOrigin(1, 0.5)
-      .setDepth(3)
-      .setInteractive({ useHandCursor: true });
-    toTitle.on('pointerup', () => {
-      bus.emit('save:written', { slot: -1 });
-      this.time.delayedCall(60, () => returnToTitle(this));
-    });
-
     const off = bus.on('inventory:changed', () => this.refreshGold());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, off);
 
     this.refreshGold();
     this.renderTab();
+  }
+
+  private makeFooterAction(
+    x: number,
+    y: number,
+    width: number,
+    icon: string,
+    label: string,
+    onTap: () => void,
+  ): void {
+    ninePanel(this, x, y, width, 40, { active: true }).setDepth(3);
+    this.add
+      .text(x - width / 2 + 17, y, icon, {
+        fontFamily: FONT,
+        fontSize: '15px',
+        color: '#ffd86b',
+      })
+      .setOrigin(0.5)
+      .setDepth(4);
+    const text = this.add
+      .text(x + 9, y, label, {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(4);
+    const hit = this.add.zone(x, y, width, 40).setDepth(5).setInteractive({ useHandCursor: true });
+    hit.on('pointerdown', () => text.setColor('#ffd86b'));
+    hit.on('pointerout', () => text.setColor('#ffffff'));
+    hit.on('pointerup', () => {
+      text.setColor('#ffffff');
+      onTap();
+    });
   }
 
   private setupScroll(): void {
