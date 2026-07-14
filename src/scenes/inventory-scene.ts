@@ -14,6 +14,7 @@ import { bus } from '@/core/event-bus';
 import { FONT, addPanelChrome, rowBand, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
 import { returnToTitle } from '@/core/game-flow';
 import { ELEMENT_LABEL, ELEMENT_COLOR, isElement } from '@/combat/elements';
+import { affixSummary } from '@/endgame/investigation-loot';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
 
@@ -593,8 +594,9 @@ export class InventoryScene extends Phaser.Scene {
       this.eqQueue.push({ kind: 'header', slot, count: ids.length, y, h: 26 });
       y += 26;
       for (const [id, count] of ids) {
-        this.eqQueue.push({ kind: 'row', id, count, y, h: 44, band: band++ });
-        y += 44;
+        const rowHeight = getEquipment(id)?.generated ? 58 : 44;
+        this.eqQueue.push({ kind: 'row', id, count, y, h: rowHeight, band: band++ });
+        y += rowHeight;
       }
       y += 6;
     }
@@ -636,7 +638,7 @@ export class InventoryScene extends Phaser.Scene {
       if (q.y + q.h < top || q.y > bottom) continue;
       const before = this.content.length;
       if (q.kind === 'header') this.renderSlotHeader(q.slot, q.count, q.y);
-      else this.renderEquipRow(q.id, q.count, q.y, q.band);
+      else this.renderEquipRow(q.id, q.count, q.y, q.band, q.h);
       this.eqLive.set(i, this.content.list.slice(before) as Phaser.GameObjects.GameObject[]);
     }
   }
@@ -665,12 +667,13 @@ export class InventoryScene extends Phaser.Scene {
   }
 
   /** One equipment row at absolute y (used by the virtual window). */
-  private renderEquipRow(id: string, count: number, y: number, band: number): void {
+  private renderEquipRow(id: string, count: number, y: number, band: number, entryHeight: number): void {
     const w = this.scale.width;
-    const rowH = 40;
+    const rowH = entryHeight - 4;
     {
       this.content.add(rowBand(this, y, rowH, band));
       const def = getEquipment(id)!;
+      const generated = !!def.generated;
       const slot = def.slot as EquipSlot;
       const equipped = gameState.equipment[slot] === id;
       const canEq = equipped || gameState.canEquip(id);
@@ -680,13 +683,13 @@ export class InventoryScene extends Phaser.Scene {
       this.iconCell(y, rowH, this.equipIcon(def), canEq ? rarityColor(def.rarity) : 0x666a78, border);
       // Equipped pieces get a small green corner tick.
       if (equipped) this.content.add(this.add.circle(38, y + 4, 4, 0x9fe3a0).setDepth(1));
-      this.content.add(
-        this.add.text(48, y + 3, `${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
-          fontFamily: FONT,
-          fontSize: '14px',
-          color: equipped ? '#9fe3a0' : canEq ? rarityColorHex(def.rarity) : '#666a78',
-        }),
-      );
+      const name = this.add.text(48, y + 3, `${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
+        fontFamily: FONT,
+        fontSize: '14px',
+        color: equipped ? '#9fe3a0' : canEq ? rarityColorHex(def.rarity) : '#666a78',
+      });
+      name.setCrop(0, 0, Math.max(100, w - 142), 18);
+      this.content.add(name);
       // Rarity label (R-number + band name), coloured by rank.
       const rarityText = this.add.text(48, y + 21, rarityLabel(def.rarity), {
         fontFamily: FONT,
@@ -718,6 +721,15 @@ export class InventoryScene extends Phaser.Scene {
           this.content.add(t);
           lineX = t.x + t.width + 6;
         }
+      }
+      if (generated) {
+        const affixes = this.add.text(48, y + 36, `追加  ${affixSummary(def, 2)}`, {
+          fontFamily: FONT,
+          fontSize: '10px',
+          color: '#9af7ff',
+        });
+        affixes.setCrop(0, 0, Math.max(90, w - 146), 14);
+        this.content.add(affixes);
       }
       if (canEq) {
         const btn = this.add

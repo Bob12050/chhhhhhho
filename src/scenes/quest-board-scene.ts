@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
-import { itemDisplayName } from '@/data/items';
+import { getEquipment, itemDisplayName } from '@/data/items';
+import { rarityColorHex, rarityLabel } from '@/data/rarity';
 import { getEnemyDef } from '@/enemies/enemy-defs';
 import { getQuest, allQuests, type QuestDef } from '@/quests/quest-defs';
 import {
@@ -14,6 +15,7 @@ import { getMap, spawnPoint } from '@/maps/map-def';
 import { bus } from '@/core/event-bus';
 import { FONT, UI, addPanelChrome, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
 import { INVESTIGATION_SEAL_ID } from '@/endgame/investigations';
+import { affixSummary } from '@/endgame/investigation-loot';
 
 type BoardTab = 'main' | 'normal' | 'hunt' | 'investigation';
 
@@ -320,6 +322,10 @@ export class QuestBoardScene extends Phaser.Scene {
 
   private rewardText(q: QuestDef): string {
     const r = q.rewards;
+    if (q.investigation) {
+      const seals = r.items?.[INVESTIGATION_SEAL_ID] ?? 0;
+      return `報酬: R${q.investigation.rewardRank}ランダム装備×1 / 調査の証×${seals} / ${r.gold ?? 0}G`;
+    }
     const parts: string[] = [];
     if (r.gold) parts.push(`${r.gold}G`);
     if (r.exp) parts.push(`EXP ${r.exp}`);
@@ -460,7 +466,7 @@ export class QuestBoardScene extends Phaser.Scene {
   private showResult(q: QuestDef): void {
     const w = this.scale.width;
     const h = this.scale.height;
-    const rows: { label: string; color: string }[] = [];
+    const rows: { label: string; color: string; size?: string }[] = [];
     if (q.rewards.exp) rows.push({ label: `EXP +${q.rewards.exp}`, color: '#9fe3a0' });
     if (q.rewards.gold) {
       // Show what was actually granted: turn-in applies the 金運 bonus.
@@ -469,6 +475,21 @@ export class QuestBoardScene extends Phaser.Scene {
     }
     for (const [id, qty] of Object.entries(q.rewards.items ?? {})) {
       rows.push({ label: `${itemDisplayName(id)} ×${qty}`, color: '#cfd3e6' });
+    }
+    const loot = q.investigation && gameState.lastInvestigationLootId
+      ? getEquipment(gameState.lastInvestigationLootId)
+      : undefined;
+    if (loot) {
+      rows.push({
+        label: `NEW  ${loot.name}  ${rarityLabel(loot.rarity)}`,
+        color: rarityColorHex(loot.rarity),
+        size: '13px',
+      });
+      rows.push({
+        label: `追加能力  ${affixSummary(loot, 3)}`,
+        color: '#9af7ff',
+        size: '12px',
+      });
     }
     const panelH = 150 + rows.length * 30;
     const cy = Math.round(h * 0.42);
@@ -500,7 +521,7 @@ export class QuestBoardScene extends Phaser.Scene {
         const t = this.add
           .text(w / 2, cy - panelH / 2 + 84 + i * 30, r.label, {
             fontFamily: FONT,
-            fontSize: '15px',
+            fontSize: r.size ?? '15px',
             color: r.color,
           })
           .setOrigin(0.5)

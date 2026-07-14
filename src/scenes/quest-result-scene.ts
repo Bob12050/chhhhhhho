@@ -18,6 +18,7 @@ export interface QuestResultData {
   rank?: number;
   veteran?: boolean;
   investigationThreat?: number;
+  investigationRewardRank?: number;
   combatGold: number;
   combatExp: number;
   drops: QuestResultItem[];
@@ -93,6 +94,12 @@ export class QuestResultScene extends Phaser.Scene {
     const report = [
       ...(this.resultData.reportGold > 0 ? [{ label: `${this.resultData.reportGold}G`, color: UI.gold }] : []),
       ...(this.resultData.reportExp > 0 ? [{ label: `EXP ${this.resultData.reportExp}`, color: '#9fd0ff' }] : []),
+      ...(this.resultData.investigationRewardRank
+        ? [{
+            label: `R${this.resultData.investigationRewardRank} ランダム装備 x1`,
+            color: rarityColorHex(this.resultData.investigationRewardRank),
+          }]
+        : []),
       ...this.resultData.reportItems.map((i) => ({
         label: `${itemDisplayName(i.itemId)} x${i.qty}`,
         color: rarityColorHex(this.itemRarity(i.itemId)),

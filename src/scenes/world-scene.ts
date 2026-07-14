@@ -1837,6 +1837,7 @@ export class WorldScene extends Phaser.Scene {
       rank: quest.rank,
       veteran: quest.veteran,
       investigationThreat: quest.investigation?.threat,
+      investigationRewardRank: quest.investigation?.rewardRank,
       combatGold,
       combatExp,
       drops,

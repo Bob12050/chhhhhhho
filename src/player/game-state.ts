@@ -4,14 +4,20 @@ import {
   type DerivedStats,
   type StatModifiers,
 } from '@/stats/stats';
-import { getEquipment, getConsumable } from '@/data/items';
+import {
+  getEquipment,
+  getConsumable,
+  getPetItem,
+  registerRuntimeEquipment,
+  replaceRuntimeEquipment,
+  type EquipmentDef,
+} from '@/data/items';
 import { getSkill } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
 import { getQuest } from '@/quests/quest-defs';
 import { canEquipClass, canEquipWeapon, canEquipTier } from '@/equipment/restrictions';
 import { getPet } from '@/pets/pet-defs';
 import { petLevelFromExp, scaledPassive, DUPLICATE_EGG_EXP } from '@/pets/pet-growth';
-import { getPetItem } from '@/data/items';
 import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
 import { bus } from '@/core/event-bus';
 import { expToNext } from '@/stats/leveling';
@@ -49,6 +55,10 @@ export class GameState {
   killCounts: Record<string, number> = {};
   /** Owned equipment ids (one entry per piece; equipped items are included). */
   equipmentOwned: string[] = [];
+  /** Per-save definitions for unique investigation equipment. */
+  generatedEquipment: Record<string, EquipmentDef> = {};
+  /** Most recent investigation reward (runtime-only, for the result ceremony). */
+  lastInvestigationLootId: string | null = null;
 
   flags: Record<string, boolean> = {};
 
@@ -300,6 +310,16 @@ export class GameState {
     bus.emit('inventory:changed', {});
   }
 
+  /** Register and own one unique post-clear equipment instance. */
+  addGeneratedEquipment(def: EquipmentDef): boolean {
+    if (!def.generated || this.generatedEquipment[def.id]) return false;
+    const saved = structuredClone(def);
+    this.generatedEquipment[def.id] = saved;
+    registerRuntimeEquipment(saved);
+    this.addEquipment(def.id);
+    return true;
+  }
+
   /** How many copies of an equipment piece the player owns. */
   ownedEquipmentCount(id: string): number {
     return this.equipmentOwned.filter((e) => e === id).length;
@@ -320,6 +340,10 @@ export class GameState {
         bus.emit('equipment:changed', { slot });
         break;
       }
+    }
+    if (!this.equipmentOwned.includes(id) && this.generatedEquipment[id]) {
+      delete this.generatedEquipment[id];
+      replaceRuntimeEquipment(Object.values(this.generatedEquipment));
     }
     bus.emit('inventory:changed', {});
     return true;
@@ -515,6 +539,7 @@ export class GameState {
         materials: { ...this.materials },
         consumables: { ...this.consumables },
         equipmentOwned: [...this.equipmentOwned],
+        generatedEquipment: structuredClone(Object.values(this.generatedEquipment)),
         seenMaterials: { ...this.seenMaterials },
       },
       flags: { ...this.flags },
@@ -536,6 +561,7 @@ export class GameState {
   loadFrom(data: SaveData): void {
     this.slot = data.slot;
     this.tempBuffs = []; // runtime-only; never carried across loads
+    this.lastInvestigationLootId = null;
     this.level = data.player.level;
     this.exp = data.player.exp;
     this.statPoints = data.player.statPoints;
@@ -559,6 +585,21 @@ export class GameState {
     // Legacy saves lack seenMaterials: anything currently held counts as seen.
     this.seenMaterials = { ...(data.inventory.seenMaterials ?? {}) };
     for (const id of Object.keys(this.materials)) this.seenMaterials[id] = true;
+    // Generated definitions must be registered before owned/equipped ids are
+    // validated below. Invalid snapshots are ignored defensively.
+    this.generatedEquipment = {};
+    for (const raw of data.inventory.generatedEquipment ?? []) {
+      if (
+        !raw
+        || typeof raw.id !== 'string'
+        || !raw.id.startsWith('ig_')
+        || !raw.generated
+        || raw.generated.source !== 'investigation'
+        || !EQUIP_SLOTS.includes(raw.slot)
+      ) continue;
+      this.generatedEquipment[raw.id] = structuredClone(raw);
+    }
+    replaceRuntimeEquipment(Object.values(this.generatedEquipment));
     // Owned equipment: keep only known ids.
     this.equipmentOwned = (data.inventory.equipmentOwned ?? []).filter((id) => !!getEquipment(id));
     this.flags = { ...data.flags };

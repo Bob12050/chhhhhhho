@@ -72,6 +72,7 @@ describe('save migration / defensive load', () => {
     expect(m.player.unlockedJobs).toContain('adventurer');
     expect(m.inventory.consumables).toBeDefined();
     expect(m.inventory.equipmentOwned).toBeDefined();
+    expect(m.inventory.generatedEquipment).toEqual([]);
     expect(m.player.ownedPets).toBeDefined();
     const gs = new GameState();
     expect(() => gs.loadFrom(m)).not.toThrow();

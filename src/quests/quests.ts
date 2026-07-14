@@ -3,6 +3,7 @@ import { getQuest, allQuests, type QuestDef } from '@/quests/quest-defs';
 import { getMaterial, getConsumable, getEquipment } from '@/data/items';
 import { bus } from '@/core/event-bus';
 import { advanceInvestigationBoard } from '@/endgame/investigations';
+import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
 
 /**
  * Quest logic (data-driven, Phaser-independent so it is headless-testable).
@@ -106,10 +107,15 @@ export function turnInQuest(gs: GameState, questId: string): boolean {
   const q = getQuest(questId);
   if (!q || !gs.activeQuests.includes(questId) || !isComplete(gs, questId)) return false;
 
+  const investigationLoot = q.investigation ? generateInvestigationEquipment(gs, q) : null;
+  gs.lastInvestigationLootId = null;
   const r = q.rewards;
   // 金運 (goldRate) boosts quest gold like kill gold; shop sells stay flat.
   if (r.gold) gs.addGold(Math.round(r.gold * (1 + gs.derived.goldRate)));
   for (const [id, qty] of Object.entries(r.items ?? {})) grantItem(gs, id, qty);
+  if (investigationLoot && gs.addGeneratedEquipment(investigationLoot)) {
+    gs.lastInvestigationLootId = investigationLoot.id;
+  }
   for (const f of r.setFlags ?? []) gs.flags[f] = true;
   if (r.exp) gs.gainExp(r.exp); // last: may trigger level-up events
 

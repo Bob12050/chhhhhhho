@@ -7,6 +7,8 @@ import {
 } from '@/endgame/investigations';
 import { getQuest, replaceRuntimeQuests } from '@/quests/quest-defs';
 import { acceptQuest, availableQuests, turnInQuest } from '@/quests/quests';
+import { getEquipment, replaceRuntimeEquipment } from '@/data/items';
+import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
 
 function postClearState(): GameState {
   const gs = new GameState();
@@ -17,7 +19,10 @@ function postClearState(): GameState {
   return gs;
 }
 
-afterEach(() => replaceRuntimeQuests(INVESTIGATION_GROUP, []));
+afterEach(() => {
+  replaceRuntimeQuests(INVESTIGATION_GROUP, []);
+  replaceRuntimeEquipment([]);
+});
 
 describe('post-clear investigations', () => {
   it('deals three deterministic, distinct boss contracts', () => {
@@ -57,10 +62,68 @@ describe('post-clear investigations', () => {
 
     expect(turnInQuest(gs, quest.id)).toBe(true);
     expect(gs.materials[INVESTIGATION_SEAL_ID]).toBe(quest.rewards.items?.[INVESTIGATION_SEAL_ID]);
+    const lootId = gs.lastInvestigationLootId;
+    expect(lootId).toBeTruthy();
+    expect(gs.equipmentOwned).toContain(lootId);
+    const loot = getEquipment(lootId!);
+    expect(loot?.rarity).toBe(quest.investigation?.rewardRank);
+    expect(loot?.generated?.affixes).toHaveLength(2);
     expect(gs.investigationsCompleted).toBe(1);
     expect(gs.investigationSeed).not.toBe(oldSeed);
     expect(getQuest(quest.id)).toBeUndefined();
     expect(availableQuests(gs).filter((q) => q.investigation)).toHaveLength(3);
+  });
+
+  it('rolls deterministic affixes for a contract', () => {
+    const gs = postClearState();
+    const [quest] = syncInvestigationQuests(gs);
+
+    const first = generateInvestigationEquipment(gs, quest);
+    const second = generateInvestigationEquipment(gs, quest);
+    expect(second).toEqual(first);
+    expect(first.generated?.baseId).toBeTruthy();
+    expect(first.generated?.threat).toBe(quest.investigation?.threat);
+  });
+
+  it.each([
+    [8, 2],
+    [9, 3],
+    [10, 4],
+  ])('gives R%s equipment %s affixes', (rank, count) => {
+    const gs = postClearState();
+    const [baseQuest] = syncInvestigationQuests(gs);
+    const quest = {
+      ...baseQuest,
+      investigation: { ...baseQuest.investigation!, rewardRank: rank },
+    };
+    const loot = generateInvestigationEquipment(gs, quest);
+
+    expect(loot.rarity).toBe(rank);
+    expect(loot.generated?.affixes).toHaveLength(count);
+  });
+
+  it('restores an equipped investigation item and its rolled stats', () => {
+    const gs = postClearState();
+    gs.jobId = 'aramikagura';
+    const [quest] = syncInvestigationQuests(gs);
+    const target = quest.objectives[0];
+    expect(acceptQuest(gs, quest.id)).toBe(true);
+    gs.questProgress[quest.id] = { [target.enemyId]: target.count };
+    expect(turnInQuest(gs, quest.id)).toBe(true);
+
+    const lootId = gs.lastInvestigationLootId!;
+    const loot = getEquipment(lootId)!;
+    expect(gs.canEquip(lootId)).toBe(true);
+    gs.equip(loot.slot, lootId);
+    const before = { ...gs.derived };
+    const save = gs.toSave(1);
+
+    const loaded = new GameState();
+    loaded.loadFrom(save);
+    expect(loaded.equipment[loot.slot]).toBe(lootId);
+    expect(loaded.generatedEquipment[lootId]).toEqual(loot);
+    expect(getEquipment(lootId)?.generated?.affixes).toEqual(loot.generated?.affixes);
+    expect(loaded.derived).toEqual(before);
   });
 
   it('preserves an active generated contract across save and load', () => {

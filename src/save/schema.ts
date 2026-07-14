@@ -1,4 +1,5 @@
 import { INTRO_PENDING_FLAG } from '@/tutorial/onboarding';
+import type { EquipmentDef } from '@/data/items';
 
 /**
  * Save data schema. Versioned with a migration path. Phase 0 stores a subset;
@@ -37,6 +38,8 @@ export interface SaveDataV1 {
     materials: Record<string, number>; // itemId -> qty
     consumables: Record<string, number>; // itemId -> qty
     equipmentOwned: string[]; // owned equipment ids (one entry per piece)
+    /** Unique post-clear equipment definitions owned by this save. */
+    generatedEquipment: EquipmentDef[];
     /** Materials ever obtained (recipe visibility gate). Legacy saves lack it. */
     seenMaterials?: Record<string, true>;
   };
@@ -88,6 +91,7 @@ export function createDefaultSave(slot: number): SaveData {
       materials: {},
       consumables: { potion_hp: 3, potion_mp: 2 },
       equipmentOwned: ['wood_sword', 'leather_cap', 'cloth_vest'],
+      generatedEquipment: [],
     },
     flags: { [INTRO_PENDING_FLAG]: true },
     // The village elder offers the first hunt in-world. Existing saves retain
@@ -123,6 +127,9 @@ export function migrate(raw: unknown, slot: number): SaveData {
       materials: { ...(data.inventory?.materials ?? {}) },
       consumables: { ...(data.inventory?.consumables ?? {}) },
       equipmentOwned: [...(data.inventory?.equipmentOwned ?? [])],
+      generatedEquipment: Array.isArray(data.inventory?.generatedEquipment)
+        ? [...data.inventory.generatedEquipment]
+        : [],
       seenMaterials: { ...(data.inventory?.seenMaterials ?? {}) },
     },
     flags: { ...(data.flags ?? {}) },
