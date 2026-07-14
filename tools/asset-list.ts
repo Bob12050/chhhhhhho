@@ -6,7 +6,12 @@
  * KEEP PATHS IN SYNC with src/assets/manifest.ts.
  */
 import { CHAR_FRAME_W, CHAR_FRAME_H, CHAR_ANCHOR_X, CHAR_ANCHOR_Y, TILE_SIZE } from '../src/config/resolution';
-import { SHEET_WIDTH, SHEET_HEIGHT } from '../src/paperdoll/pose-atlas';
+import {
+  DIAGONAL_SHEET_HEIGHT,
+  DIAGONAL_SHEET_WIDTH,
+  SHEET_HEIGHT,
+  SHEET_WIDTH,
+} from '../src/paperdoll/pose-atlas';
 
 export interface AssetSpec {
   label: string;
@@ -36,6 +41,16 @@ const tile = (label: string, src: string): AssetSpec => ({
   w: TILE_SIZE,
   h: TILE_SIZE,
 });
+const diagonalSheet = (label: string, src: string): AssetSpec => ({
+  label,
+  src,
+  type: 'sheet',
+  w: DIAGONAL_SHEET_WIDTH,
+  h: DIAGONAL_SHEET_HEIGHT,
+  frameW: CHAR_FRAME_W,
+  frameH: CHAR_FRAME_H,
+  anchor: [CHAR_ANCHOR_X, CHAR_ANCHOR_Y],
+});
 const enemySprite = (label: string, src: string): AssetSpec => ({
   label,
   src,
@@ -47,6 +62,7 @@ const enemySprite = (label: string, src: string): AssetSpec => ({
 
 export const ASSET_SPECS: AssetSpec[] = [
   sheet('プレイヤー本体', 'assets/char/player_body-storybook-v2.png'),
+  diagonalSheet('プレイヤー本体:斜め', 'assets/char/player_body-diagonal-v1.png'),
   sheet('職業:戦士', 'assets/char/job_fighter-storybook-v2.png'),
   sheet('職業:魔法使い', 'assets/char/job_mage-storybook-v2.png'),
   sheet('職業:僧侶', 'assets/char/job_priest-storybook-v2.png'),
@@ -59,6 +75,7 @@ export const ASSET_SPECS: AssetSpec[] = [
   sheet('職業:レンジャー', 'assets/char/job_ranger-storybook-v1.png'),
   sheet('職業:ソードカイザー', 'assets/char/job_sword_kaiser-storybook-v1.png'),
   sheet('職業:グランマギアー', 'assets/char/job_grand_magia-storybook-v1.png'),
+  diagonalSheet('職業:グランマギアー斜め', 'assets/char/job_grand_magia-diagonal-v1.png'),
   sheet('職業:シルドセイバー', 'assets/char/job_shield_saber-storybook-v1.png'),
   sheet('職業:アベンジスタ', 'assets/char/job_avengista-storybook-v1.png'),
   sheet('職業:デュアルスター', 'assets/char/job_dual_star-storybook-v1.png'),

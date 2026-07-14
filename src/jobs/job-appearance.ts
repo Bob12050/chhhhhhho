@@ -30,8 +30,18 @@ export const APPEARANCE_TEX: Record<JobAppearanceId, string> = {
   oltarie: TEX.jobOltarie,
 };
 
+/** Optional 8-way idle/walk/attack art; absent jobs use cardinal side poses. */
+export const APPEARANCE_DIAGONAL_TEX: Partial<Record<JobAppearanceId, string>> = {
+  grand_magia: TEX.jobGrandMagiaDiagonal,
+};
+
 /** Texture key for an appearance id, or null if unknown/unset. */
 export function appearanceTexKey(id: string | undefined): string | null {
   if (!id) return null;
   return (APPEARANCE_TEX as Record<string, string>)[id] ?? null;
+}
+
+export function appearanceDiagonalTexKey(id: string | undefined): string | null {
+  if (!id) return null;
+  return (APPEARANCE_DIAGONAL_TEX as Record<string, string>)[id] ?? null;
 }

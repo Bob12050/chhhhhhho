@@ -7,8 +7,9 @@ import type { Direction } from '@/config/layers';
  * ranges must never be scattered across gameplay code.
  *
  * Sheet layout convention (per visual sheet):
- *   - One row per (direction-base, animation). Direction bases stored on the
- *     sheet are: down, up, left. `right` is rendered as a mirror of `left`.
+ *   - One row per (direction-base, animation). Cardinal direction bases stored
+ *     on the sheet are: down, up, left. Right and diagonal facings fall back to
+ *     the mirrored side pose unless an optional diagonal sheet is assigned.
  *   - Columns are animation frames, left to right.
  *
  * Row ordering on the sheet (top to bottom):
@@ -46,8 +47,19 @@ export const ANIM_NAMES: readonly AnimName[] = [
   'death',
 ];
 
-/** The direction bases physically present on a sheet (right is a mirror). */
-export const SHEET_DIRECTIONS: readonly Exclude<Direction, 'right'>[] = ['down', 'up', 'left'];
+export type SheetDirection = 'down' | 'up' | 'left';
+
+/** The direction bases physically present on every cardinal sheet. */
+export const SHEET_DIRECTIONS: readonly SheetDirection[] = ['down', 'up', 'left'];
+
+/** Optional diagonal sheets currently carry the movement-critical poses. */
+export const DIAGONAL_ANIM_NAMES = ['idle', 'walk', 'attack'] as const;
+export type DiagonalAnimName = (typeof DIAGONAL_ANIM_NAMES)[number];
+export type DiagonalSheetDirection = 'down-left' | 'up-left';
+export const DIAGONAL_SHEET_DIRECTIONS: readonly DiagonalSheetDirection[] = [
+  'down-left',
+  'up-left',
+];
 
 /** Max columns on the sheet (widest animation). */
 export const MAX_FRAMES = Math.max(...ANIM_NAMES.map((n) => ANIMATIONS[n].frames));
@@ -57,15 +69,38 @@ export const SHEET_ROWS = SHEET_DIRECTIONS.length * ANIM_NAMES.length;
 
 export const SHEET_WIDTH = MAX_FRAMES * CHAR_FRAME_W;
 export const SHEET_HEIGHT = SHEET_ROWS * CHAR_FRAME_H;
+export const DIAGONAL_SHEET_WIDTH = MAX_FRAMES * CHAR_FRAME_W;
+export const DIAGONAL_SHEET_HEIGHT =
+  DIAGONAL_SHEET_DIRECTIONS.length * DIAGONAL_ANIM_NAMES.length * CHAR_FRAME_H;
 
-/** Resolve the sheet base direction (right -> left mirror). */
-export function sheetDirection(dir: Direction): Exclude<Direction, 'right'> {
-  return dir === 'right' ? 'left' : dir;
+/** Resolve a facing to the closest pose present on the cardinal sheet. */
+export function sheetDirection(dir: Direction): SheetDirection {
+  if (dir === 'down' || dir === 'up' || dir === 'left') return dir;
+  return 'left';
 }
 
 /** Whether the sprite should be horizontally flipped for this direction. */
 export function shouldFlipX(dir: Direction): boolean {
-  return dir === 'right';
+  return dir === 'right' || dir === 'up-right' || dir === 'down-right';
+}
+
+export function supportsDiagonalAnim(anim: AnimName): anim is DiagonalAnimName {
+  return (DIAGONAL_ANIM_NAMES as readonly AnimName[]).includes(anim);
+}
+
+export function diagonalSheetDirection(dir: Direction): DiagonalSheetDirection {
+  return dir === 'up-left' || dir === 'up-right' ? 'up-left' : 'down-left';
+}
+
+/** Frame index into the optional 4-column diagonal pose sheet. */
+export function diagonalFrameIndex(
+  dir: Direction,
+  anim: DiagonalAnimName,
+  frame: number,
+): number {
+  const dirIdx = DIAGONAL_SHEET_DIRECTIONS.indexOf(diagonalSheetDirection(dir));
+  const animIdx = DIAGONAL_ANIM_NAMES.indexOf(anim);
+  return (dirIdx * DIAGONAL_ANIM_NAMES.length + animIdx) * MAX_FRAMES + frame;
 }
 
 /**

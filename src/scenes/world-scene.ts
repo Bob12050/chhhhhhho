@@ -37,6 +37,7 @@ import { getMap, spawnPoint, type MapDef } from '@/maps/map-def';
 import { buildMap, type BuiltPortal } from '@/maps/map-builder';
 import type { UIScene } from '@/scenes/ui-scene';
 import type { Direction } from '@/config/layers';
+import { directionFromVector, directionVector } from '@/config/directions';
 import { FONT, ninePanel } from '@/ui/theme';
 import { npcHintFor, npcHintFlag } from '@/tutorial/tutorial-defs';
 import { bgm, bgmForMap } from '@/audio/bgm-engine';
@@ -2531,9 +2532,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private facingFromStick(v: { x: number; y: number }): Direction | undefined {
-    if (Math.abs(v.x) < 0.2 && Math.abs(v.y) < 0.2) return undefined;
-    if (Math.abs(v.x) > Math.abs(v.y)) return v.x > 0 ? 'right' : 'left';
-    return v.y > 0 ? 'down' : 'up';
+    if (Math.hypot(v.x, v.y) < 0.2) return undefined;
+    return directionFromVector(v.x, v.y, this.player.getDirection());
   }
 
   private openInventory(tab?: 'items' | 'consumables' | 'equipment'): void {
@@ -2545,14 +2545,6 @@ export class WorldScene extends Phaser.Scene {
 
 /** Offset ahead of the player in the given facing. */
 function aheadOffset(dir: Direction, reach: number): { ax: number; ay: number } {
-  switch (dir) {
-    case 'up':
-      return { ax: 0, ay: -reach };
-    case 'down':
-      return { ax: 0, ay: reach };
-    case 'left':
-      return { ax: -reach, ay: 0 };
-    case 'right':
-      return { ax: reach, ay: 0 };
-  }
+  const vector = directionVector(dir);
+  return { ax: vector.x * reach, ay: vector.y * reach };
 }

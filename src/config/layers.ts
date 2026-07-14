@@ -24,9 +24,30 @@ export const DRAW_GROUPS = [
 
 export type DrawGroup = (typeof DRAW_GROUPS)[number];
 
-/** Facing directions. `right` is the mirror of `left` unless a layer opts out. */
-export type Direction = 'down' | 'up' | 'left' | 'right';
-export const DIRECTIONS: readonly Direction[] = ['down', 'up', 'left', 'right'];
+/**
+ * Eight-way facing directions. Right-hand directions mirror their left-hand
+ * counterpart when a visual sheet does not ship dedicated right-facing art.
+ */
+export type Direction =
+  | 'down'
+  | 'down-left'
+  | 'left'
+  | 'up-left'
+  | 'up'
+  | 'up-right'
+  | 'right'
+  | 'down-right';
+
+export const DIRECTIONS: readonly Direction[] = [
+  'down',
+  'down-left',
+  'left',
+  'up-left',
+  'up',
+  'up-right',
+  'right',
+  'down-right',
+];
 
 /**
  * Per-direction draw order. Only the relative order of weapon/hand/back groups
@@ -34,27 +55,33 @@ export const DIRECTIONS: readonly Direction[] = ['down', 'up', 'left', 'right'];
  */
 export type DrawOrder = readonly DrawGroup[];
 
+const UP_DRAW_ORDER: DrawOrder = [
+  'shadow',
+  'behind_body',
+  'far_weapon',
+  'near_weapon',
+  'back',
+  'far_hand',
+  'near_hand',
+  'base_body',
+  'feet',
+  'waist',
+  'torso',
+  'head',
+  'front_accessory',
+  'front_effect',
+];
+
 export const DRAW_ORDER_BY_DIRECTION: Record<Direction, DrawOrder> = {
   // Facing down: weapon held in front, near side toward camera.
   down: DRAW_GROUPS,
   // Facing up: weapon & near hand go BEHIND the body/head.
-  up: [
-    'shadow',
-    'behind_body',
-    'far_weapon',
-    'near_weapon',
-    'back',
-    'far_hand',
-    'near_hand',
-    'base_body',
-    'feet',
-    'waist',
-    'torso',
-    'head',
-    'front_accessory',
-    'front_effect',
-  ],
+  up: UP_DRAW_ORDER,
+  'up-left': UP_DRAW_ORDER,
+  'up-right': UP_DRAW_ORDER,
   // Facing left/right keep base order (mirror handled separately).
   left: DRAW_GROUPS,
   right: DRAW_GROUPS,
+  'down-left': DRAW_GROUPS,
+  'down-right': DRAW_GROUPS,
 };

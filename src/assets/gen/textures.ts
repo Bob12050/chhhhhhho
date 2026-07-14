@@ -37,6 +37,7 @@ export const SKILL_TEX = {
 export const TEX = {
   shadow: 'gen.shadow',
   playerBody: 'gen.player.body',
+  playerBodyDiagonal: 'art.player.body.diagonal',
   // Hairless base body, swapped in for `playerBody` whenever a helmet is
   // equipped so the helm has a clean (bald) head to sit on. See
   // Player.setEquipVisual. Real art at assets/char/player_body_bald.png.
@@ -56,6 +57,7 @@ export const TEX = {
   jobRanger: 'gen.char.ranger',
   jobSwordKaiser: 'gen.char.sword_kaiser',
   jobGrandMagia: 'gen.char.grand_magia',
+  jobGrandMagiaDiagonal: 'art.char.grand_magia.diagonal',
   jobShieldSaber: 'gen.char.shield_saber',
   jobAvengista: 'gen.char.avengista',
   jobDualStar: 'gen.char.dual_star',

@@ -31,6 +31,7 @@ const img = (key: string, src: string): AssetEntry => ({ key, type: 'image', src
 export const ASSET_MANIFEST: AssetEntry[] = [
   // Paper-doll layers + enemy (pose-atlas spritesheets).
   sheet(TEX.playerBody, 'assets/char/player_body-storybook-v2.png'),
+  sheet(TEX.playerBodyDiagonal, 'assets/char/player_body-diagonal-v1.png'),
   sheet(TEX.playerBodyBald, 'assets/char/player_body_bald.png'),
   // Job-fixed appearance bodies (drop these PNGs to give a job its own look).
   sheet(TEX.jobFighter, 'assets/char/job_fighter-storybook-v2.png'),
@@ -45,6 +46,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   sheet(TEX.jobRanger, 'assets/char/job_ranger-storybook-v1.png'),
   sheet(TEX.jobSwordKaiser, 'assets/char/job_sword_kaiser-storybook-v1.png'),
   sheet(TEX.jobGrandMagia, 'assets/char/job_grand_magia-storybook-v1.png'),
+  sheet(TEX.jobGrandMagiaDiagonal, 'assets/char/job_grand_magia-diagonal-v1.png'),
   sheet(TEX.jobShieldSaber, 'assets/char/job_shield_saber-storybook-v1.png'),
   sheet(TEX.jobAvengista, 'assets/char/job_avengista-storybook-v1.png'),
   sheet(TEX.jobDualStar, 'assets/char/job_dual_star-storybook-v1.png'),

@@ -12,8 +12,8 @@ import {
   SHEET_HEIGHT,
   MAX_FRAMES,
   type AnimName,
+  type SheetDirection,
 } from '@/paperdoll/pose-atlas';
-import type { Direction } from '@/config/layers';
 import { PALETTES, EQUIP_RAMPS, type ActorPalette, type Ramp } from './palette';
 
 /**
@@ -81,7 +81,7 @@ function drawBody(
   ctx: CanvasRenderingContext2D,
   ox: number,
   oy: number,
-  dir: Exclude<Direction, 'right'>,
+  dir: SheetDirection,
   anim: AnimName,
   frame: number,
   pal: ActorPalette,
@@ -137,7 +137,7 @@ function drawHead(
   ctx: CanvasRenderingContext2D,
   ox: number,
   oy: number,
-  _dir: Exclude<Direction, 'right'>,
+  _dir: SheetDirection,
   anim: AnimName,
   frame: number,
   r: Ramp,
@@ -160,7 +160,7 @@ function drawTorso(
   ctx: CanvasRenderingContext2D,
   ox: number,
   oy: number,
-  _dir: Exclude<Direction, 'right'>,
+  _dir: SheetDirection,
   anim: AnimName,
   frame: number,
   r: Ramp,
@@ -180,7 +180,7 @@ function drawWeapon(
   ctx: CanvasRenderingContext2D,
   ox: number,
   oy: number,
-  _dir: Exclude<Direction, 'right'>,
+  _dir: SheetDirection,
   anim: AnimName,
   frame: number,
   r: Ramp,
@@ -214,7 +214,7 @@ function drawSlime(
   ctx: CanvasRenderingContext2D,
   ox: number,
   oy: number,
-  _dir: Exclude<Direction, 'right'>,
+  _dir: SheetDirection,
   anim: AnimName,
   frame: number,
   pal: ActorPalette,
@@ -360,7 +360,7 @@ function renderPart(
   ctx: CanvasRenderingContext2D,
   ox: number,
   oy: number,
-  dir: Exclude<Direction, 'right'>,
+  dir: SheetDirection,
   anim: AnimName,
   frame: number,
   spec: LayerSpec,

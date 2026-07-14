@@ -7,11 +7,20 @@ import {
 } from '@/config/layers';
 import {
   ANIMATIONS,
+  diagonalFrameIndex,
   frameIndex,
   shouldFlipX,
+  supportsDiagonalAnim,
   type AnimName,
 } from '@/paperdoll/pose-atlas';
 import { CHAR_ANCHOR_X, CHAR_ANCHOR_Y, CHAR_FRAME_W, CHAR_FRAME_H } from '@/config/resolution';
+import { isDiagonalDirection } from '@/config/directions';
+
+interface LayerVisual {
+  readonly sprite: Phaser.GameObjects.Sprite;
+  cardinalTextureKey: string;
+  diagonalTextureKey: string | null;
+}
 
 /**
  * Central paper-doll controller (PLAYER ONLY, and the menu preview which reuses
@@ -25,7 +34,7 @@ import { CHAR_ANCHOR_X, CHAR_ANCHOR_Y, CHAR_FRAME_W, CHAR_FRAME_H } from '@/conf
 export class PaperDollAnimator {
   readonly container: Phaser.GameObjects.Container;
   private readonly scene: Phaser.Scene;
-  private readonly layers = new Map<DrawGroup, Phaser.GameObjects.Sprite>();
+  private readonly layers = new Map<DrawGroup, LayerVisual>();
 
   private anim: AnimName = 'idle';
   private dir: Direction = 'down';
@@ -34,9 +43,10 @@ export class PaperDollAnimator {
   private playing = true;
   private onComplete: (() => void) | null = null;
   private flashTimer = 0;
+  private playbackRate = 1;
 
   // Normalized origin so the actor's (x, y) is the feet anchor and flipX mirrors
-  // around the horizontal center (anchor x == frame center == 32).
+  // around the horizontal center (anchor x == frame center == 48).
   private static readonly ORIGIN_X = CHAR_ANCHOR_X / CHAR_FRAME_W;
   private static readonly ORIGIN_Y = CHAR_ANCHOR_Y / CHAR_FRAME_H;
 
@@ -46,22 +56,32 @@ export class PaperDollAnimator {
   }
 
   /** Assign (or clear) the texture for a draw group. */
-  setLayer(group: DrawGroup, textureKey: string | null): void {
+  setLayer(
+    group: DrawGroup,
+    textureKey: string | null,
+    opts?: { diagonalTextureKey?: string | null },
+  ): void {
     const existing = this.layers.get(group);
     if (!textureKey) {
       if (existing) {
-        existing.destroy();
+        existing.sprite.destroy();
         this.layers.delete(group);
       }
       return;
     }
     if (existing) {
-      existing.setTexture(textureKey);
+      existing.cardinalTextureKey = textureKey;
+      existing.diagonalTextureKey = opts?.diagonalTextureKey ?? null;
+      existing.sprite.setTexture(textureKey);
     } else {
       const sprite = this.scene.add.sprite(0, 0, textureKey);
       sprite.setOrigin(PaperDollAnimator.ORIGIN_X, PaperDollAnimator.ORIGIN_Y);
       this.container.add(sprite);
-      this.layers.set(group, sprite);
+      this.layers.set(group, {
+        sprite,
+        cardinalTextureKey: textureKey,
+        diagonalTextureKey: opts?.diagonalTextureKey ?? null,
+      });
     }
     this.applyOrder();
     this.applyFrame();
@@ -102,6 +122,10 @@ export class PaperDollAnimator {
     return this.playing;
   }
 
+  setPlaybackRate(rate: number): void {
+    this.playbackRate = Phaser.Math.Clamp(rate, 0.5, 2);
+  }
+
   setPosition(x: number, y: number): void {
     // Round to integer pixels so dots stay crisp (no sub-pixel rendering).
     this.container.setPosition(Math.round(x), Math.round(y));
@@ -111,14 +135,20 @@ export class PaperDollAnimator {
     this.container.setDepth(depth);
   }
 
+  /** Subtle whole-body motion around the fixed feet anchor. */
+  setMotionTransform(scaleX: number, scaleY: number, rotation: number): void {
+    this.container.setScale(scaleX, scaleY);
+    this.container.setRotation(rotation);
+  }
+
   /**
    * White hit-flash across every layer (Phaser 4: FILL tint mode; plain
    * setTint would multiply). Cleared automatically by update() after `ms`.
    */
   flashWhite(ms: number): void {
     this.flashTimer = ms;
-    for (const sprite of this.layers.values()) {
-      sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+    for (const layer of this.layers.values()) {
+      layer.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
     }
   }
 
@@ -127,13 +157,13 @@ export class PaperDollAnimator {
     if (this.flashTimer > 0) {
       this.flashTimer -= dtMs;
       if (this.flashTimer <= 0) {
-        for (const sprite of this.layers.values()) sprite.clearTint();
+        for (const layer of this.layers.values()) layer.sprite.clearTint();
       }
     }
     const def = ANIMATIONS[this.anim];
     if (this.playing) {
       this.elapsed += dtMs;
-      const frameDur = 1000 / def.fps;
+      const frameDur = 1000 / (def.fps * this.playbackRate);
       while (this.elapsed >= frameDur) {
         this.elapsed -= frameDur;
         this.frame++;
@@ -161,10 +191,19 @@ export class PaperDollAnimator {
 
   private applyFrame(): void {
     const flip = shouldFlipX(this.dir);
-    const idx = frameIndex(this.dir, this.anim, this.frame);
-    for (const sprite of this.layers.values()) {
-      sprite.setFrame(idx);
-      sprite.setFlipX(flip);
+    const diagonalAnim = supportsDiagonalAnim(this.anim) ? this.anim : null;
+    const diagonalPose = isDiagonalDirection(this.dir) && diagonalAnim !== null;
+    for (const layer of this.layers.values()) {
+      const useDiagonal = diagonalPose
+        && !!layer.diagonalTextureKey
+        && this.scene.textures.exists(layer.diagonalTextureKey);
+      const textureKey = useDiagonal ? layer.diagonalTextureKey! : layer.cardinalTextureKey;
+      if (layer.sprite.texture.key !== textureKey) layer.sprite.setTexture(textureKey);
+      const idx = useDiagonal
+        ? diagonalFrameIndex(this.dir, diagonalAnim!, this.frame)
+        : frameIndex(this.dir, this.anim, this.frame);
+      layer.sprite.setFrame(idx);
+      layer.sprite.setFlipX(flip);
     }
   }
 
@@ -172,8 +211,8 @@ export class PaperDollAnimator {
   private applyOrder(): void {
     const order = DRAW_ORDER_BY_DIRECTION[this.dir] ?? DRAW_GROUPS;
     for (const group of order) {
-      const sprite = this.layers.get(group);
-      if (sprite) this.container.bringToTop(sprite);
+      const layer = this.layers.get(group);
+      if (layer) this.container.bringToTop(layer.sprite);
     }
   }
 }

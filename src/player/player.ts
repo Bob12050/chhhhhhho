@@ -5,8 +5,9 @@ import type { AnimName } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
 import { CHAR_FRAME_W } from '@/config/resolution';
 import { getJob } from '@/jobs/job-defs';
-import { appearanceTexKey } from '@/jobs/job-appearance';
+import { appearanceDiagonalTexKey, appearanceTexKey } from '@/jobs/job-appearance';
 import { gameState } from '@/player/game-state';
+import { directionFromVector, directionVector } from '@/config/directions';
 
 /**
  * Player actor. Owns a single PaperDollAnimator (body sprite) and an Arcade
@@ -32,6 +33,14 @@ export class Player {
   private attackCdMs = 0;
   private shadow!: Phaser.GameObjects.Image;
   private attacking = false;
+  private moveMagnitude = 0;
+  private stridePhase = 0;
+  private distanceSinceStep = 0;
+  private lastX: number;
+  private lastY: number;
+  private motionScaleX = 1;
+  private motionScaleY = 1;
+  private motionRotation = 0;
 
   /** Called when an attack's hit frame lands. */
   onAttackHit: ((dir: Direction) => void) | null = null;
@@ -49,6 +58,8 @@ export class Player {
     this.body.setSize(20, 16);
     this.body.setOffset((CHAR_FRAME_W - 20) / 2, 40);
     this.body.setCollideWorldBounds(true);
+    this.lastX = x;
+    this.lastY = y;
 
     this.doll = new PaperDollAnimator(scene, x, y);
     this.shadow = scene.add
@@ -66,9 +77,14 @@ export class Player {
    * cleared — gear changes stats only.
    */
   setJobAppearance(jobId: string): void {
-    const key = appearanceTexKey(getJob(jobId)?.appearance);
+    const appearance = getJob(jobId)?.appearance;
+    const key = appearanceTexKey(appearance);
     const tex = key && this.scene.textures.exists(key) ? key : TEX.playerBody;
-    this.doll.setLayer('base_body', tex);
+    this.doll.setLayer('base_body', tex, {
+      diagonalTextureKey: tex === TEX.playerBody
+        ? TEX.playerBodyDiagonal
+        : appearanceDiagonalTexKey(appearance),
+    });
   }
 
   getDirection(): Direction {
@@ -96,23 +112,27 @@ export class Player {
     if (this.rollMs > 0) return; // roll keeps its own velocity
     if (this.attacking) {
       this.body.setVelocity(0, 0);
+      this.moveMagnitude = 0;
+      this.doll.setPlaybackRate(1);
       return;
     }
     const len = Math.hypot(vx, vy);
-    if (len > 0.001) {
+    if (len >= 0.08) {
       const nx = vx / len;
       const ny = vy / len;
-      this.body.setVelocity(nx * this.moveSpeed, ny * this.moveSpeed);
-      // Direction by dominant axis (4-way).
-      if (Math.abs(nx) > Math.abs(ny)) {
-        this.dir = nx > 0 ? 'right' : 'left';
-      } else {
-        this.dir = ny > 0 ? 'down' : 'up';
-      }
+      this.moveMagnitude = Math.min(1, len);
+      this.body.setVelocity(
+        nx * this.moveSpeed * this.moveMagnitude,
+        ny * this.moveSpeed * this.moveMagnitude,
+      );
+      this.dir = directionFromVector(nx, ny, this.dir) ?? this.dir;
       this.doll.setDirection(this.dir);
+      this.doll.setPlaybackRate(0.82 + this.moveMagnitude * 0.28);
       if (this.doll.getAnim() !== 'walk') this.doll.play('walk');
     } else {
       this.body.setVelocity(0, 0);
+      this.moveMagnitude = 0;
+      this.doll.setPlaybackRate(1);
       if (this.doll.getAnim() === 'walk') this.doll.play('idle');
     }
   }
@@ -131,14 +151,15 @@ export class Player {
       nx = vx / len;
       ny = vy / len;
     } else {
-      nx = this.dir === 'left' ? -1 : this.dir === 'right' ? 1 : 0;
-      ny = this.dir === 'up' ? -1 : this.dir === 'down' ? 1 : 0;
+      const facing = directionVector(this.dir);
+      nx = facing.x;
+      ny = facing.y;
     }
     this.rollMs = ms;
     this.body.setVelocity(nx * this.moveSpeed * speedMult, ny * this.moveSpeed * speedMult);
-    if (Math.abs(nx) > Math.abs(ny)) this.dir = nx > 0 ? 'right' : 'left';
-    else this.dir = ny > 0 ? 'down' : 'up';
+    this.dir = directionFromVector(nx, ny, this.dir) ?? this.dir;
     this.doll.setDirection(this.dir);
+    this.doll.setPlaybackRate(1.45);
     this.doll.play('walk', { force: true });
     return true;
   }
@@ -152,6 +173,8 @@ export class Player {
     if (this.attacking || this.rollMs > 0 || this.attackCdMs > 0) return;
     this.attackCdMs = Player.BASE_ATTACK_MS / this.atkSpeedMult;
     this.attacking = true;
+    this.moveMagnitude = 0;
+    this.doll.setPlaybackRate(1);
     if (dir) {
       this.dir = dir;
       this.doll.setDirection(dir);
@@ -162,6 +185,7 @@ export class Player {
       force: true,
       onComplete: () => {
         this.attacking = false;
+        this.doll.play('idle');
       },
     });
     // Resolve the hit at the mid-point of the swing.
@@ -189,7 +213,9 @@ export class Player {
   /** Defeated: stop, play the death pose, flash, and fade the doll out. */
   die(): void {
     this.attacking = false;
+    this.moveMagnitude = 0;
     this.body.setVelocity(0, 0);
+    this.doll.setPlaybackRate(1);
     this.doll.play('death', { force: true });
     this.doll.flashWhite(120);
     this.scene.tweens.add({
@@ -202,16 +228,74 @@ export class Player {
 
   update(dtMs: number): void {
     if (this.attackCdMs > 0) this.attackCdMs -= dtMs;
-    this.shadow
-      .setPosition(Math.round(this.body.x), Math.round(this.body.y) + 1)
-      .setDepth(Math.round(this.body.y) - 1);
     if (this.rollMs > 0) {
       this.rollMs -= dtMs;
-      if (this.rollMs <= 0) this.body.setVelocity(0, 0);
+      if (this.rollMs <= 0) {
+        this.body.setVelocity(0, 0);
+        this.doll.setPlaybackRate(1);
+      }
     }
+
+    const dx = this.body.x - this.lastX;
+    const dy = this.body.y - this.lastY;
+    const speed = Math.hypot(this.body.body?.velocity.x ?? 0, this.body.body?.velocity.y ?? 0);
+    const walking = !this.attacking && speed > 4 && this.doll.getAnim() === 'walk';
+    let contact = 0;
+    if (walking) {
+      const speedRatio = Phaser.Math.Clamp(speed / Math.max(1, this.moveSpeed), 0.35, 2.5);
+      this.stridePhase += dtMs * 0.014 * (0.72 + speedRatio * 0.28);
+      this.stridePhase %= Math.PI * 2;
+      contact = Math.abs(Math.cos(this.stridePhase));
+      this.distanceSinceStep += Math.hypot(dx, dy);
+      if (this.distanceSinceStep >= 24) {
+        this.distanceSinceStep %= 24;
+        this.spawnFootstep();
+      }
+    } else {
+      this.distanceSinceStep = 0;
+    }
+
+    const velocityX = this.body.body?.velocity.x ?? 0;
+    const targetScaleX = walking ? 1 + contact * 0.012 : 1;
+    const targetScaleY = walking ? 1 - contact * 0.014 : 1;
+    const targetRotation = walking
+      ? Phaser.Math.Clamp(velocityX / Math.max(1, this.moveSpeed), -1, 1) * 0.018
+      : 0;
+    const motionBlend = 1 - Math.exp(-dtMs * 0.025);
+    this.motionScaleX = Phaser.Math.Linear(this.motionScaleX, targetScaleX, motionBlend);
+    this.motionScaleY = Phaser.Math.Linear(this.motionScaleY, targetScaleY, motionBlend);
+    this.motionRotation = Phaser.Math.Linear(this.motionRotation, targetRotation, motionBlend);
+    this.doll.setMotionTransform(this.motionScaleX, this.motionScaleY, this.motionRotation);
+
+    this.shadow
+      .setPosition(Math.round(this.body.x), Math.round(this.body.y) + 1)
+      .setDisplaySize(28 + contact * 2, 10 - contact)
+      .setAlpha(0.68 + contact * 0.06)
+      .setDepth(Math.round(this.body.y) - 1);
     this.doll.setPosition(this.body.x, this.body.y);
     this.doll.setDepth(Math.round(this.body.y));
     this.doll.update(dtMs);
+    this.lastX = this.body.x;
+    this.lastY = this.body.y;
+  }
+
+  private spawnFootstep(): void {
+    const facing = directionVector(this.dir);
+    const side = Math.sin(this.stridePhase) >= 0 ? 1 : -1;
+    const x = Math.round(this.body.x - facing.x * 4 - facing.y * side * 3);
+    const y = Math.round(this.body.y - facing.y * 2 + facing.x * side * 2);
+    const puff = this.scene.add
+      .ellipse(x, y, 6, 3, 0xd8c7a3, 0.24)
+      .setDepth(Math.round(this.body.y) - 2);
+    this.scene.tweens.add({
+      targets: puff,
+      alpha: 0,
+      scaleX: 1.5,
+      scaleY: 0.7,
+      duration: 260,
+      ease: 'Quad.easeOut',
+      onComplete: () => puff.destroy(),
+    });
   }
 
   destroy(): void {
