@@ -80,32 +80,72 @@ export class UIScene extends Phaser.Scene {
     const baseX = w - insets.right - 44;
     const baseY = h - bottomPad - 44;
 
-    // A single illustrated control deck ties the individual action sockets
-    // together without adding another opaque panel over the world.
-    const deckX = baseX - 38;
-    const deckY = baseY - 58;
-    const actionDeck = this.add
-      .image(deckX, deckY, TEX.hudStickBase)
-      .setDisplaySize(184, 184)
-      .setDepth(depth - 1)
-      .setAlpha(0.4);
-
-    const attackBtn = new TouchButton(this, baseX, baseY, 32, '', 0xcc4444, depth, TEX.iconSword);
+    const attackBtn = new TouchButton(
+      this,
+      baseX,
+      baseY,
+      32,
+      '',
+      0xcc5555,
+      depth,
+      TEX.iconSword,
+      'primary',
+    );
     attackBtn.onChange = (d) => input.setButton('attack', d);
 
-    const skillBtn = new TouchButton(this, baseX - 76, baseY + 6, 28, 'S1', 0x4466cc, depth);
+    const skillBtn = new TouchButton(
+      this,
+      baseX - 76,
+      baseY + 6,
+      28,
+      'S1',
+      0x5a78ba,
+      depth,
+      undefined,
+      'secondary',
+    );
     skillBtn.onChange = (d) => input.setButton('skill1', d);
 
-    const skill2Btn = new TouchButton(this, baseX - 60, baseY - 58, 26, 'S2', 0x5a4abf, depth);
+    const skill2Btn = new TouchButton(
+      this,
+      baseX - 60,
+      baseY - 58,
+      26,
+      'S2',
+      0x6870b5,
+      depth,
+      undefined,
+      'secondary',
+    );
     skill2Btn.onChange = (d) => input.setButton('skill2', d);
 
-    const dodgeBtn = new TouchButton(this, baseX + 2, baseY - 76, 26, '回避', 0x3f9a6e, depth, TEX.iconRoll);
+    const dodgeBtn = new TouchButton(
+      this,
+      baseX + 2,
+      baseY - 76,
+      26,
+      '回避',
+      0x538e78,
+      depth,
+      TEX.iconRoll,
+      'secondary',
+    );
     dodgeBtn.onChange = (d) => input.setButton('dodge', d);
 
     // Potion quick-slot: one tap heals mid-fight (no menu). Uses the smallest
     // HP potion first; greys out at zero; short cooldown against panic-chugs.
     const POTION_IDS = ['potion_hp', 'potion_hp_l'];
-    const potBtn = new TouchButton(this, baseX - 64, baseY - 122, 24, '', 0xc04a5a, depth, TEX.iconFlask);
+    const potBtn = new TouchButton(
+      this,
+      baseX - 64,
+      baseY - 122,
+      24,
+      '',
+      0xa95765,
+      depth,
+      TEX.iconFlask,
+      'utility',
+    );
     const potCount = this.add
       .text(baseX - 44, baseY - 138, '', { fontFamily: FONT, fontSize: '11px', color: '#ffffff' })
       .setOrigin(0.5)
@@ -136,7 +176,6 @@ export class UIScene extends Phaser.Scene {
     const combatButtons = [attackBtn, skillBtn, skill2Btn, dodgeBtn, potBtn];
     const setCombatDim = (dim: boolean): void => {
       combatButtons.forEach((b) => b.setDimmed(dim));
-      actionDeck.setAlpha(dim ? 0.24 : 0.4);
     };
     setCombatDim(!!getMap(gameState.mapId)?.safe);
     this.busOff.push(bus.on('world:map-ready', ({ safe }) => setCombatDim(safe)));
@@ -208,7 +247,17 @@ export class UIScene extends Phaser.Scene {
     );
 
     // Interact button appears only when something is interactable (top area).
-    this.interactBtn = new TouchButton(this, w / 2, h - bottomPad - 110, 28, '調', 0x44aa66, depth);
+    this.interactBtn = new TouchButton(
+      this,
+      w / 2,
+      h - bottomPad - 110,
+      28,
+      '調べる',
+      0x4f9870,
+      depth,
+      undefined,
+      'primary',
+    );
     this.interactBtn.onChange = (d) => input.setButton('interact', d);
     this.interactBtn.setVisible(false);
 
@@ -218,15 +267,21 @@ export class UIScene extends Phaser.Scene {
     const PW = 166;
     const PH = 66;
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
+    const panelBack = this.add.graphics();
+    panelBack.fillStyle(0x000000, 0.24);
+    panelBack.fillRoundedRect(5, 7, PW - 10, PH - 7, 10);
+    panelBack.fillStyle(0x071321, 0.8);
+    panelBack.fillRoundedRect(6, 4, PW - 12, PH - 8, 9);
+    panelBack.lineStyle(1, 0xffffff, 0.1);
+    panelBack.strokeRoundedRect(6, 4, PW - 12, PH - 8, 9);
+    panel.add(panelBack);
+    panel.add(this.add.circle(31, 34, 19, 0x10213b, 0.9));
     panel.add(
       this.add
-        .image(PW / 2, PH / 2 + 3, TEX.hudStatusFrame)
+        .image(PW / 2, PH / 2, TEX.hudStatusFrame)
         .setDisplaySize(PW, PH)
-        .setTint(0x000000)
-        .setAlpha(0.42),
+        .setAlpha(0.84),
     );
-    panel.add(this.add.circle(31, 34, 19, 0x10213b, 0.9));
-    panel.add(this.add.image(PW / 2, PH / 2, TEX.hudStatusFrame).setDisplaySize(PW, PH));
 
     // Low-HP danger vignette (full screen, just under the HUD).
     this.lowHpVignette = this.add.graphics().setDepth(depth - 1).setScrollFactor(0).setVisible(false);
@@ -340,40 +395,43 @@ export class UIScene extends Phaser.Scene {
 
     // Quest tracker: current goal pinned under the HUD block so the player
     // always knows what to do next ("game tells, player does, game rewards").
-    // A small framed quest card, visually tied to the status panel.
+    // The tracker is deliberately quieter than the player panel: one soft band
+    // with a single accent line, so it reads as guidance rather than decoration.
     const hudX = insets.left + 8;
     const trY = insets.top + 8 + PH + 4; // just below the statusPanel
     const trW = PW;
-    const trH = 38;
+    const trH = 34;
     const trRoot = this.add.container(hudX, trY).setDepth(depth);
-    trRoot.add(
-      this.add
-        .image(trW / 2, trH / 2 + 3, TEX.hudQuestFrame)
-        .setDisplaySize(trW, trH)
-        .setTint(0x000000)
-        .setAlpha(0.36),
-    );
-    trRoot.add(this.add.rectangle(102, trH / 2, 124, 25, 0x0d1c34, 0.88));
-    trRoot.add(
-      this.add
-        .image(trW / 2, trH / 2, TEX.hudQuestFrame)
-        .setDisplaySize(trW, trH),
-    );
+    const trackerBack = this.add.graphics();
+    trackerBack.fillStyle(0x000000, 0.2);
+    trackerBack.fillRoundedRect(2, 3, trW - 4, trH - 1, 7);
+    trackerBack.fillStyle(0x071321, 0.76);
+    trackerBack.fillRoundedRect(2, 0, trW - 4, trH - 3, 7);
+    trackerBack.fillStyle(0xd8bb68, 0.72);
+    trackerBack.fillRoundedRect(7, 7, 2, trH - 17, 1);
+    trackerBack.lineStyle(1, 0xffffff, 0.1);
+    trackerBack.strokeRoundedRect(2, 0, trW - 4, trH - 3, 7);
+    const trackerIcon = this.add
+      .image(20, 16, TEX.iconShield)
+      .setDisplaySize(13, 13)
+      .setTint(0xd9c37c)
+      .setAlpha(0.78);
+    trRoot.add([trackerBack, trackerIcon]);
     const trTitle = this.add
-      .text(43, 7, '', { fontFamily: FONT, fontSize: '9px', color: '#ffe9a8', fontStyle: 'bold' })
+      .text(34, 5, '', { fontFamily: FONT, fontSize: '9px', color: '#f5f1e8', fontStyle: 'bold' })
       .setShadow(0, 1, '#000000', 2);
     const trObj = this.add
-      .text(43, 21, '', { fontFamily: FONT, fontSize: '8px', color: '#dbe6f8' })
+      .text(34, 18, '', { fontFamily: FONT, fontSize: '8px', color: '#bfcbd8' })
       .setShadow(0, 1, '#000000', 2);
     const trGuideDivider = this.add.graphics().setVisible(false);
     trGuideDivider.lineStyle(1, 0xffffff, 0.16);
-    trGuideDivider.lineBetween(trW - 45, 8, trW - 45, trH - 8);
+    trGuideDivider.lineBetween(trW - 45, 6, trW - 45, trH - 8);
     const trGuideArrow = this.add
       .triangle(trW - 22, 12, 0, 8, 8, 8, 4, 0, 0xffd86b, 1)
       .setOrigin(0.5)
       .setVisible(false);
     const trGuideDistance = this.add
-      .text(trW - 22, 23, '', { fontFamily: FONT, fontSize: '7px', color: '#fff2bf' })
+      .text(trW - 22, 20, '', { fontFamily: FONT, fontSize: '7px', color: '#e8d899' })
       .setOrigin(0.5, 0)
       .setShadow(0, 1, '#000000', 2)
       .setVisible(false);
@@ -409,7 +467,7 @@ export class UIScene extends Phaser.Scene {
         trObj.setColor('#ffd86b');
       } else {
         fitText(trTitle, current.name, trackerTextWidth);
-        trObj.setColor('#cfd3e6');
+        trObj.setColor('#bfcbd8');
         fitText(
           trObj,
           currentGuide?.active
@@ -443,7 +501,10 @@ export class UIScene extends Phaser.Scene {
     const miniX = w - insets.right - 48;
     const miniY = insets.top + 48;
     const miniG = this.add.graphics();
-    const miniFrame = this.add.image(0, 0, TEX.hudMinimapFrame).setDisplaySize(92, 104);
+    const miniFrame = this.add
+      .image(0, 0, TEX.hudMinimapFrame)
+      .setDisplaySize(92, 104)
+      .setAlpha(0.8);
     const miniGuideRing = this.add
       .circle(0, 0, 5)
       .setStrokeStyle(1.5, 0xffd86b, 0.95)
@@ -456,6 +517,7 @@ export class UIScene extends Phaser.Scene {
     const miniName = this.add
       .text(0, 58, '', { fontFamily: FONT, fontSize: '8px', color: '#fff1bd' })
       .setOrigin(0.5)
+      .setAlpha(0.76)
       .setShadow(0, 1, '#000000', 2);
     const miniRoot = this.add
       .container(miniX, miniY, [miniG, miniFrame, miniGuideRing, miniGuideDot, miniDot, miniName])
@@ -554,7 +616,17 @@ export class UIScene extends Phaser.Scene {
     // read as a compact utility strip instead of two floating controls.
     const bagX = miniX - 64;
     const bagY = insets.top + 28;
-    const bag = new TouchButton(this, bagX, bagY, 22, '', 0x6a4ea0, depth, TEX.iconBag);
+    const bag = new TouchButton(
+      this,
+      bagX,
+      bagY,
+      22,
+      '',
+      0x63728d,
+      depth,
+      TEX.iconBag,
+      'utility',
+    );
     bag.onChange = (down) => {
       if (down) bus.emit('ui:open-inventory', {});
     };

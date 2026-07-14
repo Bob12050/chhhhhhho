@@ -14,7 +14,7 @@ const PLAY_HUD_SCENES = new Set(['World', 'UI', 'DebugOverlay']);
  * off, so screenshots and regular play remain clean by default.
  */
 export class DebugOverlayScene extends Phaser.Scene {
-  private button?: Phaser.GameObjects.Text;
+  private button?: Phaser.GameObjects.Container;
 
   constructor() {
     super('DebugOverlay');
@@ -26,22 +26,34 @@ export class DebugOverlayScene extends Phaser.Scene {
     const cssPerLogical = this.scale.displaySize.width / this.scale.gameSize.width;
     const insets = readInsets(cssPerLogical || 1);
 
-    // Top-right, but LEFT of the game's bag/map buttons so dev tools never sit on
-    // top of gameplay UI.
-    const btn = this.add
-      .text(w - insets.right - 54, insets.top + 8, 'DEV', {
+    // Debug stays reachable but visually recedes into the utility cluster. The
+    // hit area remains comfortably larger than the small on-screen badge.
+    const plate = this.add.graphics();
+    plate.fillStyle(0x091522, 0.86);
+    plate.fillRoundedRect(-14, -8, 28, 16, 4);
+    plate.lineStyle(1, 0xc7d2df, 0.18);
+    plate.strokeRoundedRect(-14, -8, 28, 16, 4);
+    const label = this.add
+      .text(0, 0, 'DEV', {
         fontFamily: FONT,
-        fontSize: '11px',
-        color: '#ffb4b4',
-        backgroundColor: '#3a1a1a',
-        padding: { x: 7, y: 4 },
+        fontSize: '8px',
+        color: '#aeb9c7',
       })
-      .setOrigin(1, 0)
+      .setOrigin(0.5);
+    const btn = this.add
+      .container(w - insets.right - 82, insets.top + 13, [plate, label])
+      .setSize(36, 30)
       .setScrollFactor(0)
       .setDepth(DEBUG_DEPTH)
+      .setAlpha(0.58)
       .setInteractive({ useHandCursor: true });
     this.button = btn;
-    btn.on('pointerup', () => bus.emit('ui:open-debug', {}));
+    btn.on('pointerdown', () => btn.setAlpha(0.95));
+    btn.on('pointerout', () => btn.setAlpha(0.58));
+    btn.on('pointerup', () => {
+      btn.setAlpha(0.58);
+      bus.emit('ui:open-debug', {});
+    });
   }
 
   update(): void {
