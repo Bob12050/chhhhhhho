@@ -14,7 +14,17 @@ import { bus } from '@/core/event-bus';
 import { FONT, addPanelChrome, rowBand, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
 import { returnToTitle } from '@/core/game-flow';
 import { ELEMENT_LABEL, ELEMENT_COLOR, isElement } from '@/combat/elements';
-import { affixSummary } from '@/endgame/investigation-loot';
+import { affixSummary, formatAffix } from '@/endgame/investigation-loot';
+import {
+  INVESTIGATION_CRYSTAL_ID,
+  MAX_INVESTIGATION_UPGRADE,
+  dismantleInvestigationEquipment,
+  investigationDismantleYield,
+  investigationUpgradeBonus,
+  investigationUpgradeCost,
+  upgradeInvestigationEquipment,
+} from '@/endgame/investigation-forge';
+import { INVESTIGATION_SEAL_ID } from '@/endgame/investigations';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
 
@@ -80,6 +90,7 @@ export class InventoryScene extends Phaser.Scene {
   private dragged = false;
   private viewTop = 86;
   private viewBottom = 0;
+  private gearDetail: Phaser.GameObjects.Container | null = null;
 
   constructor() {
     super('Inventory');
@@ -90,6 +101,7 @@ export class InventoryScene extends Phaser.Scene {
     this.skillView = 'loadout';
     this.selectedSkillSlot = 0;
     this.skillRefreshPending = false;
+    this.gearDetail = null;
   }
 
   create(): void {
@@ -199,7 +211,10 @@ export class InventoryScene extends Phaser.Scene {
       bg: '#39406a',
       size: 15,
     }).setDepth(3);
-    this.input.keyboard?.on('keydown-ESC', () => this.close());
+    this.input.keyboard?.on('keydown-ESC', () => {
+      if (this.gearDetail) this.closeGearDetail();
+      else this.close();
+    });
 
     const off = bus.on('inventory:changed', () => this.refreshGold());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, off);
@@ -252,7 +267,7 @@ export class InventoryScene extends Phaser.Scene {
       startScroll = this.scrollY;
       this.dragged = false;
       // Header/footer taps must never turn into a drag (they ate button taps).
-      inList = p.y >= this.viewTop && p.y <= this.viewBottom;
+      inList = p.y >= this.viewTop && p.y <= this.viewBottom && !this.gearDetail;
     });
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
       if (!p.isDown || !inList) return;
@@ -654,7 +669,10 @@ export class InventoryScene extends Phaser.Scene {
       }).setOrigin(0, 0.5),
     );
     const curId = gameState.equipment[slot as EquipSlot];
-    const curName = curId ? getEquipment(curId)?.name : null;
+    const curDef = curId ? getEquipment(curId) : undefined;
+    const curName = curDef
+      ? `${curDef.name}${curDef.generated?.upgradeLevel ? ` +${curDef.generated.upgradeLevel}` : ''}`
+      : null;
     this.content.add(
       this.add
         .text(w - 16, y + 12, curName ? `装備中: ${curName}` : '装備なし', {
@@ -678,12 +696,13 @@ export class InventoryScene extends Phaser.Scene {
       const equipped = gameState.equipment[slot] === id;
       const canEq = equipped || gameState.canEquip(id);
       const qty = count > 1 ? ` ×${count}` : '';
+      const upgrade = def.generated?.upgradeLevel ? ` +${def.generated.upgradeLevel}` : '';
       // Icon cell: greyed border when the piece can't be equipped, else rarity.
       const border = canEq ? rarityColor(def.rarity) : 0x4a4f5c;
       this.iconCell(y, rowH, this.equipIcon(def), canEq ? rarityColor(def.rarity) : 0x666a78, border);
       // Equipped pieces get a small green corner tick.
       if (equipped) this.content.add(this.add.circle(38, y + 4, 4, 0x9fe3a0).setDepth(1));
-      const name = this.add.text(48, y + 3, `${def.name}${qty}${equipped ? '（装備中）' : ''}`, {
+      const name = this.add.text(48, y + 3, `${def.name}${upgrade}${qty}${equipped ? '（装備中）' : ''}`, {
         fontFamily: FONT,
         fontSize: '14px',
         color: equipped ? '#9fe3a0' : canEq ? rarityColorHex(def.rarity) : '#666a78',
@@ -731,12 +750,12 @@ export class InventoryScene extends Phaser.Scene {
         affixes.setCrop(0, 0, Math.max(90, w - 146), 14);
         this.content.add(affixes);
       }
-      if (canEq) {
+      if (generated || canEq) {
         const btn = this.add
-          .text(w - 16, y + rowH / 2, equipped ? 'はずす' : 'そうび', {
+          .text(w - 16, y + rowH / 2, generated ? '詳細' : equipped ? 'はずす' : 'そうび', {
             fontFamily: FONT,
             fontSize: '13px',
-            color: '#9fd0ff',
+            color: generated ? '#9af7ff' : '#9fd0ff',
             backgroundColor: '#2a3050',
             padding: { x: 10, y: 5 },
           })
@@ -744,8 +763,11 @@ export class InventoryScene extends Phaser.Scene {
           .setInteractive({ useHandCursor: true });
         btn.on('pointerup', () => {
           if (this.dragged) return;
-          gameState.equip(slot, equipped ? null : id);
-          this.renderTab();
+          if (generated) this.showGearDetail(id);
+          else {
+            gameState.equip(slot, equipped ? null : id);
+            this.renderTab();
+          }
         });
         this.content.add(btn);
       } else {
@@ -764,6 +786,252 @@ export class InventoryScene extends Phaser.Scene {
         );
       }
     }
+  }
+
+  private closeGearDetail(): void {
+    this.gearDetail?.destroy(true);
+    this.gearDetail = null;
+  }
+
+  private showGearDetail(id: string): void {
+    const def = getEquipment(id);
+    if (!def?.generated) return;
+    this.closeGearDetail();
+
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cx = w / 2;
+    const cy = h / 2 - 4;
+    const panelW = Math.min(340, w - 18);
+    const affixRows = Math.max(2, def.generated.affixes.length);
+    const panelH = Math.min(365 + (affixRows - 2) * 22, h - 46);
+    const top = cy - panelH / 2;
+    const bottom = cy + panelH / 2;
+    const c = this.add.container(0, 0).setDepth(70);
+    const dim = this.add.rectangle(0, 0, w, h, 0x03050b, 0.76).setOrigin(0).setInteractive();
+    dim.on('pointerup', () => this.closeGearDetail());
+    const panel = ninePanel(this, cx, cy, panelW, panelH, { active: true });
+    const blocker = this.add.zone(cx, cy, panelW, panelH).setInteractive();
+    c.add([dim, panel, blocker]);
+
+    const level = def.generated.upgradeLevel;
+    const displayName = `${def.name}${level > 0 ? ` +${level}` : ''}`;
+    c.add(
+      this.add
+        .text(cx, top + 28, displayName, {
+          fontFamily: FONT,
+          fontSize: displayName.length > 15 ? '16px' : '19px',
+          color: rarityColorHex(def.rarity),
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5),
+    );
+    c.add(
+      this.add
+        .text(cx, top + 55, `${rarityLabel(def.rarity)}  ・  調査危険度 ${def.generated.threat}`, {
+          fontFamily: FONT,
+          fontSize: '12px',
+          color: '#cfd3e6',
+        })
+        .setOrigin(0.5),
+    );
+    const base = getEquipment(def.generated.baseId);
+    c.add(
+      this.add
+        .text(cx, top + 76, `${SLOT_LABEL[def.slot] ?? def.slot}  /  原型 ${base?.name ?? def.generated.baseId}`, {
+          fontFamily: FONT,
+          fontSize: '11px',
+          color: '#8f96ad',
+        })
+        .setOrigin(0.5),
+    );
+    c.add(this.add.rectangle(cx, top + 96, panelW - 34, 1, 0xffffff, 0.12));
+    c.add(this.add.text(cx - panelW / 2 + 20, top + 108, '追加能力', {
+      fontFamily: FONT,
+      fontSize: '12px',
+      color: '#9af7ff',
+      fontStyle: 'bold',
+    }));
+    def.generated.affixes.forEach((affix, index) => {
+      c.add(
+        this.add.text(cx - panelW / 2 + 28, top + 132 + index * 22, `◆ ${formatAffix(affix)}`, {
+          fontFamily: FONT,
+          fontSize: '13px',
+          color: '#e8edf8',
+        }),
+      );
+    });
+
+    const infoY = top + 132 + affixRows * 22 + 8;
+    c.add(this.add.rectangle(cx, infoY, panelW - 34, 1, 0xffffff, 0.12));
+    c.add(
+      this.add.text(cx - panelW / 2 + 20, infoY + 14, `強化 +${level} / +${MAX_INVESTIGATION_UPGRADE}`, {
+        fontFamily: FONT,
+        fontSize: '13px',
+        color: level >= MAX_INVESTIGATION_UPGRADE ? '#ffd86b' : '#b9d6ff',
+        fontStyle: 'bold',
+      }),
+    );
+    c.add(
+      this.add
+        .text(cx + panelW / 2 - 20, infoY + 14, `装備性能 +${investigationUpgradeBonus(def)}%`, {
+          fontFamily: FONT,
+          fontSize: '12px',
+          color: '#9fe3a0',
+        })
+        .setOrigin(1, 0),
+    );
+
+    const crystals = gameState.materials[INVESTIGATION_CRYSTAL_ID] ?? 0;
+    const seals = gameState.materials[INVESTIGATION_SEAL_ID] ?? 0;
+    const cost = investigationUpgradeCost(def);
+    c.add(
+      this.add
+        .text(cx, infoY + 44, `所持  深層結晶 ${crystals}  /  調査の証 ${seals}`, {
+          fontFamily: FONT,
+          fontSize: '12px',
+          color: '#d8dceb',
+        })
+        .setOrigin(0.5),
+    );
+    const canAfford = !!cost && crystals >= cost.crystals && seals >= cost.seals;
+    c.add(
+      this.add
+        .text(
+          cx,
+          infoY + 67,
+          cost ? `次の強化  結晶 ${cost.crystals} + 証 ${cost.seals}` : '最大強化に到達',
+          {
+            fontFamily: FONT,
+            fontSize: '12px',
+            color: cost ? (canAfford ? '#9fe3a0' : '#e0a0a0') : '#ffd86b',
+          },
+        )
+        .setOrigin(0.5),
+    );
+
+    const equipped = gameState.equipment[def.slot as EquipSlot] === id;
+    const canEquip = equipped || gameState.canEquip(id);
+    const equipLabel = equipped ? 'はずす' : canEquip ? 'そうび' : '装備不可';
+    const equipButton = pillButton(this, cx - 108, bottom - 42, equipLabel, () => {
+      if (!canEquip) {
+        this.flashMessage(gameState.equipBlock(id) === 'tier' ? '職業段階が足りません' : '現在の職業では装備できません');
+        return;
+      }
+      const scroll = this.scrollY;
+      gameState.equip(def.slot as EquipSlot, equipped ? null : id);
+      this.closeGearDetail();
+      this.renderTab();
+      this.scrollTo(scroll);
+      this.showGearDetail(id);
+    }, { color: canEquip ? '#d7edff' : '#888b98', bg: '#30456b', size: 13 });
+    const upgradeButton = pillButton(this, cx, bottom - 42, cost ? '強化する' : '強化上限', () => {
+      const result = upgradeInvestigationEquipment(gameState, id);
+      if (result === 'materials') return this.flashMessage('強化素材が足りません');
+      if (result === 'max') return this.flashMessage('これ以上は強化できません', '#ffd86b');
+      if (result !== 'ok') return this.flashMessage('強化できません');
+      const scroll = this.scrollY;
+      this.closeGearDetail();
+      this.renderTab();
+      this.scrollTo(scroll);
+      this.showGearDetail(id);
+      this.flashMessage(`強化成功  +${getEquipment(id)?.generated?.upgradeLevel ?? level + 1}`, '#9fe3a0');
+    }, { color: cost ? '#fff4c4' : '#8b8b91', bg: cost ? '#6a4d24' : '#353640', size: 13 });
+    const dismantleButton = pillButton(this, cx + 108, bottom - 42, equipped ? '装備中' : '分解', () => {
+      if (equipped) return this.flashMessage('分解する前に装備をはずしてください');
+      this.showDismantleConfirm(id);
+    }, { color: equipped ? '#888b98' : '#ffc0c0', bg: '#5c2f39', size: 13 });
+    c.add([equipButton, upgradeButton, dismantleButton]);
+
+    const close = this.add
+      .text(cx + panelW / 2 - 22, top + 20, '×', {
+        fontFamily: FONT,
+        fontSize: '24px',
+        color: '#cfd3e6',
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+    close.on('pointerup', () => this.closeGearDetail());
+    c.add(close);
+    this.gearDetail = c;
+  }
+
+  private showDismantleConfirm(id: string): void {
+    const def = getEquipment(id);
+    if (!def?.generated) return;
+    this.closeGearDetail();
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cx = w / 2;
+    const cy = h / 2;
+    const panelW = Math.min(330, w - 24);
+    const panelH = 250;
+    const crystals = investigationDismantleYield(def);
+    const c = this.add.container(0, 0).setDepth(75);
+    const dim = this.add.rectangle(0, 0, w, h, 0x03050b, 0.8).setOrigin(0).setInteractive();
+    const panel = ninePanel(this, cx, cy, panelW, panelH, { active: true });
+    const blocker = this.add.zone(cx, cy, panelW, panelH).setInteractive();
+    c.add([dim, panel, blocker]);
+    c.add(
+      this.add.text(cx, cy - 82, '調査装備を分解', {
+        fontFamily: FONT,
+        fontSize: '18px',
+        color: '#ffc0c0',
+        fontStyle: 'bold',
+      }).setOrigin(0.5),
+    );
+    c.add(
+      this.add.text(cx, cy - 44, `${def.name}${def.generated.upgradeLevel ? ` +${def.generated.upgradeLevel}` : ''}`, {
+        fontFamily: FONT,
+        fontSize: '14px',
+        color: rarityColorHex(def.rarity),
+      }).setOrigin(0.5),
+    );
+    c.add(
+      this.add.text(cx, cy - 8, `深層結晶  ${crystals}個を取得`, {
+        fontFamily: FONT,
+        fontSize: '15px',
+        color: '#9af7ff',
+      }).setOrigin(0.5),
+    );
+    c.add(
+      this.add.text(cx, cy + 22, '分解した装備は元に戻せません', {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#b4b8c8',
+      }).setOrigin(0.5),
+    );
+    const cancel = pillButton(this, cx - 60, cy + 80, 'やめる', () => this.showGearDetail(id), {
+      color: '#d7edff', bg: '#39406a', size: 13,
+    });
+    const confirm = pillButton(this, cx + 60, cy + 80, '分解する', () => {
+      const result = dismantleInvestigationEquipment(gameState, id);
+      if (result === 'equipped') {
+        this.showGearDetail(id);
+        return this.flashMessage('分解する前に装備をはずしてください');
+      }
+      if (result !== 'ok') return this.flashMessage('分解できません');
+      this.closeGearDetail();
+      this.renderTab();
+      this.flashMessage(`分解完了  深層結晶 +${crystals}`, '#9af7ff');
+    }, { color: '#ffe2e2', bg: '#6b303a', size: 13 });
+    c.add([cancel, confirm]);
+    this.gearDetail = c;
+  }
+
+  private flashMessage(message: string, color = '#ffc0c0'): void {
+    const t = this.add
+      .text(this.scale.width / 2, 104, message, {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color,
+        backgroundColor: '#111522',
+        padding: { x: 12, y: 7 },
+      })
+      .setOrigin(0.5)
+      .setDepth(90);
+    t.setCrop(0, 0, Math.min(t.width, this.scale.width - 24), t.height);
+    this.tweens.add({ targets: t, y: 94, alpha: 0, delay: 1100, duration: 300, onComplete: () => t.destroy() });
   }
 
   private renderStatus(): void {

@@ -8,6 +8,9 @@ import { allJobs } from '@/jobs/job-defs';
 import { totalExpForLevel } from '@/stats/leveling';
 import { bus } from '@/core/event-bus';
 import { FONT, addBackdrop } from '@/ui/theme';
+import { INVESTIGATION_SEAL_ID, syncInvestigationQuests } from '@/endgame/investigations';
+import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
+import { INVESTIGATION_CRYSTAL_ID } from '@/endgame/investigation-forge';
 
 /**
  * Debug menu (gated by core/debug.isDebugEnabled). Warp between maps and grant
@@ -57,6 +60,8 @@ export class DebugScene extends Phaser.Scene {
     y += 40;
     this.btn(16, y, '全装備入手', () => this.grant(() => this.grantAllEquipment()));
     this.btn(160, y, 'ペット入手', () => this.grant(() => gameState.obtainPetItem('pet_egg_slime')));
+    y += 40;
+    this.btn(16, y, '調査装備+素材', () => this.previewInvestigationGear(), 0x275b55);
     y += 40;
     this.btn(16, y, '★最強モード（Lv99・全解放）', () => this.grant(() => this.godMode()), 0x6a2a2a);
     y += 44;
@@ -120,6 +125,26 @@ export class DebugScene extends Phaser.Scene {
 
   private grantAllEquipment(): void {
     for (const e of allEquipment()) gameState.addEquipment(e.id);
+  }
+
+  private previewInvestigationGear(): void {
+    const gs = gameState;
+    gs.level = Math.max(99, gs.level);
+    gs.jobId = 'aramikagura';
+    gs.flags['main_story_complete'] = true;
+    let [quest] = syncInvestigationQuests(gs);
+    let def = quest ? generateInvestigationEquipment(gs, quest) : null;
+    while (def && gs.generatedEquipment[def.id]) {
+      gs.investigationSeed = (gs.investigationSeed + 0x9e3779b9) >>> 0;
+      [quest] = syncInvestigationQuests(gs);
+      def = quest ? generateInvestigationEquipment(gs, quest) : null;
+    }
+    if (def) gs.addGeneratedEquipment(def);
+    gs.addMaterial(INVESTIGATION_CRYSTAL_ID, 99);
+    gs.addMaterial(INVESTIGATION_SEAL_ID, 99);
+    gs.recompute();
+    this.scene.stop();
+    this.scene.launch('Inventory', { tab: 'equipment' });
   }
 
   /** Debug-only visual route: launch the base Zephys hunt without progression gates. */

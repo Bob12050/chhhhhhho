@@ -498,7 +498,14 @@
       "name": "調査の証",
       "rarity": 9,
       "sellPrice": 0,
-      "description": "深層調査を完遂した者に刻まれる証。調査装備の生成に使う。"
+      "description": "深層調査を完遂した者に刻まれる証。調査装備の強化に使う。"
+    },
+    {
+      "id": "investigation_crystal",
+      "name": "深層結晶",
+      "rarity": 9,
+      "sellPrice": 0,
+      "description": "調査装備を分解して抽出する結晶。残した調査装備の強化に使う。"
     }
   ],
   "consumables": [

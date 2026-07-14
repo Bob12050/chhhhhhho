@@ -253,6 +253,14 @@ export class GameState {
     bus.emit('item:picked-up', { itemId: id, quantity: qty });
   }
 
+  removeMaterial(id: string, qty: number): boolean {
+    if (qty <= 0 || (this.materials[id] ?? 0) < qty) return false;
+    this.materials[id] -= qty;
+    if (this.materials[id] <= 0) delete this.materials[id];
+    bus.emit('inventory:changed', {});
+    return true;
+  }
+
   addConsumable(id: string, qty: number): void {
     this.consumables[id] = (this.consumables[id] ?? 0) + qty;
     bus.emit('inventory:changed', {});
@@ -317,6 +325,17 @@ export class GameState {
     this.generatedEquipment[def.id] = saved;
     registerRuntimeEquipment(saved);
     this.addEquipment(def.id);
+    return true;
+  }
+
+  /** Replace one generated definition after upgrading its persistent stats. */
+  updateGeneratedEquipment(def: EquipmentDef): boolean {
+    if (!def.generated || !this.generatedEquipment[def.id]) return false;
+    const saved = structuredClone(def);
+    this.generatedEquipment[def.id] = saved;
+    registerRuntimeEquipment(saved);
+    if (EQUIP_SLOTS.some((slot) => this.equipment[slot] === def.id)) this.recompute();
+    bus.emit('inventory:changed', {});
     return true;
   }
 

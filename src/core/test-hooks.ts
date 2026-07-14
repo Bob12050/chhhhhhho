@@ -13,6 +13,8 @@ import { bus, type GameEvents } from '@/core/event-bus';
 import { totalExpForLevel } from '@/stats/leveling';
 import { isDebugEnabled } from '@/core/debug';
 import { saveManager } from '@/save/save-manager';
+import { syncInvestigationQuests } from '@/endgame/investigations';
+import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
 
 export interface TestHooks {
   activeScenes(): string[];
@@ -59,6 +61,8 @@ export interface TestHooks {
   addGold(amount: number): void;
   /** Grant owned (unequipped) equipment pieces (inventory-UI tests). */
   addEquipment(id: string, qty?: number): void;
+  /** Grant one deterministic investigation item for endgame UI tests. */
+  grantInvestigationGear(): string | null;
   /** Persist the current state to the active slot (reload-survival tests). */
   flushSave(): Promise<void>;
 }
@@ -165,6 +169,17 @@ export function installTestHooks(game: Phaser.Game): void {
     addGold: (amount: number) => gameState.addGold(amount),
     addEquipment: (id: string, qty = 1) => {
       for (let i = 0; i < qty; i++) gameState.addEquipment(id);
+    },
+    grantInvestigationGear: () => {
+      gameState.level = Math.max(99, gameState.level);
+      gameState.jobId = 'aramikagura';
+      gameState.flags['main_story_complete'] = true;
+      const [quest] = syncInvestigationQuests(gameState);
+      if (!quest) return null;
+      const def = generateInvestigationEquipment(gameState, quest);
+      if (!gameState.addGeneratedEquipment(def)) return null;
+      gameState.recompute();
+      return def.id;
     },
     flushSave: () => saveManager.write(gameState.toSave(gameState.slot)),
   };
