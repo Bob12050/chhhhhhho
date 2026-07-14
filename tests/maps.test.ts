@@ -45,4 +45,24 @@ describe('map definitions', () => {
     const def = spawnPoint(town, 'does_not_exist');
     expect(def).toEqual(spawnPoint(town, 'default'));
   });
+
+  it('keeps the town defeat respawn clear of scenery', () => {
+    const town = getMap('town')!;
+    const { x: spawnX, y: spawnY } = spawnPoint(town, 'respawn');
+    const scenery = [
+      ...(town.buildings ?? []).map((b) => [b.x, b.y, b.w, b.h] as const),
+      ...(town.collisionRects ?? []),
+    ];
+
+    expect(town.spawns.respawn).toBeDefined();
+    expect(spawnX).toBeGreaterThan(24);
+    expect(spawnX).toBeLessThan(town.size.w - 24);
+    expect(spawnY).toBeGreaterThan(32);
+    expect(spawnY).toBeLessThan(town.size.h - 32);
+    for (const [x, y, w, h] of scenery) {
+      const insidePaddedScenery =
+        spawnX >= x - 20 && spawnX <= x + w + 20 && spawnY >= y - 20 && spawnY <= y + h + 20;
+      expect(insidePaddedScenery, `respawn is too close to scenery at ${x},${y}`).toBe(false);
+    }
+  });
 });

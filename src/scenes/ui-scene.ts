@@ -1102,6 +1102,12 @@ export class UIScene extends Phaser.Scene {
     this.interactBtn.setVisible(show);
   }
 
+  /** Prevent a held touch/key from leaking across a death or map restart. */
+  resetControls(): void {
+    this.stick?.reset();
+    input.reset();
+  }
+
   getStickVector(): { x: number; y: number } {
     return { x: this.stick.vector.x, y: this.stick.vector.y };
   }

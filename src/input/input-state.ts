@@ -24,6 +24,16 @@ export class InputState {
     b.down = down;
   }
 
+  /** Clear every held/edge state when gameplay is restarted or interrupted. */
+  reset(): void {
+    this.moveX = 0;
+    this.moveY = 0;
+    for (const button of [this.attack, this.skill1, this.skill2, this.interact, this.dodge]) {
+      button.down = false;
+      button.justPressed = false;
+    }
+  }
+
   /** Call at end of each gameplay frame to clear edge flags. */
   endFrame(): void {
     this.attack.justPressed = false;

@@ -59,7 +59,8 @@ export class VirtualStick {
     if (!p || !p.isDown) this.reset();
   }
 
-  private reset(): void {
+  /** Release the tracked pointer and return the stick to its neutral position. */
+  reset(): void {
     this.pointerId = -1;
     this.vector.set(0, 0);
     this.baseGfx.setPosition(this.standbyX, this.standbyY).setAlpha(0.56).setVisible(true);

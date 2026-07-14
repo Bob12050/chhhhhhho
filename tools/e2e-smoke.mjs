@@ -83,6 +83,14 @@ try {
   s = await snap(page);
   check('噴水広場の左通路を通過できる', s.y < 430, `y=${Math.round(s.y)}`);
 
+  // A defeat used to return the player beside the curved southern scenery,
+  // where a stale touch or tight collision could leave the new actor stuck.
+  await page.evaluate(() => window.__test.warp('town', 320, 735));
+  await page.waitForTimeout(700);
+  await page.keyboard.down('w'); await page.waitForTimeout(650); await page.keyboard.up('w');
+  s = await snap(page);
+  check('死亡復帰地点からすぐ歩き出せる', s.y < 700, `y=${Math.round(s.y)}`);
+
   const advancedJobs = [
     'samurai', 'sorcerer', 'holy_knight', 'ninja', 'ranger',
     'sword_kaiser', 'grand_magia', 'shield_saber', 'avengista', 'dual_star',

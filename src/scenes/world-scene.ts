@@ -183,6 +183,7 @@ export class WorldScene extends Phaser.Scene {
     gameState.flags[`visited_${this.map.id}`] = true;
     bgm.play(bgmForMap(this.map.id));
     this.ui = this.scene.get('UI') as UIScene;
+    this.ui.resetControls();
     this.ui.showInteract(false);
 
     this.physics.world.setBounds(0, 0, this.map.size.w, this.map.size.h);
@@ -229,6 +230,18 @@ export class WorldScene extends Phaser.Scene {
         gameState.y *= this.map.size.h / 800;
       }
       gameState.flags['town_wide_v1'] = true;
+    }
+    // An earlier defeat return point sat beside the lower village bend. Rescue
+    // saves left there once; the curved scenery makes it unreliable on mobile.
+    if (this.map.id === 'town' && !gameState.flags['town_safe_respawn_v1']) {
+      const nearLegacyRespawn =
+        Phaser.Math.Distance.Between(gameState.x, gameState.y, 250, 850) <= 56;
+      if (nearLegacyRespawn) {
+        const safeSpawn = spawnPoint(this.map, 'respawn');
+        gameState.x = safeSpawn.x;
+        gameState.y = safeSpawn.y;
+      }
+      gameState.flags['town_safe_respawn_v1'] = true;
     }
     // The original field was 360x1280. Saves parked near its lower gate would
     // otherwise clamp into the wide map's lower-left scenery after the resize.
@@ -1138,13 +1151,14 @@ export class WorldScene extends Phaser.Scene {
     if (this.playerDead) return;
     this.playerDead = true;
     this.playerInvuln = 999999;
+    this.ui.resetControls();
     this.player.die();
     this.cameras.main.shake(200, 0.008);
     // Let the death flash/fade read before respawning in town.
     this.time.delayedCall(700, () => {
       gameState.fullHeal();
       const town = getMap('town');
-      const sp = town ? spawnPoint(town, 'default') : { x: 180, y: 820 };
+      const sp = town ? spawnPoint(town, 'respawn') : { x: 320, y: 735 };
       gameState.mapId = 'town';
       gameState.x = sp.x;
       gameState.y = sp.y;
