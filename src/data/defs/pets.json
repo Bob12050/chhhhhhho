@@ -133,7 +133,7 @@
     {
       "id": "prince_slime_pet",
       "name": "おうじスライム",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.slime_royal",
       "tint": "#ffb0c8",
       "scale": 0.72,
       "passive": {

@@ -53,7 +53,7 @@
     {
       "id": "boss_slime",
       "name": "キングスライム",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.slime_royal",
       "tint": "#ff7799",
       "scale": 2.0,
       "isBoss": true,
@@ -731,7 +731,7 @@
     {
       "id": "boss_slime_abyss",
       "name": "深淵のスライム",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.slime_royal",
       "tint": "#3a2a5a",
       "scale": 2.2,
       "isBoss": true,
@@ -978,7 +978,7 @@
     {
       "id": "boss_aurum",
       "name": "黄金スライム オーラム",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.slime_royal",
       "tint": "#f0c040",
       "scale": 2.0,
       "isBoss": true,
@@ -1512,7 +1512,7 @@
     {
       "id": "boss_crimson_abyss",
       "name": "緋の深淵",
-      "textureKey": "gen.enemy.slime",
+      "textureKey": "gen.enemy.slime_royal",
       "tint": "#c02040",
       "scale": 2.3,
       "isBoss": true,

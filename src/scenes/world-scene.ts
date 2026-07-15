@@ -70,6 +70,7 @@ const RESPAWN_MS = 8000;
 const LOOT_PICKUP_RADIUS = 42;
 const LOOT_MAGNET_RADIUS = 150;
 const LOOT_MAGNET_SPEED = 260;
+const NORMAL_ENEMY_VISUAL_SCALE = 0.9;
 
 /**
  * Generic world scene: renders whichever map `gameState.mapId` points at,
@@ -653,7 +654,7 @@ export class WorldScene extends Phaser.Scene {
       aggroRange: def.aggroRange,
       attackRange: def.attackRange,
       tint: def.tint ? Phaser.Display.Color.HexStringToColor(def.tint).color : undefined,
-      scale: def.scale,
+      scale: (def.scale ?? 1) * (def.isBoss ? 1 : NORMAL_ENEMY_VISUAL_SCALE),
       keepDistance: def.keepDistance,
       knockbackResist: def.knockbackResist,
       animSpeed: def.animSpeed,

@@ -49,4 +49,11 @@ describe('enemy roster + boss', () => {
     }
     expect(getEnemyDef('boss_slime')).toBeDefined();
   });
+
+  it('keeps the harmless starter slime separate from royal slime bosses', () => {
+    expect(getEnemyDef('slime')?.textureKey).toBe('gen.enemy.slime');
+    for (const id of ['boss_slime', 'boss_slime_abyss', 'boss_aurum', 'boss_crimson_abyss']) {
+      expect(getEnemyDef(id)?.textureKey, id).toBe('gen.enemy.slime_royal');
+    }
+  });
 });

@@ -92,6 +92,7 @@ export const TEX = {
   swordWood: 'gen.equip.sword_wood',
   swordIron: 'gen.equip.sword_iron',
   slime: 'gen.enemy.slime',
+  slimeRoyal: 'gen.enemy.slime_royal',
   bat: 'gen.enemy.bat',
   wolf: 'gen.enemy.wolf',
   mushroom: 'gen.enemy.mushroom',
@@ -209,6 +210,7 @@ const SPECS: Record<string, LayerSpec> = {
  * stand-in so nothing renders as a missing-texture box.
  */
 const ART_FALLBACK: Record<string, string> = {
+  [TEX.slimeRoyal]: TEX.slime,
   [TEX.zephys]: TEX.bat,
   [TEX.hydra]: TEX.lizard,
   [TEX.sandgoa]: TEX.golem,

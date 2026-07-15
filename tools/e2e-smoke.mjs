@@ -65,6 +65,18 @@ try {
     townTexture?.width === 640 && townTexture?.height === 960,
     JSON.stringify(townTexture),
   );
+  const slimeTextures = await page.evaluate(() => ({
+    normal: window.__test.textureSize('gen.enemy.slime'),
+    royal: window.__test.textureSize('gen.enemy.slime_royal'),
+  }));
+  check(
+    '通常スライムと王冠スライムの外見が分離されている',
+    slimeTextures.normal?.width === 96
+      && slimeTextures.normal?.height === 96
+      && slimeTextures.royal?.width === 96
+      && slimeTextures.royal?.height === 96,
+    JSON.stringify(slimeTextures),
+  );
   const firstTierLooks = [
     ['fighter', 'gen.char.fighter', 'art.char.fighter.diagonal'],
     ['mage', 'gen.char.mage', 'art.char.mage.diagonal'],
