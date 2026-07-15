@@ -8,6 +8,7 @@ import { getJob } from '@/jobs/job-defs';
 import { appearanceDiagonalTexKey, appearanceTexKey } from '@/jobs/job-appearance';
 import { gameState } from '@/player/game-state';
 import { directionFromVector, directionVector } from '@/config/directions';
+import { FONT } from '@/ui/theme';
 
 /**
  * Player actor. Owns a single PaperDollAnimator (body sprite) and an Arcade
@@ -32,6 +33,9 @@ export class Player {
   private atkSpeedMult = 1;
   private attackCdMs = 0;
   private shadow!: Phaser.GameObjects.Image;
+  private jobPlate!: Phaser.GameObjects.Container;
+  private jobPlateBack!: Phaser.GameObjects.Graphics;
+  private jobPlateText!: Phaser.GameObjects.Text;
   private attacking = false;
   private moveMagnitude = 0;
   private stridePhase = 0;
@@ -67,6 +71,19 @@ export class Player {
       .setDisplaySize(28, 10)
       .setAlpha(0.72)
       .setDepth(Math.round(y) - 1);
+    this.jobPlateBack = scene.add.graphics();
+    this.jobPlateText = scene.add
+      .text(0, 0, '', {
+        fontFamily: FONT,
+        fontSize: '8px',
+        color: '#fff0aa',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    this.jobPlateText.setShadow(0, 1, '#000000', 2);
+    this.jobPlate = scene.add
+      .container(Math.round(x), Math.round(y) - 57, [this.jobPlateBack, this.jobPlateText])
+      .setDepth(Math.round(y) + 2);
     this.setJobAppearance(gameState.jobId);
     this.doll.play('idle');
   }
@@ -77,7 +94,8 @@ export class Player {
    * cleared — gear changes stats only.
    */
   setJobAppearance(jobId: string): void {
-    const appearance = getJob(jobId)?.appearance;
+    const job = getJob(jobId);
+    const appearance = job?.appearance;
     const key = appearanceTexKey(appearance);
     const tex = key && this.scene.textures.exists(key) ? key : TEX.playerBody;
     this.doll.setLayer('base_body', tex, {
@@ -85,6 +103,13 @@ export class Player {
         ? TEX.playerBodyDiagonal
         : appearanceDiagonalTexKey(appearance),
     });
+    this.jobPlateText.setText(job?.name ?? jobId);
+    const plateW = Math.ceil(this.jobPlateText.width) + 12;
+    this.jobPlateBack.clear();
+    this.jobPlateBack.fillStyle(0x091221, 0.82);
+    this.jobPlateBack.fillRoundedRect(-plateW / 2, -7, plateW, 14, 3);
+    this.jobPlateBack.lineStyle(1, 0xe4ca72, 0.66);
+    this.jobPlateBack.strokeRoundedRect(-plateW / 2, -7, plateW, 14, 3);
   }
 
   getDirection(): Direction {
@@ -219,7 +244,7 @@ export class Player {
     this.doll.play('death', { force: true });
     this.doll.flashWhite(120);
     this.scene.tweens.add({
-      targets: [this.doll.container, this.shadow],
+      targets: [this.doll.container, this.shadow, this.jobPlate],
       alpha: 0,
       duration: 450,
       delay: 150,
@@ -272,6 +297,9 @@ export class Player {
       .setDisplaySize(28 + contact * 2, 10 - contact)
       .setAlpha(0.68 + contact * 0.06)
       .setDepth(Math.round(this.body.y) - 1);
+    this.jobPlate
+      .setPosition(Math.round(this.body.x), Math.round(this.body.y) - 57)
+      .setDepth(Math.round(this.body.y) + 2);
     this.doll.setPosition(this.body.x, this.body.y);
     this.doll.setDepth(Math.round(this.body.y));
     this.doll.update(dtMs);
@@ -301,6 +329,7 @@ export class Player {
   destroy(): void {
     this.doll.destroy();
     this.shadow.destroy();
+    this.jobPlate.destroy(true);
     this.body.destroy();
   }
 }

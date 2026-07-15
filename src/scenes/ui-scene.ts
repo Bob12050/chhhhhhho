@@ -5,7 +5,6 @@ import { TouchButton } from '@/input/touch-button';
 import { readInsets } from '@/core/safe-area';
 import { bus, type GameEvents } from '@/core/event-bus';
 import { gameState } from '@/player/game-state';
-import { getJob } from '@/jobs/job-defs';
 import { getMap } from '@/maps/map-def';
 import { getQuest } from '@/quests/quest-defs';
 import { isComplete, objectiveProgress } from '@/quests/quests';
@@ -34,9 +33,6 @@ export class UIScene extends Phaser.Scene {
   private hpBar!: Phaser.GameObjects.Rectangle;
   private mpBar!: Phaser.GameObjects.Rectangle;
   private expBar!: Phaser.GameObjects.Rectangle;
-  private expText!: Phaser.GameObjects.Text;
-  private goldText!: Phaser.GameObjects.Text;
-  private jobText!: Phaser.GameObjects.Text;
   private updateText!: Phaser.GameObjects.Text;
   private lowHpVignette!: Phaser.GameObjects.Graphics;
   private lowHpTween: Phaser.Tweens.Tween | null = null;
@@ -433,27 +429,27 @@ export class UIScene extends Phaser.Scene {
     this.interactBtn.onChange = (d) => input.setButton('interact', d);
     this.interactBtn.setVisible(false);
 
-    // ── statusPanel: HP/MP/EXP/Lv/職業/所持金 を1コンテナに統合（個別配置しない）
-    const px = insets.left + 8;
-    const py = insets.top + 8;
-    const PW = 166;
-    const PH = 66;
+    // Thin battle strip: progression and survival stay in one glanceable row.
+    // Job identity now travels with the avatar instead of competing for HUD space.
+    const px = insets.left + 6;
+    const py = insets.top + 6;
+    const PW = 218;
+    const PH = 30;
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
     const panelBack = this.add.graphics();
-    panelBack.fillStyle(0x000000, 0.24);
-    panelBack.fillRoundedRect(5, 7, PW - 10, PH - 7, 10);
-    panelBack.fillStyle(0x071321, 0.8);
-    panelBack.fillRoundedRect(6, 4, PW - 12, PH - 8, 9);
-    panelBack.lineStyle(1, 0xffffff, 0.1);
-    panelBack.strokeRoundedRect(6, 4, PW - 12, PH - 8, 9);
+    panelBack.fillStyle(0x000000, 0.28);
+    panelBack.fillRoundedRect(1, 2, PW, PH, 3);
+    panelBack.fillStyle(0x0b1425, 0.96);
+    panelBack.fillRoundedRect(0, 0, PW, PH, 3);
+    panelBack.lineStyle(1, 0xc9d7e8, 0.5);
+    panelBack.strokeRoundedRect(0, 0, PW, PH, 3);
+    panelBack.lineStyle(1, 0xf7e8a5, 0.62);
+    panelBack.lineBetween(3, 2, PW - 3, 2);
+    panelBack.lineStyle(1, 0x72839d, 0.38);
+    panelBack.lineBetween(37, 4, 37, PH - 4);
+    panelBack.lineBetween(88, 4, 88, PH - 4);
+    panelBack.lineBetween(153, 4, 153, PH - 4);
     panel.add(panelBack);
-    panel.add(this.add.circle(31, 34, 19, 0x10213b, 0.9));
-    panel.add(
-      this.add
-        .image(PW / 2, PH / 2, TEX.hudStatusFrame)
-        .setDisplaySize(PW, PH)
-        .setAlpha(0.84),
-    );
 
     // Low-HP danger vignette (full screen, just under the HUD).
     this.lowHpVignette = this.add.graphics().setDepth(depth - 1).setScrollFactor(0).setVisible(false);
@@ -462,75 +458,67 @@ export class UIScene extends Phaser.Scene {
       this.lowHpVignette.strokeRect(i, i, w - i * 2, h - i * 2);
     }
 
-    // Left: compact job/family emblem cell. The battle HUD deliberately keeps
-    // only identity and survival info; economy/progression live in the bag.
-    const emblemFor = (): { tex: string; color: number } => {
-      const fam = getJob(gameState.jobId)?.family ?? '';
-      const m: Record<string, { tex: string; color: number }> = {
-        warrior: { tex: TEX.iconSword, color: 0xcc5a5a },
-        mage: { tex: TEX.iconStaff, color: 0x5a9ad0 },
-        cleric: { tex: TEX.iconShield, color: 0xf5c542 },
-        thief: { tex: TEX.iconBow, color: 0x6db06a },
-        tamer: { tex: TEX.iconRing, color: 0xb07ad0 },
-      };
-      return m[fam] ?? { tex: TEX.iconGem, color: 0x9fd0ff };
-    };
-    const em0 = emblemFor();
-    const jobIcon = this.add.image(31, 30, em0.tex).setScale(1.35).setTint(em0.color);
-    panel.add(jobIcon);
+    const barY = PH / 2;
+    const levelLabel = this.add
+      .text(6, barY, 'LV', { fontFamily: FONT, fontSize: '7px', color: '#eef5ff', fontStyle: 'bold' })
+      .setOrigin(0, 0.5);
+    levelLabel.setShadow(0, 1, '#000000', 2);
+    panel.add(levelLabel);
     const levelText = this.add
-      .text(31, 52, '', { fontFamily: FONT, fontSize: '8px', color: '#fff1bd', fontStyle: 'bold' })
+      .text(29, barY, '', { fontFamily: FONT, fontSize: '9px', color: '#fff0a6', fontStyle: 'bold' })
       .setOrigin(0.5);
-    levelText.setShadow(0, 1, '#08101f', 2);
+    levelText.setShadow(0, 1, '#000000', 2);
     panel.add(levelText);
 
-    // Right column follows the three recessed channels in the illustrated art:
-    // identity, HP, MP. EXP remains a quiet line along the lower edge.
-    const rx = 65;
-    const rw = 93;
-    this.jobText = this.add.text(rx + 4, 21, '', {
-      fontFamily: FONT,
-      fontSize: '10px',
-      color: '#ffe9a8',
-      fontStyle: 'bold',
-    }).setOrigin(0, 0.5);
-    this.jobText.setShadow(0, 1, '#08101f', 2);
-    panel.add(this.jobText);
-    const refreshJob = (): void => {
-      levelText.setText(`Lv${gameState.level}`);
-      fitText(this.jobText, getJob(gameState.jobId)?.name ?? gameState.jobId, rw - 8);
-      const em = emblemFor();
-      jobIcon.setTexture(em.tex).setTint(em.color);
+    const refreshLevel = (): void => {
+      levelText.setText(`${gameState.level}`);
     };
 
-    const makeBar = (cy: number, color: number): Phaser.GameObjects.Rectangle => {
-      const fill = this.add.rectangle(rx + 3, cy, rw - 7, 7, color, 0.96).setOrigin(0, 0.5);
-      panel.add(fill);
+    const makeBar = (x: number, width: number, color: number): Phaser.GameObjects.Rectangle => {
+      const back = this.add
+        .rectangle(x, barY, width, 10, 0x02060c, 0.95)
+        .setOrigin(0, 0.5)
+        .setStrokeStyle(1, 0xb9c9dd, 0.42);
+      const fill = this.add.rectangle(x + 1, barY, width - 2, 8, color, 0.98).setOrigin(0, 0.5);
+      panel.add([back, fill]);
       return fill;
     };
-    const barText = (cy: number, label: string): Phaser.GameObjects.Text => {
-      const lab = this.add
-        .text(rx + 7, cy, label, { fontFamily: FONT, fontSize: '7px', color: '#ffffff' })
-        .setOrigin(0, 0.5)
-        .setAlpha(0.84);
-      lab.setShadow(0, 1, '#000000', 2);
-      panel.add(lab);
+    const statLabel = (x: number, label: string): void => {
+      const text = this.add
+        .text(x, barY, label, { fontFamily: FONT, fontSize: '6px', color: '#eef5ff', fontStyle: 'bold' })
+        .setOrigin(0, 0.5);
+      text.setShadow(0, 1, '#000000', 2);
+      panel.add(text);
+    };
+    const barText = (x: number, width: number): Phaser.GameObjects.Text => {
       const val = this.add
-        .text(rx + rw - 5, cy, '', { fontFamily: FONT, fontSize: '8px', color: '#ffffff' })
-        .setOrigin(1, 0.5);
+        .text(x + width / 2, barY, '', { fontFamily: FONT, fontSize: '6px', color: '#ffffff', fontStyle: 'bold' })
+        .setOrigin(0.5);
       val.setShadow(0, 1, '#000000', 2);
       panel.add(val);
       return val;
     };
 
-    this.hpBar = makeBar(37, 0xf05f67);
-    this.hpText = barText(37, 'HP');
-    this.mpBar = makeBar(53, 0x36b9df);
-    this.mpText = barText(53, 'MP');
-    this.expBar = this.add.rectangle(rx + 2, 62, rw - 5, 2, 0x74e2c5, 0.95).setOrigin(0, 0.5);
-    panel.add(this.expBar);
-    this.expText = this.add.text(0, 0, '').setVisible(false);
-    this.goldText = this.add.text(0, 0, '').setVisible(false);
+    const expX = 40;
+    const expW = 45;
+    this.expBar = makeBar(expX, expW, 0xf2d45c);
+    const expSegments = this.add.graphics();
+    expSegments.lineStyle(1, 0x172034, 0.58);
+    for (let i = 1; i < 7; i++) {
+      const sx = Math.round(expX + (expW * i) / 7);
+      expSegments.lineBetween(sx, barY - 4, sx, barY + 4);
+    }
+    panel.add(expSegments);
+
+    const hpX = 105;
+    const mpX = 170;
+    const statW = 46;
+    statLabel(92, 'HP');
+    this.hpBar = makeBar(hpX, statW, 0xf17c78);
+    this.hpText = barText(hpX, statW);
+    statLabel(156, 'MP');
+    this.mpBar = makeBar(mpX, statW, 0x5ee0e6);
+    this.mpText = barText(mpX, statW);
 
     // Initial values (bars need a fill before the first bus event).
     const d0 = gameState.derived;
@@ -538,11 +526,11 @@ export class UIScene extends Phaser.Scene {
     this.hpBar.scaleX = d0.maxHp > 0 ? Phaser.Math.Clamp(gameState.hp / d0.maxHp, 0, 1) : 0;
     this.mpText.setText(`${gameState.mp}/${d0.maxMp}`);
     this.mpBar.scaleX = d0.maxMp > 0 ? Phaser.Math.Clamp(gameState.mp / d0.maxMp, 0, 1) : 0;
-    refreshJob();
+    refreshLevel();
 
     // Bus wiring.
-    this.busOff.push(bus.on('job:changed', refreshJob));
-    this.busOff.push(bus.on('player:level-up', refreshJob));
+    this.busOff.push(bus.on('job:changed', refreshLevel));
+    this.busOff.push(bus.on('player:level-up', refreshLevel));
     this.busOff.push(
       bus.on('player:hp-changed', ({ current, max }) => {
         this.hpText.setText(`${current}/${max}`);
@@ -557,21 +545,19 @@ export class UIScene extends Phaser.Scene {
       }),
     );
     const setExp = (cur: number, toNext: number): void => {
-      this.expText.setText(`${cur}/${toNext}`);
       this.expBar.scaleX = toNext > 0 ? Phaser.Math.Clamp(cur / toNext, 0, 1) : 0;
     };
     setExp(gameState.exp, expToNext(gameState.level));
     this.busOff.push(bus.on('player:exp-changed', ({ current, toNext }) => setExp(current, toNext)));
     this.busOff.push(bus.on('player:level-up', () => setExp(gameState.exp, expToNext(gameState.level))));
-    this.busOff.push(bus.on('gold:changed', ({ current }) => this.goldText.setText(`${current}`)));
 
     // Quest tracker: current goal pinned under the HUD block so the player
     // always knows what to do next ("game tells, player does, game rewards").
     // The tracker is deliberately quieter than the player panel: one soft band
     // with a single accent line, so it reads as guidance rather than decoration.
-    const hudX = insets.left + 8;
-    const trY = insets.top + 8 + PH + 4; // just below the statusPanel
-    const trW = PW;
+    const hudX = px;
+    const trY = py + PH + 5; // just below the statusPanel
+    const trW = 166;
     const trH = 34;
     const trRoot = this.add.container(hudX, trY).setDepth(depth);
     const trackerBack = this.add.graphics();
