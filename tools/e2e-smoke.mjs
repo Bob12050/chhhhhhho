@@ -135,6 +135,28 @@ try {
   }
   check('2次職5種の通常・斜め外見を読み込める', allSecondTierLooks);
 
+  const thirdTierLooks = [
+    ['sword_kaiser', 'gen.char.sword_kaiser', 'art.char.sword_kaiser.diagonal'],
+    ['grand_magia', 'gen.char.grand_magia', 'art.char.grand_magia.diagonal'],
+    ['shield_saber', 'gen.char.shield_saber', 'art.char.shield_saber.diagonal'],
+    ['avengista', 'gen.char.avengista', 'art.char.avengista.diagonal'],
+    ['dual_star', 'gen.char.dual_star', 'art.char.dual_star.diagonal'],
+  ];
+  let allThirdTierLooks = true;
+  for (const [id, cardinalKey, diagonalKey] of thirdTierLooks) {
+    const result = await page.evaluate(([jobId, cardinal, diagonal]) => ({
+      changed: window.__test.forceJob(jobId),
+      cardinal: window.__test.textureSize(cardinal),
+      diagonal: window.__test.textureSize(diagonal),
+    }), [id, cardinalKey, diagonalKey]);
+    allThirdTierLooks &&= result.changed
+      && result.cardinal?.width === 384
+      && result.cardinal?.height === 1728
+      && result.diagonal?.width === 384
+      && result.diagonal?.height === 576;
+  }
+  check('3次職5種の通常・斜め外見を読み込める', allThirdTierLooks);
+
   const advancedJobs = [
     'samurai', 'sorcerer', 'holy_knight', 'ninja', 'ranger',
     'sword_kaiser', 'grand_magia', 'shield_saber', 'avengista', 'dual_star',

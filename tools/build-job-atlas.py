@@ -186,19 +186,21 @@ def fit_scale(cells: list[list[Cell]], movement_rows: tuple[int, ...], target_he
 
 
 def normalize_cell(cell: Cell, scale: float) -> Image.Image:
-    main_left, _, main_right, _ = cell.main.bbox
+    main_left, _, main_right, main_bottom = cell.main.bbox
     main_center = (main_left + main_right) / 2
     resized = cell.image.resize(
         (max(1, round(cell.image.width * scale)), max(1, round(cell.image.height * scale))),
         Image.Resampling.NEAREST,
     )
     x = round(ANCHOR_X - main_center * scale)
-    content_left, _, content_right, content_bottom = cell.meaningful_bbox
+    content_left, _, content_right, _ = cell.meaningful_bbox
     if (content_right - content_left) * scale <= FRAME_SIZE - 4:
         min_x = round(2 - content_left * scale)
         max_x = round(FRAME_SIZE - 2 - content_right * scale)
         x = max(min_x, min(max_x, x))
-    y = round(ANCHOR_Y - content_bottom * scale)
+    # Ground the character component itself. A familiar may intentionally
+    # hover lower than the character without lifting the character's feet.
+    y = round(ANCHOR_Y - main_bottom * scale)
     frame = Image.new("RGBA", (FRAME_SIZE, FRAME_SIZE), (0, 0, 0, 0))
     frame.alpha_composite(resized, (x, y))
     return frame
@@ -249,10 +251,14 @@ def validate_movement_grounding(
             visible_bbox = alpha.getbbox()
             if visible_bbox is None:
                 raise ValueError(f"Empty {label} movement frame ({col}, {row})")
-            if not ANCHOR_Y - 1 <= visible_bbox[3] <= ANCHOR_Y + 1:
+            ground_bottom = visible_bbox[3]
+            if allow_detached:
+                components = connected_components(alpha)
+                ground_bottom = max(components, key=lambda component: component.area).bbox[3]
+            if not ANCHOR_Y - 1 <= ground_bottom <= ANCHOR_Y + 1:
                 raise ValueError(
                     f"Ungrounded {label} movement frame ({col}, {row}): "
-                    f"bottom={visible_bbox[3]}"
+                    f"bottom={ground_bottom}"
                 )
             if visible_bbox[0] == 0 or visible_bbox[2] == FRAME_SIZE:
                 raise ValueError(f"Clipped {label} movement frame ({col}, {row})")
