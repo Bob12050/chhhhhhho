@@ -97,7 +97,7 @@ def union_bbox(boxes: list[tuple[int, int, int, int]]) -> tuple[int, int, int, i
     )
 
 
-def split_source(path: Path) -> list[list[Cell]]:
+def split_source(path: Path, movement_rows: tuple[int, ...]) -> list[list[Cell]]:
     source = Image.open(path).convert("RGBA")
     cells: list[list[Cell]] = []
 
@@ -116,7 +116,43 @@ def split_source(path: Path) -> list[list[Cell]]:
 
             main = max(components, key=lambda component: component.area)
             minimum_area = max(8, round(main.area * 0.007))
-            meaningful = [component.bbox for component in components if component.area >= minimum_area]
+            meaningful_components = [
+                component
+                for component in components
+                if component.area >= minimum_area
+            ]
+            if row in movement_rows:
+                # Generated grids occasionally let the next row's hat or boots
+                # cross a crop boundary. Only movement poses get this filter;
+                # attack effects may intentionally extend beyond their cell.
+                edge_margin = 1
+                main_height = main.bbox[3] - main.bbox[1]
+                vertical_gap_limit = max(4, round(main_height * 0.05))
+
+                def belongs_to_pose(component: Component) -> bool:
+                    if component == main:
+                        return True
+                    if (
+                        component.bbox[0] <= edge_margin
+                        or component.bbox[1] <= edge_margin
+                        or component.bbox[2] >= image.width - edge_margin
+                        or component.bbox[3] >= image.height - edge_margin
+                    ):
+                        return False
+                    vertical_gap = max(
+                        0,
+                        main.bbox[1] - component.bbox[3],
+                        component.bbox[1] - main.bbox[3],
+                    )
+                    return vertical_gap <= vertical_gap_limit
+
+                meaningful_components = [
+                    component
+                    for component in meaningful_components
+                    if belongs_to_pose(component)
+                ]
+
+            meaningful = [component.bbox for component in meaningful_components]
             clean_alpha = Image.new("L", image.size, 0)
             for box in meaningful:
                 clean_alpha.paste(alpha.crop(box), box[:2])
@@ -182,6 +218,53 @@ def paste_row(sheet: Image.Image, row: int, frames: list[Image.Image]) -> None:
         sheet.alpha_composite(frame, (col * FRAME_SIZE, row * FRAME_SIZE))
 
 
+def validate_movement_grounding(
+    sheet: Image.Image,
+    movement_rows: tuple[int, ...],
+    label: str,
+) -> None:
+    for row in movement_rows:
+        for col in range(COLS):
+            frame = sheet.crop(
+                (
+                    col * FRAME_SIZE,
+                    row * FRAME_SIZE,
+                    (col + 1) * FRAME_SIZE,
+                    (row + 1) * FRAME_SIZE,
+                )
+            )
+            alpha = frame.getchannel("A")
+            visible_bbox = alpha.getbbox()
+            if visible_bbox is None:
+                raise ValueError(f"Empty {label} movement frame ({col}, {row})")
+            if not ANCHOR_Y - 1 <= visible_bbox[3] <= ANCHOR_Y + 1:
+                raise ValueError(
+                    f"Ungrounded {label} movement frame ({col}, {row}): "
+                    f"bottom={visible_bbox[3]}"
+                )
+            if visible_bbox[0] == 0 or visible_bbox[2] == FRAME_SIZE:
+                raise ValueError(f"Clipped {label} movement frame ({col}, {row})")
+
+            components = connected_components(alpha)
+            main = max(components, key=lambda component: component.area)
+            minimum_area = max(8, round(main.area * 0.007))
+            main_height = main.bbox[3] - main.bbox[1]
+            vertical_gap_limit = max(4, round(main_height * 0.05))
+            for component in components:
+                if component == main or component.area < minimum_area:
+                    continue
+                vertical_gap = max(
+                    0,
+                    main.bbox[1] - component.bbox[3],
+                    component.bbox[1] - main.bbox[3],
+                )
+                if vertical_gap > vertical_gap_limit:
+                    raise ValueError(
+                        f"Detached fragment in {label} movement frame "
+                        f"({col}, {row}): bbox={component.bbox}"
+                    )
+
+
 def build_cardinal(cells: list[list[Cell]], target_height: int) -> tuple[Image.Image, float]:
     scale = fit_scale(cells, (0, 2, 4), target_height)
     normalized = [[normalize_cell(cell, scale) for cell in row] for row in cells]
@@ -214,10 +297,12 @@ def build_diagonal(cells: list[list[Cell]], target_height: int) -> tuple[Image.I
 
 def main() -> None:
     args = parse_args()
-    cardinal_cells = split_source(args.cardinal_source)
-    diagonal_cells = split_source(args.diagonal_source)
+    cardinal_cells = split_source(args.cardinal_source, (0, 2, 4))
+    diagonal_cells = split_source(args.diagonal_source, (0, 1, 3, 4))
     cardinal, cardinal_scale = build_cardinal(cardinal_cells, args.target_height)
     diagonal, diagonal_scale = build_diagonal(diagonal_cells, args.target_height)
+    validate_movement_grounding(cardinal, (0, 1, 6, 7, 12, 13), "cardinal")
+    validate_movement_grounding(diagonal, (0, 1, 3, 4), "diagonal")
 
     args.out_cardinal.parent.mkdir(parents=True, exist_ok=True)
     args.out_diagonal.parent.mkdir(parents=True, exist_ok=True)
