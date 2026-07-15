@@ -47,6 +47,11 @@ export const APPEARANCE_DIAGONAL_TEX: Partial<Record<JobAppearanceId, string>> =
   shield_saber: TEX.jobShieldSaberDiagonal,
   avengista: TEX.jobAvengistaDiagonal,
   dual_star: TEX.jobDualStarDiagonal,
+  aramikagura: TEX.jobAramikaguraDiagonal,
+  alvride: TEX.jobAlvrideDiagonal,
+  nirvadio: TEX.jobNirvadioDiagonal,
+  noxtia: TEX.jobNoxtiaDiagonal,
+  oltarie: TEX.jobOltarieDiagonal,
 };
 
 /** Texture key for an appearance id, or null if unknown/unset. */
