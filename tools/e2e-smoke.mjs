@@ -113,6 +113,28 @@ try {
   s = await snap(page);
   check('死亡復帰地点からすぐ歩き出せる', s.y < 700, `y=${Math.round(s.y)}`);
 
+  const secondTierLooks = [
+    ['samurai', 'gen.char.samurai', 'art.char.samurai.diagonal'],
+    ['sorcerer', 'gen.char.sorcerer', 'art.char.sorcerer.diagonal'],
+    ['holy_knight', 'gen.char.holy_knight', 'art.char.holy_knight.diagonal'],
+    ['ninja', 'gen.char.ninja', 'art.char.ninja.diagonal'],
+    ['ranger', 'gen.char.ranger', 'art.char.ranger.diagonal'],
+  ];
+  let allSecondTierLooks = true;
+  for (const [id, cardinalKey, diagonalKey] of secondTierLooks) {
+    const result = await page.evaluate(([jobId, cardinal, diagonal]) => ({
+      changed: window.__test.forceJob(jobId),
+      cardinal: window.__test.textureSize(cardinal),
+      diagonal: window.__test.textureSize(diagonal),
+    }), [id, cardinalKey, diagonalKey]);
+    allSecondTierLooks &&= result.changed
+      && result.cardinal?.width === 384
+      && result.cardinal?.height === 1728
+      && result.diagonal?.width === 384
+      && result.diagonal?.height === 576;
+  }
+  check('2次職5種の通常・斜め外見を読み込める', allSecondTierLooks);
+
   const advancedJobs = [
     'samurai', 'sorcerer', 'holy_knight', 'ninja', 'ranger',
     'sword_kaiser', 'grand_magia', 'shield_saber', 'avengista', 'dual_star',

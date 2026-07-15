@@ -37,6 +37,11 @@ export const APPEARANCE_DIAGONAL_TEX: Partial<Record<JobAppearanceId, string>> =
   priest: TEX.jobPriestDiagonal,
   thief: TEX.jobThiefDiagonal,
   pet_raiser: TEX.jobPetRaiserDiagonal,
+  samurai: TEX.jobSamuraiDiagonal,
+  sorcerer: TEX.jobSorcererDiagonal,
+  holy_knight: TEX.jobHolyKnightDiagonal,
+  ninja: TEX.jobNinjaDiagonal,
+  ranger: TEX.jobRangerDiagonal,
   grand_magia: TEX.jobGrandMagiaDiagonal,
 };
 

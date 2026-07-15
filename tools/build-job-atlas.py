@@ -45,6 +45,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-cardinal", required=True, type=Path)
     parser.add_argument("--out-diagonal", required=True, type=Path)
     parser.add_argument("--target-height", type=int, default=68)
+    parser.add_argument(
+        "--allow-detached-movement",
+        action="store_true",
+        help="Keep intentional detached movement parts such as familiars.",
+    )
     return parser.parse_args()
 
 
@@ -97,7 +102,11 @@ def union_bbox(boxes: list[tuple[int, int, int, int]]) -> tuple[int, int, int, i
     )
 
 
-def split_source(path: Path, movement_rows: tuple[int, ...]) -> list[list[Cell]]:
+def split_source(
+    path: Path,
+    movement_rows: tuple[int, ...],
+    allow_detached_movement: bool = False,
+) -> list[list[Cell]]:
     source = Image.open(path).convert("RGBA")
     cells: list[list[Cell]] = []
 
@@ -139,6 +148,8 @@ def split_source(path: Path, movement_rows: tuple[int, ...]) -> list[list[Cell]]
                         or component.bbox[3] >= image.height - edge_margin
                     ):
                         return False
+                    if allow_detached_movement:
+                        return True
                     vertical_gap = max(
                         0,
                         main.bbox[1] - component.bbox[3],
@@ -222,6 +233,7 @@ def validate_movement_grounding(
     sheet: Image.Image,
     movement_rows: tuple[int, ...],
     label: str,
+    allow_detached: bool = False,
 ) -> None:
     for row in movement_rows:
         for col in range(COLS):
@@ -244,6 +256,8 @@ def validate_movement_grounding(
                 )
             if visible_bbox[0] == 0 or visible_bbox[2] == FRAME_SIZE:
                 raise ValueError(f"Clipped {label} movement frame ({col}, {row})")
+            if allow_detached:
+                continue
 
             components = connected_components(alpha)
             main = max(components, key=lambda component: component.area)
@@ -297,12 +311,30 @@ def build_diagonal(cells: list[list[Cell]], target_height: int) -> tuple[Image.I
 
 def main() -> None:
     args = parse_args()
-    cardinal_cells = split_source(args.cardinal_source, (0, 2, 4))
-    diagonal_cells = split_source(args.diagonal_source, (0, 1, 3, 4))
+    cardinal_cells = split_source(
+        args.cardinal_source,
+        (0, 2, 4),
+        args.allow_detached_movement,
+    )
+    diagonal_cells = split_source(
+        args.diagonal_source,
+        (0, 1, 3, 4),
+        args.allow_detached_movement,
+    )
     cardinal, cardinal_scale = build_cardinal(cardinal_cells, args.target_height)
     diagonal, diagonal_scale = build_diagonal(diagonal_cells, args.target_height)
-    validate_movement_grounding(cardinal, (0, 1, 6, 7, 12, 13), "cardinal")
-    validate_movement_grounding(diagonal, (0, 1, 3, 4), "diagonal")
+    validate_movement_grounding(
+        cardinal,
+        (0, 1, 6, 7, 12, 13),
+        "cardinal",
+        args.allow_detached_movement,
+    )
+    validate_movement_grounding(
+        diagonal,
+        (0, 1, 3, 4),
+        "diagonal",
+        args.allow_detached_movement,
+    )
 
     args.out_cardinal.parent.mkdir(parents=True, exist_ok=True)
     args.out_diagonal.parent.mkdir(parents=True, exist_ok=True)
