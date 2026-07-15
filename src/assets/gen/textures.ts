@@ -46,10 +46,15 @@ export const TEX = {
   // art ships as PNGs (manifest); until a job's PNG exists the player falls back
   // to `playerBody`. NOT in SPECS on purpose so the fallback check can work.
   jobFighter: 'gen.char.fighter',
+  jobFighterDiagonal: 'art.char.fighter.diagonal',
   jobMage: 'gen.char.mage',
+  jobMageDiagonal: 'art.char.mage.diagonal',
   jobPriest: 'gen.char.priest',
+  jobPriestDiagonal: 'art.char.priest.diagonal',
   jobThief: 'gen.char.thief',
+  jobThiefDiagonal: 'art.char.thief.diagonal',
   jobPetRaiser: 'gen.char.pet_raiser',
+  jobPetRaiserDiagonal: 'art.char.pet_raiser.diagonal',
   jobSamurai: 'gen.char.samurai',
   jobSorcerer: 'gen.char.sorcerer',
   jobHolyKnight: 'gen.char.holy_knight',

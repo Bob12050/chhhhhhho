@@ -65,6 +65,28 @@ try {
     townTexture?.width === 640 && townTexture?.height === 960,
     JSON.stringify(townTexture),
   );
+  const firstTierLooks = [
+    ['fighter', 'gen.char.fighter', 'art.char.fighter.diagonal'],
+    ['mage', 'gen.char.mage', 'art.char.mage.diagonal'],
+    ['priest', 'gen.char.priest', 'art.char.priest.diagonal'],
+    ['thief', 'gen.char.thief', 'art.char.thief.diagonal'],
+    ['pet_raiser', 'gen.char.pet_raiser', 'art.char.pet_raiser.diagonal'],
+  ];
+  let allFirstTierLooks = true;
+  for (const [id, cardinalKey, diagonalKey] of firstTierLooks) {
+    const result = await page.evaluate(([jobId, cardinal, diagonal]) => ({
+      changed: window.__test.forceJob(jobId),
+      cardinal: window.__test.textureSize(cardinal),
+      diagonal: window.__test.textureSize(diagonal),
+    }), [id, cardinalKey, diagonalKey]);
+    allFirstTierLooks &&= result.changed
+      && result.cardinal?.width === 384
+      && result.cardinal?.height === 1728
+      && result.diagonal?.width === 384
+      && result.diagonal?.height === 576;
+  }
+  check('一次職5種の通常・斜め外見を読み込める', allFirstTierLooks);
+  await page.evaluate(() => window.__test.forceJob('adventurer'));
   check('初期クエストが受注済み', s.activeQuests.includes('q_apprentice'));
   check(
     '町では北門への矢印と距離が出る',

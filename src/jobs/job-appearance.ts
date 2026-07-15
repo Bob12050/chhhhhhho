@@ -32,6 +32,11 @@ export const APPEARANCE_TEX: Record<JobAppearanceId, string> = {
 
 /** Optional 8-way idle/walk/attack art; absent jobs use cardinal side poses. */
 export const APPEARANCE_DIAGONAL_TEX: Partial<Record<JobAppearanceId, string>> = {
+  fighter: TEX.jobFighterDiagonal,
+  mage: TEX.jobMageDiagonal,
+  priest: TEX.jobPriestDiagonal,
+  thief: TEX.jobThiefDiagonal,
+  pet_raiser: TEX.jobPetRaiserDiagonal,
   grand_magia: TEX.jobGrandMagiaDiagonal,
 };
 
