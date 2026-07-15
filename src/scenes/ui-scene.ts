@@ -433,7 +433,7 @@ export class UIScene extends Phaser.Scene {
     // Job identity now travels with the avatar instead of competing for HUD space.
     const px = insets.left + 6;
     const py = insets.top + 6;
-    const PW = 218;
+    const PW = 256;
     const PH = 30;
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
     const panelBack = this.add.graphics();
@@ -446,9 +446,9 @@ export class UIScene extends Phaser.Scene {
     panelBack.lineStyle(1, 0xf7e8a5, 0.62);
     panelBack.lineBetween(3, 2, PW - 3, 2);
     panelBack.lineStyle(1, 0x72839d, 0.38);
-    panelBack.lineBetween(37, 4, 37, PH - 4);
-    panelBack.lineBetween(88, 4, 88, PH - 4);
-    panelBack.lineBetween(153, 4, 153, PH - 4);
+    panelBack.lineBetween(39, 4, 39, PH - 4);
+    panelBack.lineBetween(106, 4, 106, PH - 4);
+    panelBack.lineBetween(180, 4, 180, PH - 4);
     panel.add(panelBack);
 
     // Low-HP danger vignette (full screen, just under the HUD).
@@ -465,7 +465,7 @@ export class UIScene extends Phaser.Scene {
     levelLabel.setShadow(0, 1, '#000000', 2);
     panel.add(levelLabel);
     const levelText = this.add
-      .text(29, barY, '', { fontFamily: FONT, fontSize: '9px', color: '#fff0a6', fontStyle: 'bold' })
+      .text(30, barY, '', { fontFamily: FONT, fontSize: '9px', color: '#fff0a6', fontStyle: 'bold' })
       .setOrigin(0.5);
     levelText.setShadow(0, 1, '#000000', 2);
     panel.add(levelText);
@@ -499,24 +499,24 @@ export class UIScene extends Phaser.Scene {
       return val;
     };
 
-    const expX = 40;
-    const expW = 45;
+    const expX = 42;
+    const expW = 61;
     this.expBar = makeBar(expX, expW, 0xf2d45c);
     const expSegments = this.add.graphics();
     expSegments.lineStyle(1, 0x172034, 0.58);
-    for (let i = 1; i < 7; i++) {
-      const sx = Math.round(expX + (expW * i) / 7);
+    for (let i = 1; i < 8; i++) {
+      const sx = Math.round(expX + (expW * i) / 8);
       expSegments.lineBetween(sx, barY - 4, sx, barY + 4);
     }
     panel.add(expSegments);
 
-    const hpX = 105;
-    const mpX = 170;
-    const statW = 46;
-    statLabel(92, 'HP');
+    const hpX = 123;
+    const mpX = 198;
+    const statW = 55;
+    statLabel(109, 'HP');
     this.hpBar = makeBar(hpX, statW, 0xf17c78);
     this.hpText = barText(hpX, statW);
-    statLabel(156, 'MP');
+    statLabel(184, 'MP');
     this.mpBar = makeBar(mpX, statW, 0x5ee0e6);
     this.mpText = barText(mpX, statW);
 
@@ -770,18 +770,18 @@ export class UIScene extends Phaser.Scene {
       }),
     );
 
-    // Bag button stays beside the minimap, so map navigation and inventory
-    // read as a compact utility strip instead of two floating controls.
-    const bagX = miniX - 64;
-    const bagY = insets.top + 28;
+    // Attach inventory to the minimap's lower-right corner. This keeps the
+    // status strip wide while leaving a full-size, thumb-friendly touch target.
+    const bagX = miniX + 24;
+    const bagY = miniY + 27;
     const bag = new TouchButton(
       this,
       bagX,
       bagY,
-      22,
+      24,
       '',
       0x63728d,
-      depth,
+      depth + 2,
       TEX.iconBag,
       'utility',
     );

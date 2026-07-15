@@ -196,7 +196,7 @@ try {
 
   // The footer used to place 「とじる」 directly over 「ペット」, so a
   // single tap closed Inventory and launched PetScreen at the same time.
-  await page.mouse.click(250, 28); await page.waitForTimeout(500);
+  await page.mouse.click(336, 75); await page.waitForTimeout(500);
   await page.mouse.click(180, 676); await page.waitForTimeout(500);
   const scenesAfterBagClose = await page.evaluate(() => window.__test.activeScenes());
   check(
@@ -607,7 +607,7 @@ try {
   // ---- pets: egg → hatch → assist ----
   step = 'pets';
   await page.evaluate(() => window.__test.addEgg('pet_egg_wolf'));
-  await page.mouse.click(250, 28); await page.waitForTimeout(900); // bag
+  await page.mouse.click(336, 75); await page.waitForTimeout(900); // bag on minimap corner
   await page.mouse.click(222, 632); await page.waitForTimeout(800); // framed ペット action
   await page.waitForFunction(() => window.__test.activeScenes().includes('PetScreen'));
   const hatchPressed = await page.evaluate(() => window.__test.activateText('PetScreen', '孵化する'));
@@ -622,7 +622,7 @@ try {
 
   // ---- bestiary opens ----
   step = 'bestiary';
-  await page.mouse.click(250, 28); await page.waitForTimeout(900);
+  await page.mouse.click(336, 75); await page.waitForTimeout(900);
   await page.mouse.click(138, 632); await page.waitForTimeout(800); // framed 図鑑 action
   // Detail for the first (slime) row must open without errors.
   await page.mouse.click(180, 134); await page.waitForTimeout(600);
