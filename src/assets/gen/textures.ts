@@ -152,6 +152,7 @@ export const TEX = {
   // these raster layers provide the shared material/world finish.
   uiMenuBackdrop: 'art.ui.menu.backdrop',
   uiMapBackdrop: 'art.ui.map.backdrop',
+  uiCraftingBackdrop: 'art.ui.crafting.backdrop',
   uiRibbonFrame: 'art.ui.ribbon.frame',
   // Illustrated HUD skin. These are real transparent PNGs rather than canvas
   // primitives so the always-visible game screen shares one art direction.

@@ -5,7 +5,7 @@ import { rarityColor } from '@/data/rarity';
 import { allRecipes, type Recipe } from '@/crafting/recipes';
 import { craft, craftBlock, visibleRecipes } from '@/crafting/crafting';
 import { bus } from '@/core/event-bus';
-import { FONT, addPanelChrome, tabChip, ninePanel, type TabHandle } from '@/ui/theme';
+import { FONT, addPanelChrome, type TabHandle } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
 
 /**
@@ -37,7 +37,7 @@ export class CraftingScene extends Phaser.Scene {
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
-  private viewTop = 128;
+  private viewTop = 132;
   private viewBottom = 0;
   private tab: CraftTab = 'weapon';
   private tabButtons: { id: CraftTab; tab: TabHandle }[] = [];
@@ -79,37 +79,49 @@ export class CraftingScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
-    // One continuous forge header reads as a single screen identity. The old
-    // split title/currency frames competed with each other at the top.
-    ninePanel(this, w / 2, 23, w - 16, 38).setDepth(2.5);
-    this.add.image(26, 23, TEX.iconSword).setScale(1.35).setTint(0xffdf85).setDepth(3);
+    // A quiet workshop header: the generated forge art supplies atmosphere,
+    // while one compact workbench bar carries identity and currency.
+    const header = this.add.graphics().setDepth(3);
+    header.fillStyle(0x111a21, 0.96);
+    header.fillRoundedRect(8, 7, w - 16, 34, 5);
+    header.fillStyle(0xd28a3b, 0.95);
+    header.fillRoundedRect(8, 12, 3, 24, 1);
+    header.lineStyle(1, 0xe7c985, 0.32);
+    header.strokeRoundedRect(8, 7, w - 16, 34, 5);
+    this.add.image(27, 24, TEX.iconSword).setDisplaySize(19, 19).setTint(0xffd88a).setDepth(4);
     this.add
-      .text(44, 23, '装備工房', { fontFamily: FONT, fontSize: '16px', color: '#fff4cf', fontStyle: 'bold' })
+      .text(43, 23, '鍛冶工房', { fontFamily: FONT, fontSize: '15px', color: '#fff4d6', fontStyle: 'bold' })
       .setOrigin(0, 0.5)
-      .setDepth(3);
-    this.add.circle(w - 112, 23, 5, 0xf5c542).setStrokeStyle(1, 0xffe995, 0.7).setDepth(3);
+      .setDepth(4);
+    this.add.circle(w - 108, 23, 5, 0xf1bc45).setStrokeStyle(1, 0xffe6a1, 0.72).setDepth(4);
     this.goldText = this.add
-      .text(w - 20, 23, '', { fontFamily: FONT, fontSize: '12px', color: '#ffe39a' })
+      .text(w - 18, 23, '', { fontFamily: FONT, fontSize: '12px', color: '#ffe2a3', fontStyle: 'bold' })
       .setOrigin(1, 0.5)
-      .setDepth(3);
+      .setDepth(4);
 
-    // Tabs: weapons / armour / tools.
+    // One segmented tool rail reads as a single control instead of three
+    // unrelated floating cards.
+    const tabRail = this.add.graphics().setDepth(3);
+    tabRail.fillStyle(0x0c141b, 0.94);
+    tabRail.fillRoundedRect(8, 48, w - 16, 36, 5);
+    tabRail.lineStyle(1, 0xffffff, 0.09);
+    tabRail.strokeRoundedRect(8, 48, w - 16, 36, 5);
     this.tabButtons = [];
     const tabs: { id: CraftTab; label: string; icon: string }[] = [
       { id: 'weapon', label: '武器', icon: TEX.iconSword },
       { id: 'armor', label: '防具', icon: TEX.iconArmor },
       { id: 'tool', label: 'どうぐ', icon: TEX.iconFlask },
     ];
-    const mainTabW = (w - 12) / tabs.length;
+    const mainTabW = (w - 16) / tabs.length;
     tabs.forEach((t, i) => {
-      const tab = tabChip(this, 6 + mainTabW * (i + 0.5), 62, mainTabW, t.label, () => {
+      const tab = this.mainTab(8 + mainTabW * (i + 0.5), 66, mainTabW, t.label, t.icon, () => {
         if (this.dragged) return;
         this.tab = t.id;
         this.subFilter = null;
         this.scrollY = 0;
         this.buildFilterChips();
         this.render();
-      }, { icon: t.icon });
+      });
       tab.root.setDepth(3);
       this.tabButtons.push({ id: t.id, tab });
     });
@@ -117,7 +129,12 @@ export class CraftingScene extends Phaser.Scene {
 
     this.content = this.add.container(0, 0).setDepth(1);
     this.viewBottom = h - 72;
-    addPanelChrome(this, this.viewTop, this.viewBottom);
+    addPanelChrome(this, this.viewTop, this.viewBottom, {
+      backdropKey: TEX.uiCraftingBackdrop,
+      backdropAlpha: 0.2,
+      chromeColor: 0x0d161e,
+      chromeAlpha: 0.92,
+    });
     this.setupScroll();
 
     const closeDisc = this.add
@@ -140,6 +157,71 @@ export class CraftingScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
     this.render();
+  }
+
+  /** Screen-specific segmented tab used by the forge's primary navigation. */
+  private mainTab(
+    cx: number,
+    cy: number,
+    width: number,
+    label: string,
+    iconKey: string,
+    onTap: () => void,
+  ): TabHandle {
+    const g = this.add.graphics();
+    const icon = this.add.image(-22, -1, iconKey).setDisplaySize(15, 15);
+    const text = this.add
+      .text(6, -1, label, { fontFamily: FONT, fontSize: '13px', color: '#aab4bd', fontStyle: 'bold' })
+      .setOrigin(0.5);
+    const root = this.add.container(cx, cy, [g, icon, text]);
+    root.setSize(width, 36).setInteractive({ useHandCursor: true });
+    root.on('pointerup', onTap);
+    const draw = (active: boolean): void => {
+      g.clear();
+      if (active) {
+        g.fillStyle(0x263845, 0.96);
+        g.fillRoundedRect(-width / 2 + 2, -16, width - 4, 32, 4);
+        g.fillStyle(0xe2a54a, 1);
+        g.fillRoundedRect(-width / 2 + 18, 13, width - 36, 3, 1);
+      }
+      g.lineStyle(1, 0xffffff, active ? 0.1 : 0.04);
+      g.lineBetween(width / 2 - 1, -11, width / 2 - 1, 11);
+      icon.setTint(active ? 0xffd27a : 0x71808b);
+      text.setColor(active ? '#fff4d6' : '#9ba6ae');
+    };
+    draw(false);
+    return { root, setActive: draw };
+  }
+
+  /** Compact filter label for the horizontally draggable weapon/armour rail. */
+  private filterChip(
+    cx: number,
+    cy: number,
+    width: number,
+    label: string,
+    onTap: () => void,
+  ): TabHandle {
+    const g = this.add.graphics();
+    const text = this.add
+      .text(0, -1, label, { fontFamily: FONT, fontSize: '12px', color: '#9aa6af' })
+      .setOrigin(0.5);
+    const root = this.add.container(cx, cy, [g, text]);
+    root.setSize(width, 30).setInteractive({ useHandCursor: true });
+    root.on('pointerup', onTap);
+    const draw = (active: boolean): void => {
+      g.clear();
+      g.fillStyle(active ? 0x273942 : 0x101a21, active ? 0.98 : 0.82);
+      g.fillRoundedRect(-width / 2, -14, width, 28, 4);
+      if (active) {
+        g.fillStyle(0xe0a24a, 0.98);
+        g.fillRoundedRect(-width / 2 + 8, 10, width - 16, 2, 1);
+      }
+      g.lineStyle(1, active ? 0xd9b56f : 0xffffff, active ? 0.28 : 0.06);
+      g.strokeRoundedRect(-width / 2, -14, width, 28, 4);
+      text.setColor(active ? '#fff1cf' : '#9aa6af');
+    };
+    draw(false);
+    return { root, setActive: draw };
   }
 
   /**
@@ -170,10 +252,10 @@ export class CraftingScene extends Phaser.Scene {
     const bar = this.add.container(0, 0).setDepth(3);
     this.chipBar = bar;
     let x = 8;
-    const cy = 102;
+    const cy = 108;
     for (const [value, label] of defs) {
-      const chipW = label.length * 14 + 32;
-      const tab = tabChip(this, x + chipW / 2, cy, chipW, label, () => {
+      const chipW = label.length * 13 + 28;
+      const tab = this.filterChip(x + chipW / 2, cy, chipW, label, () => {
         if (this.chipDragging) return;
         this.subFilter = value;
         this.scrollY = 0;
@@ -183,7 +265,7 @@ export class CraftingScene extends Phaser.Scene {
       tab.setActive(value === this.subFilter);
       bar.add(tab.root);
       this.filterChips.push({ value, tab });
-      x += chipW + 8;
+      x += chipW + 6;
     }
     this.chipBarWidth = x;
     this.buildChipEdgeHints(cy);
@@ -277,7 +359,7 @@ export class CraftingScene extends Phaser.Scene {
       // finger roll was eating chip taps. Only list-area gestures scroll.
       inList = p.y >= this.viewTop && p.y <= this.viewBottom;
       // Chip band: horizontal drag pans the chip bar instead.
-      inChips = p.y >= 84 && p.y <= 122 && !!this.chipBar;
+      inChips = p.y >= 90 && p.y <= 126 && !!this.chipBar;
       // Freeze the discovery nudge the moment the user touches the screen so
       // it never shifts a chip out from under their finger mid-tap.
       this.chipNudge?.remove();
@@ -346,8 +428,8 @@ export class CraftingScene extends Phaser.Scene {
     let band = 0;
     if (this.tab === 'tool') {
       for (const r of visible) {
-        this.rowQueue.push({ kind: 'recipe', y, h: 76, r, band: band++ });
-        y += 76;
+        this.rowQueue.push({ kind: 'recipe', y, h: 94, r, band: band++ });
+        y += 94;
       }
     } else {
       const groups = this.buildGroups(visible);
@@ -366,12 +448,12 @@ export class CraftingScene extends Phaser.Scene {
       this.seedScroll = -1;
       for (const g of groups) {
         if (g.key === seededKey) this.scrollY = this.seedScroll = Math.max(0, y - (this.viewTop + 8));
-        this.rowQueue.push({ kind: 'header', y, h: 64, group: g, band: band++ });
-        y += 64;
+        this.rowQueue.push({ kind: 'header', y, h: 60, group: g, band: band++ });
+        y += 60;
         if (this.expanded.has(g.key)) {
           for (const r of g.recipes) {
-            this.rowQueue.push({ kind: 'recipe', y, h: 76, r, band: band++ });
-            y += 76;
+            this.rowQueue.push({ kind: 'recipe', y, h: 94, r, band: band++ });
+            y += 94;
           }
         }
       }
@@ -433,7 +515,7 @@ export class CraftingScene extends Phaser.Scene {
   /**
    * Virtual window: create rows near the viewport, destroy rows outside it.
    * Keeps live object count small no matter how many recipes exist — big
-   * lists froze the phone otherwise. Heights vary (header 64 / recipe 76) so
+   * lists froze the phone otherwise. Heights vary (header 60 / recipe 94) so
    * visibility is tested per entry instead of by fixed pitch.
    */
   private updateWindow(): void {
@@ -468,75 +550,68 @@ export class CraftingScene extends Phaser.Scene {
    * the recipe rows beneath it.
    */
   private renderSeriesHeader(g: SeriesGroup, y: number, w: number, band: number): void {
-    const h = 64;
+    const h = 58;
     const open = this.expanded.has(g.key);
     const surface = this.add.graphics();
-    surface.fillStyle(open ? 0x13263a : band % 2 ? 0x0e1b2b : 0x0c1827, 0.96);
-    surface.fillRoundedRect(8, y - 3, w - 16, h, 5);
-    surface.fillStyle(rarityColor(g.rarity), 0.82);
-    surface.fillRoundedRect(8, y + 5, 3, h - 16, 1);
-    surface.lineStyle(1, 0xffffff, open ? 0.14 : 0.07);
-    surface.strokeRoundedRect(8, y - 3, w - 16, h, 5);
+    surface.fillStyle(open ? 0x172a32 : band % 2 ? 0x101a21 : 0x121d24, 0.96);
+    surface.fillRoundedRect(8, y - 2, w - 16, h, 5);
+    surface.fillStyle(rarityColor(g.rarity), open ? 0.95 : 0.68);
+    surface.fillRoundedRect(8, y + 5, 3, h - 14, 1);
+    if (g.craftable > 0) {
+      surface.fillStyle(0x4a341d, 0.92);
+      surface.fillRoundedRect(w - 112, y + 28, 76, 20, 3);
+      surface.lineStyle(1, 0xe2b863, 0.35);
+      surface.strokeRoundedRect(w - 112, y + 28, 76, 20, 3);
+    }
+    surface.lineStyle(1, open ? 0xe1b867 : 0xffffff, open ? 0.24 : 0.07);
+    surface.strokeRoundedRect(8, y - 2, w - 16, h, 5);
     this.content.add(surface);
     this.content.add(
-      this.add.circle(23, y + 17, 9, 0x07111e, 0.92).setStrokeStyle(1, 0xffffff, 0.08),
+      this.add
+        .rectangle(29, y + 27, 30, 30, 0x091219, 0.94)
+        .setStrokeStyle(1, rarityColor(g.rarity), open ? 0.75 : 0.4),
     );
     this.content.add(
-      this.add.text(23, y + 16, open ? '−' : '+', {
-        fontFamily: FONT,
-        fontSize: '12px',
-        color: open ? '#ffe39a' : '#aab6c4',
-      }).setOrigin(0.5),
+      this.add.image(29, y + 27, this.resultIcon(g.recipes[0].resultItemId)).setDisplaySize(20, 20)
+        .setTint(open ? 0xffd78a : 0xa7b1b8),
     );
     this.content.add(
-      this.add.text(40, y + 8, g.label === 'その他' ? 'その他' : `${g.label}シリーズ`, {
+      this.add.text(50, y + 6, g.label === 'その他' ? 'その他' : `${g.label}シリーズ`, {
         fontFamily: FONT,
         fontSize: '14px',
-        color: '#eef3f7',
+        color: open ? '#fff2d0' : '#e7edf0',
         fontStyle: 'bold',
       }),
     );
     this.content.add(
-      this.add
-        .text(w - 16, y + 9, `Lv${g.minLv}`, {
-          fontFamily: FONT,
-          fontSize: '11px',
-          color: '#9aa0b4',
-        })
-        .setOrigin(1, 0),
+      this.add.text(50, y + 31, `Lv${g.minLv}  ·  ${g.recipes.length}部位`, {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#8f9ca4',
+      }),
     );
     if (g.craftable > 0) {
       this.content.add(
         this.add
-          .text(w - 54, y + 9, `作成可 ${g.craftable}`, {
+          .text(w - 74, y + 38, `制作可 ${g.craftable}`, {
             fontFamily: FONT,
             fontSize: '10px',
-            color: '#e4c66e',
+            color: '#ffd98a',
+            fontStyle: 'bold',
           })
-          .setOrigin(1, 0),
+          .setOrigin(0.5),
       );
     }
-    // Piece-state strip (max 12 cells fits 360px portrait).
-    let x = 43;
-    const iy = y + 44;
-    for (const r of g.recipes.slice(0, 12)) {
-      const blocked = !!craftBlock(gameState, r);
-      const owned = gameState.ownedEquipmentCount(r.resultItemId) > 0;
-      const border = owned ? 0x63826e : blocked ? 0x303b48 : 0xd0aa4c;
-      const fill = owned ? 0x14271f : blocked ? 0x08121e : 0x302718;
-      this.content.add(
-        this.add.rectangle(x, iy, 22, 22, fill, 1).setStrokeStyle(1, border, blocked ? 0.55 : 0.88),
-      );
-      const img = this.add
-        .image(x, iy, this.resultIcon(r.resultItemId))
-        .setDisplaySize(16, 16)
-        .setTint(owned ? 0x9fc5ab : blocked ? 0x596575 : 0xffdda0);
-      this.content.add(img);
-      x += 26;
-    }
+    this.content.add(
+      this.add.text(w - 20, y + 26, open ? '−' : '+', {
+        fontFamily: FONT,
+        fontSize: '16px',
+        color: open ? '#ffd47f' : '#8d9aa3',
+      }).setOrigin(0.5),
+    );
     // Whole-row tap target (kept last so it sits above the visuals).
     const zone = this.add
-      .rectangle(w / 2, y + h / 2, w, h - 2, 0x000000, 0.001)
+      .rectangle(w / 2, y + h / 2, w, h, 0x000000, 0.001)
       .setInteractive({ useHandCursor: true });
     zone.on('pointerup', () => {
       if (this.dragged) return;
@@ -568,38 +643,42 @@ export class CraftingScene extends Phaser.Scene {
   }
 
   private renderRecipe(r: Recipe, y: number, w: number, band: number): void {
-    const rowH = 72;
+    const rowH = 92;
     const block = craftBlock(gameState, r);
+    const craftable = block === null;
     const resultRarity =
       getEquipment(r.resultItemId)?.rarity ?? getMaterial(r.resultItemId)?.rarity;
     const surface = this.add.graphics();
-    surface.fillStyle(band % 2 ? 0x091523 : 0x0a1726, 0.97);
-    surface.fillRoundedRect(18, y - 3, w - 26, rowH, 4);
-    surface.fillStyle(rarityColor(resultRarity), block ? 0.28 : 0.68);
-    surface.fillRect(18, y + 6, 2, rowH - 18);
-    surface.lineStyle(1, 0xffffff, 0.055);
-    surface.strokeRoundedRect(18, y - 3, w - 26, rowH, 4);
+    surface.fillStyle(craftable ? 0x17252a : band % 2 ? 0x10181e : 0x111a20, 0.97);
+    surface.fillRoundedRect(14, y - 2, w - 22, rowH, 5);
+    surface.fillStyle(craftable ? 0xe09a42 : rarityColor(resultRarity), craftable ? 0.92 : 0.3);
+    surface.fillRoundedRect(14, y + 7, 3, rowH - 18, 1);
+    surface.lineStyle(1, craftable ? 0xe0b66c : 0xffffff, craftable ? 0.22 : 0.06);
+    surface.strokeRoundedRect(14, y - 2, w - 22, rowH, 5);
     this.content.add(surface);
     // Result icon cell (rarity border), dimmed when unaffordable.
-    const border = block ? 0x4a4f5c : rarityColor(resultRarity);
-    const cy = y + rowH / 2;
+    const border = craftable ? rarityColor(resultRarity) : 0x48545c;
+    const cy = y + 42;
     this.content.add(
-      this.add.rectangle(37, cy, 30, 30, 0x0a1220, 1).setStrokeStyle(1, border, block ? 0.5 : 0.8),
+      this.add.rectangle(38, cy, 38, 38, 0x091218, 0.98).setStrokeStyle(1, border, craftable ? 0.82 : 0.42),
     );
     this.content.add(
-      this.add.image(37, cy, this.resultIcon(r.resultItemId)).setTint(block ? 0x737d8c : 0xf2e4bd),
+      this.add
+        .image(38, cy, this.resultIcon(r.resultItemId))
+        .setDisplaySize(24, 24)
+        .setTint(craftable ? 0xffe0a0 : 0x6f7b82),
     );
     this.content.add(
-      this.add.text(58, y + 6, `${itemDisplayName(r.resultItemId)} ×${r.resultQty}`, {
+      this.add.text(64, y + 7, `${itemDisplayName(r.resultItemId)} ×${r.resultQty}`, {
         fontFamily: FONT,
-        fontSize: '13px',
-        color: '#eef3f7',
+        fontSize: '12px',
+        color: craftable ? '#fff3d6' : '#d9e0e3',
         fontStyle: 'bold',
       }),
     );
 
-    // Per-cost chips: green when satisfied, red when short (a wall of red text
-    // was unreadable; colour each requirement individually).
+    // Requirements read like a compact bill of materials. Tiny status dots
+    // carry pass/fail colour so the text itself stays calm and legible.
     const costs: { label: string; ok: boolean }[] = [];
     for (const [id, qty] of Object.entries(r.materials)) {
       const have = gameState.materials[id] ?? 0;
@@ -610,44 +689,47 @@ export class CraftingScene extends Phaser.Scene {
       costs.push({ label: `${itemDisplayName(eq)}(装) ${have}/1`, ok: have >= 1 });
     }
     costs.push({ label: `${r.gold}G`, ok: gameState.gold >= r.gold });
-    let lineX = 58;
-    let lineY = y + 28;
+    let lineX = 64;
+    let lineY = y + 34;
+    const maxCostX = w - 82;
     for (const c of costs) {
-      const t = this.add.text(lineX, lineY, c.label, {
+      const t = this.add.text(0, 0, c.label, {
         fontFamily: FONT,
-        fontSize: '11px',
-        color: c.ok ? '#a8b8c8' : '#df8a83',
+        fontSize: '10px',
+        color: c.ok ? '#b8c4c9' : '#e29b91',
       });
-      this.content.add(t);
-      lineX = t.x + t.width + 10;
-      // Wrap long upgrade-recipe cost lists to a second row.
-      if (lineX > w - 96 && lineY === y + 28) {
-        lineX = 58;
-        lineY = y + 46;
+      const entryW = t.width + 16;
+      if (lineX + entryW > maxCostX && lineX > 64) {
+        lineX = 64;
+        lineY += 18;
       }
+      t.setPosition(lineX + 9, lineY);
+      this.content.add(this.add.circle(lineX + 3, lineY + 7, 2.5, c.ok ? 0x6fb584 : 0xc56c62));
+      this.content.add(t);
+      lineX += entryW;
     }
 
-    if (block) {
-      this.content.add(
-        this.add
-          .text(w - 16, cy, '素材不足', { fontFamily: FONT, fontSize: '10px', color: '#727f8e' })
-          .setOrigin(1, 0.5),
-      );
-    } else {
-      const buttonPlate = this.add.graphics();
-      buttonPlate.fillStyle(0x2b2619, 1);
-      buttonPlate.fillRoundedRect(-29, -15, 58, 30, 4);
-      buttonPlate.fillStyle(0xd0aa4c, 0.9);
-      buttonPlate.fillRoundedRect(-29, -15, 3, 30, { tl: 4, tr: 0, bl: 4, br: 0 });
-      buttonPlate.lineStyle(1, 0xe5ca7b, 0.58);
-      buttonPlate.strokeRoundedRect(-29, -15, 58, 30, 4);
-      const buttonText = this.add
-        .text(0, 0, '作る', { fontFamily: FONT, fontSize: '12px', color: '#ffeab0', fontStyle: 'bold' })
-        .setOrigin(0.5);
-      const btn = this.add
-        .container(w - 45, cy, [buttonPlate, buttonText])
-        .setSize(58, 34)
-        .setInteractive({ useHandCursor: true });
+    // Command stays in one fixed place for every row. Unavailable recipes keep
+    // the same silhouette, which makes the craftable amber buttons pop.
+    const buttonPlate = this.add.graphics();
+    buttonPlate.fillStyle(craftable ? 0xb96c2f : 0x1d282e, 1);
+    buttonPlate.fillRoundedRect(-30, -19, 60, 38, 5);
+    buttonPlate.fillStyle(craftable ? 0xffc465 : 0x53616a, craftable ? 0.9 : 0.35);
+    buttonPlate.fillRoundedRect(-30, -19, 3, 38, { tl: 5, tr: 0, bl: 5, br: 0 });
+    buttonPlate.lineStyle(1, craftable ? 0xffd383 : 0x71808a, craftable ? 0.62 : 0.2);
+    buttonPlate.strokeRoundedRect(-30, -19, 60, 38, 5);
+    const blockedLabel = block === 'gold' ? 'G不足' : block === 'equipment' ? '装備不足' : '素材不足';
+    const buttonText = this.add
+      .text(0, 0, craftable ? '制作' : blockedLabel, {
+        fontFamily: FONT,
+        fontSize: craftable ? '12px' : '9px',
+        color: craftable ? '#fff5d6' : '#7f8c94',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    const btn = this.add.container(w - 45, cy, [buttonPlate, buttonText]).setSize(62, 42);
+    if (craftable) {
+      btn.setInteractive({ useHandCursor: true });
       btn.on('pointerdown', () => btn.setScale(0.96));
       btn.on('pointerout', () => btn.setScale(1));
       btn.on('pointerup', () => {
@@ -659,20 +741,36 @@ export class CraftingScene extends Phaser.Scene {
         }
         this.render();
       });
-      this.content.add(btn);
     }
+    this.content.add(btn);
   }
 
   private flash(msg: string): void {
     const t = this.add
-      .text(this.scale.width / 2, this.scale.height - 70, msg, {
+      .text(0, -1, msg, {
         fontFamily: FONT,
-        fontSize: '13px',
-        color: '#ffe9a8',
+        fontSize: '12px',
+        color: '#fff0c6',
+        fontStyle: 'bold',
       })
-      .setOrigin(0.5)
-      .setDepth(2);
-    this.tweens.add({ targets: t, alpha: 0, delay: 700, duration: 500, onComplete: () => t.destroy() });
+      .setOrigin(0.5);
+    const plate = this.add.graphics();
+    const toastW = Math.min(this.scale.width - 32, Math.max(150, t.width + 30));
+    plate.fillStyle(0x101a20, 0.97);
+    plate.fillRoundedRect(-toastW / 2, -17, toastW, 34, 5);
+    plate.lineStyle(1, 0xe2ad59, 0.55);
+    plate.strokeRoundedRect(-toastW / 2, -17, toastW, 34, 5);
+    const toast = this.add
+      .container(this.scale.width / 2, this.viewBottom - 20, [plate, t])
+      .setDepth(5);
+    this.tweens.add({
+      targets: toast,
+      y: toast.y - 6,
+      alpha: 0,
+      delay: 750,
+      duration: 450,
+      onComplete: () => toast.destroy(),
+    });
   }
 
   private close(): void {

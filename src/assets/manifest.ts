@@ -134,6 +134,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.uiFrame, 'assets/ui/frame-storybook-v1.png'),
   img(TEX.uiMenuBackdrop, 'assets/ui/menu-backdrop-storybook-v1.webp'),
   img(TEX.uiMapBackdrop, 'assets/ui/map-backdrop-storybook-v1.webp'),
+  img(TEX.uiCraftingBackdrop, 'assets/ui/crafting-workshop-storybook-v1.webp'),
   img(TEX.uiRibbonFrame, 'assets/ui/ribbon-frame-storybook-v1.png'),
   // Cohesive illustrated battle HUD. Dynamic values/icons remain code-driven;
   // these transparent bezels supply the production-quality material finish.

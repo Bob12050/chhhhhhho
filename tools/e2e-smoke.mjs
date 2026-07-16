@@ -47,12 +47,15 @@ try {
   await page.mouse.click(180, 400); await page.waitForTimeout(1200);
   await page.mouse.click(180, 360); await page.waitForTimeout(900);
   await page.mouse.click(294, 156); await page.waitForTimeout(1800);
-  // Three elder lines, then tap inside (not on the top edge of) the single
-  // 「依頼を受ける」 choice hit area.
+  // Advance the three elder lines via the scene's keyboard contract, then
+  // activate the choice by label. Coordinate taps here were brittle whenever
+  // the logical height or device letterbox changed.
   for (let i = 0; i < 3; i++) {
-    await page.mouse.click(180, 680); await page.waitForTimeout(220);
+    await page.keyboard.press('e'); await page.waitForTimeout(220);
   }
-  await page.mouse.click(180, 650); await page.waitForTimeout(300);
+  const introAccepted = await page.evaluate(() => window.__test.activateText('Dialogue', '依頼を受ける'));
+  if (!introAccepted) throw new Error('intro quest choice was not available');
+  await page.waitForTimeout(300);
   await page.waitForTimeout(500);
   await page.mouse.click(64, 610); await page.waitForTimeout(800);
   await page.waitForFunction(() => !!window.__test, undefined, { timeout: 10000 });
