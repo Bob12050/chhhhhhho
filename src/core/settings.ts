@@ -1,10 +1,6 @@
-/**
- * User settings (audio volumes), persisted to localStorage. Values are 0..1
- * multipliers applied on top of each engine's internal master gain, in 25%
- * steps from the options screen. Loaded once at startup; setters persist and
- * notify the audio engines live (wired in main.ts / options-scene).
- */
-const KEY = 'pixelrpg.settings.v1';
+/** User settings persisted to localStorage. */
+export const SETTINGS_STORAGE_KEY = 'pixelrpg.settings.v1';
+const PAPER_DOLL_PILOT_REVISION = 1;
 
 export interface Settings {
   bgmVol: number; // 0..1
@@ -13,7 +9,11 @@ export interface Settings {
   paperDollPilot: boolean;
 }
 
-const DEFAULTS: Settings = { bgmVol: 1, sfxVol: 1, paperDollPilot: true };
+const DEFAULTS: Settings = { bgmVol: 1, sfxVol: 1, paperDollPilot: false };
+
+type StoredSettings = Partial<Settings> & {
+  paperDollPilotRevision?: number;
+};
 
 function clamp01(v: unknown): number {
   const n = typeof v === 'number' && Number.isFinite(v) ? v : 1;
@@ -22,13 +22,17 @@ function clamp01(v: unknown): number {
 
 export function loadSettings(): Settings {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
     if (!raw) return { ...DEFAULTS };
-    const p = JSON.parse(raw) as Partial<Settings>;
+    const p = JSON.parse(raw) as StoredSettings;
     return {
       bgmVol: clamp01(p.bgmVol),
       sfxVol: clamp01(p.sfxVol),
-      paperDollPilot: p.paperDollPilot !== false,
+      // The first public pilot had mismatched anchors. Require a value saved by
+      // the revised settings screen so that every existing player rolls back.
+      paperDollPilot:
+        p.paperDollPilot === true
+        && p.paperDollPilotRevision === PAPER_DOLL_PILOT_REVISION,
     };
   } catch {
     return { ...DEFAULTS };
@@ -37,7 +41,10 @@ export function loadSettings(): Settings {
 
 export function saveSettings(s: Settings): void {
   try {
-    localStorage.setItem(KEY, JSON.stringify(s));
+    localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      JSON.stringify({ ...s, paperDollPilotRevision: PAPER_DOLL_PILOT_REVISION }),
+    );
   } catch {
     /* private mode etc. — settings just won't persist */
   }
