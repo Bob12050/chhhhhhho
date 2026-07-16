@@ -5506,7 +5506,8 @@
       "materials": {
         "treant_sap": 4,
         "lord_hardwood": 2,
-        "soft_leather": 2
+        "soft_leather": 2,
+        "spirit_amber": 1
       },
       "gold": 50,
       "station": "forge"
@@ -5554,7 +5555,8 @@
       "materials": {
         "stone_heart": 3,
         "guardian_keystone": 2,
-        "soft_leather": 2
+        "soft_leather": 2,
+        "earth_coreorb": 1
       },
       "gold": 60,
       "station": "forge"
@@ -5627,7 +5629,8 @@
       "materials": {
         "gale_feather": 2,
         "gale_tailfeather": 2,
-        "soft_leather": 2
+        "soft_leather": 2,
+        "sky_crown": 1
       },
       "gold": 100,
       "station": "forge"
@@ -5704,6 +5707,50 @@
         "soft_leather": 2
       },
       "gold": 210,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_skoll_blade",
+      "resultItemId": "skoll_blade",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "fenrir_fang_katana"
+      ],
+      "materials": {
+        "skoll_pelt": 4,
+        "alpha_fang": 2
+      },
+      "gold": 650,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_skoll_greaves",
+      "resultItemId": "skoll_greaves",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "fenrir_greaves"
+      ],
+      "materials": {
+        "skoll_pelt": 3,
+        "alpha_pelt": 2,
+        "alpha_fang": 1
+      },
+      "gold": 550,
+      "station": "forge"
+    },
+    {
+      "id": "upgrade_skoll_coil",
+      "resultItemId": "skoll_coil",
+      "resultQty": 1,
+      "consumeEquipment": [
+        "fenrir_belt"
+      ],
+      "materials": {
+        "skoll_pelt": 3,
+        "alpha_pelt": 2,
+        "skoll_thunder_horn": 1
+      },
+      "gold": 600,
       "station": "forge"
     },
     {

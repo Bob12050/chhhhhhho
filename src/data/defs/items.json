@@ -452,6 +452,13 @@
       "description": "スコルの毛皮。触れると弾ける。"
     },
     {
+      "id": "skoll_thunder_horn",
+      "name": "雷狼の轟角",
+      "rarity": 9,
+      "sellPrice": 360,
+      "description": "雷狼の長スコルの雷を蓄えた希少な角。スコルシリーズの象徴素材。"
+    },
+    {
       "id": "miasma_sac",
       "name": "猛毒の胞子嚢",
       "rarity": 8,
@@ -7346,6 +7353,62 @@
       "sellPrice": 210,
       "description": "長牙を飾った腰帯。群れの長の証。",
       "series": "フェンリル"
+    },
+    {
+      "id": "skoll_blade",
+      "name": "スコルブレイド",
+      "slot": "main_hand",
+      "rarity": 9,
+      "visualId": "sword_iron",
+      "weaponTags": [
+        "katana"
+      ],
+      "element": "thunder",
+      "levelRequirement": 60,
+      "derived": {
+        "physAtk": 38,
+        "critRate": 0.09,
+        "atkSpeed": 0.3
+      },
+      "sellPrice": 420,
+      "description": "フェンリルブレイドを雷狼の素材で鍛え直した雷刀。斬撃の軌跡に稲妻が走る。",
+      "series": "スコル"
+    },
+    {
+      "id": "skoll_greaves",
+      "name": "スコルグリーヴ",
+      "slot": "feet",
+      "rarity": 9,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 60,
+      "derived": {
+        "moveSpeed": 9,
+        "evasion": 15,
+        "def": 18
+      },
+      "sellPrice": 360,
+      "description": "雷狼の毛皮で仕立てた脚甲。踏み込むたび足元で雷が弾ける。",
+      "series": "スコル"
+    },
+    {
+      "id": "skoll_coil",
+      "name": "スコルコイル",
+      "slot": "waist",
+      "rarity": 9,
+      "visualId": "vest_cloth",
+      "element": "none",
+      "levelRequirement": 60,
+      "derived": {
+        "maxHp": 50,
+        "def": 18,
+        "magDef": 3,
+        "evasion": 8,
+        "atkSpeed": 0.2
+      },
+      "sellPrice": 360,
+      "description": "雷狼の轟角を核に据えた腰帯。群れを率いる者だけが雷威を引き出せる。",
+      "series": "スコル"
     },
     {
       "id": "king_jelly_rod",

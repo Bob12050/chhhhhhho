@@ -420,6 +420,43 @@ function validateRecipes(itemIds: Set<string>): void {
   }
 }
 
+function validateBossRareMaterials(): void {
+  const items = readJson<{
+    materials: { id: string; rarity?: number }[];
+    equipment: { id: string }[];
+  }>('src/data/defs/items.json');
+  const rareMaterialIds = new Set(
+    items.materials.filter((m) => (m.rarity ?? 0) >= 8).map((m) => m.id),
+  );
+  const equipmentIds = new Set(items.equipment.map((e) => e.id));
+  const drops = readJson<{
+    tables: { id: string; entries: { itemId: string; dropRate: number }[] }[];
+  }>('src/data/defs/drops.json');
+  const recipes = readJson<{
+    recipes: { resultItemId: string; materials: Record<string, number> }[];
+  }>('src/data/defs/recipes.json').recipes;
+
+  for (const table of drops.tables.filter((t) => t.id.startsWith('boss_'))) {
+    const bossRares = table.entries.filter(
+      (e) => e.dropRate > 0 && e.dropRate <= 0.1 && rareMaterialIds.has(e.itemId),
+    );
+    if (bossRares.length === 0) {
+      err(`Boss drop ${table.id}: no R8+ rare material at 10% or lower`);
+      continue;
+    }
+    for (const rare of bossRares) {
+      const hasEquipmentUse = recipes.some(
+        (r) => equipmentIds.has(r.resultItemId) && (r.materials[rare.itemId] ?? 0) > 0,
+      );
+      if (!hasEquipmentUse) {
+        err(
+          `Boss drop ${table.id}: rare material "${rare.itemId}" is not used by any equipment recipe`,
+        );
+      }
+    }
+  }
+}
+
 function validateSkills(): Set<string> {
   const file = readJson<{
     skills: {
@@ -661,6 +698,7 @@ const enemyIds = validateEnemies(itemIds, dropTableIds);
 const dialogueIds = validateDialogue();
 const mapIds = validateMaps(enemyIds, dialogueIds);
 validateRecipes(itemIds);
+validateBossRareMaterials();
 const skillIds = validateSkills();
 validateJobs(skillIds);
 validatePets();
