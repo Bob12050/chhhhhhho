@@ -20,7 +20,10 @@ export class Pet {
 
   constructor(scene: Phaser.Scene, x: number, y: number, def: PetDef) {
     this.sprite = scene.add.image(Math.round(x), Math.round(y), def.textureKey, 0).setOrigin(0.5, 0.875);
-    if (def.scale) this.sprite.setScale(def.scale);
+    // Pet definitions vary for silhouette, but rendering uses two crisp size
+    // classes instead of fractional scales that crawl across the pixel grid.
+    const scale = (def.scale ?? 0.6) >= 0.66 ? 0.75 : 0.5;
+    this.sprite.setScale(scale);
     if (def.tint) this.sprite.setTint(Phaser.Display.Color.HexStringToColor(def.tint).color);
     this.shadow = scene.add
       .ellipse(Math.round(x), Math.round(y) + 2, 16, 6, 0x000000, 0.2)

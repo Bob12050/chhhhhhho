@@ -28,6 +28,7 @@ interface Walker {
   speed: number;
   frame: number;
   elapsed: number;
+  animated: boolean;
 }
 
 /**
@@ -122,13 +123,20 @@ export class TitleScene extends Phaser.Scene {
     const roadY = Math.round(h * 0.72);
     const spawn = (tex: string, x: number, isSlime = false): void => {
       if (!this.textures.exists(tex)) return;
+      const animated = this.supportsWalkAnimation(tex);
       const s = this.add
-        .sprite(x, roadY, tex, frameIndex('left', 'walk', 0))
+        .sprite(x, roadY, tex, animated ? frameIndex('left', 'walk', 0) : 0)
         .setOrigin(0.5, 0.875)
         .setFlipX(true) // right = mirrored left (pose-atlas rule)
         .setDepth(10);
       if (isSlime) s.setTint(0x9fe36a);
-      this.walkers.push({ sprite: s, speed: isSlime ? 34 : 38, frame: 0, elapsed: 0 });
+      this.walkers.push({
+        sprite: s,
+        speed: isSlime ? 34 : 38,
+        frame: 0,
+        elapsed: 0,
+        animated,
+      });
     };
     // Staggered start so the screen is alive immediately.
     spawn(this.pickParadeTex(), w * 0.55);
@@ -145,6 +153,10 @@ export class TitleScene extends Phaser.Scene {
       }
     }
     return TEX.playerBody; // always generated
+  }
+
+  private supportsWalkAnimation(tex: string): boolean {
+    return this.textures.get(tex).has(String(frameIndex('left', 'walk', 3)));
   }
 
   /** Slow-drifting gold motes (fireflies) for a bit of life. */
@@ -334,14 +346,19 @@ export class TitleScene extends Phaser.Scene {
       if (walker.elapsed >= 140) {
         walker.elapsed -= 140;
         walker.frame = (walker.frame + 1) % 4;
-        walker.sprite.setFrame(frameIndex('left', 'walk', walker.frame));
+        if (walker.animated) walker.sprite.setFrame(frameIndex('left', 'walk', walker.frame));
       }
       walker.sprite.setX(Math.round(walker.sprite.x));
       if (walker.sprite.x > w + 60) {
         walker.sprite.x = -60 - Math.random() * 80;
         // Slimes stay slimes; heroes rotate through the roster.
         if (walker.sprite.texture.key !== TEX.slime) {
-          walker.sprite.setTexture(this.pickParadeTex(), frameIndex('left', 'walk', walker.frame));
+          const tex = this.pickParadeTex();
+          walker.animated = this.supportsWalkAnimation(tex);
+          walker.sprite.setTexture(
+            tex,
+            walker.animated ? frameIndex('left', 'walk', walker.frame) : 0,
+          );
           walker.sprite.setFlipX(true);
         }
       }

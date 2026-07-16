@@ -42,9 +42,6 @@ export class Player {
   private distanceSinceStep = 0;
   private lastX: number;
   private lastY: number;
-  private motionScaleX = 1;
-  private motionScaleY = 1;
-  private motionRotation = 0;
 
   /** Called when an attack's hit frame lands. */
   onAttackHit: ((dir: Direction) => void) | null = null;
@@ -280,21 +277,9 @@ export class Player {
       this.distanceSinceStep = 0;
     }
 
-    const velocityX = this.body.body?.velocity.x ?? 0;
-    const targetScaleX = walking ? 1 + contact * 0.012 : 1;
-    const targetScaleY = walking ? 1 - contact * 0.014 : 1;
-    const targetRotation = walking
-      ? Phaser.Math.Clamp(velocityX / Math.max(1, this.moveSpeed), -1, 1) * 0.018
-      : 0;
-    const motionBlend = 1 - Math.exp(-dtMs * 0.025);
-    this.motionScaleX = Phaser.Math.Linear(this.motionScaleX, targetScaleX, motionBlend);
-    this.motionScaleY = Phaser.Math.Linear(this.motionScaleY, targetScaleY, motionBlend);
-    this.motionRotation = Phaser.Math.Linear(this.motionRotation, targetRotation, motionBlend);
-    this.doll.setMotionTransform(this.motionScaleX, this.motionScaleY, this.motionRotation);
-
     this.shadow
       .setPosition(Math.round(this.body.x), Math.round(this.body.y) + 1)
-      .setDisplaySize(28 + contact * 2, 10 - contact)
+      .setDisplaySize(Math.round(28 + contact * 2), Math.round(10 - contact))
       .setAlpha(0.68 + contact * 0.06)
       .setDepth(Math.round(this.body.y) - 1);
     this.jobPlate

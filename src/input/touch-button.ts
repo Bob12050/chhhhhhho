@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import { FONT } from '@/ui/theme';
-import { TEX } from '@/assets/gen/textures';
 
 export type TouchButtonStyle = 'primary' | 'secondary' | 'utility';
 
@@ -14,11 +13,9 @@ export class TouchButton {
   private readonly depth: number;
   private readonly circle: Phaser.GameObjects.Arc;
   private readonly inner: Phaser.GameObjects.Arc;
-  private readonly frame?: Phaser.GameObjects.Image;
   private readonly label: Phaser.GameObjects.Text;
   private icon?: Phaser.GameObjects.Image;
   private hasIconContent = false;
-  private frameSize = 0;
   private dimmed = false;
   private unavailable = false;
   private pointerId = -1;
@@ -48,8 +45,6 @@ export class TouchButton {
     this.radius = Math.max(radius, 24); // 48px diameter minimum
     this.accent = color;
     this.style = style;
-    const frameTex = this.radius >= 26 ? TEX.hudActionButton : TEX.hudUtilityButton;
-    const hasIllustratedFrame = style === 'primary' && scene.textures.exists(frameTex);
     const baseColor = style === 'primary' ? 0x142d4b : 0x0c1828;
     const baseAlpha = style === 'primary' ? 0.9 : style === 'secondary' ? 0.72 : 0.64;
     this.circle = scene.add.circle(x, y, this.radius, baseColor, baseAlpha).setDepth(depth);
@@ -62,15 +57,6 @@ export class TouchButton {
       .circle(x, y, this.radius - 6, color, style === 'primary' ? 0.18 : 0.1)
       .setDepth(depth + 0.25);
     this.inner.setStrokeStyle(1, color, style === 'primary' ? 0.5 : 0.26);
-    if (hasIllustratedFrame) {
-      const size = this.radius * 2 + (this.radius >= 26 ? 8 : 6);
-      this.frameSize = size;
-      this.frame = scene.add
-        .image(x, y, frameTex)
-        .setDisplaySize(size, size)
-        .setAlpha(0.86)
-        .setDepth(depth + 0.6);
-    }
     // Icon + smaller caption reads better than a bare letter; integer scale
     // only (pixel-art rule).
     if (iconTex && scene.textures.exists(iconTex)) {
@@ -139,7 +125,6 @@ export class TouchButton {
           : idleContent;
     this.circle.setAlpha(shellAlpha);
     this.inner.setAlpha(shellAlpha);
-    this.frame?.setAlpha(this.dimmed ? 0.42 : this.unavailable ? 0.52 : pressed ? 1 : 0.86);
     this.label.setAlpha(contentAlpha);
     this.icon?.setAlpha(contentAlpha);
     this.label.setColor(this.unavailable && !pressed ? '#aab3be' : '#ffffff');
@@ -158,7 +143,6 @@ export class TouchButton {
     );
     this.inner.setFillStyle(this.unavailable ? 0x52606c : this.accent, innerAlpha);
     this.inner.setStrokeStyle(1, this.unavailable ? 0x6f7c89 : this.accent, this.style === 'primary' ? 0.5 : 0.26);
-    this.frame?.clearTint().setDisplaySize(this.frameSize, this.frameSize);
     this.applyOpacity(false);
   }
 
@@ -216,7 +200,6 @@ export class TouchButton {
   setVisible(v: boolean): void {
     this.circle.setVisible(v);
     this.inner.setVisible(v);
-    this.frame?.setVisible(v);
     this.label.setVisible(v);
     this.icon?.setVisible(v && this.hasIconContent);
     if (!v && this.pointerId !== -1) {
@@ -242,7 +225,6 @@ export class TouchButton {
     this.pointerId = p.id;
     this.circle.setFillStyle(0x2f6598, 0.98);
     this.inner.setFillStyle(this.accent, this.style === 'primary' ? 0.32 : 0.22);
-    this.frame?.setTint(0xfff0bf).setDisplaySize(this.frameSize * 0.96, this.frameSize * 0.96);
     this.applyOpacity(true);
     this.onChange?.(true);
   }

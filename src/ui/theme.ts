@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { TEX, UI_FRAME_SLICE } from '@/assets/gen/textures';
+import { TEX } from '@/assets/gen/textures';
 
 /**
  * Central UI theme (B: 統一感). One place for the font, palette, text-style
@@ -151,44 +151,21 @@ export function ninePanel(
   height: number,
   opts?: { active?: boolean; alpha?: number; tint?: number },
 ): Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Depth {
-  if (scene.textures.exists(TEX.uiFrame)) {
-    // A container keeps the shadow and face together when a scrolling scene
-    // moves the returned panel.
-    const shadow = scene.add.nineslice(
-      0,
-      4,
-      TEX.uiFrame,
-      undefined,
-      width,
-      height,
-      UI_FRAME_SLICE,
-      UI_FRAME_SLICE,
-      UI_FRAME_SLICE,
-      UI_FRAME_SLICE,
-    );
-    shadow.setTint(0x000000).setAlpha(0.28 * (opts?.alpha ?? 1));
-    const n = scene.add.nineslice(
-      0,
-      0,
-      TEX.uiFrame,
-      undefined,
-      width,
-      height,
-      UI_FRAME_SLICE,
-      UI_FRAME_SLICE,
-      UI_FRAME_SLICE,
-      UI_FRAME_SLICE,
-    );
-    const tint = opts?.tint ?? (opts?.active === false ? 0x8890a8 : undefined);
-    if (tint !== undefined) n.setTint(tint);
-    if (opts?.alpha !== undefined) n.setAlpha(opts.alpha);
-    return scene.add.container(cx, cy, [shadow, n]);
-  }
-  // Fallback: the original flat card so menus still render without a frame tex.
-  const r = scene.add
-    .rectangle(0, 0, width, height, 0x141726, opts?.alpha ?? 0.94)
-    .setStrokeStyle(2, opts?.active === false ? 0x333a5a : 0x46508a, 0.9);
-  return scene.add.container(cx, cy, [r]);
+  const active = opts?.active !== false;
+  const alpha = opts?.alpha ?? 0.96;
+  const radius = Math.min(6, Math.floor(height / 4));
+  const g = scene.add.graphics();
+  g.fillStyle(0x000000, 0.28 * alpha);
+  g.fillRoundedRect(-width / 2, -height / 2 + 3, width, height, radius);
+  g.fillStyle(opts?.tint ?? (active ? 0x0c1b2d : 0x111927), alpha);
+  g.fillRoundedRect(-width / 2, -height / 2, width, height, radius);
+  g.fillStyle(0xffffff, active ? 0.035 : 0.018);
+  g.fillRoundedRect(-width / 2 + 2, -height / 2 + 2, width - 4, Math.max(2, Math.floor(height / 3)), {
+    tl: Math.max(0, radius - 2), tr: Math.max(0, radius - 2), bl: 0, br: 0,
+  });
+  g.lineStyle(1, active ? 0xa9bed2 : 0x718095, active ? 0.28 : 0.16);
+  g.strokeRoundedRect(-width / 2, -height / 2, width, height, radius);
+  return scene.add.container(cx, cy, [g]);
 }
 
 /** Parse a #rrggbb string to a Phaser fill number. */
@@ -275,55 +252,24 @@ export function pillButton(
   const w = Math.max(92, Math.ceil(txt.width) + padX * 2);
   const h = Math.max(40, Math.ceil(txt.height) + padY * 2);
   const children: Phaser.GameObjects.GameObject[] = [];
-  if (scene.textures.exists(TEX.uiFrame)) {
-    const shadow = scene.add
-      .nineslice(
-        0,
-        3,
-        TEX.uiFrame,
-        undefined,
-        w,
-        h,
-        UI_FRAME_SLICE,
-        UI_FRAME_SLICE,
-        UI_FRAME_SLICE,
-        UI_FRAME_SLICE,
-      )
-      .setTint(0x000000)
-      .setAlpha(0.3);
-    const plate = scene.add.nineslice(
-      0,
-      0,
-      TEX.uiFrame,
-      undefined,
-      w,
-      h,
-      UI_FRAME_SLICE,
-      UI_FRAME_SLICE,
-      UI_FRAME_SLICE,
-      UI_FRAME_SLICE,
-    );
-    children.push(shadow, plate);
-  } else {
-    const r = Math.min(h / 2, 12);
-    const g = scene.add.graphics();
-    g.fillStyle(0x000000, 0.25);
-    g.fillRoundedRect(-w / 2, -h / 2 + 2, w, h, r);
-    g.fillStyle(bg, 1);
-    g.fillRoundedRect(-w / 2, -h / 2, w, h, r);
-    g.fillStyle(0xffffff, 0.1);
-    g.fillRoundedRect(-w / 2 + 2, -h / 2 + 2, w - 4, h / 2 - 2, { tl: r, tr: r, bl: 0, br: 0 });
-    g.lineStyle(1.5, 0xffffff, 0.16);
-    g.strokeRoundedRect(-w / 2, -h / 2, w, h, r);
-    children.push(g);
-  }
+  const r = 7;
+  const g = scene.add.graphics();
+  g.fillStyle(0x000000, 0.3);
+  g.fillRoundedRect(-w / 2, -h / 2 + 3, w, h, r);
+  g.fillStyle(bg, 1);
+  g.fillRoundedRect(-w / 2, -h / 2, w, h, r);
+  g.fillStyle(0xffffff, 0.055);
+  g.fillRoundedRect(-w / 2 + 2, -h / 2 + 2, w - 4, Math.floor(h / 2) - 2, { tl: 5, tr: 5, bl: 0, br: 0 });
+  g.lineStyle(1, 0xc5d3e1, 0.24);
+  g.strokeRoundedRect(-w / 2, -h / 2, w, h, r);
+  children.push(g);
   children.push(txt);
   const c = scene.add.container(x, y, children);
   c.setSize(w, h).setInteractive();
   if (c.input) c.input.cursor = 'pointer';
   c.on('pointerup', onTap);
   // Press feedback.
-  c.on('pointerdown', () => c.setScale(0.96));
+  c.on('pointerdown', () => c.setScale(0.98));
   c.on('pointerup', () => c.setScale(1));
   c.on('pointerout', () => c.setScale(1));
   return c;
@@ -385,13 +331,11 @@ export function rowBand(
 ): Phaser.GameObjects.Graphics {
   const w = scene.scale.width - 16;
   const g = scene.add.graphics();
-  // Soft rounded card per row (alternating tint) — reads far less "spreadsheet"
-  // than hard full-width bands.
-  g.fillStyle(index % 2 ? 0x17314b : 0x142842, 0.9);
-  g.fillRoundedRect(8, y - 4, w, height, 8);
-  g.fillStyle(index % 2 ? 0x3fa2b8 : 0xd3aa4f, 0.58);
-  g.fillRoundedRect(8, y + 3, 3, height - 14, 2);
-  g.lineStyle(1, 0xe8c76b, 0.22);
-  g.strokeRoundedRect(8, y - 4, w, height, 8);
+  g.fillStyle(index % 2 ? 0x11263a : 0x102235, 0.9);
+  g.fillRoundedRect(8, y - 4, w, height, 4);
+  g.fillStyle(index % 2 ? 0x4f91ad : 0x617ea4, 0.52);
+  g.fillRect(8, y + 4, 2, Math.max(4, height - 16));
+  g.lineStyle(1, 0xb9cad9, 0.12);
+  g.strokeRoundedRect(8, y - 4, w, height, 4);
   return g;
 }

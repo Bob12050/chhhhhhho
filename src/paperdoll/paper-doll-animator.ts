@@ -135,12 +135,6 @@ export class PaperDollAnimator {
     this.container.setDepth(depth);
   }
 
-  /** Subtle whole-body motion around the fixed feet anchor. */
-  setMotionTransform(scaleX: number, scaleY: number, rotation: number): void {
-    this.container.setScale(scaleX, scaleY);
-    this.container.setRotation(rotation);
-  }
-
   /**
    * White hit-flash across every layer (Phaser 4: FILL tint mode; plain
    * setTint would multiply). Cleared automatically by update() after `ms`.

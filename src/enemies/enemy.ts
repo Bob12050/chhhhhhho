@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import { frameIndex, ANIMATIONS, type AnimName } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
 import type { Direction } from '@/config/layers';
-import { CHAR_FRAME_H, CHAR_FRAME_W } from '@/config/resolution';
 import { STATUS_CATEGORY, STATUS_COLOR, type Element, type StatusType } from '@/combat/elements';
 
 /**
@@ -12,7 +11,16 @@ import { STATUS_CATEGORY, STATUS_COLOR, type Element, type StatusType } from '@/
  */
 export type EnemyState = 'idle' | 'wander' | 'chase' | 'attack' | 'hurt' | 'return' | 'dead';
 
-const ENEMY_ART_SCALE = 0.55;
+/**
+ * Use exact half-step scales so 96px enemy art never shimmers while moving.
+ * The data scale still chooses the visual class; it no longer creates dozens
+ * of subtly different fractional sizes.
+ */
+function crispEnemyScale(dataScale = 1): number {
+  if (dataScale >= 2.7) return 1.5;
+  if (dataScale >= 1.7) return 1;
+  return 0.5;
+}
 
 export interface EnemyConfig {
   readonly textureKey: string;
@@ -92,10 +100,10 @@ export class Enemy {
     this.hp = cfg.maxHp;
     this.homeX = x;
     this.homeY = y;
-    // Frame-name counts can briefly retain stale entries during Vite HMR.
-    // Source dimensions are stable: one-cell enemy art is exactly 96x96.
-    const source = scene.textures.get(cfg.textureKey).getSourceImage() as HTMLImageElement;
-    this.staticSheet = source.width <= CHAR_FRAME_W && source.height <= CHAR_FRAME_H;
+    // A complete pose atlas always contains the final death frame. Imported
+    // one-cell enemy art has only frame 0, regardless of its source metadata.
+    const lastAtlasFrame = frameIndex('left', 'death', ANIMATIONS.death.frames - 1);
+    this.staticSheet = !scene.textures.get(cfg.textureKey).has(String(lastAtlasFrame));
     const frame0 = this.staticSheet ? 0 : frameIndex('down', 'idle', 0);
     this.sprite = scene.physics.add.image(x, y, cfg.textureKey, frame0);
     this.sprite.setOrigin(0.5, 0.875);
@@ -106,7 +114,7 @@ export class Enemy {
 
     this.visual = scene.add.sprite(x, y, cfg.textureKey, frame0);
     this.visual.setOrigin(0.5, 0.875);
-    const sc = (cfg.scale ?? 1) * ENEMY_ART_SCALE;
+    const sc = crispEnemyScale(cfg.scale);
     this.visual.setScale(sc);
     if (cfg.tint !== undefined) this.visual.setTint(cfg.tint);
     const shadowScale = Math.max(0.8, sc);

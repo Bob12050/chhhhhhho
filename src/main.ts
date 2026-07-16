@@ -48,9 +48,12 @@ const config: Phaser.Types.Core.GameConfig = {
   height: logicalHeight,
   pixelArt: true, // Nearest filtering, no antialias
   roundPixels: true, // integer render positions
+  antialias: false,
+  antialiasGL: false,
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
+    autoRound: true,
   },
   // Mobile twin-control scheme needs several simultaneous touches: the stick
   // (1 finger) plus attack/skill/interact buttons. Phaser tracks only 1 touch
@@ -70,6 +73,7 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   render: {
     antialias: false,
+    antialiasGL: false,
     pixelArt: true,
     roundPixels: true,
   },

@@ -203,7 +203,9 @@ export class WorldScene extends Phaser.Scene {
 
     this.physics.world.setBounds(0, 0, this.map.size.w, this.map.size.h);
     this.cameras.main.setBounds(0, 0, this.map.size.w, this.map.size.h);
-    this.baseCameraZoom = this.map.ground === 'grass' ? 1.04 : 1;
+    // Fractional base zoom makes every source pixel alternate between widths.
+    // Keep ordinary exploration at 1:1; short boss zooms remain deliberate FX.
+    this.baseCameraZoom = 1;
     this.cameras.main.setZoom(this.baseCameraZoom);
     this.cameras.main.roundPixels = true;
 
