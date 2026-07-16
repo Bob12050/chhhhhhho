@@ -107,7 +107,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.tileFloor, 'assets/tiles/floor.png'),
   // Versioned filenames force mobile Safari to discard the previous narrow
   // backgrounds when the painted map dimensions change.
-  img(TEX.townMap, 'assets/maps/town-storybook-wide-v2.png'),
+  img(TEX.townMap, 'assets/maps/town-cute-wide-v1.png'),
   img(TEX.fieldMap, 'assets/maps/field-cute-wide-v1.png'),
   img(TEX.forestMap, 'assets/maps/forest-storybook-wide-v2.png'),
   img(TEX.dungeonMap, 'assets/maps/dungeon-storybook-wide-v2.png'),

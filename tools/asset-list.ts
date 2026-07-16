@@ -128,7 +128,7 @@ export const ASSET_SPECS: AssetSpec[] = [
   { label: 'タイル:道', src: 'assets/tiles/path.png', type: 'image', w: 128, h: 128 },
   { label: 'タイル:石', src: 'assets/tiles/stone.png', type: 'image', w: 128, h: 128 },
   tile('タイル:床', 'assets/tiles/floor.png'),
-  { label: '街背景', src: 'assets/maps/town-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
+  { label: '街背景', src: 'assets/maps/town-cute-wide-v1.png', type: 'image', w: 640, h: 960 },
   { label: '草原背景', src: 'assets/maps/field-cute-wide-v1.png', type: 'image', w: 640, h: 960 },
   { label: '森背景', src: 'assets/maps/forest-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
   { label: '洞窟背景', src: 'assets/maps/dungeon-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
