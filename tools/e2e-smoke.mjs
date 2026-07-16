@@ -269,7 +269,7 @@ try {
         forestTexture?.width === 640 && forestTexture?.height === 960,
         JSON.stringify(forestTexture),
       );
-      await page.evaluate(() => window.__test.warp('forest', 430, 520));
+      await page.evaluate(() => window.__test.warp('forest', 455, 520));
       await page.waitForTimeout(700);
       await page.keyboard.down('w'); await page.waitForTimeout(1700); await page.keyboard.up('w');
       const forestLoop = await snap(page);
