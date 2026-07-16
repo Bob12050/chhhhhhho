@@ -66,25 +66,27 @@ describe('map definitions', () => {
     }
   });
 
-  it('keeps forest entrances and enemy posts clear of painted scenery', () => {
-    const forest = getMap('forest')!;
-    const actorPoints = [
-      ...Object.entries(forest.spawns).map(([name, [x, y]]) => ({ name: `spawn:${name}`, x, y })),
-      ...(forest.enemies ?? []).map((enemy, index) => ({
-        name: `enemy:${enemy.type}:${index}`,
-        x: enemy.x,
-        y: enemy.y,
-      })),
-    ];
+  it('keeps illustrated-map entrances and enemy posts clear of painted scenery', () => {
+    for (const mapId of ['forest', 'dungeon']) {
+      const map = getMap(mapId)!;
+      const actorPoints = [
+        ...Object.entries(map.spawns).map(([name, [x, y]]) => ({ name: `spawn:${name}`, x, y })),
+        ...(map.enemies ?? []).map((enemy, index) => ({
+          name: `enemy:${enemy.type}:${index}`,
+          x: enemy.x,
+          y: enemy.y,
+        })),
+      ];
 
-    for (const point of actorPoints) {
-      for (const [x, y, w, h] of forest.collisionRects ?? []) {
-        const bodyTouchesScenery =
-          point.x + 10 > x
-          && point.x - 10 < x + w
-          && point.y + 8 > y
-          && point.y - 8 < y + h;
-        expect(bodyTouchesScenery, `${point.name} touches scenery at ${x},${y}`).toBe(false);
+      for (const point of actorPoints) {
+        for (const [x, y, w, h] of map.collisionRects ?? []) {
+          const bodyTouchesScenery =
+            point.x + 10 > x
+            && point.x - 10 < x + w
+            && point.y + 8 > y
+            && point.y - 8 < y + h;
+          expect(bodyTouchesScenery, `${mapId}:${point.name} touches scenery at ${x},${y}`).toBe(false);
+        }
       }
     }
   });

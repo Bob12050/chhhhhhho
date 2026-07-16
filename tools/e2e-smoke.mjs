@@ -311,6 +311,24 @@ try {
         dungeonTexture?.width === 640 && dungeonTexture?.height === 960,
         JSON.stringify(dungeonTexture),
       );
+      await page.evaluate(() => window.__test.warp('dungeon', 320, 884));
+      await page.waitForTimeout(500);
+      await page.keyboard.down('w'); await page.waitForTimeout(1300); await page.keyboard.up('w');
+      const dungeonEntry = await snap(page);
+      check(
+        '洞窟の南入口から中央路へ進める',
+        dungeonEntry.mapId === 'dungeon' && dungeonEntry.y < 790,
+        `mapId=${dungeonEntry.mapId} y=${Math.round(dungeonEntry.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('dungeon', 320, 340));
+      await page.waitForTimeout(500);
+      await page.keyboard.down('w'); await page.waitForTimeout(1500); await page.keyboard.up('w');
+      const dungeonNorth = await snap(page);
+      check(
+        '洞窟の中央路を北の封印門前まで進める',
+        dungeonNorth.mapId === 'dungeon' && dungeonNorth.y < 230,
+        `mapId=${dungeonNorth.mapId} y=${Math.round(dungeonNorth.y)}`,
+      );
       await page.evaluate(() => window.__test.warp('dungeon', 320, 340));
       await page.waitForTimeout(500);
       await page.keyboard.down('d'); await page.waitForTimeout(1500); await page.keyboard.up('d');

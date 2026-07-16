@@ -131,7 +131,7 @@ export const ASSET_SPECS: AssetSpec[] = [
   { label: '街背景', src: 'assets/maps/town-cute-wide-v1.png', type: 'image', w: 640, h: 960 },
   { label: '草原背景', src: 'assets/maps/field-cute-wide-v1.png', type: 'image', w: 640, h: 960 },
   { label: '森背景', src: 'assets/maps/forest-cute-wide-v1.png', type: 'image', w: 640, h: 960 },
-  { label: '洞窟背景', src: 'assets/maps/dungeon-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
+  { label: '洞窟背景', src: 'assets/maps/dungeon-cute-wide-v1.png', type: 'image', w: 640, h: 960 },
   { label: '渓谷背景', src: 'assets/maps/canyon-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
   { label: '火山背景', src: 'assets/maps/volcano-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
   { label: '雪原背景', src: 'assets/maps/snowfield-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
