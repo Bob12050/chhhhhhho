@@ -286,6 +286,16 @@ export class PetScene extends Phaser.Scene {
       if (Math.abs(d) > 12) this.dragged = true;
       if (this.dragged) this.scrollTo(startScroll + d);
     });
+    const finishPointer = (): void => {
+      inList = false;
+      // Keep `dragged` true through this pointer-up dispatch so row buttons do
+      // not fire after a swipe, then clear it before the next interaction.
+      this.time.delayedCall(0, () => {
+        this.dragged = false;
+      });
+    };
+    this.input.on('pointerup', finishPointer);
+    this.input.on('pointerupoutside', finishPointer);
     this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
       this.scrollTo(this.scrollY + dy * 0.5);
     });
