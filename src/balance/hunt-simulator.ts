@@ -4,7 +4,13 @@ import { getBossRareExchangeForDropTable } from '@/crafting/boss-rare-exchange';
 import { Rng } from '@/core/rng';
 import { allEquipment, itemDisplayName, type EquipmentDef } from '@/data/items';
 import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
-import { EQUIP_SLOTS } from '@/equipment/slots';
+import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
+import {
+  activeBossSetCombat,
+  activeBossSetStates,
+  bossSetStatModifiers,
+  type ActiveBossSetCombat,
+} from '@/equipment/boss-set-bonuses';
 import { getDropTable, type DropEntry } from '@/loot/drop-table';
 import {
   VETERAN_MODS,
@@ -69,6 +75,7 @@ export interface HuntSimulationResult {
     dropBonus: number;
     gearIds: string[];
     gearNames: string[];
+    setBonuses: string[];
   };
   encounter: {
     kind: HuntEncounterKind;
@@ -251,7 +258,12 @@ function bestSwordGear(level: number): EquipmentDef[] {
   return picks;
 }
 
-function buildBenchmarkPlayer(level: number): { derived: DerivedStats; gear: EquipmentDef[] } {
+function buildBenchmarkPlayer(level: number): {
+  derived: DerivedStats;
+  gear: EquipmentDef[];
+  combat: ActiveBossSetCombat;
+  setBonuses: string[];
+} {
   const points = Math.max(0, level - 1) * 3;
   const base: BaseStats = {
     ...ZERO_BASE,
@@ -262,8 +274,21 @@ function buildBenchmarkPlayer(level: number): { derived: DerivedStats; gear: Equ
     LUK: 5,
   };
   const gear = bestSwordGear(level);
+  const equipped = Object.fromEntries(EQUIP_SLOTS.map((slot) => [slot, null])) as Record<
+    EquipSlot,
+    string | null
+  >;
+  for (const entry of gear) equipped[entry.slot] = entry.id;
   const modifiers: StatModifiers[] = gear.map((entry) => ({ derived: entry.derived }));
-  return { derived: computeDerived(base, modifiers), gear };
+  modifiers.push(...bossSetStatModifiers(equipped));
+  return {
+    derived: computeDerived(base, modifiers),
+    gear,
+    combat: activeBossSetCombat(equipped),
+    setBonuses: activeBossSetStates(equipped)
+      .filter((state) => state.activeBonuses.length > 0)
+      .map((state) => `${state.set.name} ${state.count}/${state.set.maxPieces}`),
+  };
 }
 
 function clampNumber(value: number | undefined, fallback: number, min: number, max: number): number {
@@ -454,14 +479,28 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
   const seed = options.seed ?? (0xc0ffee ^ hashId(quest.id));
   const combatRng = new Rng(seed ^ 0x51f15e);
   const dropRng = new Rng(seed ^ 0xd09f00d);
-  const { derived, gear } = buildBenchmarkPlayer(playerLevel);
+  const { derived, gear, combat: setCombat, setBonuses } = buildBenchmarkPlayer(playerLevel);
   const swingsPerSec = 1000 / (BASE_ATTACK_MS / derived.atkSpeed);
-  const theoreticalDps = derived.physAtk * (1 + derived.critRate * 0.6) * swingsPerSec;
-  const effectiveDps = theoreticalDps * DEFAULT_UPTIME;
   const waves = encounterWaves(quest, derived.def, enemyHpScale, enemyDamageScale);
 
   if (waves.length === 0) throw new Error(`Hunt quest has no valid targets: ${quest.id}`);
   const profile = encounterProfile(waves);
+  const totalWaveHp = waves.reduce((sum, wave) => sum + wave.hp, 0);
+  const bossHpShare = totalWaveHp > 0
+    ? waves.reduce((sum, wave) => sum + (wave.enemy.isBoss ? wave.hp : 0), 0) / totalWaveHp
+    : 0;
+  const procRate = setCombat.onHit.reduce(
+    (sum, proc) => sum + proc.chance * proc.power,
+    0,
+  );
+  const outgoingRate = 1 + setCombat.damageRate + setCombat.bossDamage * bossHpShare;
+  const theoreticalDps =
+    derived.physAtk
+    * (1 + derived.critRate * (0.6 + setCombat.critDamage))
+    * (1 + procRate)
+    * outgoingRate
+    * swingsPerSec;
+  const effectiveDps = theoreticalDps * DEFAULT_UPTIME;
   const combatModifiers = huntStatModifiers(quest);
 
   const candidates = new Map<string, DropAccumulator>();
@@ -507,7 +546,16 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
       let landedHits = Math.floor(expectedHits);
       if (combatRng.chance(expectedHits - landedHits)) landedHits++;
       const damageVariance = 0.88 + combatRng.next() * 0.24;
-      runDamage += landedHits * Math.max(1, Math.round(wave.hitDamage * damageVariance));
+      runDamage += landedHits * Math.max(
+        1,
+        Math.round(wave.hitDamage * damageVariance * (1 - setCombat.damageReduction)),
+      );
+      if (setCombat.healOnKillRate > 0) {
+        runDamage = Math.max(
+          0,
+          runDamage - derived.maxHp * setCombat.healOnKillRate * wave.count,
+        );
+      }
     }
     ttkSamples.push(runTtk);
     totalCombatTtk += runCombatTtk;
@@ -551,12 +599,20 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
   const baseTotalHp = waves.reduce((sum, wave) => sum + wave.enemy.maxHp * wave.count, 0);
   const baseMaxContactDamage = Math.max(...waves.map((wave) => wave.enemy.contactDamage));
   const adjustedMaxContactDamage = baseMaxContactDamage * combatModifiers.dmgMult * enemyDamageScale;
-  const strongestHit = mitigateDamage(Math.round(adjustedMaxContactDamage), derived.def);
+  const strongestHit = Math.max(
+    1,
+    Math.round(
+      mitigateDamage(Math.round(adjustedMaxContactDamage), derived.def)
+      * (1 - setCombat.damageReduction),
+    ),
+  );
   const targetTtk = encounterTargetTtk(rank, profile);
   const targetHits = rankTargetHits(rank);
   const targetAdjustedHp = effectiveDps * Math.max(1, targetTtk - profile.transitionSec);
   const targetMitigatedHit = derived.maxHp / targetHits;
-  const targetAdjustedContact = targetMitigatedHit * ((MITIGATION_K + derived.def) / MITIGATION_K);
+  const targetAdjustedContact =
+    (targetMitigatedHit / Math.max(0.5, 1 - setCombat.damageReduction))
+    * ((MITIGATION_K + derived.def) / MITIGATION_K);
   const suggestedHpScale = targetAdjustedHp / Math.max(1, baseTotalHp * combatModifiers.hpMult);
   const suggestedDamageScale = targetAdjustedContact / Math.max(
     1,
@@ -615,6 +671,7 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
       dropBonus: derived.dropRate,
       gearIds: gear.map((entry) => entry.id),
       gearNames: gear.map((entry) => entry.name),
+      setBonuses,
     },
     encounter: {
       kind: profile.kind,

@@ -532,6 +532,133 @@ function validateBossRareExchanges(itemIds: Set<string>, dropTableIds: Set<strin
   }
 }
 
+function validateBossSetBonuses(): void {
+  const items = readJson<{
+    equipment: { id: string; slot: string }[];
+  }>('src/data/defs/items.json');
+  const equipmentById = new Map(items.equipment.map((item) => [item.id, item]));
+  const recipeResults = new Set(
+    readJson<{ recipes: { resultItemId: string }[] }>('src/data/defs/recipes.json').recipes
+      .map((recipe) => recipe.resultItemId),
+  );
+  const exchangeRareIds = new Set(
+    readJson<{ exchanges: { rareMaterialId: string }[] }>(
+      'src/data/defs/boss-rare-exchanges.json',
+    ).exchanges.map((exchange) => exchange.rareMaterialId),
+  );
+  const file = readJson<{
+    sets: {
+      id: string;
+      name: string;
+      rareMaterialId: string;
+      maxPieces: number;
+      pieceIds: string[];
+      bonuses: {
+        pieces: number;
+        name: string;
+        description: string;
+        derived?: Record<string, number>;
+        combat?: {
+          damageRate?: number;
+          damageReduction?: number;
+          critDamage?: number;
+          bossDamage?: number;
+          skillPower?: number;
+          lowHpDamage?: number;
+          healOnKillRate?: number;
+          onHit?: { chance: number; power: number; element: string; label: string };
+        };
+      }[];
+    }[];
+  }>('src/data/defs/boss-set-bonuses.json');
+
+  const setIds = new Set<string>();
+  const rareIds = new Set<string>();
+  const combatKeys = new Set([
+    'damageRate',
+    'damageReduction',
+    'critDamage',
+    'bossDamage',
+    'skillPower',
+    'lowHpDamage',
+    'healOnKillRate',
+    'onHit',
+  ]);
+  for (const set of file.sets) {
+    if (setIds.has(set.id)) err(`Boss set: duplicate id "${set.id}"`);
+    setIds.add(set.id);
+    if (!set.name) err(`Boss set ${set.id}: empty name`);
+    if (rareIds.has(set.rareMaterialId)) {
+      err(`Boss set: duplicate rare material "${set.rareMaterialId}"`);
+    }
+    rareIds.add(set.rareMaterialId);
+    if (!exchangeRareIds.has(set.rareMaterialId)) {
+      err(`Boss set ${set.id}: rare material "${set.rareMaterialId}" has no exchange family`);
+    }
+    if (set.maxPieces !== 4) err(`Boss set ${set.id}: maxPieces must be 4`);
+    if (new Set(set.pieceIds).size !== set.pieceIds.length) {
+      err(`Boss set ${set.id}: duplicate piece id`);
+    }
+    const slots = new Set<string>();
+    for (const itemId of set.pieceIds) {
+      const item = equipmentById.get(itemId);
+      if (!item) {
+        err(`Boss set ${set.id}: unknown equipment "${itemId}"`);
+        continue;
+      }
+      slots.add(item.slot);
+      if (!recipeResults.has(itemId)) err(`Boss set ${set.id}: "${itemId}" has no recipe`);
+    }
+    if (slots.size < set.maxPieces) {
+      err(`Boss set ${set.id}: only ${slots.size} simultaneously equippable slots`);
+    }
+    const thresholds = set.bonuses.map((bonus) => bonus.pieces).sort((a, b) => a - b);
+    if (thresholds.length !== 2 || thresholds[0] !== 2 || thresholds[1] !== 4) {
+      err(`Boss set ${set.id}: bonuses must contain exactly 2-piece and 4-piece tiers`);
+    }
+    for (const bonus of set.bonuses) {
+      if (!bonus.name || !bonus.description) {
+        err(`Boss set ${set.id}/${bonus.pieces}: name and description are required`);
+      }
+      for (const key of Object.keys(bonus.derived ?? {})) {
+        if (!DERIVED_KEYS.has(key)) err(`Boss set ${set.id}: invalid derived stat "${key}"`);
+      }
+      for (const key of Object.keys(bonus.combat ?? {})) {
+        if (!combatKeys.has(key)) err(`Boss set ${set.id}: invalid combat bonus "${key}"`);
+      }
+      const combat = bonus.combat;
+      for (const value of [
+        combat?.damageRate,
+        combat?.damageReduction,
+        combat?.critDamage,
+        combat?.bossDamage,
+        combat?.skillPower,
+        combat?.lowHpDamage,
+        combat?.healOnKillRate,
+      ]) {
+        if (value != null && (value < 0 || value > 0.5)) {
+          err(`Boss set ${set.id}/${bonus.pieces}: combat value ${value} out of [0,0.5]`);
+        }
+      }
+      if (combat?.onHit) {
+        if (combat.onHit.chance <= 0 || combat.onHit.chance > 1) {
+          err(`Boss set ${set.id}: onHit chance out of (0,1]`);
+        }
+        if (combat.onHit.power <= 0 || combat.onHit.power > 1) {
+          err(`Boss set ${set.id}: onHit power out of (0,1]`);
+        }
+        if (!ELEMENT_SET.has(combat.onHit.element) || combat.onHit.element === 'none') {
+          err(`Boss set ${set.id}: invalid onHit element "${combat.onHit.element}"`);
+        }
+        if (!combat.onHit.label) err(`Boss set ${set.id}: empty onHit label`);
+      }
+    }
+  }
+  for (const rareId of exchangeRareIds) {
+    if (!rareIds.has(rareId)) err(`Boss set: exchange rare "${rareId}" has no set`);
+  }
+}
+
 function validateSkills(): Set<string> {
   const file = readJson<{
     skills: {
@@ -775,6 +902,7 @@ const mapIds = validateMaps(enemyIds, dialogueIds);
 validateRecipes(itemIds);
 validateBossRareMaterials();
 validateBossRareExchanges(itemIds, dropTableIds);
+validateBossSetBonuses();
 const skillIds = validateSkills();
 validateJobs(skillIds);
 validatePets();

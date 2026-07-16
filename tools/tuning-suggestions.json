@@ -19,37 +19,37 @@
   },
   "boss_flame": {
     "maxHp": 2640,
-    "contactDamage": 65,
+    "contactDamage": 66,
     "rank": 1,
     "lv": 20
   },
   "boss_dragon": {
     "maxHp": 3790,
-    "contactDamage": 100,
+    "contactDamage": 105,
     "rank": 1,
     "lv": 30
   },
   "boss_hydra": {
     "maxHp": 6140,
-    "contactDamage": 149,
+    "contactDamage": 159,
     "rank": 1,
     "lv": 40
   },
   "boss_lizard_king": {
     "maxHp": 14340,
-    "contactDamage": 234,
+    "contactDamage": 242,
     "rank": 4,
     "lv": 44
   },
   "boss_wisp_queen": {
     "maxHp": 20340,
-    "contactDamage": 332,
+    "contactDamage": 339,
     "rank": 5,
     "lv": 52
   },
   "boss_sandgoa": {
     "maxHp": 19760,
-    "contactDamage": 387,
+    "contactDamage": 393,
     "rank": 5,
     "lv": 58
   },
@@ -91,25 +91,25 @@
   },
   "boss_dross": {
     "maxHp": 2870,
-    "contactDamage": 53,
+    "contactDamage": 54,
     "rank": 2,
     "lv": 15
   },
   "boss_obsidion": {
     "maxHp": 4910,
-    "contactDamage": 84,
+    "contactDamage": 85,
     "rank": 3,
     "lv": 22
   },
   "boss_wolf_alpha": {
     "maxHp": 5410,
-    "contactDamage": 92,
+    "contactDamage": 99,
     "rank": 3,
     "lv": 24
   },
   "boss_slime": {
     "maxHp": 5510,
-    "contactDamage": 99,
+    "contactDamage": 106,
     "rank": 3,
     "lv": 25
   },
@@ -133,13 +133,13 @@
   },
   "boss_azvurm": {
     "maxHp": 18610,
-    "contactDamage": 295,
+    "contactDamage": 305,
     "rank": 5,
     "lv": 50
   },
   "boss_skoll": {
     "maxHp": 20950,
-    "contactDamage": 345,
+    "contactDamage": 352,
     "rank": 5,
     "lv": 54
   },

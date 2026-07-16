@@ -443,7 +443,7 @@ export class BalanceLabScene extends Phaser.Scene {
       this.add.text(
         18,
         y,
-        `剣・入手可能な最良装備 / 通常攻撃 / 回復なし\nLv${result.playerLevel}  HP ${result.player.maxHp}  攻撃 ${result.player.physAtk}  防御 ${result.player.defense}\n実効DPS ${result.player.effectiveDps.toFixed(1)}  装備 ${result.player.gearNames.length}点`,
+        `剣・入手可能な最良装備 / 通常攻撃 / 回復なし\nLv${result.playerLevel}  HP ${result.player.maxHp}  攻撃 ${result.player.physAtk}  防御 ${result.player.defense}\n実効DPS ${result.player.effectiveDps.toFixed(1)}  装備 ${result.player.gearNames.length}点\nセット ${result.player.setBonuses.join(' / ') || 'なし'}`,
         {
           fontFamily: FONT,
           fontSize: '10px',
@@ -452,7 +452,7 @@ export class BalanceLabScene extends Phaser.Scene {
         },
       ),
     );
-    y += 60;
+    y += 74;
 
     this.maxScroll = Math.max(0, y + 14 - this.scale.height);
     this.scrollTo(0);

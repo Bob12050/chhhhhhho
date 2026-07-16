@@ -25,6 +25,7 @@ import {
   upgradeInvestigationEquipment,
 } from '@/endgame/investigation-forge';
 import { INVESTIGATION_SEAL_ID } from '@/endgame/investigations';
+import { activeBossSetStates } from '@/equipment/boss-set-bonuses';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
 
@@ -568,7 +569,7 @@ export class InventoryScene extends Phaser.Scene {
     for (const id of gameState.equipmentOwned) {
       if (getEquipment(id)) counts.set(id, (counts.get(id) ?? 0) + 1);
     }
-    let y = 258;
+    let y = this.renderEquippedSetSummary(258);
     // 部位ごとのセクションに分け、各セクション内は「装備中 → 今そうび
     // できる強い順（レア度→Lv）→ 職業/段階で装備不可」。取得順のごちゃ
     // 混ぜをやめて、常に同じ場所に同じ部位が並ぶ。
@@ -629,6 +630,71 @@ export class InventoryScene extends Phaser.Scene {
       }),
     );
     this.updateEquipWindow();
+  }
+
+  /** Compact set-progress rows above the equipment list. They scroll away with
+   * the list, so the fixed profile and slot filters stay uncluttered. */
+  private renderEquippedSetSummary(startY: number): number {
+    const w = this.scale.width;
+    const states = activeBossSetStates(gameState.equipment).slice(0, 3);
+    const headingY = startY + 10;
+    this.content.add(
+      this.add.text(16, headingY, 'セット効果', {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#c9b27a',
+      }),
+    );
+    let y = startY + 28;
+    if (states.length === 0) {
+      this.content.add(rowBand(this, y, 32, 0));
+      this.content.add(
+        this.add.text(16, y + 16, '同じ大型モンスターの装備を2部位そろえると発動', {
+          fontFamily: FONT,
+          fontSize: '11px',
+          color: '#8f98ad',
+        }).setOrigin(0, 0.5),
+      );
+      return y + 42;
+    }
+    states.forEach((state, index) => {
+      this.content.add(rowBand(this, y, 42, index));
+      this.content.add(
+        this.add.text(16, y + 12, state.set.name, {
+          fontFamily: FONT,
+          fontSize: '13px',
+          color: state.count >= 2 ? '#ffe5a3' : '#d4d9e8',
+          fontStyle: 'bold',
+        }).setOrigin(0, 0.5),
+      );
+      this.content.add(
+        this.add.text(w - 16, y + 12, `${state.count}/${state.set.maxPieces}`, {
+          fontFamily: FONT,
+          fontSize: '12px',
+          color: state.count >= state.set.maxPieces ? '#9fe3a0' : '#9fd0ff',
+        }).setOrigin(1, 0.5),
+      );
+      const tier2 = state.set.bonuses.find((bonus) => bonus.pieces === 2)!;
+      const tier4 = state.set.bonuses.find((bonus) => bonus.pieces === 4)!;
+      const tier2Active = state.count >= 2;
+      const tier4Active = state.count >= 4;
+      this.content.add(
+        this.add.text(16, y + 30, `${tier2Active ? '●' : '○'} 2 ${tier2.name}`, {
+          fontFamily: FONT,
+          fontSize: '10px',
+          color: tier2Active ? '#9fe3a0' : '#727b91',
+        }).setOrigin(0, 0.5),
+      );
+      this.content.add(
+        this.add.text(w / 2 + 4, y + 30, `${tier4Active ? '●' : '○'} 4 ${tier4.name}`, {
+          fontFamily: FONT,
+          fontSize: '10px',
+          color: tier4Active ? '#72e6ff' : '#727b91',
+        }).setOrigin(0, 0.5),
+      );
+      y += 44;
+    });
+    return y + 8;
   }
 
   /**
@@ -1130,6 +1196,59 @@ export class InventoryScene extends Phaser.Scene {
         lineSpacing: 4,
       }),
     );
+    this.renderStatusSetBonuses(panelY + 116);
+  }
+
+  /** Full set-effect sheet in the status tab, including locked 4-piece tiers. */
+  private renderStatusSetBonuses(startY: number): void {
+    const w = this.scale.width;
+    const states = activeBossSetStates(gameState.equipment);
+    this.content.add(
+      this.add.text(16, startY, '装備セット効果', {
+        fontFamily: FONT,
+        fontSize: '13px',
+        color: '#ffe5a3',
+      }),
+    );
+    let y = startY + 24;
+    if (states.length === 0) {
+      this.content.add(rowBand(this, y, 42, 0));
+      this.content.add(
+        this.add.text(16, y + 21, '発動中のセット効果はありません', {
+          fontFamily: FONT,
+          fontSize: '12px',
+          color: '#8f98ad',
+        }).setOrigin(0, 0.5),
+      );
+      return;
+    }
+    states.forEach((state, index) => {
+      this.content.add(rowBand(this, y, 68, index));
+      this.content.add(
+        this.add.text(16, y + 10, `${state.set.name}  ${state.count}/${state.set.maxPieces}`, {
+          fontFamily: FONT,
+          fontSize: '13px',
+          color: state.count >= 2 ? '#ffe5a3' : '#c7ccda',
+          fontStyle: 'bold',
+        }),
+      );
+      state.set.bonuses.forEach((bonus, tierIndex) => {
+        const active = state.count >= bonus.pieces;
+        const line = this.add.text(
+          20,
+          y + 31 + tierIndex * 18,
+          `${active ? '●' : '○'} ${bonus.pieces}部位 ${bonus.name}: ${bonus.description}`,
+          {
+            fontFamily: FONT,
+            fontSize: '10px',
+            color: active ? (bonus.pieces === 4 ? '#72e6ff' : '#9fe3a0') : '#70798e',
+          },
+        );
+        line.setCrop(0, 0, w - 38, 16);
+        this.content.add(line);
+      });
+      y += 72;
+    });
   }
 
   private compactSkillText(text: string, max = 23): string {

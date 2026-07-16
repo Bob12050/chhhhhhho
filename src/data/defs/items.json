@@ -8732,6 +8732,302 @@
       "sellPrice": 420,
       "description": "流れ星を閉じ込めた護符。幸運は狩人に味方する。",
       "series": "星砂"
+    },
+    {
+      "id": "lord_branch_crown",
+      "name": "モリヌシクラウン",
+      "slot": "head",
+      "rarity": 4,
+      "visualId": "cap_leather",
+      "levelRequirement": 10,
+      "derived": {
+        "def": 5,
+        "magDef": 4,
+        "maxHp": 18
+      },
+      "sellPrice": 70,
+      "description": "主の若枝を編んだ冠。森の息吹が絶えず巡る。",
+      "series": "もりの主"
+    },
+    {
+      "id": "guardian_greaves_set",
+      "name": "ガーディアングリーヴ",
+      "slot": "feet",
+      "rarity": 5,
+      "visualId": "plate_iron",
+      "levelRequirement": 15,
+      "derived": {
+        "def": 8,
+        "maxHp": 25,
+        "moveSpeed": -2
+      },
+      "sellPrice": 100,
+      "description": "番人の脚部装甲を仕立て直した脚甲。地面に根を張るように安定する。",
+      "series": "岩の番人"
+    },
+    {
+      "id": "nox_coat",
+      "name": "ノクスメイル",
+      "slot": "torso",
+      "rarity": 5,
+      "visualId": "vest_cloth",
+      "levelRequirement": 16,
+      "derived": {
+        "def": 8,
+        "magDef": 6,
+        "evasion": 5,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 140,
+      "description": "夜王の翼膜を重ねた軽鎧。闇に紛れ、傷口から力を奪う。",
+      "series": "ノクス"
+    },
+    {
+      "id": "zephys_mantle",
+      "name": "ゼフィスマント",
+      "slot": "back",
+      "rarity": 5,
+      "visualId": "vest_cloth",
+      "levelRequirement": 16,
+      "derived": {
+        "evasion": 7,
+        "moveSpeed": 3,
+        "magDef": 3
+      },
+      "sellPrice": 130,
+      "description": "風切羽を束ねた外套。向かい風さえ背中を押す。",
+      "series": "ゼフィス"
+    },
+    {
+      "id": "vurm_mail",
+      "name": "ヴルムメイル",
+      "slot": "torso",
+      "rarity": 6,
+      "visualId": "plate_iron",
+      "levelRequirement": 24,
+      "derived": {
+        "def": 15,
+        "maxHp": 40,
+        "magDef": 4
+      },
+      "sellPrice": 240,
+      "description": "火竜の甲殻を重ねた胸甲。内側には消えない熱が宿る。",
+      "series": "ヴルム"
+    },
+    {
+      "id": "fenrir_hood",
+      "name": "フェンリルヘルム",
+      "slot": "head",
+      "rarity": 6,
+      "visualId": "cap_leather",
+      "levelRequirement": 24,
+      "derived": {
+        "def": 10,
+        "critRate": 0.03,
+        "evasion": 5
+      },
+      "sellPrice": 220,
+      "description": "群狼の頭部を模した兜。獲物のわずかな隙を嗅ぎ分ける。",
+      "series": "フェンリル"
+    },
+    {
+      "id": "skoll_helm",
+      "name": "スコルヘルム",
+      "slot": "head",
+      "rarity": 9,
+      "visualId": "helm_iron",
+      "levelRequirement": 60,
+      "derived": {
+        "def": 20,
+        "critRate": 0.04,
+        "evasion": 7,
+        "magDef": 5
+      },
+      "sellPrice": 370,
+      "description": "雷狼の耳とたてがみを残した兜。遠雷より早く敵意を察する。",
+      "series": "スコル"
+    },
+    {
+      "id": "royal_boots",
+      "name": "キングスライムグリーヴ",
+      "slot": "feet",
+      "rarity": 6,
+      "visualId": "vest_cloth",
+      "levelRequirement": 25,
+      "derived": {
+        "def": 9,
+        "moveSpeed": 4,
+        "goldRate": 0.05
+      },
+      "sellPrice": 230,
+      "description": "王者の弾力を封じた靴。跳ねるたび小気味よい金貨の音がする。",
+      "series": "キングスライム"
+    },
+    {
+      "id": "varga_helm",
+      "name": "ヴァルガヘルム",
+      "slot": "head",
+      "rarity": 7,
+      "visualId": "helm_iron",
+      "levelRequirement": 36,
+      "derived": {
+        "def": 16,
+        "maxHp": 32,
+        "magDef": 6
+      },
+      "sellPrice": 330,
+      "description": "竜王の角を冠した兜。正面から大物へ挑む者のための防具。",
+      "series": "ヴァルガ"
+    },
+    {
+      "id": "spora_robe",
+      "name": "スポラローブ",
+      "slot": "torso",
+      "rarity": 7,
+      "visualId": "vest_cloth",
+      "levelRequirement": 36,
+      "derived": {
+        "def": 15,
+        "magDef": 10,
+        "maxMp": 16,
+        "dropRate": 0.03
+      },
+      "sellPrice": 370,
+      "description": "母胞子の菌糸を織ったローブ。希少な素材へ導く胞子が舞う。",
+      "series": "スポラ"
+    },
+    {
+      "id": "garo_helm",
+      "name": "ガロヘルム",
+      "slot": "head",
+      "rarity": 7,
+      "visualId": "helm_iron",
+      "levelRequirement": 40,
+      "derived": {
+        "def": 17,
+        "maxHp": 35,
+        "magDef": 4
+      },
+      "sellPrice": 350,
+      "description": "岩牙竜の頭殻を削り出した兜。正面からの衝撃を左右へ逃がす。",
+      "series": "ガロ"
+    },
+    {
+      "id": "garo_greaves",
+      "name": "ガログリーヴ",
+      "slot": "feet",
+      "rarity": 7,
+      "visualId": "plate_iron",
+      "levelRequirement": 40,
+      "derived": {
+        "def": 16,
+        "maxHp": 30,
+        "moveSpeed": -2
+      },
+      "sellPrice": 340,
+      "description": "重鱗を隙間なく組んだ脚甲。踏ん張れば大型モンスターにも押し負けない。",
+      "series": "ガロ"
+    },
+    {
+      "id": "hydra_crown",
+      "name": "ヒュドラクラウン",
+      "slot": "head",
+      "rarity": 7,
+      "visualId": "cap_leather",
+      "levelRequirement": 44,
+      "derived": {
+        "def": 15,
+        "magDef": 8,
+        "maxHp": 25,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 370,
+      "description": "九つの牙を環状に配した冠。毒気を生命力へ変える。",
+      "series": "ヒュドラ"
+    },
+    {
+      "id": "glacies_boots",
+      "name": "グラキエスグリーヴ",
+      "slot": "feet",
+      "rarity": 8,
+      "visualId": "vest_cloth",
+      "levelRequirement": 52,
+      "derived": {
+        "def": 18,
+        "magDef": 8,
+        "moveSpeed": 4,
+        "maxMp": 10
+      },
+      "sellPrice": 510,
+      "description": "永久氷を薄く重ねた脚甲。氷上でも足取りが乱れない。",
+      "series": "グラキエス"
+    },
+    {
+      "id": "sandgoa_helm",
+      "name": "サンドゴアヘルム",
+      "slot": "head",
+      "rarity": 8,
+      "visualId": "helm_iron",
+      "levelRequirement": 56,
+      "derived": {
+        "def": 22,
+        "maxHp": 45,
+        "goldRate": 0.03
+      },
+      "sellPrice": 550,
+      "description": "砂巨神の頭部を模した兜。砂金の膜が打撃を受け流す。",
+      "series": "サンドゴア"
+    },
+    {
+      "id": "mordo_gauntlet",
+      "name": "モルドアーム",
+      "slot": "hands",
+      "rarity": 8,
+      "visualId": "plate_iron",
+      "levelRequirement": 66,
+      "derived": {
+        "def": 18,
+        "physAtk": 3,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 710,
+      "description": "魂鉄で覆った籠手。握った武器へ死者の執念が流れ込む。",
+      "series": "モルド"
+    },
+    {
+      "id": "magia_greaves",
+      "name": "アルマギアグリーヴ",
+      "slot": "feet",
+      "rarity": 9,
+      "visualId": "plate_iron",
+      "levelRequirement": 84,
+      "derived": {
+        "def": 23,
+        "evasion": 10,
+        "accuracy": 6,
+        "moveSpeed": 4
+      },
+      "sellPrice": 1180,
+      "description": "機神の補助脚部。狙った軌道を機械精度で踏み抜く。",
+      "series": "アルマギア"
+    },
+    {
+      "id": "abyss_robe",
+      "name": "アビスローブ",
+      "slot": "torso",
+      "rarity": 9,
+      "visualId": "vest_cloth",
+      "levelRequirement": 86,
+      "derived": {
+        "def": 28,
+        "magDef": 18,
+        "maxHp": 45,
+        "maxMp": 25,
+        "lifesteal": 0.02
+      },
+      "sellPrice": 1320,
+      "description": "深淵核と緋核を縫い合わせた法衣。二つの核が胸元で共鳴する。",
+      "series": "深淵"
     }
   ]
 }

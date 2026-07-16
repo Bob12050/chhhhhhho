@@ -6504,6 +6504,223 @@
       },
       "gold": 1200,
       "station": "forge"
+    },
+    {
+      "id": "craft_lord_branch_crown",
+      "resultItemId": "lord_branch_crown",
+      "resultQty": 1,
+      "materials": {
+        "treant_sap": 2,
+        "lord_hardwood": 2,
+        "mana_stone": 1
+      },
+      "gold": 40,
+      "station": "forge"
+    },
+    {
+      "id": "craft_guardian_greaves_set",
+      "resultItemId": "guardian_greaves_set",
+      "resultQty": 1,
+      "materials": {
+        "stone_heart": 2,
+        "guardian_keystone": 1,
+        "iron_ore": 2
+      },
+      "gold": 70,
+      "station": "forge"
+    },
+    {
+      "id": "craft_nox_coat",
+      "resultItemId": "nox_coat",
+      "resultQty": 1,
+      "materials": {
+        "night_fang": 2,
+        "lord_wing": 2,
+        "soft_leather": 3
+      },
+      "gold": 120,
+      "station": "forge"
+    },
+    {
+      "id": "craft_zephys_mantle",
+      "resultItemId": "zephys_mantle",
+      "resultQty": 1,
+      "materials": {
+        "gale_feather": 3,
+        "gale_tailfeather": 2,
+        "soft_leather": 2
+      },
+      "gold": 120,
+      "station": "forge"
+    },
+    {
+      "id": "craft_vurm_mail",
+      "resultItemId": "vurm_mail",
+      "resultQty": 1,
+      "materials": {
+        "flame_core": 3,
+        "flame_talon": 2,
+        "soft_leather": 2
+      },
+      "gold": 240,
+      "station": "forge"
+    },
+    {
+      "id": "craft_fenrir_hood",
+      "resultItemId": "fenrir_hood",
+      "resultQty": 1,
+      "materials": {
+        "alpha_pelt": 2,
+        "alpha_fang": 2,
+        "soft_leather": 2
+      },
+      "gold": 220,
+      "station": "forge"
+    },
+    {
+      "id": "craft_skoll_helm",
+      "resultItemId": "skoll_helm",
+      "resultQty": 1,
+      "materials": {
+        "skoll_pelt": 3,
+        "alpha_pelt": 1,
+        "alpha_fang": 2
+      },
+      "gold": 580,
+      "station": "forge"
+    },
+    {
+      "id": "craft_royal_boots",
+      "resultItemId": "royal_boots",
+      "resultQty": 1,
+      "materials": {
+        "royal_ichor": 2,
+        "crown_droplet": 2,
+        "soft_leather": 3
+      },
+      "gold": 230,
+      "station": "forge"
+    },
+    {
+      "id": "craft_varga_helm",
+      "resultItemId": "varga_helm",
+      "resultQty": 1,
+      "materials": {
+        "dragon_scale": 3,
+        "dragon_wing": 1,
+        "steel_ingot": 2
+      },
+      "gold": 390,
+      "station": "forge"
+    },
+    {
+      "id": "craft_spora_robe",
+      "resultItemId": "spora_robe",
+      "resultQty": 1,
+      "materials": {
+        "spore_sac": 3,
+        "mother_cap": 2,
+        "soft_leather": 3
+      },
+      "gold": 390,
+      "station": "forge"
+    },
+    {
+      "id": "craft_garo_helm",
+      "resultItemId": "garo_helm",
+      "resultQty": 1,
+      "materials": {
+        "garo_scale": 3,
+        "garo_fang": 1,
+        "iron_ore": 3
+      },
+      "gold": 410,
+      "station": "forge"
+    },
+    {
+      "id": "craft_garo_greaves",
+      "resultItemId": "garo_greaves",
+      "resultQty": 1,
+      "materials": {
+        "garo_scale": 3,
+        "garo_fang": 2,
+        "soft_leather": 2
+      },
+      "gold": 400,
+      "station": "forge"
+    },
+    {
+      "id": "craft_hydra_crown",
+      "resultItemId": "hydra_crown",
+      "resultQty": 1,
+      "materials": {
+        "hydra_scale": 2,
+        "hydra_fang": 2,
+        "mana_stone": 2
+      },
+      "gold": 430,
+      "station": "forge"
+    },
+    {
+      "id": "craft_glacies_boots",
+      "resultItemId": "glacies_boots",
+      "resultQty": 1,
+      "materials": {
+        "frost_heart": 2,
+        "queen_ice": 2,
+        "soft_leather": 3
+      },
+      "gold": 610,
+      "station": "forge"
+    },
+    {
+      "id": "craft_sandgoa_helm",
+      "resultItemId": "sandgoa_helm",
+      "resultQty": 1,
+      "materials": {
+        "sand_core": 2,
+        "sand_gold": 3,
+        "steel_ingot": 2
+      },
+      "gold": 640,
+      "station": "forge"
+    },
+    {
+      "id": "craft_mordo_gauntlet",
+      "resultItemId": "mordo_gauntlet",
+      "resultQty": 1,
+      "materials": {
+        "soul_iron": 2,
+        "dread_carapace": 2,
+        "steel_ingot": 2
+      },
+      "gold": 820,
+      "station": "forge"
+    },
+    {
+      "id": "craft_magia_greaves",
+      "resultItemId": "magia_greaves",
+      "resultQty": 1,
+      "materials": {
+        "magia_plate": 2,
+        "ancient_gear": 2,
+        "mythril_ore": 2
+      },
+      "gold": 1320,
+      "station": "forge"
+    },
+    {
+      "id": "craft_abyss_robe",
+      "resultItemId": "abyss_robe",
+      "resultQty": 1,
+      "materials": {
+        "abyss_dreg": 3,
+        "abyss_core": 2,
+        "crimson_core": 1,
+        "soft_leather": 4
+      },
+      "gold": 1500,
+      "station": "forge"
     }
   ]
 }

@@ -23,6 +23,7 @@ import { bus } from '@/core/event-bus';
 import { expToNext } from '@/stats/leveling';
 import type { SaveData } from '@/save/schema';
 import { syncInvestigationQuests } from '@/endgame/investigations';
+import { bossSetStatModifiers } from '@/equipment/boss-set-bonuses';
 
 /**
  * Central runtime player model. Holds base stats / level / equipment /
@@ -115,6 +116,7 @@ export class GameState {
       const def = getEquipment(id);
       if (def) mods.push({ derived: def.derived });
     }
+    mods.push(...bossSetStatModifiers(this.equipment));
     // Passive skills contribute derived modifiers too.
     for (const id of Object.keys(this.skills)) {
       const sk = getSkill(id);

@@ -58,6 +58,7 @@ import {
   isElement,
   type Element,
 } from '@/combat/elements';
+import { activeBossSetCombat } from '@/equipment/boss-set-bonuses';
 
 interface BuiltNpc {
   x: number;
@@ -120,7 +121,7 @@ export class WorldScene extends Phaser.Scene {
   private bullets: { obj: Phaser.GameObjects.Arc; vx: number; vy: number; ttl: number; damage: number }[] = [];
   private bulletPool: Phaser.GameObjects.Arc[] = [];
   /** Player skill projectiles (pooled). */
-  private pBolts: { obj: Phaser.GameObjects.Arc; vx: number; vy: number; ttl: number; atk: number; mult: number; element: Element }[] = [];
+  private pBolts: { obj: Phaser.GameObjects.Arc; vx: number; vy: number; ttl: number; atk: number; mult: number; element: Element; skill: boolean }[] = [];
   private pBoltPool: Phaser.GameObjects.Arc[] = [];
   private minions: Enemy[] = [];
   private bossMaxHp = 0;
@@ -1145,10 +1146,12 @@ export class WorldScene extends Phaser.Scene {
     // Knockback can shove the player onto a walk-on portal mid-fight (boss
     // charges ejected hunters from the arena). Briefly disarm portals.
     this.portalGuard = 1500;
-    const amount = mitigateDamage(
+    const mitigated = mitigateDamage(
       raw,
       kind === 'mag' ? gameState.derived.magDef : gameState.derived.def,
     );
+    const setCombat = activeBossSetCombat(gameState.equipment);
+    const amount = Math.max(1, Math.round(mitigated * (1 - setCombat.damageReduction)));
     gameState.hp = Math.max(0, gameState.hp - amount);
     bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
     this.dmg.show(this.player.x, this.player.y - 40, amount, false);
@@ -1194,28 +1197,61 @@ export class WorldScene extends Phaser.Scene {
     mult: number,
     knockback: number,
     element: Element,
+    isSkill = false,
   ): { killed: boolean; crit: boolean } {
     this.combatTarget = e;
     this.combatTargetLockMs = 1200;
+    const setCombat = activeBossSetCombat(gameState.equipment);
     const crit = Math.random() < gameState.derived.critRate;
     const elemMult = elementMultiplier(element, e.cfg.weakness, e.cfg.resist);
     const weak = elemMult > 1;
-    const amount = Math.max(1, Math.round(atk * mult * (crit ? 1.6 : 1) * elemMult));
-    const killed = e.takeDamage(amount, this.player.x, this.player.y, knockback);
-    this.updateCombatTargetUi();
+    const isBoss = e === this.boss || !!getEnemyDef(this.enemyTypes.get(e) ?? '')?.isBoss;
+    const lowHp = gameState.hp <= gameState.derived.maxHp * 0.3;
+    const damageRate =
+      1
+      + setCombat.damageRate
+      + (isBoss ? setCombat.bossDamage : 0)
+      + (isSkill ? setCombat.skillPower : 0)
+      + (lowHp ? setCombat.lowHpDamage : 0);
+    const critMult = crit ? 1.6 + setCombat.critDamage : 1;
+    const amount = Math.max(1, Math.round(atk * mult * critMult * elemMult * damageRate));
+    let totalDamage = amount;
+    let killed = e.takeDamage(amount, this.player.x, this.player.y, knockback);
     // Elemental hits color the number; a super-effective hit reads red.
     const color = element !== 'none' ? elementColorHex(element) : undefined;
     const sparkColor = weak ? 0xff5a5a : element !== 'none' ? ELEMENT_COLOR[element] : 0xffffff;
     this.dmg.show(e.x, e.y - 42, amount, crit, weak ? '#ff5a5a' : color);
     this.spawnHitSpark(e.x, e.y - 22, crit, sparkColor);
     bus.emit('combat:damage-dealt', { x: e.x, y: e.y, amount, crit });
+    if (!killed) {
+      for (const proc of setCombat.onHit) {
+        if (Math.random() >= proc.chance) continue;
+        const procMult = elementMultiplier(proc.element, e.cfg.weakness, e.cfg.resist);
+        const procDamage = Math.max(1, Math.round(atk * proc.power * procMult));
+        totalDamage += procDamage;
+        killed = e.takeDamage(procDamage, this.player.x, this.player.y, 8);
+        const procColor = elementColorHex(proc.element);
+        this.dmg.show(e.x + 8, e.y - 58, procDamage, false, procColor);
+        this.spawnHitSpark(e.x, e.y - 28, false, ELEMENT_COLOR[proc.element]);
+        this.floatText(e.x, e.y - 72, proc.label, procColor);
+        bus.emit('combat:damage-dealt', { x: e.x, y: e.y, amount: procDamage, crit: false });
+        if (killed) break;
+      }
+    }
+    this.updateCombatTargetUi();
     // 吸血 (lifesteal): boss-gear special — heal a fraction of dealt damage.
     const ls = gameState.derived.lifesteal;
     if (ls > 0 && gameState.hp < gameState.derived.maxHp && !this.playerDead) {
-      const heal = Math.max(1, Math.round(amount * ls));
+      const heal = Math.max(1, Math.round(totalDamage * ls));
       gameState.hp = Math.min(gameState.derived.maxHp, gameState.hp + heal);
       bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
       this.dmg.show(this.player.x, this.player.y - 48, heal, false, '#e36a9f');
+    }
+    if (killed && setCombat.healOnKillRate > 0 && gameState.hp < gameState.derived.maxHp) {
+      const heal = Math.max(1, Math.round(gameState.derived.maxHp * setCombat.healOnKillRate));
+      gameState.hp = Math.min(gameState.derived.maxHp, gameState.hp + heal);
+      bus.emit('player:hp-changed', { current: gameState.hp, max: gameState.derived.maxHp });
+      this.dmg.show(this.player.x, this.player.y - 62, heal, false, '#9fe3a0');
     }
     // On-hit status proc (only on a live enemy; weakness improves the odds).
     if (!killed && element !== 'none') {
@@ -1237,6 +1273,7 @@ export class WorldScene extends Phaser.Scene {
     half = 34,
     atk = gameState.derived.physAtk,
     element: Element = 'none',
+    isSkill = false,
   ): void {
     const { ax, ay } = aheadOffset(dir, reach);
     const hx = this.player.x + ax;
@@ -1246,7 +1283,7 @@ export class WorldScene extends Phaser.Scene {
     for (const e of this.enemies) {
       if (e.isDead()) continue;
       if (Phaser.Math.Distance.Between(hx, hy, e.x, e.y) <= half) {
-        const { crit } = this.hitEnemy(e, atk, mult, knockback, element);
+        const { crit } = this.hitEnemy(e, atk, mult, knockback, element, isSkill);
         hitStop = true;
         anyCrit = anyCrit || crit;
       }
@@ -1552,6 +1589,7 @@ export class WorldScene extends Phaser.Scene {
         def.radius ?? 34,
         atk,
         element,
+        true,
       ),
     );
   }
@@ -1590,6 +1628,7 @@ export class WorldScene extends Phaser.Scene {
       atk,
       mult,
       element,
+      skill: true,
     });
   }
 
@@ -1604,7 +1643,7 @@ export class WorldScene extends Phaser.Scene {
       for (const e of this.enemies) {
         if (e.isDead()) continue;
         if (Phaser.Math.Distance.Between(b.obj.x, b.obj.y, e.x, e.y - 16) < 18) {
-          this.hitEnemy(e, b.atk, b.mult, 14, b.element);
+          this.hitEnemy(e, b.atk, b.mult, 14, b.element, b.skill);
           hit = true;
           break;
         }

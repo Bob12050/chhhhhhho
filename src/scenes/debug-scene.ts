@@ -63,6 +63,7 @@ export class DebugScene extends Phaser.Scene {
     this.btn(160, y, 'ペット入手', () => this.grant(() => gameState.obtainPetItem('pet_egg_slime')));
     y += 40;
     this.btn(16, y, '全討伐証+12', () => this.grant(() => this.grantHuntProofs()), 0x275b55);
+    this.btn(160, y, 'スコル4部位', () => this.previewSkollSet(), 0x275b55);
     y += 40;
     this.btn(16, y, '調査装備+素材', () => this.previewInvestigationGear(), 0x275b55);
     y += 40;
@@ -134,6 +135,20 @@ export class DebugScene extends Phaser.Scene {
     for (const exchange of allBossRareExchanges()) {
       gameState.addMaterial(exchange.proofItemId, 12);
     }
+  }
+
+  private previewSkollSet(): void {
+    const pieces = {
+      main_hand: 'skoll_blade',
+      head: 'skoll_helm',
+      waist: 'skoll_coil',
+      feet: 'skoll_greaves',
+    } as const;
+    for (const itemId of Object.values(pieces)) gameState.addEquipment(itemId);
+    Object.assign(gameState.equipment, pieces);
+    gameState.recompute();
+    this.scene.stop();
+    this.scene.launch('Inventory', { tab: 'equipment' });
   }
 
   private previewInvestigationGear(): void {
