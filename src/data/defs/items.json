@@ -78,84 +78,84 @@
       "name": "大樹の樹液",
       "rarity": 3,
       "sellPrice": 36,
-      "description": "生命の杖の素材。treantの討伐で得られる。"
+      "description": "モリヌシスタッフの素材。もりの主から得られる。"
     },
     {
       "id": "night_fang",
       "name": "夜の牙",
       "rarity": 3,
       "sellPrice": 36,
-      "description": "夜牙の短剣の素材。bat_lordの討伐で得られる。"
+      "description": "ノクスダガーの素材。夜の王 ノクスから得られる。"
     },
     {
       "id": "flame_core",
       "name": "業火の核",
       "rarity": 5,
       "sellPrice": 60,
-      "description": "業火の剣の素材。flameの討伐で得られる。"
+      "description": "ヴルムソードの素材。業火の主 ヴルムから得られる。"
     },
     {
       "id": "alpha_pelt",
       "name": "群狼の毛皮",
       "rarity": 4,
       "sellPrice": 48,
-      "description": "狼牙の斧の素材。wolf_alphaの討伐で得られる。"
+      "description": "フェンリルアックスの素材。群狼の長 フェンリルから得られる。"
     },
     {
       "id": "royal_ichor",
       "name": "王者の粘液",
       "rarity": 5,
       "sellPrice": 60,
-      "description": "粘王の槌の素材。slimeの討伐で得られる。"
+      "description": "キングスライムメイスの素材。キングスライムから得られる。"
     },
     {
       "id": "dragon_scale",
       "name": "竜鱗",
       "rarity": 7,
       "sellPrice": 84,
-      "description": "竜鱗の槍の素材。dragonの討伐で得られる。"
+      "description": "ヴァルガランスの素材。竜王ヴァルガから得られる。"
     },
     {
       "id": "spore_sac",
       "name": "胞子嚢",
       "rarity": 5,
       "sellPrice": 60,
-      "description": "胞子の杖の素材。mushroomの討伐で得られる。"
+      "description": "スポラワンドの素材。胞子の母 スポラから得られる。"
     },
     {
       "id": "garo_fang",
       "name": "岩牙",
       "rarity": 6,
       "sellPrice": 72,
-      "description": "岩牙刀の素材。lizard_kingの討伐で得られる。"
+      "description": "ガロブレイドの素材。岩牙竜 ガロから得られる。"
     },
     {
       "id": "frost_heart",
       "name": "氷霜の心核",
       "rarity": 7,
       "sellPrice": 84,
-      "description": "氷霜の杖の素材。wisp_queenの討伐で得られる。"
+      "description": "グラキエススタッフの素材。霜の女王 グラキエスから得られる。"
     },
     {
       "id": "dread_carapace",
       "name": "不死の甲殻",
       "rarity": 7,
       "sellPrice": 84,
-      "description": "不死の鎧の素材。knight_dreadの討伐で得られる。"
+      "description": "モルドメイル改の素材。不死騎士 モルドから得られる。"
     },
     {
       "id": "abyss_core",
       "name": "深淵核",
       "rarity": 8,
       "sellPrice": 96,
-      "description": "深淵剣の素材。slime_abyssの討伐で得られる。"
+      "description": "アビスブレイドの素材。深淵のスライムから得られる。"
     },
     {
       "id": "stone_heart",
       "name": "石の心臓",
       "rarity": 4,
       "sellPrice": 48,
-      "description": "砦の兜の素材。stoneの討伐で得られる。"
+      "description": "ガーディアンヘルム改の素材。岩の番人から得られる。"
     },
     {
       "id": "lord_hardwood",
@@ -868,7 +868,7 @@
     },
     {
       "id": "guardian_helm",
-      "name": "守護の兜",
+      "name": "ガーディアンヘルム",
       "slot": "head",
       "rarity": 5,
       "visualId": "helm_iron",
@@ -881,7 +881,7 @@
       },
       "sellPrice": 90,
       "description": "守りに優れた兜。",
-      "series": "番人"
+      "series": "岩の番人"
     },
     {
       "id": "royal_helm",
@@ -2997,7 +2997,7 @@
     },
     {
       "id": "lifewood_staff",
-      "name": "生命の杖",
+      "name": "モリヌシスタッフ",
       "slot": "main_hand",
       "rarity": 3,
       "visualId": "sword_wood",
@@ -3012,11 +3012,12 @@
       "description": "大樹の樹液を加工した一品。",
       "weaponTags": [
         "staff"
-      ]
+      ],
+      "series": "もりの主"
     },
     {
       "id": "nightfang_dagger",
-      "name": "夜牙の短剣",
+      "name": "ノクスダガー",
       "slot": "main_hand",
       "rarity": 3,
       "visualId": "sword_iron",
@@ -3031,11 +3032,12 @@
       "description": "夜の牙を加工した一品。",
       "weaponTags": [
         "dagger"
-      ]
+      ],
+      "series": "ノクス"
     },
     {
       "id": "inferno_blade",
-      "name": "業火の剣",
+      "name": "ヴルムソード",
       "slot": "main_hand",
       "rarity": 5,
       "visualId": "sword_iron",
@@ -3049,11 +3051,12 @@
       "description": "業火の核を加工した一品。",
       "weaponTags": [
         "sword"
-      ]
+      ],
+      "series": "ヴルム"
     },
     {
       "id": "fang_axe",
-      "name": "狼牙の斧",
+      "name": "フェンリルアックス",
       "slot": "main_hand",
       "rarity": 4,
       "visualId": "sword_iron",
@@ -3067,11 +3070,12 @@
       "description": "群狼の毛皮を加工した一品。",
       "weaponTags": [
         "axe"
-      ]
+      ],
+      "series": "フェンリル"
     },
     {
       "id": "royal_mace",
-      "name": "粘王の槌",
+      "name": "キングスライムメイス",
       "slot": "main_hand",
       "rarity": 5,
       "visualId": "sword_iron",
@@ -3086,11 +3090,11 @@
       "weaponTags": [
         "mace"
       ],
-      "series": "粘王"
+      "series": "キングスライム"
     },
     {
       "id": "dragonscale_lance",
-      "name": "竜鱗の槍",
+      "name": "ヴァルガランス",
       "slot": "main_hand",
       "rarity": 7,
       "visualId": "sword_iron",
@@ -3104,11 +3108,12 @@
       "description": "竜鱗を加工した一品。",
       "weaponTags": [
         "spear"
-      ]
+      ],
+      "series": "ヴァルガ"
     },
     {
       "id": "spore_wand",
-      "name": "胞子の杖",
+      "name": "スポラワンド",
       "slot": "main_hand",
       "rarity": 5,
       "visualId": "sword_wood",
@@ -3122,11 +3127,12 @@
       "description": "胞子嚢を加工した一品。",
       "weaponTags": [
         "wand"
-      ]
+      ],
+      "series": "スポラ"
     },
     {
       "id": "garo_katana",
-      "name": "岩牙刀",
+      "name": "ガロブレイド",
       "slot": "main_hand",
       "rarity": 6,
       "visualId": "sword_iron",
@@ -3141,11 +3147,11 @@
       "weaponTags": [
         "katana"
       ],
-      "series": "岩牙"
+      "series": "ガロ"
     },
     {
       "id": "glacier_staff",
-      "name": "氷霜の杖",
+      "name": "グラキエススタッフ",
       "slot": "main_hand",
       "rarity": 7,
       "visualId": "sword_wood",
@@ -3159,11 +3165,12 @@
       "description": "氷霜の心核を加工した一品。",
       "weaponTags": [
         "staff"
-      ]
+      ],
+      "series": "グラキエス"
     },
     {
       "id": "dread_plate_armor",
-      "name": "不死の鎧",
+      "name": "モルドメイル改",
       "slot": "torso",
       "rarity": 7,
       "visualId": "plate_iron",
@@ -3175,11 +3182,12 @@
         "magDef": 12
       },
       "sellPrice": 280,
-      "description": "不死の甲殻を加工した一品。"
+      "description": "不死の甲殻を加工した一品。",
+      "series": "モルド"
     },
     {
       "id": "abyss_blade",
-      "name": "深淵剣",
+      "name": "アビスブレイド",
       "slot": "main_hand",
       "rarity": 8,
       "visualId": "sword_iron",
@@ -3194,11 +3202,11 @@
       "weaponTags": [
         "sword"
       ],
-      "series": "深淵"
+      "series": "深淵のスライム"
     },
     {
       "id": "bastion_helm",
-      "name": "砦の兜",
+      "name": "ガーディアンヘルム改",
       "slot": "head",
       "rarity": 4,
       "visualId": "helm_iron",
@@ -3209,7 +3217,8 @@
         "maxHp": 40
       },
       "sellPrice": 160,
-      "description": "石の心臓を加工した一品。"
+      "description": "石の心臓を加工した一品。",
+      "series": "岩の番人"
     },
     {
       "id": "ring_copper",
@@ -7008,7 +7017,7 @@
     },
     {
       "id": "lord_mace",
-      "name": "主の大槌",
+      "name": "モリヌシメイス",
       "slot": "main_hand",
       "rarity": 4,
       "visualId": "sword_iron",
@@ -7025,11 +7034,11 @@
       },
       "sellPrice": 80,
       "description": "もりの主の堅木で作った大槌。命が宿る。",
-      "series": "森の主"
+      "series": "もりの主"
     },
     {
       "id": "lord_bark_mail",
-      "name": "主の樹鎧",
+      "name": "モリヌシメイル",
       "slot": "torso",
       "rarity": 4,
       "visualId": "plate_iron",
@@ -7042,11 +7051,11 @@
       },
       "sellPrice": 80,
       "description": "主の樹皮の鎧。着る者を守るように軋む。",
-      "series": "森の主"
+      "series": "もりの主"
     },
     {
       "id": "lord_root_boots",
-      "name": "主の根靴",
+      "name": "モリヌシグリーヴ",
       "slot": "feet",
       "rarity": 4,
       "visualId": "vest_cloth",
@@ -7059,11 +7068,11 @@
       },
       "sellPrice": 70,
       "description": "主の根で編んだ靴。大地を掴む。",
-      "series": "森の主"
+      "series": "もりの主"
     },
     {
       "id": "guardian_blade",
-      "name": "番人の石剣",
+      "name": "ガーディアンソード",
       "slot": "main_hand",
       "rarity": 4,
       "visualId": "sword_iron",
@@ -7078,11 +7087,11 @@
       },
       "sellPrice": 95,
       "description": "番人の腕部を打ち直した剣。重く、硬い。",
-      "series": "番人"
+      "series": "岩の番人"
     },
     {
       "id": "guardian_bulwark",
-      "name": "番人の大盾",
+      "name": "ガーディアンシールド",
       "slot": "main_hand",
       "rarity": 4,
       "visualId": "sword_iron",
@@ -7099,11 +7108,11 @@
       },
       "sellPrice": 95,
       "description": "番人の胸甲そのものの大盾。",
-      "series": "番人"
+      "series": "岩の番人"
     },
     {
       "id": "guardian_plate",
-      "name": "番人の岩鎧",
+      "name": "ガーディアンメイル",
       "slot": "torso",
       "rarity": 4,
       "visualId": "plate_iron",
@@ -7117,11 +7126,11 @@
       },
       "sellPrice": 90,
       "description": "番人の装甲を纏う。重いが頼れる。",
-      "series": "番人"
+      "series": "岩の番人"
     },
     {
       "id": "nox_fang_blade",
-      "name": "ノクスの吸血刃",
+      "name": "ノクスファング",
       "slot": "main_hand",
       "rarity": 5,
       "visualId": "sword_iron",
@@ -7141,7 +7150,7 @@
     },
     {
       "id": "nox_wing_cloak",
-      "name": "ノクスの翼マント",
+      "name": "ノクスマント",
       "slot": "back",
       "rarity": 5,
       "visualId": "vest_cloth",
@@ -7159,7 +7168,7 @@
     },
     {
       "id": "nox_mask",
-      "name": "夜王の仮面",
+      "name": "ノクスヘルム",
       "slot": "head",
       "rarity": 5,
       "visualId": "cap_leather",
@@ -7176,7 +7185,7 @@
     },
     {
       "id": "zephys_gale_bow",
-      "name": "ゼフィスの風弓",
+      "name": "ゼフィスボウ",
       "slot": "main_hand",
       "rarity": 5,
       "visualId": "sword_iron",
@@ -7197,7 +7206,7 @@
     },
     {
       "id": "zephys_boots",
-      "name": "風翔のブーツ",
+      "name": "ゼフィスグリーヴ",
       "slot": "feet",
       "rarity": 5,
       "visualId": "vest_cloth",
@@ -7214,7 +7223,7 @@
     },
     {
       "id": "zephys_band",
-      "name": "風切の帯",
+      "name": "ゼフィスコイル",
       "slot": "waist",
       "rarity": 5,
       "visualId": "vest_cloth",
@@ -7231,7 +7240,7 @@
     },
     {
       "id": "vurm_greatsword",
-      "name": "業火の大剣",
+      "name": "ヴルムバスター",
       "slot": "main_hand",
       "rarity": 6,
       "visualId": "sword_iron",
@@ -7246,11 +7255,11 @@
       },
       "sellPrice": 260,
       "description": "ヴルムの紅蓮珠を鍔に埋めた大剣。刃が燃える。",
-      "series": "業火"
+      "series": "ヴルム"
     },
     {
       "id": "vurm_gauntlet",
-      "name": "業火の籠手",
+      "name": "ヴルムアーム",
       "slot": "hands",
       "rarity": 6,
       "visualId": "vest_cloth",
@@ -7264,11 +7273,11 @@
       },
       "sellPrice": 220,
       "description": "剛爪の籠手。拳に熱がこもる。",
-      "series": "業火"
+      "series": "ヴルム"
     },
     {
       "id": "vurm_helm",
-      "name": "業火の兜",
+      "name": "ヴルムヘルム",
       "slot": "head",
       "rarity": 6,
       "visualId": "cap_leather",
@@ -7281,11 +7290,11 @@
       },
       "sellPrice": 220,
       "description": "ヴルムの頭殻の兜。炎を恐れなくなる。",
-      "series": "業火"
+      "series": "ヴルム"
     },
     {
       "id": "fenrir_fang_katana",
-      "name": "フェンリルの牙刀",
+      "name": "フェンリルブレイド",
       "slot": "main_hand",
       "rarity": 6,
       "visualId": "sword_iron",
@@ -7305,7 +7314,7 @@
     },
     {
       "id": "fenrir_greaves",
-      "name": "群狼の脚甲",
+      "name": "フェンリルグリーヴ",
       "slot": "feet",
       "rarity": 6,
       "visualId": "vest_cloth",
@@ -7322,7 +7331,7 @@
     },
     {
       "id": "fenrir_belt",
-      "name": "狼王の腰帯",
+      "name": "フェンリルコイル",
       "slot": "waist",
       "rarity": 6,
       "visualId": "vest_cloth",
@@ -7340,7 +7349,7 @@
     },
     {
       "id": "king_jelly_rod",
-      "name": "王のゼリーロッド",
+      "name": "キングスライムロッド",
       "slot": "main_hand",
       "rarity": 6,
       "visualId": "sword_iron",
@@ -7356,11 +7365,12 @@
         "atkSpeed": 0.2
       },
       "sellPrice": 260,
-      "description": "王冠の雫を封じたロッド。振ると金の音がする。"
+      "description": "王冠の雫を封じたロッド。振ると金の音がする。",
+      "series": "キングスライム"
     },
     {
       "id": "golden_crown",
-      "name": "黄金の王冠",
+      "name": "キングスライムクラウン",
       "slot": "accessory_1",
       "rarity": 6,
       "visualId": "vest_cloth",
@@ -7372,11 +7382,12 @@
         "maxHp": 15
       },
       "sellPrice": 300,
-      "description": "スライム王の王冠。持ち主に富を呼ぶ。"
+      "description": "スライム王の王冠。持ち主に富を呼ぶ。",
+      "series": "キングスライム"
     },
     {
       "id": "royal_robe",
-      "name": "王衣のローブ",
+      "name": "キングスライムローブ",
       "slot": "torso",
       "rarity": 6,
       "visualId": "vest_cloth",
@@ -7390,11 +7401,11 @@
       },
       "sellPrice": 230,
       "description": "王者の粘液で織ったローブ。魔を弾く。",
-      "series": "粘王"
+      "series": "キングスライム"
     },
     {
       "id": "varga_lance",
-      "name": "竜王の槍",
+      "name": "ヴァルガランス改",
       "slot": "main_hand",
       "rarity": 7,
       "visualId": "sword_iron",
@@ -7411,11 +7422,11 @@
       },
       "sellPrice": 380,
       "description": "逆鱗を穂先にした槍。竜気を纏う。",
-      "series": "竜王"
+      "series": "ヴァルガ"
     },
     {
       "id": "varga_mail",
-      "name": "竜王の鎧",
+      "name": "ヴァルガメイル",
       "slot": "torso",
       "rarity": 7,
       "visualId": "plate_iron",
@@ -7428,11 +7439,11 @@
       },
       "sellPrice": 340,
       "description": "竜鱗を重ねた鎧。炎に強い…気がする。",
-      "series": "竜王"
+      "series": "ヴァルガ"
     },
     {
       "id": "varga_cloak",
-      "name": "竜翼の外套",
+      "name": "ヴァルガマント",
       "slot": "back",
       "rarity": 7,
       "visualId": "vest_cloth",
@@ -7446,11 +7457,11 @@
       },
       "sellPrice": 320,
       "description": "剛翼の外套。羽ばたけば身が軽い。",
-      "series": "竜王"
+      "series": "ヴァルガ"
     },
     {
       "id": "spora_staff",
-      "name": "胞子の傘杖",
+      "name": "スポラブルーム",
       "slot": "main_hand",
       "rarity": 7,
       "visualId": "sword_iron",
@@ -7470,7 +7481,7 @@
     },
     {
       "id": "spora_cap",
-      "name": "スポラの菌糸帽",
+      "name": "スポラヘルム",
       "slot": "head",
       "rarity": 7,
       "visualId": "cap_leather",
@@ -7487,7 +7498,7 @@
     },
     {
       "id": "spora_shroud",
-      "name": "胞子の羽衣",
+      "name": "スポラマント",
       "slot": "back",
       "rarity": 7,
       "visualId": "vest_cloth",
@@ -7504,7 +7515,7 @@
     },
     {
       "id": "garo_axe",
-      "name": "岩牙の大斧",
+      "name": "ガロアックス",
       "slot": "main_hand",
       "rarity": 7,
       "visualId": "sword_iron",
@@ -7520,11 +7531,11 @@
       },
       "sellPrice": 400,
       "description": "宝角の大斧。一撃が地響きになる。",
-      "series": "岩牙"
+      "series": "ガロ"
     },
     {
       "id": "garo_plate",
-      "name": "岩牙の重鎧",
+      "name": "ガロメイル",
       "slot": "torso",
       "rarity": 7,
       "visualId": "plate_iron",
@@ -7538,11 +7549,11 @@
       },
       "sellPrice": 360,
       "description": "重鱗の鎧。もはや城壁。",
-      "series": "岩牙"
+      "series": "ガロ"
     },
     {
       "id": "garo_shield",
-      "name": "岩牙の重盾",
+      "name": "ガロシールド",
       "slot": "main_hand",
       "rarity": 7,
       "visualId": "sword_iron",
@@ -7559,11 +7570,11 @@
       },
       "sellPrice": 380,
       "description": "重鱗を張った大盾。竜の突進も止める。",
-      "series": "岩牙"
+      "series": "ガロ"
     },
     {
       "id": "hydra_whip",
-      "name": "九首の連鞭",
+      "name": "ヒュドラウィップ",
       "slot": "main_hand",
       "rarity": 7,
       "visualId": "sword_iron",
@@ -7583,7 +7594,7 @@
     },
     {
       "id": "hydra_mail",
-      "name": "沼蛇の鱗鎧",
+      "name": "ヒュドラメイル",
       "slot": "torso",
       "rarity": 7,
       "visualId": "plate_iron",
@@ -7600,7 +7611,7 @@
     },
     {
       "id": "hydra_greaves",
-      "name": "毒牙の脛当",
+      "name": "ヒュドラグリーヴ",
       "slot": "feet",
       "rarity": 7,
       "visualId": "vest_cloth",
@@ -7617,7 +7628,7 @@
     },
     {
       "id": "glacies_staff",
-      "name": "女王の氷杖",
+      "name": "グラキエスセプター",
       "slot": "main_hand",
       "rarity": 8,
       "visualId": "sword_iron",
@@ -7637,7 +7648,7 @@
     },
     {
       "id": "glacies_crown",
-      "name": "氷晶の宝冠",
+      "name": "グラキエスクラウン",
       "slot": "head",
       "rarity": 8,
       "visualId": "cap_leather",
@@ -7654,7 +7665,7 @@
     },
     {
       "id": "glacies_robe",
-      "name": "氷雪のローブ",
+      "name": "グラキエスローブ",
       "slot": "torso",
       "rarity": 8,
       "visualId": "vest_cloth",
@@ -7671,7 +7682,7 @@
     },
     {
       "id": "sandgoa_maul",
-      "name": "巨神の大槌",
+      "name": "サンドゴアハンマー",
       "slot": "main_hand",
       "rarity": 8,
       "visualId": "sword_iron",
@@ -7692,7 +7703,7 @@
     },
     {
       "id": "sandgoa_plate",
-      "name": "流砂の重甲",
+      "name": "サンドゴアメイル",
       "slot": "torso",
       "rarity": 8,
       "visualId": "plate_iron",
@@ -7709,7 +7720,7 @@
     },
     {
       "id": "sandgoa_belt",
-      "name": "砂金の帯",
+      "name": "サンドゴアコイル",
       "slot": "waist",
       "rarity": 8,
       "visualId": "vest_cloth",
@@ -7726,7 +7737,7 @@
     },
     {
       "id": "mordo_greatsword",
-      "name": "不死騎士の大剣",
+      "name": "モルドバスター",
       "slot": "main_hand",
       "rarity": 8,
       "visualId": "sword_iron",
@@ -7745,7 +7756,7 @@
     },
     {
       "id": "mordo_plate",
-      "name": "魂鉄の全身鎧",
+      "name": "モルドメイル",
       "slot": "torso",
       "rarity": 8,
       "visualId": "plate_iron",
@@ -7763,7 +7774,7 @@
     },
     {
       "id": "mordo_helm",
-      "name": "不死の大兜",
+      "name": "モルドヘルム",
       "slot": "head",
       "rarity": 8,
       "visualId": "cap_leather",
@@ -7780,7 +7791,7 @@
     },
     {
       "id": "magia_blade",
-      "name": "機神の粒子刃",
+      "name": "アルマギアブレイド",
       "slot": "main_hand",
       "rarity": 9,
       "visualId": "sword_iron",
@@ -7796,11 +7807,11 @@
       },
       "sellPrice": 1300,
       "description": "動力炉で駆動する光の刃。狙いは機械精度。",
-      "series": "機神"
+      "series": "アルマギア"
     },
     {
       "id": "magia_visor",
-      "name": "機神の照準器",
+      "name": "アルマギアバイザー",
       "slot": "head",
       "rarity": 9,
       "visualId": "cap_leather",
@@ -7813,11 +7824,11 @@
       },
       "sellPrice": 1200,
       "description": "機神の眼。急所が線で見える。",
-      "series": "機神"
+      "series": "アルマギア"
     },
     {
       "id": "magia_frame",
-      "name": "機神の外装",
+      "name": "アルマギアメイル",
       "slot": "torso",
       "rarity": 9,
       "visualId": "plate_iron",
@@ -7830,11 +7841,11 @@
       },
       "sellPrice": 1250,
       "description": "古代合金の外装。矢が滑る。",
-      "series": "機神"
+      "series": "アルマギア"
     },
     {
       "id": "abyss_scepter",
-      "name": "深淵の王笏",
+      "name": "アビスセプター",
       "slot": "main_hand",
       "rarity": 9,
       "visualId": "sword_iron",
@@ -7850,11 +7861,11 @@
       },
       "sellPrice": 1350,
       "description": "真核の笏。振るうたび生気が満ちる。",
-      "series": "深淵"
+      "series": "深淵のスライム"
     },
     {
       "id": "abyss_ring",
-      "name": "深淵の宝環",
+      "name": "アビスリング",
       "slot": "accessory_1",
       "rarity": 9,
       "visualId": "vest_cloth",
@@ -7869,11 +7880,11 @@
       },
       "sellPrice": 1400,
       "description": "深淵を封じた指環。持ち主に万象が集う。",
-      "series": "深淵"
+      "series": "深淵のスライム"
     },
     {
       "id": "crimson_mantle",
-      "name": "真紅のマント",
+      "name": "クリムゾンマント",
       "slot": "back",
       "rarity": 9,
       "visualId": "vest_cloth",
@@ -7886,7 +7897,8 @@
         "lifesteal": 0.03
       },
       "sellPrice": 1300,
-      "description": "緋の深淵核で染めたマント。傷がふさがる。"
+      "description": "緋の深淵核で染めたマント。傷がふさがる。",
+      "series": "緋の深淵"
     },
     {
       "id": "hero_emblem",
