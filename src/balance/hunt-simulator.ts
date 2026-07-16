@@ -1,5 +1,6 @@
 import { mitigateDamage, MITIGATION_K } from '@/combat/mitigation';
 import { allRecipes } from '@/crafting/recipes';
+import { getBossRareExchangeForDropTable } from '@/crafting/boss-rare-exchange';
 import { Rng } from '@/core/rng';
 import { allEquipment, itemDisplayName, type EquipmentDef } from '@/data/items';
 import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
@@ -471,6 +472,12 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
         candidates.set(entry.itemId, { total: 0, runsWithDrop: 0 });
       }
     }
+    const proofExchange = wave.enemy.isBoss && wave.enemy.dropTableId
+      ? getBossRareExchangeForDropTable(wave.enemy.dropTableId)
+      : undefined;
+    if (proofExchange && !candidates.has(proofExchange.proofItemId)) {
+      candidates.set(proofExchange.proofItemId, { total: 0, runsWithDrop: 0 });
+    }
   }
   for (const itemId of Object.keys(quest.rewards.items ?? {})) {
     if (!candidates.has(itemId)) candidates.set(itemId, { total: 0, runsWithDrop: 0 });
@@ -517,6 +524,10 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
         for (const entry of table?.entries ?? []) {
           addRunDrop(runDrops, entry.itemId, rollScaledDrop(entry, dropRng, chanceScale));
         }
+        const proofExchange = enemy.isBoss && enemy.dropTableId
+          ? getBossRareExchangeForDropTable(enemy.dropTableId)
+          : undefined;
+        if (proofExchange) addRunDrop(runDrops, proofExchange.proofItemId, 1);
         totalGold += Math.round((enemy.goldReward ?? 0) * rewardMult * goldMult);
         totalExp += Math.round(enemy.expReward * rewardMult);
       }

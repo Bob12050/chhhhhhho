@@ -1,0 +1,90 @@
+{
+  "exchangeCost": 12,
+  "exchanges": [
+    {
+      "rareMaterialId": "royal_pearl",
+      "proofItemId": "hunt_proof_royal_slime",
+      "dropTableIds": ["boss_slime", "boss_aurum"]
+    },
+    {
+      "rareMaterialId": "spirit_amber",
+      "proofItemId": "hunt_proof_treant",
+      "dropTableIds": ["boss_treant", "boss_dross"]
+    },
+    {
+      "rareMaterialId": "earth_coreorb",
+      "proofItemId": "hunt_proof_stone",
+      "dropTableIds": ["boss_stone", "boss_obsidion"]
+    },
+    {
+      "rareMaterialId": "dragon_gekirin",
+      "proofItemId": "hunt_proof_dragon",
+      "dropTableIds": ["boss_dragon", "boss_varganos"]
+    },
+    {
+      "rareMaterialId": "flame_guren",
+      "proofItemId": "hunt_proof_vurm",
+      "dropTableIds": ["boss_flame", "boss_azvurm"]
+    },
+    {
+      "rareMaterialId": "night_ruby",
+      "proofItemId": "hunt_proof_nox",
+      "dropTableIds": ["boss_bat_lord", "boss_cruor"]
+    },
+    {
+      "rareMaterialId": "moon_fang",
+      "proofItemId": "hunt_proof_fenrir",
+      "dropTableIds": ["boss_wolf_alpha"]
+    },
+    {
+      "rareMaterialId": "venom_core",
+      "proofItemId": "hunt_proof_spora",
+      "dropTableIds": ["boss_mushroom", "boss_miasma"]
+    },
+    {
+      "rareMaterialId": "garo_horn",
+      "proofItemId": "hunt_proof_garo",
+      "dropTableIds": ["boss_lizard_king", "boss_ignigaro"]
+    },
+    {
+      "rareMaterialId": "eternal_ice",
+      "proofItemId": "hunt_proof_elemental_queen",
+      "dropTableIds": ["boss_wisp_queen", "boss_flarelis"]
+    },
+    {
+      "rareMaterialId": "dread_crownpiece",
+      "proofItemId": "hunt_proof_mordo",
+      "dropTableIds": ["boss_knight_dread", "boss_luxmordo"]
+    },
+    {
+      "rareMaterialId": "abyss_truecore",
+      "proofItemId": "hunt_proof_abyss",
+      "dropTableIds": ["boss_slime_abyss", "boss_crimson_abyss"]
+    },
+    {
+      "rareMaterialId": "sky_crown",
+      "proofItemId": "hunt_proof_zephys",
+      "dropTableIds": ["boss_zephys"]
+    },
+    {
+      "rareMaterialId": "hydra_orb",
+      "proofItemId": "hunt_proof_hydra",
+      "dropTableIds": ["boss_hydra"]
+    },
+    {
+      "rareMaterialId": "skoll_thunder_horn",
+      "proofItemId": "hunt_proof_skoll",
+      "dropTableIds": ["boss_skoll"]
+    },
+    {
+      "rareMaterialId": "sand_heart",
+      "proofItemId": "hunt_proof_sandgoa",
+      "dropTableIds": ["boss_sandgoa"]
+    },
+    {
+      "rareMaterialId": "magia_reactor",
+      "proofItemId": "hunt_proof_almagia",
+      "dropTableIds": ["boss_almagia"]
+    }
+  ]
+}

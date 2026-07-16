@@ -587,6 +587,7 @@ try {
   }
   s = await snap(page);
   check('ボス素材がドロップする', (s.materials['gale_feather'] ?? 0) > 0);
+  check('ボス討伐で対応する討伐証を必ず獲得する', (s.materials['hunt_proof_zephys'] ?? 0) === 1);
   const resultOpen = await page.evaluate(() => window.__test.activeScenes().includes('QuestResult'));
   check('勝利後にクエスト結果が表示される', resultOpen);
   await page.keyboard.press('Escape'); await page.waitForTimeout(900); // result always returns to town

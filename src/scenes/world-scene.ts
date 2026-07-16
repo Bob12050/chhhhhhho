@@ -12,6 +12,7 @@ import { getPet } from '@/pets/pet-defs';
 import { TEX } from '@/assets/gen/textures';
 import { Rng } from '@/core/rng';
 import { getDropTable, rollDrops } from '@/loot/drop-table';
+import { getBossRareExchangeForDropTable } from '@/crafting/boss-rare-exchange';
 import { getSkill } from '@/skills/skill-defs';
 import {
   abandonQuest,
@@ -1807,6 +1808,20 @@ export class WorldScene extends Phaser.Scene {
     const firstKill = !!def.isBoss && !gameState.flags[killFlag];
     const table = def.dropTableId ? getDropTable(def.dropTableId) : undefined;
     const earnedDrops: QuestResultItem[] = [];
+    const proofExchange = def.isBoss && def.dropTableId
+      ? getBossRareExchangeForDropTable(def.dropTableId)
+      : undefined;
+    if (proofExchange) {
+      const proof = { itemId: proofExchange.proofItemId, qty: 1 };
+      earnedDrops.push(proof);
+      this.grantLoot(proof.itemId, proof.qty);
+      this.floatText(
+        x,
+        y - 68,
+        `+${itemDisplayName(proof.itemId)}`,
+        rarityColorHex(this.itemRarity(proof.itemId)),
+      );
+    }
     if (table) {
       // 歴戦 individuals double every drop chance on top of the player's bonus.
       const dropBonus = gameState.derived.dropRate + (veteran ? VETERAN_MODS.dropBonusAdd : 0);

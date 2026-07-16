@@ -501,6 +501,125 @@
       "description": "緋の深淵の核。血のように波打つ。"
     },
     {
+      "id": "hunt_proof_royal_slime",
+      "name": "王者スライムの討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "王者スライム系を討伐した証。12枚で王者の心珠と交換できる。"
+    },
+    {
+      "id": "hunt_proof_treant",
+      "name": "樹王種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "樹王種を討伐した証。12枚で精霊の琥珀と交換できる。"
+    },
+    {
+      "id": "hunt_proof_stone",
+      "name": "岩番人種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "岩番人種を討伐した証。12枚で大地の核玉と交換できる。"
+    },
+    {
+      "id": "hunt_proof_dragon",
+      "name": "竜王種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "竜王種を討伐した証。12枚で竜王の逆鱗と交換できる。"
+    },
+    {
+      "id": "hunt_proof_vurm",
+      "name": "火竜種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "火竜種を討伐した証。12枚で業火の紅蓮珠と交換できる。"
+    },
+    {
+      "id": "hunt_proof_nox",
+      "name": "夜王種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "夜王種を討伐した証。12枚で夜王の紅玉と交換できる。"
+    },
+    {
+      "id": "hunt_proof_fenrir",
+      "name": "群狼種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "群狼の長を討伐した証。12枚で月魄の牙と交換できる。"
+    },
+    {
+      "id": "hunt_proof_spora",
+      "name": "胞子母種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "胞子母種を討伐した証。12枚で母なる猛毒核と交換できる。"
+    },
+    {
+      "id": "hunt_proof_garo",
+      "name": "岩牙竜種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "岩牙竜種を討伐した証。12枚で岩牙竜の宝角と交換できる。"
+    },
+    {
+      "id": "hunt_proof_elemental_queen",
+      "name": "精霊女王種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "精霊女王種を討伐した証。12枚で永久氷晶と交換できる。"
+    },
+    {
+      "id": "hunt_proof_mordo",
+      "name": "不死騎士種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "不死騎士種を討伐した証。12枚で不死の王冠片と交換できる。"
+    },
+    {
+      "id": "hunt_proof_abyss",
+      "name": "深淵種の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "深淵種を討伐した証。12枚で深淵の真核と交換できる。"
+    },
+    {
+      "id": "hunt_proof_zephys",
+      "name": "風翔王の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "ゼフィスを討伐した証。12枚で天翔の羽冠と交換できる。"
+    },
+    {
+      "id": "hunt_proof_hydra",
+      "name": "ヒュドラの討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "ヒュドラを討伐した証。12枚でヒュドラの九首珠と交換できる。"
+    },
+    {
+      "id": "hunt_proof_skoll",
+      "name": "雷狼の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "スコルを討伐した証。12枚で雷狼の轟角と交換できる。"
+    },
+    {
+      "id": "hunt_proof_sandgoa",
+      "name": "砂巨神の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "サンドゴアを討伐した証。12枚で巨神の心臓と交換できる。"
+    },
+    {
+      "id": "hunt_proof_almagia",
+      "name": "機神の討伐証",
+      "rarity": 5,
+      "sellPrice": 0,
+      "description": "アルマギアを討伐した証。12枚で機神の動力炉と交換できる。"
+    },
+    {
       "id": "investigation_seal",
       "name": "調査の証",
       "rarity": 9,

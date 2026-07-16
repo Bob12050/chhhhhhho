@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { allEnemyDefs, type EnemyDef } from '@/enemies/enemy-defs';
 import { getDropTable } from '@/loot/drop-table';
+import { getBossRareExchangeForDropTable } from '@/crafting/boss-rare-exchange';
 import { itemDisplayName, getEquipment } from '@/data/items';
 import { FONT, addPanelChrome, rowBand, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
 import { ELEMENT_LABEL, elementColorHex, isElement } from '@/combat/elements';
@@ -241,13 +242,27 @@ export class BestiaryScene extends Phaser.Scene {
     if (table) {
       c.add(this.add.text(cx - panelW / 2 + 18, ey, '― ドロップ ―', { fontFamily: FONT, fontSize: '11px', color: '#c9b27a' }));
       ey += 20;
+      const displayEntries: { itemId: string; rateText: string; rateColor: string }[] = [];
+      const proofExchange = def.dropTableId
+        ? getBossRareExchangeForDropTable(def.dropTableId)
+        : undefined;
+      if (proofExchange) {
+        displayEntries.push({
+          itemId: proofExchange.proofItemId,
+          rateText: '確定',
+          rateColor: '#8fd6a5',
+        });
+      }
       for (const e of table.entries) {
-        if (ey > cy + panelH / 2 - 48) break; // keep inside the panel
         const guaranteedFirst = !!e.bossFirstGuaranteed && e.dropRate <= 0;
         const r = this.rateLabel(e.dropRate, guaranteedFirst);
-        const isGear = !!getEquipment(e.itemId);
+        displayEntries.push({ itemId: e.itemId, rateText: r.text, rateColor: r.color });
+      }
+      for (const entry of displayEntries) {
+        if (ey > cy + panelH / 2 - 48) break; // keep inside the panel
+        const isGear = !!getEquipment(entry.itemId);
         c.add(
-          this.add.text(cx - panelW / 2 + 22, ey, `${itemDisplayName(e.itemId)}${isGear ? '（装備）' : ''}`, {
+          this.add.text(cx - panelW / 2 + 22, ey, `${itemDisplayName(entry.itemId)}${isGear ? '（装備）' : ''}`, {
             fontFamily: FONT,
             fontSize: '12px',
             color: '#e6e9f5',
@@ -255,7 +270,7 @@ export class BestiaryScene extends Phaser.Scene {
         );
         c.add(
           this.add
-            .text(cx + panelW / 2 - 20, ey, r.text, { fontFamily: FONT, fontSize: '11px', color: r.color })
+            .text(cx + panelW / 2 - 20, ey, entry.rateText, { fontFamily: FONT, fontSize: '11px', color: entry.rateColor })
             .setOrigin(1, 0),
         );
         ey += 20;

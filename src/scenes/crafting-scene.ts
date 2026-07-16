@@ -4,6 +4,11 @@ import { getEquipment, getMaterial, getConsumable, itemDisplayName } from '@/dat
 import { rarityColor } from '@/data/rarity';
 import { allRecipes, type Recipe } from '@/crafting/recipes';
 import { craft, craftBlock, visibleRecipes } from '@/crafting/crafting';
+import {
+  BOSS_RARE_EXCHANGE_COST,
+  exchangeBossRareMaterial,
+  getBossRareExchangeForMaterial,
+} from '@/crafting/boss-rare-exchange';
 import { bus } from '@/core/event-bus';
 import { FONT, addPanelChrome, type TabHandle } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
@@ -646,6 +651,17 @@ export class CraftingScene extends Phaser.Scene {
     const rowH = 92;
     const block = craftBlock(gameState, r);
     const craftable = block === null;
+    const missingRare = Object.entries(r.materials)
+      .map(([id, qty]) => ({
+        id,
+        missing: (gameState.materials[id] ?? 0) < qty,
+        exchange: getBossRareExchangeForMaterial(id),
+      }))
+      .find((entry) => entry.missing && entry.exchange);
+    const proofHave = missingRare?.exchange
+      ? gameState.materials[missingRare.exchange.proofItemId] ?? 0
+      : 0;
+    const exchangeReady = !!missingRare && proofHave >= BOSS_RARE_EXCHANGE_COST;
     const resultRarity =
       getEquipment(r.resultItemId)?.rarity ?? getMaterial(r.resultItemId)?.rarity;
     const surface = this.add.graphics();
@@ -683,6 +699,12 @@ export class CraftingScene extends Phaser.Scene {
     for (const [id, qty] of Object.entries(r.materials)) {
       const have = gameState.materials[id] ?? 0;
       costs.push({ label: `${itemDisplayName(id)} ${have}/${qty}`, ok: have >= qty });
+      if (id === missingRare?.id) {
+        costs.push({
+          label: `討伐証 ${proofHave}/${BOSS_RARE_EXCHANGE_COST}`,
+          ok: exchangeReady,
+        });
+      }
     }
     for (const eq of r.consumeEquipment ?? []) {
       const have = gameState.ownedEquipmentCount(eq);
@@ -712,31 +734,52 @@ export class CraftingScene extends Phaser.Scene {
     // Command stays in one fixed place for every row. Unavailable recipes keep
     // the same silhouette, which makes the craftable amber buttons pop.
     const buttonPlate = this.add.graphics();
-    buttonPlate.fillStyle(craftable ? 0xb96c2f : 0x1d282e, 1);
+    buttonPlate.fillStyle(craftable ? 0xb96c2f : exchangeReady ? 0x245c5a : 0x1d282e, 1);
     buttonPlate.fillRoundedRect(-30, -19, 60, 38, 5);
-    buttonPlate.fillStyle(craftable ? 0xffc465 : 0x53616a, craftable ? 0.9 : 0.35);
+    buttonPlate.fillStyle(
+      craftable ? 0xffc465 : exchangeReady ? 0x68d1c3 : 0x53616a,
+      craftable || exchangeReady ? 0.9 : 0.35,
+    );
     buttonPlate.fillRoundedRect(-30, -19, 3, 38, { tl: 5, tr: 0, bl: 5, br: 0 });
-    buttonPlate.lineStyle(1, craftable ? 0xffd383 : 0x71808a, craftable ? 0.62 : 0.2);
+    buttonPlate.lineStyle(
+      1,
+      craftable ? 0xffd383 : exchangeReady ? 0x8ce5d8 : 0x71808a,
+      craftable || exchangeReady ? 0.62 : 0.2,
+    );
     buttonPlate.strokeRoundedRect(-30, -19, 60, 38, 5);
     const blockedLabel = block === 'gold' ? 'G不足' : block === 'equipment' ? '装備不足' : '素材不足';
+    const buttonLabel = craftable
+      ? '制作'
+      : missingRare
+        ? exchangeReady
+          ? '交換'
+          : `証 ${proofHave}/${BOSS_RARE_EXCHANGE_COST}`
+        : blockedLabel;
     const buttonText = this.add
-      .text(0, 0, craftable ? '制作' : blockedLabel, {
+      .text(0, 0, buttonLabel, {
         fontFamily: FONT,
-        fontSize: craftable ? '12px' : '9px',
-        color: craftable ? '#fff5d6' : '#7f8c94',
+        fontSize: craftable || exchangeReady ? '12px' : '9px',
+        color: craftable ? '#fff5d6' : exchangeReady ? '#d8fff9' : '#7f8c94',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
     const btn = this.add.container(w - 45, cy, [buttonPlate, buttonText]).setSize(62, 42);
-    if (craftable) {
+    if (craftable || exchangeReady) {
       btn.setInteractive({ useHandCursor: true });
       btn.on('pointerdown', () => btn.setScale(0.96));
       btn.on('pointerout', () => btn.setScale(1));
       btn.on('pointerup', () => {
         btn.setScale(1);
         if (this.dragged) return;
-        if (craft(gameState, r)) {
+        if (craftable && craft(gameState, r)) {
           this.flash(`${itemDisplayName(r.resultItemId)} を作った！`);
+          bus.emit('sfx:play', { id: 'craft' });
+        } else if (
+          exchangeReady
+          && missingRare
+          && exchangeBossRareMaterial(gameState, missingRare.id)
+        ) {
+          this.flash(`${itemDisplayName(missingRare.id)} と交換した！`);
           bus.emit('sfx:play', { id: 'craft' });
         }
         this.render();

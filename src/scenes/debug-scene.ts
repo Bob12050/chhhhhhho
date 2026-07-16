@@ -11,6 +11,7 @@ import { FONT, addBackdrop } from '@/ui/theme';
 import { INVESTIGATION_SEAL_ID, syncInvestigationQuests } from '@/endgame/investigations';
 import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
 import { INVESTIGATION_CRYSTAL_ID } from '@/endgame/investigation-forge';
+import { allBossRareExchanges } from '@/crafting/boss-rare-exchange';
 
 /**
  * Debug menu (gated by core/debug.isDebugEnabled). Warp between maps and grant
@@ -60,6 +61,8 @@ export class DebugScene extends Phaser.Scene {
     y += 40;
     this.btn(16, y, '全装備入手', () => this.grant(() => this.grantAllEquipment()));
     this.btn(160, y, 'ペット入手', () => this.grant(() => gameState.obtainPetItem('pet_egg_slime')));
+    y += 40;
+    this.btn(16, y, '全討伐証+12', () => this.grant(() => this.grantHuntProofs()), 0x275b55);
     y += 40;
     this.btn(16, y, '調査装備+素材', () => this.previewInvestigationGear(), 0x275b55);
     y += 40;
@@ -125,6 +128,12 @@ export class DebugScene extends Phaser.Scene {
 
   private grantAllEquipment(): void {
     for (const e of allEquipment()) gameState.addEquipment(e.id);
+  }
+
+  private grantHuntProofs(): void {
+    for (const exchange of allBossRareExchanges()) {
+      gameState.addMaterial(exchange.proofItemId, 12);
+    }
   }
 
   private previewInvestigationGear(): void {

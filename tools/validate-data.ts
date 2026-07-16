@@ -457,6 +457,81 @@ function validateBossRareMaterials(): void {
   }
 }
 
+function validateBossRareExchanges(itemIds: Set<string>, dropTableIds: Set<string>): void {
+  const items = readJson<{
+    materials: { id: string; rarity?: number; sellPrice: number }[];
+  }>('src/data/defs/items.json');
+  const materialById = new Map(items.materials.map((m) => [m.id, m]));
+  const drops = readJson<{
+    tables: { id: string; entries: { itemId: string; dropRate: number }[] }[];
+  }>('src/data/defs/drops.json');
+  const tableById = new Map(drops.tables.map((t) => [t.id, t]));
+  const file = readJson<{
+    exchangeCost: number;
+    exchanges: {
+      rareMaterialId: string;
+      proofItemId: string;
+      dropTableIds: string[];
+    }[];
+  }>('src/data/defs/boss-rare-exchanges.json');
+
+  if (file.exchangeCost !== 12) {
+    err(`Boss rare exchange: exchangeCost must be 12 (got ${file.exchangeCost})`);
+  }
+  const rareIds = new Set<string>();
+  const proofIds = new Set<string>();
+  const coveredTables = new Set<string>();
+  for (const exchange of file.exchanges) {
+    if (rareIds.has(exchange.rareMaterialId)) {
+      err(`Boss rare exchange: duplicate rare material "${exchange.rareMaterialId}"`);
+    }
+    rareIds.add(exchange.rareMaterialId);
+    if (proofIds.has(exchange.proofItemId)) {
+      err(`Boss rare exchange: duplicate proof item "${exchange.proofItemId}"`);
+    }
+    proofIds.add(exchange.proofItemId);
+
+    const rare = materialById.get(exchange.rareMaterialId);
+    const proof = materialById.get(exchange.proofItemId);
+    if (!itemIds.has(exchange.rareMaterialId) || !rare) {
+      err(`Boss rare exchange: unknown rare material "${exchange.rareMaterialId}"`);
+    } else if ((rare.rarity ?? 0) < 8) {
+      err(`Boss rare exchange: "${exchange.rareMaterialId}" must be R8+`);
+    }
+    if (!itemIds.has(exchange.proofItemId) || !proof) {
+      err(`Boss rare exchange: unknown proof item "${exchange.proofItemId}"`);
+    } else if (proof.sellPrice !== 0) {
+      err(`Boss rare exchange: proof "${exchange.proofItemId}" must not be sellable`);
+    }
+    if (exchange.dropTableIds.length === 0) {
+      err(`Boss rare exchange ${exchange.rareMaterialId}: no drop tables`);
+    }
+    for (const tableId of exchange.dropTableIds) {
+      if (!dropTableIds.has(tableId)) {
+        err(`Boss rare exchange ${exchange.rareMaterialId}: unknown drop table "${tableId}"`);
+        continue;
+      }
+      if (coveredTables.has(tableId)) {
+        err(`Boss rare exchange: drop table "${tableId}" is covered more than once`);
+      }
+      coveredTables.add(tableId);
+      const table = tableById.get(tableId);
+      const rareDrop = table?.entries.find((entry) => entry.itemId === exchange.rareMaterialId);
+      if (!rareDrop || rareDrop.dropRate <= 0 || rareDrop.dropRate > 0.1) {
+        err(
+          `Boss rare exchange ${tableId}: "${exchange.rareMaterialId}" is not a 1-10% drop`,
+        );
+      }
+    }
+  }
+
+  for (const table of drops.tables.filter((t) => t.id.startsWith('boss_'))) {
+    if (!coveredTables.has(table.id)) {
+      err(`Boss rare exchange: drop table "${table.id}" has no hunt proof`);
+    }
+  }
+}
+
 function validateSkills(): Set<string> {
   const file = readJson<{
     skills: {
@@ -699,6 +774,7 @@ const dialogueIds = validateDialogue();
 const mapIds = validateMaps(enemyIds, dialogueIds);
 validateRecipes(itemIds);
 validateBossRareMaterials();
+validateBossRareExchanges(itemIds, dropTableIds);
 const skillIds = validateSkills();
 validateJobs(skillIds);
 validatePets();
