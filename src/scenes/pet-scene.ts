@@ -54,6 +54,7 @@ export class PetScene extends Phaser.Scene {
     const h = this.scale.height;
     this.viewBottom = h - 64;
     this.scrollY = 0;
+    this.dragged = false;
 
     ninePanel(this, 106, 24, 194, 40).setDepth(2.5);
     ninePanel(this, w - 54, 24, 92, 40).setDepth(2.5);
