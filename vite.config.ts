@@ -3,7 +3,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
 
 // Vite configuration.
-// - PWA: standalone, portrait-primary, offline-capable (precache app shell).
+// - PWA: standalone, portrait-primary, offline-capable.
 // - Save data lives in IndexedDB and is intentionally NOT routed through the
 //   service worker cache (see CLAUDE.md / docs/TECH_DESIGN.md).
 // On GitHub Pages this is a project site served under /<repo>/, so the build
@@ -25,7 +25,7 @@ export default defineConfig({
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: null, // we register/update manually so combat is never auto-reloaded
+      injectRegister: null, // registration and update checks live in core/pwa.ts
       includeAssets: ['icons/*.png'],
       manifest: {
         name: 'Pixel Action RPG',
@@ -43,10 +43,45 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,webp,woff2,json,wav,ogg,mp3}'],
+        // Never precache index.html. GitHub Pages gives HTML a ten-minute HTTP
+        // cache, and putting that response behind another cache can pin an old
+        // hashed bundle on iOS even after a successful deployment.
+        globPatterns: ['**/*.{js,css,woff2}'],
+        navigateFallback: null,
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'app-pages-v2',
+              networkTimeoutSeconds: 5,
+              fetchOptions: { cache: 'no-store' },
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxEntries: 4, maxAgeSeconds: 7 * 24 * 60 * 60 },
+            },
+          },
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'game-images-v2',
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxEntries: 180, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
+          {
+            urlPattern: ({ request }) => request.destination === 'audio',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'game-audio-v2',
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxEntries: 48, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
+        ],
       },
     }),
   ],

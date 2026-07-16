@@ -39,9 +39,12 @@ jobs:
           npm run validate-data
           npm run test
       - name: Build (Pages base path)
-        run: npm run build
+        run: |
+          node -e "require('fs').writeFileSync('public/build-version.json', JSON.stringify({ version: process.env.GITHUB_SHA }) + '\n')"
+          npm run build
         env:
           VITE_BASE: /chhhhhhho/
+          VITE_BUILD_VERSION: ${{ github.sha }}
       # E2E smoke: boots the REAL built game headless and plays the core
       # loops (new game → combat → hunt quest → craft → pet hatch → save/
       # reload). A red run blocks the deploy — broken builds never ship.
