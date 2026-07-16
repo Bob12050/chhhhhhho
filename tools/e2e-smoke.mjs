@@ -365,43 +365,40 @@ try {
         canyonTexture?.width === 640 && canyonTexture?.height === 960,
         JSON.stringify(canyonTexture),
       );
-      await page.evaluate(() => window.__test.warp('canyon', 320, 830));
+      await page.evaluate(() => window.__test.warp('canyon', 320, 785));
       await page.waitForTimeout(400);
       await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
       const caveMouth = await snap(page);
       check('渓谷の洞穴から洞窟へ戻れる', caveMouth.mapId === 'dungeon', `mapId=${caveMouth.mapId}`);
-      await page.evaluate(() => window.__test.warp('canyon', 320, 870));
+      await page.evaluate(() => window.__test.warp('canyon', 320, 820));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(400); await page.keyboard.up('w');
-      await page.keyboard.down('a'); await page.waitForTimeout(1500); await page.keyboard.up('a');
-      await page.keyboard.down('w'); await page.waitForTimeout(1100); await page.keyboard.up('w');
+      await page.keyboard.down('a'); await page.waitForTimeout(2050); await page.keyboard.up('a');
+      await page.keyboard.down('w'); await page.waitForTimeout(1750); await page.keyboard.up('w');
       const mesaTrail = await snap(page);
       check(
         '洞窟前広場から左の高台道へ上がれる',
         mesaTrail.mapId === 'canyon' && mesaTrail.x < 210 && mesaTrail.y < 760,
         `mapId=${mesaTrail.mapId} x=${Math.round(mesaTrail.x)} y=${Math.round(mesaTrail.y)}`,
       );
-      await page.evaluate(() => window.__test.warp('canyon', 545, 445));
+      await page.evaluate(() => window.__test.warp('canyon', 555, 575));
       await page.waitForTimeout(400);
-      await page.keyboard.down('a'); await page.waitForTimeout(1400); await page.keyboard.up('a');
+      await page.keyboard.down('a'); await page.waitForTimeout(1550); await page.keyboard.up('a');
       const lowerBridge = await snap(page);
       check(
         '渓谷の下側吊り橋を渡れる',
-        // Frame timing can stop 1-3 px either side of the old 430 boundary;
-        // 435 is still clearly west of the bridge exit and tests the route.
-        lowerBridge.mapId === 'canyon' && lowerBridge.x < 435,
+        lowerBridge.mapId === 'canyon' && lowerBridge.x < 440,
         `mapId=${lowerBridge.mapId} x=${Math.round(lowerBridge.x)}`,
       );
-      await page.evaluate(() => window.__test.warp('canyon', 535, 300));
+      await page.evaluate(() => window.__test.warp('canyon', 550, 335));
       await page.waitForTimeout(400);
-      await page.keyboard.down('a'); await page.waitForTimeout(1300); await page.keyboard.up('a');
+      await page.keyboard.down('a'); await page.waitForTimeout(1550); await page.keyboard.up('a');
       const upperBridge = await snap(page);
       check(
         '渓谷の上側吊り橋を渡れる',
-        upperBridge.mapId === 'canyon' && upperBridge.x < 430,
+        upperBridge.mapId === 'canyon' && upperBridge.x < 435,
         `mapId=${upperBridge.mapId} x=${Math.round(upperBridge.x)}`,
       );
-      await page.evaluate(() => window.__test.warp('canyon', 320, 116));
+      await page.evaluate(() => window.__test.warp('canyon', 320, 174));
       await page.waitForTimeout(400);
       await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
       const volcanoPass = await snap(page);
