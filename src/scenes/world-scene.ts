@@ -73,6 +73,7 @@ const LOOT_PICKUP_RADIUS = 42;
 const LOOT_MAGNET_RADIUS = 150;
 const LOOT_MAGNET_SPEED = 260;
 const NORMAL_ENEMY_VISUAL_SCALE = 0.9;
+const NORMAL_ENEMY_SEPARATION = 28;
 
 /**
  * Generic world scene: renders whichever map `gameState.mapId` points at,
@@ -656,7 +657,10 @@ export class WorldScene extends Phaser.Scene {
       moveSpeed: def.moveSpeed,
       contactDamage,
       aggroRange: def.aggroRange,
-      attackRange: def.attackRange,
+      // Ordinary melee sprites are roughly 48px wide. Stopping their feet a
+      // little earlier keeps the actor, job plate and enemy HP plate readable
+      // instead of letting every attacker stand inside the player artwork.
+      attackRange: def.isBoss ? def.attackRange : Math.max(def.attackRange, 28),
       tint: def.tint ? Phaser.Display.Color.HexStringToColor(def.tint).color : undefined,
       scale: (def.scale ?? 1) * (def.isBoss ? 1 : NORMAL_ENEMY_VISUAL_SCALE),
       keepDistance: def.keepDistance,
@@ -1160,7 +1164,7 @@ export class WorldScene extends Phaser.Scene {
     this.player.hurt();
     bus.emit('sfx:play', { id: 'hurt' });
     this.cameras.main.shake(120, 0.006);
-    this.flashScreen(0xff2a2a, 0.32, 180);
+    this.flashScreen(0xff2a2a, 0.18, 120);
     const ang = Math.atan2(this.player.y - fromY, this.player.x - fromX);
     this.player.body.setVelocity(Math.cos(ang) * 160, Math.sin(ang) * 160);
     if (gameState.hp <= 0) this.onPlayerDown();
@@ -2228,6 +2232,7 @@ export class WorldScene extends Phaser.Scene {
     this.pet?.update(delta, this.player.x, this.player.y);
     this.updatePetAssist(delta);
     for (const e of this.enemies) e.update(delta, this.player.x, this.player.y);
+    this.separateNormalEnemies();
     this.updateCombatTarget(delta);
     this.questGuideTimer -= delta;
     if (this.questGuideTimer <= 0) {
@@ -2280,6 +2285,43 @@ export class WorldScene extends Phaser.Scene {
     }
 
     input.endFrame();
+  }
+
+  /**
+   * Keep ordinary monsters readable as a pack without turning narrow paths
+   * into hard body-blocks. A small velocity nudge preserves some overlap but
+   * stops several sprites, HP plates and shadows from occupying one point.
+   */
+  private separateNormalEnemies(): void {
+    const alive = this.enemies.filter((enemy) => {
+      if (enemy.isDead()) return false;
+      const def = getEnemyDef(this.enemyTypes.get(enemy) ?? '');
+      return def !== undefined && !def.isBoss;
+    });
+    const minDistSq = NORMAL_ENEMY_SEPARATION * NORMAL_ENEMY_SEPARATION;
+    for (let i = 0; i < alive.length; i++) {
+      for (let j = i + 1; j < alive.length; j++) {
+        const a = alive[i];
+        const b = alive[j];
+        let dx = b.x - a.x;
+        let dy = b.y - a.y;
+        let distSq = dx * dx + dy * dy;
+        if (distSq >= minDistSq) continue;
+        if (distSq < 0.01) {
+          dx = (i + j) % 2 === 0 ? 1 : -1;
+          dy = 0;
+          distSq = 1;
+        }
+        const dist = Math.sqrt(distSq);
+        const nx = dx / dist;
+        const ny = dy / dist;
+        const nudge = Math.min(24, (NORMAL_ENEMY_SEPARATION - dist) * 2);
+        const av = (a.sprite.body as Phaser.Physics.Arcade.Body).velocity;
+        const bv = (b.sprite.body as Phaser.Physics.Arcade.Body).velocity;
+        a.sprite.setVelocity(av.x - nx * nudge, av.y - ny * nudge);
+        b.sprite.setVelocity(bv.x + nx * nudge, bv.y + ny * nudge);
+      }
+    }
   }
 
   private updateBossBar(): void {

@@ -313,6 +313,15 @@ export class Enemy {
         this.stepAnim(dtMs, 'idle');
         break;
       case 'wander':
+        if (this.movementBlocked()) {
+          // Pick a fresh route instead of walking into painted scenery for the
+          // rest of the wander timer. The short idle pause keeps the turn from
+          // looking like an abrupt physics correction.
+          this.sprite.setVelocity(0, 0);
+          this.setState('idle');
+          this.stepAnim(dtMs, 'idle');
+          break;
+        }
         if (distToPlayer < this.cfg.aggroRange) this.setState('chase');
         else this.moveToward(this.wanderTarget.x, this.wanderTarget.y, this.cfg.moveSpeed * 0.5);
         if (
@@ -375,6 +384,11 @@ export class Enemy {
     const r = 24 + Math.random() * 32;
     this.wanderTarget.set(this.homeX + Math.cos(ang) * r, this.homeY + Math.sin(ang) * r);
     this.setState('wander');
+  }
+
+  private movementBlocked(): boolean {
+    const body = this.sprite.body as Phaser.Physics.Arcade.Body;
+    return body.blocked.left || body.blocked.right || body.blocked.up || body.blocked.down;
   }
 
   private moveToward(tx: number, ty: number, speed: number): void {

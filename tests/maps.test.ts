@@ -65,4 +65,39 @@ describe('map definitions', () => {
       expect(insidePaddedScenery, `respawn is too close to scenery at ${x},${y}`).toBe(false);
     }
   });
+
+  it('keeps forest entrances and enemy posts clear of painted scenery', () => {
+    const forest = getMap('forest')!;
+    const actorPoints = [
+      ...Object.entries(forest.spawns).map(([name, [x, y]]) => ({ name: `spawn:${name}`, x, y })),
+      ...(forest.enemies ?? []).map((enemy, index) => ({
+        name: `enemy:${enemy.type}:${index}`,
+        x: enemy.x,
+        y: enemy.y,
+      })),
+    ];
+
+    for (const point of actorPoints) {
+      for (const [x, y, w, h] of forest.collisionRects ?? []) {
+        const bodyTouchesScenery =
+          point.x + 10 > x
+          && point.x - 10 < x + w
+          && point.y + 8 > y
+          && point.y - 8 < y + h;
+        expect(bodyTouchesScenery, `${point.name} touches scenery at ${x},${y}`).toBe(false);
+      }
+    }
+  });
+
+  it('uses a stepped pond collider so the painted round corners stay walkable', () => {
+    const forest = getMap('forest')!;
+    const blocked = (px: number, py: number): boolean =>
+      (forest.collisionRects ?? []).some(([x, y, w, h]) =>
+        px >= x && px <= x + w && py >= y && py <= y + h,
+      );
+
+    expect(blocked(160, 650)).toBe(true);
+    expect(blocked(60, 620)).toBe(false);
+    expect(blocked(250, 780)).toBe(false);
+  });
 });

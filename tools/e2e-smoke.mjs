@@ -269,6 +269,24 @@ try {
         forestTexture?.width === 640 && forestTexture?.height === 960,
         JSON.stringify(forestTexture),
       );
+      await page.evaluate(() => window.__test.warp('forest', 320, 884));
+      await page.waitForTimeout(500);
+      await page.keyboard.down('w'); await page.waitForTimeout(1300); await page.keyboard.up('w');
+      const forestEntry = await snap(page);
+      check(
+        '森の入口から中央の戦闘路へ進める',
+        forestEntry.mapId === 'forest' && forestEntry.y < 790,
+        `mapId=${forestEntry.mapId} y=${Math.round(forestEntry.y)}`,
+      );
+      await page.evaluate(() => window.__test.warp('forest', 180, 560));
+      await page.waitForTimeout(500);
+      await page.keyboard.down('w'); await page.waitForTimeout(1700); await page.keyboard.up('w');
+      const forestLeftLoop = await snap(page);
+      check(
+        '森の大樹左側を回り込んで探索できる',
+        forestLeftLoop.mapId === 'forest' && forestLeftLoop.y < 440,
+        `mapId=${forestLeftLoop.mapId} y=${Math.round(forestLeftLoop.y)}`,
+      );
       await page.evaluate(() => window.__test.warp('forest', 455, 520));
       await page.waitForTimeout(700);
       await page.keyboard.down('w'); await page.waitForTimeout(1700); await page.keyboard.up('w');
@@ -278,6 +296,12 @@ try {
         forestLoop.mapId === 'forest' && forestLoop.y < 390,
         `mapId=${forestLoop.mapId} y=${Math.round(forestLoop.y)}`,
       );
+      await page.evaluate(() => window.__test.warp('forest', 320, 884));
+      await page.waitForTimeout(500);
+      await page.keyboard.down('s'); await page.waitForTimeout(900); await page.keyboard.up('s');
+      await page.waitForTimeout(500);
+      const forestExit = await snap(page);
+      check('森の南口から草原へ戻れる', forestExit.mapId === 'field', `mapId=${forestExit.mapId}`);
       await page.evaluate(() => window.__test.warp('dungeon'));
       await page.waitForTimeout(700);
       const dungeonTexture = await page.evaluate(() =>
