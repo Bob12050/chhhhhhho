@@ -4,6 +4,7 @@
       "id": "slime",
       "name": "スライム",
       "textureKey": "gen.enemy.slime",
+      "scale": 1.7,
       "maxHp": 30,
       "moveSpeed": 46,
       "contactDamage": 6,
