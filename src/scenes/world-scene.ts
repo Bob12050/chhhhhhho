@@ -236,7 +236,8 @@ export class WorldScene extends Phaser.Scene {
     // Map title flash.
     this.showMapName(this.map.name);
 
-    // Player. Appearance is job-fixed; equipment only changes stats.
+    // Player. Fighter may use the optional equipment-layer pilot; every
+    // original fixed job sprite remains available through settings.
     // Map dimensions can change between releases; keep old saves inside the
     // current walkable world instead of spawning beyond a shortened edge.
     if (this.map.id === 'town' && !gameState.flags['town_wide_v1']) {
@@ -427,9 +428,14 @@ export class WorldScene extends Phaser.Scene {
     // Listeners (unsubscribed on shutdown to avoid accumulation on re-entry).
     this.busOff.push(
       bus.on('equipment:changed', () => {
-        // Equipment changes stats only (look is job-fixed); refresh speeds.
+        this.player.refreshEquipmentAppearance();
         this.player.setMoveSpeed(gameState.derived.moveSpeed);
         this.player.setAtkSpeed(gameState.derived.atkSpeed);
+      }),
+    );
+    this.busOff.push(
+      bus.on('appearance:mode-changed', () => {
+        this.player.setJobAppearance(gameState.jobId);
       }),
     );
     this.busOff.push(

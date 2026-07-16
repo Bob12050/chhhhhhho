@@ -42,6 +42,22 @@ export const TEX = {
   // equipped so the helm has a clean (bald) head to sit on. See
   // Player.setEquipVisual. Real art at assets/char/player_body_bald.png.
   playerBodyBald: 'gen.player.body.bald',
+  paperDollPilotBase: 'art.paperdoll.pilot.base',
+  paperDollPilotBaseDiagonal: 'art.paperdoll.pilot.base.diagonal',
+  paperDollPilotHead: 'art.paperdoll.pilot.head',
+  paperDollPilotHeadDiagonal: 'art.paperdoll.pilot.head.diagonal',
+  paperDollPilotTorso: 'art.paperdoll.pilot.torso',
+  paperDollPilotTorsoDiagonal: 'art.paperdoll.pilot.torso.diagonal',
+  paperDollPilotFarHand: 'art.paperdoll.pilot.hand.far',
+  paperDollPilotFarHandDiagonal: 'art.paperdoll.pilot.hand.far.diagonal',
+  paperDollPilotNearHand: 'art.paperdoll.pilot.hand.near',
+  paperDollPilotNearHandDiagonal: 'art.paperdoll.pilot.hand.near.diagonal',
+  paperDollPilotFeet: 'art.paperdoll.pilot.feet',
+  paperDollPilotFeetDiagonal: 'art.paperdoll.pilot.feet.diagonal',
+  paperDollPilotSword: 'art.paperdoll.pilot.sword',
+  paperDollPilotSwordDiagonal: 'art.paperdoll.pilot.sword.diagonal',
+  paperDollPilotShield: 'art.paperdoll.pilot.shield',
+  paperDollPilotShieldDiagonal: 'art.paperdoll.pilot.shield.diagonal',
   // Job-fixed appearance bodies (look is decided by job, not equipment). Real
   // art ships as PNGs (manifest); until a job's PNG exists the player falls back
   // to `playerBody`. NOT in SPECS on purpose so the fallback check can work.

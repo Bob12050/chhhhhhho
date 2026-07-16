@@ -62,6 +62,8 @@ export class DebugScene extends Phaser.Scene {
     this.btn(16, y, '全装備入手', () => this.grant(() => this.grantAllEquipment()));
     this.btn(160, y, 'ペット入手', () => this.grant(() => gameState.obtainPetItem('pet_egg_slime')));
     y += 40;
+    this.btn(16, y, 'レイヤー試着', () => this.previewPaperDoll(), 0x365070);
+    y += 40;
     this.btn(16, y, '全討伐証+12', () => this.grant(() => this.grantHuntProofs()), 0x275b55);
     this.btn(160, y, 'スコル4部位', () => this.previewSkollSet(), 0x275b55);
     y += 40;
@@ -129,6 +131,29 @@ export class DebugScene extends Phaser.Scene {
 
   private grantAllEquipment(): void {
     for (const e of allEquipment()) gameState.addEquipment(e.id);
+  }
+
+  private previewPaperDoll(): void {
+    const gs = gameState;
+    const equipment = {
+      main_hand: 'iron_sword',
+      head: 'iron_helm',
+      torso: 'iron_plate',
+      hands: 'steel_gloves',
+      feet: 'steel_boots',
+    } as const;
+    gs.jobId = 'fighter';
+    gs.level = Math.max(10, gs.level);
+    gs.jobLevels.fighter = Math.max(10, gs.jobLevels.fighter ?? 1);
+    if (!gs.unlockedJobs.includes('fighter')) gs.unlockedJobs.push('fighter');
+    for (const itemId of Object.values(equipment)) {
+      if (!gs.equipmentOwned.includes(itemId)) gs.addEquipment(itemId);
+    }
+    Object.assign(gs.equipment, equipment);
+    gs.recompute();
+    gs.fullHeal();
+    bus.emit('job:changed', { jobId: 'fighter' });
+    this.close();
   }
 
   private grantHuntProofs(): void {

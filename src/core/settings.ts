@@ -9,9 +9,11 @@ const KEY = 'pixelrpg.settings.v1';
 export interface Settings {
   bgmVol: number; // 0..1
   sfxVol: number; // 0..1
+  /** Fighter-only equipment-layer pilot. False restores the original job art. */
+  paperDollPilot: boolean;
 }
 
-const DEFAULTS: Settings = { bgmVol: 1, sfxVol: 1 };
+const DEFAULTS: Settings = { bgmVol: 1, sfxVol: 1, paperDollPilot: true };
 
 function clamp01(v: unknown): number {
   const n = typeof v === 'number' && Number.isFinite(v) ? v : 1;
@@ -23,7 +25,11 @@ export function loadSettings(): Settings {
     const raw = localStorage.getItem(KEY);
     if (!raw) return { ...DEFAULTS };
     const p = JSON.parse(raw) as Partial<Settings>;
-    return { bgmVol: clamp01(p.bgmVol), sfxVol: clamp01(p.sfxVol) };
+    return {
+      bgmVol: clamp01(p.bgmVol),
+      sfxVol: clamp01(p.sfxVol),
+      paperDollPilot: p.paperDollPilot !== false,
+    };
   } catch {
     return { ...DEFAULTS };
   }

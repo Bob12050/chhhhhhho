@@ -15,6 +15,7 @@ import { isDebugEnabled } from '@/core/debug';
 import { saveManager } from '@/save/save-manager';
 import { syncInvestigationQuests } from '@/endgame/investigations';
 import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
+import { getEquipment } from '@/data/items';
 
 export interface TestHooks {
   activeScenes(): string[];
@@ -61,6 +62,8 @@ export interface TestHooks {
   addGold(amount: number): void;
   /** Grant owned (unequipped) equipment pieces (inventory-UI tests). */
   addEquipment(id: string, qty?: number): void;
+  /** Equip a known item through the real slot/stat/event path. */
+  equip(id: string): boolean;
   /** Grant one deterministic investigation item for endgame UI tests. */
   grantInvestigationGear(): string | null;
   /** Persist the current state to the active slot (reload-survival tests). */
@@ -169,6 +172,12 @@ export function installTestHooks(game: Phaser.Game): void {
     addGold: (amount: number) => gameState.addGold(amount),
     addEquipment: (id: string, qty = 1) => {
       for (let i = 0; i < qty; i++) gameState.addEquipment(id);
+    },
+    equip: (id: string) => {
+      const def = getEquipment(id);
+      if (!def || !gameState.canEquip(id)) return false;
+      gameState.equip(def.slot, id);
+      return gameState.equipment[def.slot] === id;
     },
     grantInvestigationGear: () => {
       gameState.level = Math.max(99, gameState.level);

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { PaperDollAnimator } from '@/paperdoll/paper-doll-animator';
-import type { Direction } from '@/config/layers';
+import type { Direction, DrawGroup } from '@/config/layers';
 import type { AnimName } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
 import { CHAR_FRAME_W } from '@/config/resolution';
@@ -9,16 +9,27 @@ import { appearanceDiagonalTexKey, appearanceTexKey } from '@/jobs/job-appearanc
 import { gameState } from '@/player/game-state';
 import { directionFromVector, directionVector } from '@/config/directions';
 import { FONT } from '@/ui/theme';
+import { loadSettings } from '@/core/settings';
 
 /**
  * Player actor. Owns a single PaperDollAnimator (body sprite) and an Arcade
  * physics body for movement/collision. The paper-doll container follows the
  * physics body each frame, snapped to integer pixels.
  *
- * Appearance is JOB-FIXED: the body sprite is decided by the active job, and
- * equipment only changes stats (not the look). Until a job's art PNG ships, the
- * body falls back to the default player body.
+ * Ordinary jobs use their original fixed sprite. Fighter can opt into a
+ * separate layered pilot; disabling it restores the untouched original sheet.
  */
+
+const APPEARANCE_LAYERS: readonly DrawGroup[] = [
+  'base_body',
+  'feet',
+  'torso',
+  'far_hand',
+  'far_weapon',
+  'head',
+  'near_hand',
+  'near_weapon',
+];
 
 export class Player {
   /** ms between attacks at atkSpeed 1.0 (anim is ~286ms; a hair above it). */
@@ -40,6 +51,7 @@ export class Player {
   private moveMagnitude = 0;
   private stridePhase = 0;
   private distanceSinceStep = 0;
+  private layeredAppearance = false;
   private lastX: number;
   private lastY: number;
 
@@ -85,21 +97,30 @@ export class Player {
     this.doll.play('idle');
   }
 
-  /**
-   * Set the body sprite from the active job (job-fixed appearance). Uses the
-   * job's art if its PNG is loaded, else the default body. Equipment layers stay
-   * cleared — gear changes stats only.
-   */
+  /** Set either the fighter paper-doll pilot or the untouched fixed job art. */
   setJobAppearance(jobId: string): void {
     const job = getJob(jobId);
     const appearance = job?.appearance;
-    const key = appearanceTexKey(appearance);
-    const tex = key && this.scene.textures.exists(key) ? key : TEX.playerBody;
-    this.doll.setLayer('base_body', tex, {
-      diagonalTextureKey: tex === TEX.playerBody
-        ? TEX.playerBodyDiagonal
-        : appearanceDiagonalTexKey(appearance),
-    });
+    this.clearAppearanceLayers();
+    this.layeredAppearance = appearance === 'fighter'
+      && loadSettings().paperDollPilot
+      && this.scene.textures.exists(TEX.paperDollPilotBase)
+      && this.scene.textures.exists(TEX.paperDollPilotBaseDiagonal);
+
+    if (this.layeredAppearance) {
+      this.doll.setLayer('base_body', TEX.paperDollPilotBase, {
+        diagonalTextureKey: TEX.paperDollPilotBaseDiagonal,
+      });
+      this.refreshEquipmentAppearance();
+    } else {
+      const key = appearanceTexKey(appearance);
+      const tex = key && this.scene.textures.exists(key) ? key : TEX.playerBody;
+      this.doll.setLayer('base_body', tex, {
+        diagonalTextureKey: tex === TEX.playerBody
+          ? TEX.playerBodyDiagonal
+          : appearanceDiagonalTexKey(appearance),
+      });
+    }
     this.jobPlateText.setText(job?.name ?? jobId);
     const plateW = Math.ceil(this.jobPlateText.width) + 12;
     this.jobPlateBack.clear();
@@ -107,6 +128,71 @@ export class Player {
     this.jobPlateBack.fillRoundedRect(-plateW / 2, -7, plateW, 14, 3);
     this.jobPlateBack.lineStyle(1, 0xe4ca72, 0.66);
     this.jobPlateBack.strokeRoundedRect(-plateW / 2, -7, plateW, 14, 3);
+  }
+
+  /** Reflect equipped slot presence in the fighter pilot's independent layers. */
+  refreshEquipmentAppearance(): void {
+    if (!this.layeredAppearance) return;
+    const equipped = gameState.equipment;
+    this.setPilotLayer(
+      'head',
+      equipped.head !== null,
+      TEX.paperDollPilotHead,
+      TEX.paperDollPilotHeadDiagonal,
+    );
+    this.setPilotLayer(
+      'torso',
+      equipped.torso !== null,
+      TEX.paperDollPilotTorso,
+      TEX.paperDollPilotTorsoDiagonal,
+    );
+    this.setPilotLayer(
+      'far_hand',
+      equipped.hands !== null,
+      TEX.paperDollPilotFarHand,
+      TEX.paperDollPilotFarHandDiagonal,
+    );
+    this.setPilotLayer(
+      'near_hand',
+      equipped.hands !== null,
+      TEX.paperDollPilotNearHand,
+      TEX.paperDollPilotNearHandDiagonal,
+    );
+    this.setPilotLayer(
+      'feet',
+      equipped.feet !== null,
+      TEX.paperDollPilotFeet,
+      TEX.paperDollPilotFeetDiagonal,
+    );
+    this.setPilotLayer(
+      'near_weapon',
+      equipped.main_hand !== null,
+      TEX.paperDollPilotSword,
+      TEX.paperDollPilotSwordDiagonal,
+    );
+    // The current data model has no off-hand slot. Keep the fighter's class
+    // shield as an independent layer until that slot is introduced.
+    this.setPilotLayer(
+      'far_weapon',
+      true,
+      TEX.paperDollPilotShield,
+      TEX.paperDollPilotShieldDiagonal,
+    );
+  }
+
+  private setPilotLayer(
+    group: DrawGroup,
+    visible: boolean,
+    cardinalTextureKey: string,
+    diagonalTextureKey: string,
+  ): void {
+    this.doll.setLayer(group, visible ? cardinalTextureKey : null, {
+      diagonalTextureKey: visible ? diagonalTextureKey : null,
+    });
+  }
+
+  private clearAppearanceLayers(): void {
+    for (const group of APPEARANCE_LAYERS) this.doll.setLayer(group, null);
   }
 
   getDirection(): Direction {
