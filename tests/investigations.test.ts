@@ -10,6 +10,8 @@ import { acceptQuest, availableQuests, turnInQuest } from '@/quests/quests';
 import { getEquipment, replaceRuntimeEquipment } from '@/data/items';
 import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
 import { getEnemyDef } from '@/enemies/enemy-defs';
+import { INVESTIGATION_CONDITIONS } from '@/endgame/investigation-conditions';
+import { simulateHunt } from '@/balance/hunt-simulator';
 
 function postClearState(): GameState {
   const gs = new GameState();
@@ -36,6 +38,11 @@ describe('post-clear investigations', () => {
     expect(new Set(first.map((q) => q.objectives[0].enemyId)).size).toBe(3);
     for (const quest of first) {
       expect(quest.investigation?.threat).toBeGreaterThanOrEqual(1);
+      expect(
+        INVESTIGATION_CONDITIONS.some(
+          (condition) => condition.id === quest.investigation?.conditionId,
+        ),
+      ).toBe(true);
       expect(quest.huntModifiers?.hpMult).toBeGreaterThan(0);
       expect(quest.huntModifiers?.dmgMult).toBeGreaterThan(0);
       expect(quest.require?.minLevel).toBeGreaterThanOrEqual(94);
@@ -123,6 +130,28 @@ describe('post-clear investigations', () => {
     expect(enemies.size).toBeGreaterThan(10);
     expect(Math.max(...hpValues) / Math.min(...hpValues)).toBeLessThan(1.12);
     expect(Math.max(...damageValues) / Math.min(...damageValues)).toBeLessThan(1.08);
+  });
+
+  it('runs all three condition mechanics through the balance simulator', () => {
+    const gs = postClearState();
+    gs.investigationsCompleted = 8;
+    const simulated = new Map<string, ReturnType<typeof simulateHunt>>();
+
+    for (let seed = 1; seed <= 20 && simulated.size < 3; seed++) {
+      gs.investigationSeed = seed;
+      for (const quest of syncInvestigationQuests(gs)) {
+        const id = quest.investigation!.conditionId;
+        if (simulated.has(id)) continue;
+        simulated.set(id, simulateHunt({ questId: quest.id, runs: 100, seed }));
+      }
+    }
+
+    expect(simulated.size).toBe(3);
+    for (const result of simulated.values()) {
+      expect(result.averageTtkSec).toBeGreaterThan(0);
+      expect(result.danger).toBeGreaterThan(0);
+      expect(Number.isFinite(result.clearRate)).toBe(true);
+    }
   });
 
   it.each([

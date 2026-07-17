@@ -1,5 +1,6 @@
 import { Rng } from '@/core/rng';
 import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
+import { INVESTIGATION_CONDITIONS } from '@/endgame/investigation-conditions';
 import type { GameState } from '@/player/game-state';
 import {
   allQuests,
@@ -18,12 +19,6 @@ interface Candidate {
   enemyId: string;
   enemyName: string;
 }
-
-const CONDITIONS = [
-  { label: '生命反応増大', hpRate: 1.1, damageRate: 1 },
-  { label: '攻撃性増大', hpRate: 1, damageRate: 1.06 },
-  { label: '深層共鳴', hpRate: 1.05, damageRate: 1.03 },
-] as const;
 
 // Investigation bosses span several authored ranks, so multiplying every base
 // stat by the same value makes late bosses walls and early bosses trivial. Aim
@@ -74,7 +69,9 @@ export function syncInvestigationQuests(gs: GameState): QuestDef[] {
   for (let index = 0; index < INVESTIGATION_BOARD_SIZE && pool.length > 0; index++) {
     const pick = pool.splice(rng.intRange(0, pool.length - 1), 1)[0];
     const threat = Math.min(10, baseThreat + rng.intRange(0, 2));
-    const condition = CONDITIONS[rng.intRange(0, CONDITIONS.length - 1)];
+    const condition = INVESTIGATION_CONDITIONS[
+      rng.intRange(0, INVESTIGATION_CONDITIONS.length - 1)
+    ];
     const targetHp = (BASE_TARGET_HP + (threat - 1) * HP_PER_THREAT) * condition.hpRate;
     const targetDamage =
       (BASE_TARGET_DAMAGE + (threat - 1) * DAMAGE_PER_THREAT) * condition.damageRate;
@@ -101,6 +98,7 @@ export function syncInvestigationQuests(gs: GameState): QuestDef[] {
       huntModifiers: { hpMult, dmgMult },
       investigation: {
         threat,
+        conditionId: condition.id,
         condition: condition.label,
         rewardRank: rewardRank(threat),
         boardSeed: gs.investigationSeed,

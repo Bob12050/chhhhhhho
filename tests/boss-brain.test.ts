@@ -152,6 +152,36 @@ describe('BossBrain', () => {
     expect(log.shots.length).toBe(0);
   });
 
+  it('defers its next attack for arena-level mechanics', () => {
+    const { arena, log } = makeArena();
+    const brain = new BossBrain(
+      arena,
+      [{ type: 'shots', count: 1, speed: 100, damageMult: 1, spread: 'radial' }],
+      10,
+    );
+    step(brain, 1_100);
+    brain.defer(1_000);
+    step(brain, 900);
+    expect(log.shots).toHaveLength(0);
+    step(brain, 300);
+    expect(log.shots).toHaveLength(1);
+  });
+
+  it('accelerates cooldown cadence without shortening a busy attack window', () => {
+    const made = makeArena() as ReturnType<typeof makeArena> & { flush: () => void };
+    const brain = new BossBrain(
+      made.arena,
+      [{ type: 'aoe', radius: 40, damageMult: 1, telegraphMs: 800 }],
+      10,
+    );
+    for (let elapsed = 0; elapsed < 700; elapsed += 100) brain.update(100, 2);
+    expect(made.log.telegraphs).toHaveLength(1);
+    brain.update(500, 2);
+    expect(brain.isBusy()).toBe(true);
+    brain.update(300, 2);
+    expect(brain.isBusy()).toBe(false);
+  });
+
   it('enrages exactly once at the HP threshold and speeds up', () => {
     let hp = 1;
     const { arena, log } = makeArena({ hpPct: () => hp });

@@ -36,8 +36,11 @@ export interface HuntModifiers {
 }
 
 /** Generated post-clear investigation contract metadata. */
+export type InvestigationConditionId = 'regeneration' | 'frenzy' | 'resonance';
+
 export interface InvestigationMeta {
   threat: number;
+  conditionId: InvestigationConditionId;
   condition: string;
   rewardRank: number;
   boardSeed: number;

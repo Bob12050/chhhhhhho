@@ -12,6 +12,7 @@ import {
   type ActiveBossSetCombat,
 } from '@/equipment/boss-set-bonuses';
 import { getDropTable, type DropEntry } from '@/loot/drop-table';
+import { getInvestigationCondition } from '@/endgame/investigation-conditions';
 import {
   VETERAN_MODS,
   concurrentSpawnCount,
@@ -505,6 +506,9 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
     * swingsPerSec;
   const effectiveDps = theoreticalDps * DEFAULT_UPTIME;
   const combatModifiers = huntStatModifiers(quest);
+  const investigationCondition = quest.investigation
+    ? getInvestigationCondition(quest.investigation.conditionId)
+    : undefined;
 
   const candidates = new Map<string, DropAccumulator>();
   for (const wave of waves) {
@@ -542,10 +546,26 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
     let runCombatTtk = 0;
     let runDamage = 0;
     for (const wave of waves) {
-      const waveTtk = wave.hp / Math.max(0.01, runDps);
+      let effectiveWaveHp = wave.hp;
+      if (wave.enemy.isBoss && investigationCondition?.mechanic === 'regeneration') {
+        // Solve the small feedback loop: a longer fight allows more periodic
+        // heals, and those heals extend the fight again.
+        for (let iteration = 0; iteration < 8; iteration++) {
+          const elapsedMs = (effectiveWaveHp / Math.max(0.01, runDps)) * 1000;
+          const heals = Math.floor(elapsedMs / investigationCondition.intervalMs);
+          const nextHp = wave.hp * (1 + heals * investigationCondition.healRate);
+          if (Math.abs(nextHp - effectiveWaveHp) < 0.5) break;
+          effectiveWaveHp = nextHp;
+        }
+      }
+      const waveTtk = effectiveWaveHp / Math.max(0.01, runDps);
       runTtk += waveTtk;
       runCombatTtk += waveTtk;
-      const expectedHits = (waveTtk * 1000 * wave.pressure) / HIT_EVERY_MS;
+      const conditionPressure = wave.enemy.isBoss && investigationCondition?.mechanic === 'frenzy'
+        ? 1 + (investigationCondition.cadenceMult - 1) * investigationCondition.triggerHpRate
+        : 1;
+      const expectedHits =
+        (waveTtk * 1000 * wave.pressure * conditionPressure) / HIT_EVERY_MS;
       let landedHits = Math.floor(expectedHits);
       if (combatRng.chance(expectedHits - landedHits)) landedHits++;
       const damageVariance = 0.88 + combatRng.next() * 0.24;
@@ -553,6 +573,26 @@ export function simulateHunt(options: HuntSimulationOptions): HuntSimulationResu
         1,
         Math.round(wave.hitDamage * damageVariance * (1 - setCombat.damageReduction)),
       );
+      if (wave.enemy.isBoss && investigationCondition?.mechanic === 'resonance') {
+        const elapsedMs = waveTtk * 1000;
+        const pulses = elapsedMs < investigationCondition.initialDelayMs
+          ? 0
+          : 1 + Math.floor(
+            (elapsedMs - investigationCondition.initialDelayMs) / investigationCondition.intervalMs,
+          );
+        const expectedPulseHits = pulses * investigationCondition.simulatedHitRate;
+        let pulseHits = Math.floor(expectedPulseHits);
+        if (combatRng.chance(expectedPulseHits - pulseHits)) pulseHits++;
+        runDamage += pulseHits * Math.max(
+          1,
+          Math.round(
+            wave.hitDamage
+            * investigationCondition.damageMult
+            * damageVariance
+            * (1 - setCombat.damageReduction),
+          ),
+        );
+      }
       if (setCombat.healOnKillRate > 0) {
         runDamage = Math.max(
           0,

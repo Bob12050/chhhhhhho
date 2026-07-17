@@ -59,6 +59,10 @@ import {
   type Element,
 } from '@/combat/elements';
 import { activeBossSetCombat } from '@/equipment/boss-set-bonuses';
+import {
+  getInvestigationCondition,
+  type InvestigationConditionDef,
+} from '@/endgame/investigation-conditions';
 
 interface BuiltNpc {
   x: number;
@@ -118,6 +122,9 @@ export class WorldScene extends Phaser.Scene {
   private pet: Pet | null = null;
   private boss: Enemy | null = null;
   private bossBrain: BossBrain | null = null;
+  private investigationCondition: InvestigationConditionDef | null = null;
+  private investigationConditionTimerMs = 0;
+  private investigationFrenzy = false;
   /** Pooled enemy projectiles (mobile-perf rule: projectiles use a pool). */
   private bullets: { obj: Phaser.GameObjects.Arc; vx: number; vy: number; ttl: number; damage: number }[] = [];
   private bulletPool: Phaser.GameObjects.Arc[] = [];
@@ -185,6 +192,9 @@ export class WorldScene extends Phaser.Scene {
     // Leaving an arena mid-fight must hand the HUD slot back to the tracker.
     bus.emit('boss:bar', { active: false });
     this.bossBrain = null;
+    this.investigationCondition = null;
+    this.investigationConditionTimerMs = 0;
+    this.investigationFrenzy = false;
     this.bullets = [];
     this.bulletPool = [];
     this.pBolts = [];
@@ -572,6 +582,7 @@ export class WorldScene extends Phaser.Scene {
       }
     }
     if (spawnedBoss && def.isBoss) {
+      this.activateInvestigationCondition(q);
       this.showBossIntro(q, def);
     } else if (announce) {
       const msg = def.isBoss
@@ -612,6 +623,9 @@ export class WorldScene extends Phaser.Scene {
 
   private showBossIntro(q: QuestDef, def: EnemyDef): void {
     const durationMs = 1650;
+    const condition = q.investigation
+      ? getInvestigationCondition(q.investigation.conditionId)
+      : undefined;
     this.bossIntroLockMs = Math.max(this.bossIntroLockMs, durationMs);
     this.cameras.main.shake(260, 0.004);
     bus.emit('sfx:play', { id: 'roar' });
@@ -621,8 +635,94 @@ export class WorldScene extends Phaser.Scene {
       rank: q.rank,
       veteran: q.veteran,
       investigationThreat: q.investigation?.threat,
+      investigationCondition: condition?.label,
+      investigationRule: condition?.combatHint,
       weakness: def.weakness,
       durationMs,
+    });
+  }
+
+  private activateInvestigationCondition(q: QuestDef): void {
+    const condition = q.investigation
+      ? getInvestigationCondition(q.investigation.conditionId)
+      : null;
+    this.investigationCondition = condition;
+    this.investigationFrenzy = false;
+    this.investigationConditionTimerMs = condition?.mechanic === 'resonance'
+      ? condition.initialDelayMs
+      : condition?.mechanic === 'regeneration'
+        ? condition.intervalMs
+        : 0;
+  }
+
+  /** Apply the contract rule independently of each boss's authored attack set. */
+  private updateInvestigationCondition(delta: number): void {
+    const boss = this.boss;
+    const condition = this.investigationCondition;
+    if (!boss || boss.isDead() || !condition || this.playerDead) return;
+
+    if (condition.mechanic === 'frenzy') {
+      const hpRate = Math.max(0, boss.hp) / boss.cfg.maxHp;
+      if (!this.investigationFrenzy && hpRate <= condition.triggerHpRate) {
+        this.investigationFrenzy = true;
+        boss.enrageVisual(0xff6f55);
+        this.floatText(boss.x, boss.y - 72, '攻撃性増大・猛攻', '#ff9a78');
+        this.cameras.main.shake(180, 0.006);
+        bus.emit('sfx:play', { id: 'roar' });
+      }
+      if (this.investigationFrenzy) {
+        boss.speedMult = Math.max(boss.speedMult, condition.moveSpeedMult);
+      }
+      return;
+    }
+
+    this.investigationConditionTimerMs -= delta;
+    if (this.investigationConditionTimerMs > 0) return;
+
+    if (condition.mechanic === 'regeneration') {
+      this.investigationConditionTimerMs += condition.intervalMs;
+      const heal = Math.min(
+        boss.cfg.maxHp - boss.hp,
+        Math.max(1, Math.round(boss.cfg.maxHp * condition.healRate)),
+      );
+      if (heal <= 0) return;
+      boss.hp += heal;
+      this.dmg.show(boss.x, boss.y - 52, heal, false, '#70e59a');
+      this.floatText(boss.x, boss.y - 76, '生命再生', '#9cf0ae');
+      const aura = this.add
+        .circle(boss.x, boss.y - 8, 24, 0x64e58a, 0.2)
+        .setStrokeStyle(2, 0xa9ffc0, 0.9)
+        .setDepth(9000);
+      this.tweens.add({
+        targets: aura,
+        alpha: 0,
+        scale: 1.8,
+        duration: 420,
+        ease: 'Quad.easeOut',
+        onComplete: () => aura.destroy(),
+      });
+      return;
+    }
+
+    if (this.bossBrain?.isBusy()) {
+      this.investigationConditionTimerMs = 250;
+      return;
+    }
+    this.investigationConditionTimerMs += condition.intervalMs;
+    const x = boss.x;
+    const y = boss.y;
+    boss.castHold(condition.telegraphMs);
+    this.bossBrain?.defer(condition.telegraphMs + 250);
+    this.floatText(x, y - 72, '深層共鳴', '#9fe9ff');
+    this.telegraphFx(x, y, condition.radius, condition.telegraphMs, 0x5fd6ee, () => {
+      if (boss !== this.boss || boss.isDead() || this.playerDead) return;
+      this.explodeAt(
+        x,
+        y,
+        condition.radius,
+        Math.max(1, Math.round(boss.cfg.contactDamage * condition.damageMult)),
+        0x67dff2,
+      );
     });
   }
 
@@ -2313,7 +2413,13 @@ export class WorldScene extends Phaser.Scene {
       this.questGuideTimer = 180;
       this.updateQuestGuide();
     }
-    if (this.boss && !this.boss.isDead()) this.bossBrain?.update(delta);
+    if (this.boss && !this.boss.isDead()) {
+      const cadence = this.investigationCondition?.mechanic === 'frenzy' && this.investigationFrenzy
+        ? this.investigationCondition.cadenceMult
+        : 1;
+      this.bossBrain?.update(delta, cadence);
+      this.updateInvestigationCondition(delta);
+    }
     this.updateBullets(delta);
     this.updatePlayerBolts(delta);
     this.updateLootMagnet(delta);

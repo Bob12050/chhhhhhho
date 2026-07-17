@@ -17,6 +17,7 @@ import { bus } from '@/core/event-bus';
 import { FONT, UI, addPanelChrome, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
 import { INVESTIGATION_SEAL_ID } from '@/endgame/investigations';
 import { affixSummary } from '@/endgame/investigation-loot';
+import { getInvestigationCondition } from '@/endgame/investigation-conditions';
 
 type BoardTab = 'main' | 'job' | 'investigation';
 type QuestViewState = 'active' | 'available' | 'done' | 'locked';
@@ -609,6 +610,9 @@ export class QuestBoardScene extends Phaser.Scene {
     state: QuestViewState,
     lockedReason = '',
   ): number {
+    const investigationCondition = q.investigation
+      ? getInvestigationCondition(q.investigation.conditionId)
+      : undefined;
     const titleColor = state === 'done' ? '#6b7088' : q.type === 'unlock' ? '#ffe9a8' : '#ffffff';
     // MH-style star rank prefix, colored by rank (dimmed once done).
     const rank = q.rank ?? 1;
@@ -658,7 +662,7 @@ export class QuestBoardScene extends Phaser.Scene {
         16,
         y + 20,
         q.investigation
-          ? `${q.investigation.condition}  推奨Lv${q.require?.minLevel ?? 94}`
+          ? `${investigationCondition?.boardHint ?? q.investigation.condition}・Lv${q.require?.minLevel ?? 94}`
           : this.objectiveText(q, state === 'active'),
         {
         fontFamily: FONT,

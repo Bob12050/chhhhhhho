@@ -1142,7 +1142,7 @@ export class UIScene extends Phaser.Scene {
     const bottom = this.add.rectangle(w / 2, cy + 58, w, 2, 0xf5c542, 0).setAlpha(0);
     const rank = data.rank ? `★${data.rank}` : '';
     const title = data.investigationThreat
-      ? `調査危険度 ${data.investigationThreat}`
+      ? `調査危険度 ${data.investigationThreat}${data.investigationCondition ? `・${data.investigationCondition}` : ''}`
       : `${rank} ${data.veteran ? '歴戦個体' : '大型狩猟開始'}`.trim();
     const titleText = this.add
       .text(w / 2, cy - 34, title, {
@@ -1158,7 +1158,11 @@ export class UIScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setAlpha(0);
     const questText = this.add
-      .text(w / 2, cy + 22, data.questName, { fontFamily: FONT, fontSize: '11px', color: '#cfd3e6' })
+      .text(w / 2, cy + 22, data.investigationRule ?? data.questName, {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: data.investigationRule ? '#b9eef0' : '#cfd3e6',
+      })
       .setOrigin(0.5)
       .setAlpha(0);
     root.add([veil, band, top, bottom, titleText, bossText, questText]);

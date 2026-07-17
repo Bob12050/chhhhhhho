@@ -104,6 +104,8 @@ export interface GameEvents {
     rank?: number;
     veteran?: boolean;
     investigationThreat?: number;
+    investigationCondition?: string;
+    investigationRule?: string;
     weakness?: string;
     durationMs: number;
   };

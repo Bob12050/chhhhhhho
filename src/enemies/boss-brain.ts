@@ -92,7 +92,16 @@ export class BossBrain {
     return this.enraged;
   }
 
-  update(dtMs: number): void {
+  isBusy(): boolean {
+    return this.busyMs > 0;
+  }
+
+  /** Reserve a clean window for an arena-level mechanic such as a pulse. */
+  defer(ms: number): void {
+    this.busyMs = Math.max(this.busyMs, ms);
+  }
+
+  update(dtMs: number, cadenceMult = 1): void {
     if (this.attacks.length === 0) return;
 
     if (!this.enraged && this.arena.hpPct() <= this.enrageAt) {
@@ -106,7 +115,7 @@ export class BossBrain {
       this.busyMs -= dtMs;
       return;
     }
-    this.cooldown -= dtMs;
+    this.cooldown -= dtMs * Math.max(0.1, cadenceMult);
     if (this.cooldown > 0) return;
 
     const boss = this.arena.bossPos();
