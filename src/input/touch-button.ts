@@ -46,22 +46,22 @@ export class TouchButton {
     this.radius = Math.max(radius, 24); // 48px diameter minimum
     this.accent = color;
     this.style = style;
-    const baseColor = style === 'primary' ? 0x142d4b : 0x0c1828;
-    const baseAlpha = style === 'primary' ? 0.9 : style === 'secondary' ? 0.72 : 0.64;
+    const baseColor = style === 'primary' ? 0x0a2139 : 0x0a1a2d;
+    const baseAlpha = style === 'primary' ? 0.98 : style === 'secondary' ? 0.94 : 0.9;
     this.circle = scene.add.circle(x, y, this.radius, baseColor, baseAlpha).setDepth(depth);
     this.circle.setStrokeStyle(
-      style === 'primary' ? 1.5 : 1,
-      style === 'primary' ? 0xe8cb79 : 0xdce8f3,
-      style === 'primary' ? 0.48 : 0.22,
+      style === 'primary' ? 2 : 1.5,
+      0xe8cb79,
+      style === 'primary' ? 0.9 : style === 'secondary' ? 0.72 : 0.58,
     );
     this.inner = scene.add
-      .circle(x, y, this.radius - 6, color, style === 'primary' ? 0.18 : 0.1)
+      .circle(x, y, this.radius - 6, color, style === 'primary' ? 0.24 : 0.14)
       .setDepth(depth + 0.25);
-    this.inner.setStrokeStyle(1, color, style === 'primary' ? 0.5 : 0.26);
+    this.inner.setStrokeStyle(1, color, style === 'primary' ? 0.66 : 0.4);
     // Icon + smaller caption reads better than a bare letter; integer scale
     // only (pixel-art rule).
     if (iconTex && scene.textures.exists(iconTex)) {
-      const scale = this.radius >= 26 ? 2 : 1;
+      const scale = this.style === 'primary' && this.radius >= 36 ? 3 : this.radius >= 26 ? 2 : 1;
       this.hasIconContent = true;
       this.icon = scene.add.image(x, text ? y - 7 : y, iconTex).setScale(scale).setDepth(depth + 1);
       this.label = scene.add
@@ -111,10 +111,10 @@ export class TouchButton {
   }
 
   private applyOpacity(pressed: boolean): void {
-    const idleShell = this.style === 'primary' ? 0.94 : this.style === 'secondary' ? 0.74 : 0.66;
-    const dimmedShell = this.style === 'primary' ? 0.46 : 0.34;
-    const idleContent = this.style === 'primary' ? 1 : 0.82;
-    const dimmedContent = this.style === 'primary' ? 0.58 : 0.46;
+    const idleShell = this.style === 'primary' ? 1 : this.style === 'secondary' ? 0.94 : 0.9;
+    const dimmedShell = this.style === 'primary' ? 0.96 : 0.9;
+    const idleContent = this.style === 'primary' ? 1 : 0.94;
+    const dimmedContent = this.style === 'primary' ? 0.98 : 0.92;
     const shellAlpha = pressed
       ? 1
       : this.dimmed
@@ -139,17 +139,17 @@ export class TouchButton {
   }
 
   private resetAppearance(): void {
-    const baseColor = this.style === 'primary' ? 0x142d4b : 0x0c1828;
-    const baseAlpha = this.style === 'primary' ? 0.9 : this.style === 'secondary' ? 0.72 : 0.64;
-    const innerAlpha = this.style === 'primary' ? 0.18 : 0.1;
+    const baseColor = this.style === 'primary' ? 0x0a2139 : 0x0a1a2d;
+    const baseAlpha = this.style === 'primary' ? 0.98 : this.style === 'secondary' ? 0.94 : 0.9;
+    const innerAlpha = this.style === 'primary' ? 0.24 : 0.14;
     this.circle.setFillStyle(baseColor, baseAlpha);
     this.circle.setStrokeStyle(
-      this.style === 'primary' ? 1.5 : 1,
-      this.style === 'primary' ? 0xe8cb79 : 0xdce8f3,
-      this.style === 'primary' ? 0.48 : 0.22,
+      this.style === 'primary' ? 2 : 1.5,
+      0xe8cb79,
+      this.style === 'primary' ? 0.9 : this.style === 'secondary' ? 0.72 : 0.58,
     );
     this.inner.setFillStyle(this.unavailable ? 0x52606c : this.accent, innerAlpha);
-    this.inner.setStrokeStyle(1, this.unavailable ? 0x6f7c89 : this.accent, this.style === 'primary' ? 0.5 : 0.26);
+    this.inner.setStrokeStyle(1, this.unavailable ? 0x6f7c89 : this.accent, this.style === 'primary' ? 0.66 : 0.4);
     this.applyOpacity(false);
   }
 
@@ -166,7 +166,7 @@ export class TouchButton {
       }
       this.icon
         .setPosition(this.cx, text ? this.cy - 7 : this.cy)
-        .setScale(this.radius >= 26 ? 2 : 1)
+        .setScale(this.style === 'primary' && this.radius >= 36 ? 3 : this.radius >= 26 ? 2 : 1)
         .setVisible(this.circle.visible);
       this.label
         .setPosition(this.cx, text ? this.cy + this.radius - 10 : this.cy)
@@ -188,7 +188,7 @@ export class TouchButton {
 
   /** Apply the player's idle-visibility preference without weakening press feedback. */
   setOpacityMultiplier(value: number): void {
-    this.opacityMultiplier = Phaser.Math.Clamp(value, 0.5, 1);
+    this.opacityMultiplier = Phaser.Math.Clamp(value, 0.8, 1);
     this.applyOpacity(false);
   }
 

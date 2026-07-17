@@ -521,12 +521,14 @@ export class WorldScene extends Phaser.Scene {
 
   private showMapName(name: string): void {
     const t = this.add
-      .text(this.scale.width / 2, 70, name, {
+      .text(this.scale.width / 2, 118, name, {
         fontFamily: FONT,
-        fontSize: '16px',
-        color: '#ffffff',
-        backgroundColor: '#00000066',
-        padding: { x: 10, y: 4 },
+        fontSize: '13px',
+        color: '#fff0b8',
+        backgroundColor: '#071523e6',
+        padding: { x: 12, y: 5 },
+        stroke: '#02060d',
+        strokeThickness: 2,
       })
       .setOrigin(0.5)
       .setScrollFactor(0)

@@ -95,7 +95,7 @@ export class UIScene extends Phaser.Scene {
       settings.leftHanded,
     );
     this.rewardFeedX = w / 2;
-    this.rewardFeedY = Math.max(insets.top + 88, 96);
+    this.rewardFeedY = Math.max(insets.top + 104, 112);
     this.rewardQueue = [];
     this.activeReward = null;
 
@@ -130,7 +130,7 @@ export class UIScene extends Phaser.Scene {
       this,
       controls.attack.x,
       controls.attack.y,
-      32 * controlScale,
+      48 * controlScale,
       '',
       0xcc5555,
       depth,
@@ -143,7 +143,7 @@ export class UIScene extends Phaser.Scene {
       this,
       controls.skill1.x,
       controls.skill1.y,
-      28 * controlScale,
+      32 * controlScale,
       'S1',
       0x5a78ba,
       depth,
@@ -156,7 +156,7 @@ export class UIScene extends Phaser.Scene {
       this,
       controls.skill2.x,
       controls.skill2.y,
-      26 * controlScale,
+      32 * controlScale,
       'S2',
       0x6870b5,
       depth,
@@ -167,8 +167,8 @@ export class UIScene extends Phaser.Scene {
 
     const skillButtons = [skillBtn, skill2Btn];
     const skillButtonGeom = [
-      { x: controls.skill1.x, y: controls.skill1.y, r: 28 * controlScale },
-      { x: controls.skill2.x, y: controls.skill2.y, r: 26 * controlScale },
+      { x: controls.skill1.x, y: controls.skill1.y, r: 32 * controlScale },
+      { x: controls.skill2.x, y: controls.skill2.y, r: 32 * controlScale },
     ];
     const skillCooling = [false, false];
     const skillCostBacks = skillButtonGeom.map(({ x, y, r }) =>
@@ -228,7 +228,7 @@ export class UIScene extends Phaser.Scene {
       this,
       controls.dodge.x,
       controls.dodge.y,
-      26 * controlScale,
+      23 * controlScale,
       '回避',
       0x538e78,
       depth,
@@ -244,7 +244,7 @@ export class UIScene extends Phaser.Scene {
       this,
       controls.potion.x,
       controls.potion.y,
-      24 * controlScale,
+      23 * controlScale,
       '',
       0xa95765,
       depth,
@@ -286,16 +286,19 @@ export class UIScene extends Phaser.Scene {
     combatButtons.forEach((button) => button.setOpacityMultiplier(controlOpacity));
     const setCombatDim = (dim: boolean): void => {
       combatButtons.forEach((b) => b.setDimmed(dim));
+      dodgeBtn.setVisible(!dim);
+      potBtn.setVisible(!dim);
+      potCount.setVisible(!dim);
     };
     setCombatDim(!!getMap(gameState.mapId)?.safe);
     this.busOff.push(bus.on('world:map-ready', ({ safe }) => setCombatDim(safe)));
 
     // Cooldown sweep overlays for the two skill buttons (slot 0 = S1, 1 = S2).
     const cdGeom = [
-      { x: controls.skill1.x, y: controls.skill1.y, r: 28 * controlScale },
-      { x: controls.skill2.x, y: controls.skill2.y, r: 26 * controlScale },
-      { x: controls.dodge.x, y: controls.dodge.y, r: 26 * controlScale }, // dodge (slot 2)
-      { x: controls.potion.x, y: controls.potion.y, r: 24 * controlScale }, // potion (slot 3)
+      { x: controls.skill1.x, y: controls.skill1.y, r: 32 * controlScale },
+      { x: controls.skill2.x, y: controls.skill2.y, r: 32 * controlScale },
+      { x: controls.dodge.x, y: controls.dodge.y, r: 23 * controlScale }, // dodge (slot 2)
+      { x: controls.potion.x, y: controls.potion.y, r: 23 * controlScale }, // potion (slot 3)
     ];
     const cdGfx = cdGeom.map(() => this.add.graphics().setDepth(depth + 1));
     const cdLabels = cdGeom.map(({ x, y }) =>
@@ -488,21 +491,21 @@ export class UIScene extends Phaser.Scene {
     const px = insets.left + 6;
     const py = insets.top + 6;
     const PW = w - insets.left - insets.right - 12;
-    const PH = 38;
-    const levelDivider = 40;
-    const expDivider = 112;
+    const PH = 42;
+    const levelDivider = 48;
+    const expDivider = 130;
     const hpDivider = Math.floor((PW + expDivider) / 2);
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
     const panelBack = this.add.graphics();
     panelBack.fillStyle(0x000000, 0.28);
     panelBack.fillRoundedRect(1, 2, PW, PH, 3);
-    panelBack.fillStyle(0x0b1425, 0.96);
+    panelBack.fillStyle(0x071523, 0.98);
     panelBack.fillRoundedRect(0, 0, PW, PH, 3);
-    panelBack.lineStyle(1, 0xc9d7e8, 0.5);
+    panelBack.lineStyle(1.5, 0xd9bd6a, 0.86);
     panelBack.strokeRoundedRect(0, 0, PW, PH, 3);
-    panelBack.lineStyle(1, 0xf7e8a5, 0.62);
+    panelBack.lineStyle(1, 0xffedab, 0.72);
     panelBack.lineBetween(3, 2, PW - 3, 2);
-    panelBack.lineStyle(1, 0x72839d, 0.38);
+    panelBack.lineStyle(1, 0x71839b, 0.48);
     panelBack.lineBetween(levelDivider, 4, levelDivider, PH - 4);
     panelBack.lineBetween(expDivider, 4, expDivider, PH - 4);
     panelBack.lineBetween(hpDivider, 4, hpDivider, PH - 4);
@@ -517,12 +520,12 @@ export class UIScene extends Phaser.Scene {
 
     const barY = PH / 2;
     const levelLabel = this.add
-      .text(6, barY, 'LV', { fontFamily: FONT, fontSize: '9px', color: '#eef5ff', fontStyle: 'bold' })
+      .text(6, barY, 'LV', { fontFamily: FONT, fontSize: '11px', color: '#f5f7fb', fontStyle: 'bold' })
       .setOrigin(0, 0.5);
     levelLabel.setShadow(0, 1, '#000000', 2);
     panel.add(levelLabel);
     const levelText = this.add
-      .text(30, barY, '', { fontFamily: FONT, fontSize: '11px', color: '#fff0a6', fontStyle: 'bold' })
+      .text(34, barY, '', { fontFamily: FONT, fontSize: '14px', color: '#ffe485', fontStyle: 'bold' })
       .setOrigin(0.5);
     levelText.setShadow(0, 1, '#000000', 2);
     panel.add(levelText);
@@ -531,46 +534,61 @@ export class UIScene extends Phaser.Scene {
       levelText.setText(`${gameState.level}`);
     };
 
-    const makeBar = (x: number, width: number, color: number): Phaser.GameObjects.Rectangle => {
+    const makeBar = (
+      x: number,
+      width: number,
+      color: number,
+      height = 16,
+      y = barY,
+    ): Phaser.GameObjects.Rectangle => {
       const back = this.add
-        .rectangle(x, barY, width, 14, 0x02060c, 0.95)
+        .rectangle(x, y, width, height, 0x02060c, 0.95)
         .setOrigin(0, 0.5)
-        .setStrokeStyle(1, 0xb9c9dd, 0.42);
-      const fill = this.add.rectangle(x + 1, barY, width - 2, 12, color, 0.98).setOrigin(0, 0.5);
+        .setStrokeStyle(1, 0xc9d6e4, 0.56);
+      const fill = this.add.rectangle(x + 1, y, width - 2, height - 2, color, 0.98).setOrigin(0, 0.5);
       panel.add([back, fill]);
       return fill;
     };
     const statLabel = (x: number, label: string): void => {
       const text = this.add
-        .text(x, barY, label, { fontFamily: FONT, fontSize: '9px', color: '#eef5ff', fontStyle: 'bold' })
+        .text(x, barY, label, { fontFamily: FONT, fontSize: '11px', color: '#f5f7fb', fontStyle: 'bold' })
         .setOrigin(0, 0.5);
       text.setShadow(0, 1, '#000000', 2);
       panel.add(text);
     };
     const barText = (x: number, width: number): Phaser.GameObjects.Text => {
       const val = this.add
-        .text(x + width / 2, barY, '', { fontFamily: FONT, fontSize: '9px', color: '#ffffff', fontStyle: 'bold' })
+        .text(x + width / 2, barY, '', { fontFamily: FONT, fontSize: '10px', color: '#ffffff', fontStyle: 'bold' })
         .setOrigin(0.5);
       val.setShadow(0, 1, '#000000', 2);
       panel.add(val);
       return val;
     };
 
-    const expX = levelDivider + 5;
+    const expX = levelDivider + 7;
     const expW = expDivider - expX - 5;
-    this.expBar = makeBar(expX, expW, 0xf2d45c);
-    this.expText = barText(expX, expW);
+    this.expBar = makeBar(expX, expW, 0xf2d45c, 8, 31);
+    this.expText = this.add
+      .text(expX + expW / 2, 5, '', {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#f5f7fb',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5, 0);
+    this.expText.setShadow(0, 1, '#000000', 2);
+    panel.add(this.expText);
     const expSegments = this.add.graphics();
     expSegments.lineStyle(1, 0x172034, 0.58);
     for (let i = 1; i < 8; i++) {
       const sx = Math.round(expX + (expW * i) / 8);
-      expSegments.lineBetween(sx, barY - 6, sx, barY + 6);
+      expSegments.lineBetween(sx, 28, sx, 34);
     }
     panel.add(expSegments);
 
-    const hpX = expDivider + 24;
+    const hpX = expDivider + 27;
     const hpW = hpDivider - hpX - 5;
-    const mpX = hpDivider + 24;
+    const mpX = hpDivider + 27;
     const mpW = PW - mpX - 5;
     statLabel(expDivider + 5, 'HP');
     this.hpBar = makeBar(hpX, hpW, 0xf17c78);
@@ -637,29 +655,29 @@ export class UIScene extends Phaser.Scene {
     // with a single accent line, so it reads as guidance rather than decoration.
     const hudX = px;
     const trY = py + PH + 5; // just below the statusPanel
-    const trW = 166;
-    const trH = 34;
+    const trW = 174;
+    const trH = 38;
     const trRoot = this.add.container(hudX, trY).setDepth(depth);
     const trackerBack = this.add.graphics();
-    trackerBack.fillStyle(0x000000, 0.2);
+    trackerBack.fillStyle(0x000000, 0.28);
     trackerBack.fillRoundedRect(2, 3, trW - 4, trH - 1, 7);
-    trackerBack.fillStyle(0x071321, 0.76);
+    trackerBack.fillStyle(0x071523, 0.94);
     trackerBack.fillRoundedRect(2, 0, trW - 4, trH - 3, 7);
-    trackerBack.fillStyle(0xd8bb68, 0.72);
+    trackerBack.fillStyle(0xd8bb68, 0.92);
     trackerBack.fillRoundedRect(7, 7, 2, trH - 17, 1);
-    trackerBack.lineStyle(1, 0xffffff, 0.1);
+    trackerBack.lineStyle(1, 0xd9bd6a, 0.72);
     trackerBack.strokeRoundedRect(2, 0, trW - 4, trH - 3, 7);
     const trackerIcon = this.add
-      .image(20, 16, TEX.iconShield)
-      .setDisplaySize(13, 13)
-      .setTint(0xd9c37c)
-      .setAlpha(0.78);
+      .image(21, 18, TEX.iconShield)
+      .setDisplaySize(16, 16)
+      .setTint(0xffd56a)
+      .setAlpha(1);
     trRoot.add([trackerBack, trackerIcon]);
     const trTitle = this.add
-      .text(34, 4, '', { fontFamily: FONT, fontSize: '10px', color: '#f5f1e8', fontStyle: 'bold' })
+      .text(36, 4, '', { fontFamily: FONT, fontSize: '11px', color: '#f7f3e8', fontStyle: 'bold' })
       .setShadow(0, 1, '#000000', 2);
     const trObj = this.add
-      .text(34, 18, '', { fontFamily: FONT, fontSize: '9px', color: '#c8d2df' })
+      .text(36, 21, '', { fontFamily: FONT, fontSize: '10px', color: '#d2dbe5' })
       .setShadow(0, 1, '#000000', 2);
     const trGuideDivider = this.add.graphics().setVisible(false);
     trGuideDivider.lineStyle(1, 0xffffff, 0.16);
@@ -740,39 +758,52 @@ export class UIScene extends Phaser.Scene {
       }),
     );
 
-    // Explicit menu shortcuts replace the minimap. They share one row and use
-    // full 48px touch targets, so neither hides status values or map scenery.
-    const bagX = w - insets.right - 30;
-    const bagY = trY + 19;
-    const mapX = bagX - 54;
-    const mapButton = new TouchButton(
-      this,
-      mapX,
-      bagY,
-      24,
-      'マップ',
-      0x4f82a6,
-      depth + 2,
-      TEX.iconMap,
-      'utility',
-    );
-    mapButton.onChange = (down) => {
-      if (down) bus.emit('ui:open-map', {});
+    // Menu shortcuts use compact framed tiles, matching the selected HUD mock.
+    const shortcutW = 49;
+    const shortcutH = 48;
+    const shortcutY = trY + shortcutH / 2;
+    const bagX = w - insets.right - shortcutW / 2 - 5;
+    const mapX = bagX - shortcutW - 6;
+    const makeShortcut = (
+      x: number,
+      label: string,
+      iconTex: string,
+      onPress: () => void,
+    ): { setVisible: (visible: boolean) => void } => {
+      const back = this.add.graphics();
+      back.fillStyle(0x061424, 0.97);
+      back.fillRoundedRect(-shortcutW / 2, -shortcutH / 2, shortcutW, shortcutH, 3);
+      back.lineStyle(1.5, 0xd9bd6a, 0.88);
+      back.strokeRoundedRect(-shortcutW / 2, -shortcutH / 2, shortcutW, shortcutH, 3);
+      back.lineStyle(1, 0x7c91a8, 0.5);
+      back.strokeRoundedRect(-shortcutW / 2 + 3, -shortcutH / 2 + 3, shortcutW - 6, shortcutH - 6, 2);
+      const icon = this.add.image(0, -7, iconTex).setScale(2).setTint(0xffe29a);
+      const caption = this.add
+        .text(0, 14, label, {
+          fontFamily: FONT,
+          fontSize: '9px',
+          color: '#f7f3e8',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5);
+      caption.setShadow(0, 1, '#000000', 2);
+      const root = this.add.container(x, shortcutY, [back, icon, caption]).setDepth(depth + 2);
+      const hit = this.add
+        .zone(x, shortcutY, shortcutW, shortcutH)
+        .setDepth(depth + 3)
+        .setInteractive({ useHandCursor: true });
+      hit.on('pointerdown', onPress);
+      return {
+        setVisible: (visible: boolean): void => {
+          root.setVisible(visible);
+          hit.setVisible(visible);
+          if (visible) hit.setInteractive({ useHandCursor: true });
+          else hit.disableInteractive();
+        },
+      };
     };
-    const bag = new TouchButton(
-      this,
-      bagX,
-      bagY,
-      24,
-      'もちもの',
-      0x776a98,
-      depth + 2,
-      TEX.iconBag,
-      'utility',
-    );
-    bag.onChange = (down) => {
-      if (down) bus.emit('ui:open-inventory', {});
-    };
+    const mapButton = makeShortcut(mapX, 'マップ', TEX.iconMap, () => bus.emit('ui:open-map', {}));
+    const bag = makeShortcut(bagX, 'もちもの', TEX.iconBag, () => bus.emit('ui:open-inventory', {}));
     this.busOff.push(
       bus.on('boss:bar', ({ active }) => {
         bossBarActive = active;
@@ -829,7 +860,7 @@ export class UIScene extends Phaser.Scene {
         {
           stick: controls.stickStandby,
           attack: { x: baseX, y: baseY },
-          bag: { x: bagX, y: bagY },
+          bag: { x: bagX, y: shortcutY },
         },
         depth + 20,
       );

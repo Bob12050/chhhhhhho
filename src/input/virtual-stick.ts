@@ -29,8 +29,8 @@ export class VirtualStick {
     options?: { scale?: number; opacity?: number; standby?: { x: number; y: number } },
   ) {
     const scale = Phaser.Math.Clamp(options?.scale ?? 1, 0.85, 1.2);
-    this.radius = 44 * scale;
-    this.idleOpacity = Phaser.Math.Clamp(options?.opacity ?? 1, 0.5, 1);
+    this.radius = 56 * scale;
+    this.idleOpacity = Phaser.Math.Clamp(options?.opacity ?? 1, 0.8, 1);
     this.standbyX = options?.standby?.x ?? zoneRect.x + 60;
     this.standbyY = options?.standby?.y ?? zoneRect.y + zoneRect.height - 60;
     this.zone = scene.add
@@ -40,15 +40,15 @@ export class VirtualStick {
     this.zone.setDepth(depth);
 
     this.baseGfx = scene.add
-      .circle(0, 0, this.radius, 0x081522, 0.58)
-      .setStrokeStyle(1.5, 0xdce8f3, 0.22)
+      .circle(0, 0, this.radius, 0x0a1a2d, 0.72)
+      .setStrokeStyle(1.5, 0xe8cb79, 0.58)
       .setDepth(depth);
     this.thumbGfx = scene.add
-      .circle(0, 0, 18 * scale, 0x294b68, 0.82)
-      .setStrokeStyle(1, 0xe6f0f6, 0.32)
+      .circle(0, 0, 20 * scale, 0x234b76, 0.94)
+      .setStrokeStyle(1.5, 0xe8cb79, 0.7)
       .setDepth(depth + 1);
-    this.baseGfx.setPosition(this.standbyX, this.standbyY).setAlpha(0.56 * this.idleOpacity);
-    this.thumbGfx.setPosition(this.standbyX, this.standbyY).setAlpha(0.7 * this.idleOpacity);
+    this.baseGfx.setPosition(this.standbyX, this.standbyY).setAlpha(0.76 * this.idleOpacity);
+    this.thumbGfx.setPosition(this.standbyX, this.standbyY).setAlpha(0.9 * this.idleOpacity);
 
     this.zone.on('pointerdown', (p: Phaser.Input.Pointer) => this.onDown(p));
     scene.input.on('pointermove', (p: Phaser.Input.Pointer) => this.onMove(p));
@@ -74,11 +74,11 @@ export class VirtualStick {
     this.vector.set(0, 0);
     this.baseGfx
       .setPosition(this.standbyX, this.standbyY)
-      .setAlpha(0.56 * this.idleOpacity)
+      .setAlpha(0.76 * this.idleOpacity)
       .setVisible(true);
     this.thumbGfx
       .setPosition(this.standbyX, this.standbyY)
-      .setAlpha(0.7 * this.idleOpacity)
+      .setAlpha(0.9 * this.idleOpacity)
       .setVisible(true);
   }
 

@@ -26,21 +26,21 @@ export function buildControlLayout(
   const scale = Math.max(0.85, Math.min(1.2, controlScale));
   const direction = leftHanded ? 1 : -1;
   const attackX = leftHanded
-    ? insets.left + 44 * scale
-    : width - insets.right - 44 * scale;
-  const attackY = height - bottomPad - 44 * scale;
+    ? insets.left + 66 * scale
+    : width - insets.right - 66 * scale;
+  const attackY = height - bottomPad - 70 * scale;
   const stickOnRight = leftHanded;
   const stickZoneX = stickOnRight ? width / 2 : 0;
 
   return {
     attack: { x: attackX, y: attackY },
-    skill1: { x: attackX + 76 * scale * direction, y: attackY + 6 * scale },
-    skill2: { x: attackX + 60 * scale * direction, y: attackY - 58 * scale },
-    dodge: { x: attackX - 2 * scale * direction, y: attackY - 76 * scale },
-    potion: { x: attackX + 64 * scale * direction, y: attackY - 122 * scale },
+    skill1: { x: attackX + 54 * scale * direction, y: attackY - 62 * scale },
+    skill2: { x: attackX + 4 * scale * direction, y: attackY - 106 * scale },
+    dodge: { x: attackX + 70 * scale * direction, y: attackY - 118 * scale },
+    potion: { x: attackX + 8 * scale * direction, y: attackY - 164 * scale },
     potionCount: {
-      x: attackX + 44 * scale * direction,
-      y: attackY - 138 * scale,
+      x: attackX + 28 * scale * direction,
+      y: attackY - 180 * scale,
     },
     stickZone: {
       x: stickZoneX,
@@ -50,9 +50,9 @@ export function buildControlLayout(
     },
     stickStandby: {
       x: stickOnRight
-        ? width - insets.right - 60 * scale
-        : insets.left + 60 * scale,
-      y: attackY,
+        ? width - insets.right - 68 * scale
+        : insets.left + 68 * scale,
+      y: attackY - 24 * scale,
     },
   };
 }
