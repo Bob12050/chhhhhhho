@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#081321" />
+    <title>鉄装備・試着</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: #050b12;
+        color: #edf3f8;
+      }
+
+      * {
+        box-sizing: border-box;
+        letter-spacing: 0;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background: #050b12;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .app {
+        width: min(100%, 520px);
+        min-height: 100vh;
+        margin: 0 auto;
+        background: #0b1522;
+        border-inline: 1px solid #1e2d3d;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 58px;
+        padding: max(10px, env(safe-area-inset-top)) 16px 10px;
+        background: #0d1a2a;
+        border-bottom: 1px solid #2e4053;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.2;
+      }
+
+      #count {
+        min-width: 54px;
+        color: #f4d676;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: right;
+      }
+
+      main {
+        padding: 12px 12px max(24px, env(safe-area-inset-bottom));
+      }
+
+      .segment {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 4px;
+        margin-bottom: 10px;
+        padding: 4px;
+        background: #101f30;
+        border: 1px solid #26384b;
+        border-radius: 6px;
+      }
+
+      .segment button,
+      .mode button,
+      .commands button {
+        min-height: 40px;
+        padding: 7px 5px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background: transparent;
+        color: #aebccc;
+      }
+
+      .segment button[aria-pressed="true"],
+      .mode button[aria-pressed="true"] {
+        background: #253b51;
+        border-color: #d9b95e;
+        color: #ffffff;
+        font-weight: 700;
+      }
+
+      .stage {
+        position: relative;
+        display: grid;
+        place-items: center;
+        min-height: min(58vh, 520px);
+        overflow: hidden;
+        background: #081321;
+        border: 1px solid #2a3b4d;
+        border-radius: 6px;
+      }
+
+      .stage::after {
+        position: absolute;
+        right: 8%;
+        bottom: 7%;
+        left: 8%;
+        height: 1px;
+        background: #25384c;
+        content: "";
+      }
+
+      canvas {
+        position: relative;
+        z-index: 1;
+        display: block;
+        width: min(100%, 360px);
+        height: auto;
+        aspect-ratio: 360 / 500;
+        image-rendering: pixelated;
+      }
+
+      .mode {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        margin: 10px 0;
+        padding: 4px;
+        background: #101f30;
+        border: 1px solid #26384b;
+        border-radius: 6px;
+      }
+
+      fieldset {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      .part {
+        display: flex;
+        align-items: center;
+        min-height: 48px;
+        padding: 8px 10px;
+        background: #122235;
+        border: 1px solid #2a3c50;
+        border-radius: 6px;
+        color: #dce6ef;
+        font-size: 14px;
+        font-weight: 650;
+      }
+
+      .part:has(input:checked) {
+        background: #1c3044;
+        border-color: #a98c3e;
+      }
+
+      .part input {
+        width: 20px;
+        height: 20px;
+        margin: 0 9px 0 0;
+        accent-color: #d8b54f;
+      }
+
+      .commands {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .commands button {
+        background: #182a3d;
+        border-color: #34485d;
+        color: #eaf0f6;
+      }
+
+      button:focus-visible,
+      input:focus-visible {
+        outline: 2px solid #f1cf69;
+        outline-offset: 2px;
+      }
+
+      button:active {
+        background: #304961;
+      }
+
+      button:disabled {
+        cursor: default;
+        opacity: 0.45;
+      }
+
+      #loading {
+        position: absolute;
+        z-index: 2;
+        color: #b7c4d1;
+        font-size: 14px;
+      }
+
+      @media (min-width: 700px) {
+        .app {
+          margin-block: 18px;
+          min-height: calc(100vh - 36px);
+          border: 1px solid #26384b;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <h1>鉄装備・試着</h1>
+        <output id="count">6 / 6</output>
+      </header>
+
+      <main>
+        <nav class="segment" aria-label="向き">
+          <button type="button" data-direction="0" aria-pressed="true">正面</button>
+          <button type="button" data-direction="1" aria-pressed="false">背面</button>
+          <button type="button" data-direction="2" aria-pressed="false">左</button>
+          <button type="button" data-direction="3" aria-pressed="false">斜前</button>
+          <button type="button" data-direction="4" aria-pressed="false">斜後</button>
+        </nav>
+
+        <section class="stage" aria-label="キャラクター表示">
+          <span id="loading">読み込み中</span>
+          <canvas id="preview" width="360" height="500"></canvas>
+        </section>
+
+        <div class="mode" aria-label="表示モード">
+          <button type="button" data-mode="tryon" aria-pressed="true">試着</button>
+          <button type="button" data-mode="reference" aria-pressed="false">完成見本</button>
+        </div>
+
+        <fieldset id="parts" aria-label="装備部位">
+          <label class="part"><input type="checkbox" data-layer="head" checked />頭</label>
+          <label class="part"><input type="checkbox" data-layer="torso" checked />胴</label>
+          <label class="part"><input type="checkbox" data-layer="hands" checked />手</label>
+          <label class="part"><input type="checkbox" data-layer="feet" checked />足</label>
+          <label class="part"><input type="checkbox" data-layer="sword" checked />剣</label>
+          <label class="part"><input type="checkbox" data-layer="shield" checked />盾</label>
+        </fieldset>
+
+        <div class="commands">
+          <button type="button" id="equip-all">全装備</button>
+          <button type="button" id="clear-all">すべて外す</button>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const TILE_W = 360;
+      const TILE_H = 500;
+      const root = "previews/paperdoll-iron/";
+      const layerNames = ["head", "torso", "hands", "feet", "sword", "shield"];
+      const armorLayerNames = ["head", "torso", "hands", "feet"];
+      const weaponLayerNames = ["sword", "shield"];
+      const files = {
+        base: "base-atlas-v1.png",
+        reference: "reference-atlas-v1.png",
+        head: "head-atlas-v1.png",
+        torso: "torso-atlas-v1.png",
+        hands: "hands-atlas-v1.png",
+        feet: "feet-atlas-v1.png",
+        sword: "sword-atlas-v1.png",
+        shield: "shield-atlas-v1.png",
+        ...Object.fromEntries(
+          armorLayerNames.map((name) => [`mask-${name}`, `mask-${name}-atlas-v1.png`]),
+        ),
+      };
+
+      const canvas = document.querySelector("#preview");
+      const context = canvas.getContext("2d");
+      context.imageSmoothingEnabled = false;
+      const images = {};
+      const enabled = Object.fromEntries(layerNames.map((name) => [name, true]));
+      let direction = 0;
+      let mode = "tryon";
+
+      function loadImage(src) {
+        return new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => resolve(image);
+          image.onerror = reject;
+          image.src = src;
+        });
+      }
+
+      function drawTile(image) {
+        context.drawImage(
+          image,
+          direction * TILE_W,
+          0,
+          TILE_W,
+          TILE_H,
+          0,
+          0,
+          TILE_W,
+          TILE_H,
+        );
+      }
+
+      function render() {
+        if (!images.base) return;
+        context.clearRect(0, 0, TILE_W, TILE_H);
+
+        if (mode === "reference") {
+          drawTile(images.reference);
+          return;
+        }
+
+        drawTile(images.base);
+        for (const layer of armorLayerNames) {
+          if (!enabled[layer]) continue;
+          context.save();
+          context.globalCompositeOperation = "destination-out";
+          drawTile(images[`mask-${layer}`]);
+          context.restore();
+          drawTile(images[layer]);
+        }
+        for (const layer of weaponLayerNames) {
+          if (enabled[layer]) drawTile(images[layer]);
+        }
+      }
+
+      function syncControls() {
+        document.querySelectorAll("[data-direction]").forEach((button) => {
+          button.setAttribute("aria-pressed", String(Number(button.dataset.direction) === direction));
+        });
+        document.querySelectorAll("[data-mode]").forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
+        });
+        const equipped = layerNames.filter((name) => enabled[name]).length;
+        document.querySelector("#count").textContent =
+          mode === "reference" ? "完成見本" : `${equipped} / ${layerNames.length}`;
+        document.querySelector("#parts").toggleAttribute("disabled", mode === "reference");
+        document.querySelectorAll(".commands button").forEach((button) => {
+          button.disabled = mode === "reference";
+        });
+      }
+
+      document.querySelectorAll("[data-direction]").forEach((button) => {
+        button.addEventListener("click", () => {
+          direction = Number(button.dataset.direction);
+          syncControls();
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-mode]").forEach((button) => {
+        button.addEventListener("click", () => {
+          mode = button.dataset.mode;
+          syncControls();
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-layer]").forEach((input) => {
+        input.addEventListener("change", () => {
+          enabled[input.dataset.layer] = input.checked;
+          syncControls();
+          render();
+        });
+      });
+
+      function setAll(value) {
+        document.querySelectorAll("[data-layer]").forEach((input) => {
+          input.checked = value;
+          enabled[input.dataset.layer] = value;
+        });
+        syncControls();
+        render();
+      }
+
+      document.querySelector("#equip-all").addEventListener("click", () => setAll(true));
+      document.querySelector("#clear-all").addEventListener("click", () => setAll(false));
+
+      Promise.all(
+        Object.entries(files).map(async ([name, file]) => {
+          images[name] = await loadImage(`${root}${file}`);
+        }),
+      )
+        .then(() => {
+          document.querySelector("#loading").hidden = true;
+          syncControls();
+          render();
+        })
+        .catch(() => {
+          document.querySelector("#loading").textContent = "画像を読み込めませんでした";
+        });
+    </script>
+  </body>
+</html>
