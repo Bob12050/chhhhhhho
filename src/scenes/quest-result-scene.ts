@@ -153,7 +153,7 @@ export class QuestResultScene extends Phaser.Scene {
 
   private statBox(cx: number, y: number, width: number, label: string, value: string, color: string, depth: number): void {
     this.add.rectangle(cx, y + 18, width, 38, 0x151a2e, 0.96).setStrokeStyle(1, 0xffffff, 0.12).setDepth(depth);
-    this.add.text(cx, y + 8, label, { fontFamily: FONT, fontSize: '9px', color: UI.sub }).setOrigin(0.5).setDepth(depth + 1);
+    this.add.text(cx, y + 8, label, { fontFamily: FONT, fontSize: '10px', color: UI.sub, fontStyle: 'bold' }).setOrigin(0.5).setDepth(depth + 1);
     this.add.text(cx, y + 24, value, { fontFamily: FONT, fontSize: '14px', color, fontStyle: 'bold' }).setOrigin(0.5).setDepth(depth + 1);
   }
 

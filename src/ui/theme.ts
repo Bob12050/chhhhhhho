@@ -7,17 +7,52 @@ import { TEX } from '@/assets/gen/textures';
  * future tweaks happen in a single file. Scenes import from here instead of
  * hardcoding `'system-ui, sans-serif'` and scattered hex values.
  */
-/**
- * UI body font. A clean device-native gothic (Hiragino on iOS, Noto/Yu on
- * Android/desktop) — this is what pulls the menus out of the "retro doujin"
- * look while the pixel-art world stays crisp. No web-font download (CDN禁止);
- * we ride the OS font, which on the target devices is a polished rounded gothic.
- */
+/** Self-hosted Japanese UI face: consistent metrics and weight on every device. */
 export const FONT =
-  "'Hiragino Maru Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', 'YuGothic', system-ui, sans-serif";
+  "'M PLUS 2 Game', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', 'YuGothic', system-ui, sans-serif";
 
-/** Pixel display font (self-hosted DotGothic16 subset) — title/logo only. */
+/** Pixel display font (self-hosted DotGothic16 subset) for rare retro accents. */
 export const FONT_PIXEL = "'DotGothic16', system-ui, sans-serif";
+
+let typographyInstalled = false;
+const READABLE_TEXT_COLORS: Record<string, string> = {
+  '#9aa0b5': '#bac5d5',
+  '#9aa0b4': '#bac5d5',
+  '#7e8499': '#a3b0c2',
+  '#7f8aa4': '#a3b0c2',
+  '#8995ae': '#aab7c9',
+  '#8fa0b8': '#aebed1',
+};
+
+/**
+ * Phaser Text defaults to a thin 400-weight, 1x canvas. At this game's compact
+ * logical resolution that made Japanese counters and menu copy look brittle.
+ * Normalize all M PLUS text to medium/bold weights and a sharper 1.5x source
+ * texture without bringing back the heavy menu cost of full 2x text atlases.
+ */
+export function installTypographyDefaults(): void {
+  if (typographyInstalled) return;
+  typographyInstalled = true;
+  const prototype = Phaser.GameObjects.TextStyle.prototype;
+  const originalSetStyle = prototype.setStyle;
+  prototype.setStyle = function (
+    style: Phaser.Types.GameObjects.Text.TextStyle,
+    updateText?: boolean,
+    setDefaults?: boolean,
+  ): Phaser.GameObjects.Text {
+    const next = style ? { ...style } : {};
+    const family = next.fontFamily ?? (!setDefaults ? this.fontFamily : undefined);
+    if (typeof family === 'string' && family.includes('M PLUS 2 Game')) {
+      next.fontStyle = next.fontStyle === 'bold' ? '700' : next.fontStyle || '500';
+      next.resolution ??= 1.5;
+      next.letterSpacing ??= 0;
+      if (typeof next.color === 'string') {
+        next.color = READABLE_TEXT_COLORS[next.color.toLowerCase()] ?? next.color;
+      }
+    }
+    return originalSetStyle.call(this, next, updateText, setDefaults);
+  };
+}
 
 /**
  * HUD render depth floor. World objects Y-sort at `round(y)` (at most a few
@@ -36,9 +71,9 @@ export const UI = {
   panel: 0x10121c, // framed boxes (HUD bars etc.)
   divider: 0x333a5a, // thin separators between rows
   // Text (strings)
-  white: '#ffffff',
-  sub: '#9aa0b5', // secondary / descriptions
-  gold: '#ffd86b', // currency / confirm actions
+  white: '#f7f9fc',
+  sub: '#bac5d5', // secondary / descriptions
+  gold: '#ffdc78', // currency / confirm actions
   good: '#9fe3a0', // affordable / success
   bad: '#e58a8a', // insufficient / danger
   link: '#9fd0ff', // tappable actions
@@ -50,11 +85,11 @@ export const UI = {
 
 /** Common text-style presets (spread into add.text). */
 export const TEXT = {
-  title: { fontFamily: FONT, fontSize: '18px', color: UI.white },
-  heading: { fontFamily: FONT, fontSize: '15px', color: UI.white },
-  body: { fontFamily: FONT, fontSize: '13px', color: UI.white },
-  small: { fontFamily: FONT, fontSize: '11px', color: UI.sub },
-  button: { fontFamily: FONT, fontSize: '16px', color: UI.gold },
+  title: { fontFamily: FONT, fontSize: '18px', color: UI.white, fontStyle: '700' },
+  heading: { fontFamily: FONT, fontSize: '15px', color: UI.white, fontStyle: '700' },
+  body: { fontFamily: FONT, fontSize: '13px', color: UI.white, fontStyle: '500' },
+  small: { fontFamily: FONT, fontSize: '11px', color: UI.sub, fontStyle: '500' },
+  button: { fontFamily: FONT, fontSize: '16px', color: UI.gold, fontStyle: '700' },
 } satisfies Record<string, Phaser.Types.GameObjects.Text.TextStyle>;
 
 /** Cover the viewport without distorting a portrait illustration. */
@@ -196,7 +231,12 @@ export function tabChip(
   const h = 34; // finger-sized (30 was too easy to miss on device)
   const bw = width - 4;
   const txt = scene.add
-    .text(opts?.icon ? 8 : 0, 0, label, { fontFamily: FONT, fontSize: '13px', color: '#fff' })
+    .text(opts?.icon ? 8 : 0, 0, label, {
+      fontFamily: FONT,
+      fontSize: '13px',
+      color: '#f7f9fc',
+      fontStyle: 'bold',
+    })
     .setOrigin(0.5);
   const g = scene.add.graphics();
   const icon = opts?.icon && scene.textures.exists(opts.icon)
@@ -245,7 +285,12 @@ export function pillButton(
   const size = opts?.size ?? 14;
   const bg = hexNum(opts?.bg ?? '#2a3050');
   const txt = scene.add
-    .text(0, 0, label, { fontFamily: FONT, fontSize: `${size}px`, color: opts?.color ?? '#ffffff' })
+    .text(0, 0, label, {
+      fontFamily: FONT,
+      fontSize: `${size}px`,
+      color: opts?.color ?? '#f7f9fc',
+      fontStyle: 'bold',
+    })
     .setOrigin(0.5);
   const padX = 14;
   const padY = 9;

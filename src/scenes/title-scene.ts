@@ -1,8 +1,7 @@
 import Phaser from 'phaser';
 import { applyPendingUpdate, isUpdateReady } from '@/core/pwa';
 import { bus } from '@/core/event-bus';
-// Title/logo keeps the pixel display font (the retro look the player liked).
-import { FONT_PIXEL as FONT } from '@/ui/theme';
+import { FONT } from '@/ui/theme';
 import { bgm } from '@/audio/bgm-engine';
 import { TEX } from '@/assets/gen/textures';
 import { frameIndex } from '@/paperdoll/pose-atlas';
@@ -211,24 +210,26 @@ export class TitleScene extends Phaser.Scene {
       .text(cx, cy, GAME_TITLE, {
         fontFamily: FONT,
         fontSize: '30px',
-        color: '#ffffff',
+        color: '#f8fbff',
         fontStyle: 'bold',
-        stroke: '#1a1030',
-        strokeThickness: 8,
+        stroke: '#10182a',
+        strokeThickness: 3,
       })
       .setOrigin(0.5)
       .setDepth(21)
-      .setShadow(0, 4, '#000000', 0, false, true);
+      .setShadow(0, 3, '#000000', 3, false, true);
     const sub = this.add
       .text(cx, cy + 28, '狩って、作って、強くなる', {
         fontFamily: FONT,
         fontSize: '12px',
         color: '#ffe9a8',
-        stroke: '#1a1030',
-        strokeThickness: 4,
+        fontStyle: 'bold',
+        stroke: '#10182a',
+        strokeThickness: 1,
       })
       .setOrigin(0.5)
-      .setDepth(21);
+      .setDepth(21)
+      .setShadow(0, 1, '#000000', 2);
     // Gold rule lines flanking the subtitle.
     const rule = this.add.graphics().setDepth(21);
     rule.fillStyle(0xf5c542, 0.8);

@@ -72,7 +72,7 @@ export class Player {
     this.jobPlateText = scene.add
       .text(0, 0, '', {
         fontFamily: FONT,
-        fontSize: '8px',
+        fontSize: '9px',
         color: '#fff0aa',
         fontStyle: 'bold',
       })

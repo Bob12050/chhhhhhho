@@ -51,9 +51,8 @@
         display: block;
         max-width: 100%;
         max-height: 100%;
-        /* Keep the final browser resize on the same nearest-neighbour grid as Phaser. */
-        image-rendering: crisp-edges;
-        image-rendering: pixelated;
+        /* Phaser smooths fractional scaling while preserving pixel-art edges. */
+        image-rendering: auto;
       }
       @media (min-width: 700px) {
         #app {

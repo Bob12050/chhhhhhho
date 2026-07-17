@@ -34,11 +34,14 @@ import { installLifecycle } from '@/core/lifecycle';
 import { registerServiceWorker } from '@/core/pwa';
 import { soundEngine } from '@/audio/sound-engine';
 import { installTestHooks } from '@/core/test-hooks';
+import { installTypographyDefaults } from '@/ui/theme';
 
 // Logical size: width is fixed at 360; height follows the device aspect ratio
-// clamped to [640, 800]. Integer zoom + letterbox is handled by Phaser FIT
-// with pixelArt + roundPixels so dots stay crisp.
+// clamped to [640, 800]. Phaser's smooth-pixel shader keeps authored sprites
+// crisp while allowing canvas text and fractional phone scaling to stay clean.
 const logicalHeight = computeLogicalHeight(window.innerWidth, window.innerHeight);
+
+installTypographyDefaults();
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -46,10 +49,8 @@ const config: Phaser.Types.Core.GameConfig = {
   backgroundColor: '#0e0f1a',
   width: LOGICAL_WIDTH,
   height: logicalHeight,
-  pixelArt: true, // Nearest filtering, no antialias
-  roundPixels: true, // integer render positions
-  antialias: false,
-  antialiasGL: false,
+  smoothPixelArt: true,
+  roundPixels: true,
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -72,9 +73,7 @@ const config: Phaser.Types.Core.GameConfig = {
     },
   },
   render: {
-    antialias: false,
-    antialiasGL: false,
-    pixelArt: true,
+    smoothPixelArt: true,
     roundPixels: true,
   },
   scene: [
@@ -118,13 +117,18 @@ function startGame(): void {
   void registerServiceWorker();
 }
 
-// Load the pixel UI font (DotGothic16, self-hosted subset) BEFORE the game
-// starts: Phaser bakes text to canvas and won't reflow once the font arrives,
-// so scenes must be created with it already available. Base-prefixed so it
-// resolves under the GitHub Pages sub-path. Falls back after a short timeout.
-const fontUrl = import.meta.env.BASE_URL + 'assets/fonts/dotgothic16-subset.woff2';
+// Phaser bakes text into textures, so both faces must be ready before scenes
+// are created. The Japanese face is a compact game-specific OFL subset.
+const bodyFontUrl = import.meta.env.BASE_URL + 'assets/fonts/m-plus-2-game.woff2';
+const pixelFontUrl = import.meta.env.BASE_URL + 'assets/fonts/dotgothic16-subset.woff2';
 const fontStyle = document.createElement('style');
-fontStyle.textContent = `@font-face{font-family:'DotGothic16';font-style:normal;font-weight:400;font-display:swap;src:url('${fontUrl}') format('woff2');}`;
+fontStyle.textContent = `
+@font-face{font-family:'M PLUS 2 Game';font-style:normal;font-weight:100 900;font-display:block;src:url('${bodyFontUrl}') format('woff2-variations');}
+@font-face{font-family:'DotGothic16';font-style:normal;font-weight:400;font-display:block;src:url('${pixelFontUrl}') format('woff2');}
+`;
 document.head.appendChild(fontStyle);
-const fontReady = (document.fonts?.load('16px "DotGothic16"') ?? Promise.resolve()).catch(() => {});
-Promise.race([fontReady, new Promise((r) => setTimeout(r, 1500))]).finally(startGame);
+const fontReady = Promise.all([
+  document.fonts?.load('500 16px "M PLUS 2 Game"', '冒険者の装備と経験値') ?? Promise.resolve(),
+  document.fonts?.load('16px "DotGothic16"', 'Pixel Action RPG') ?? Promise.resolve(),
+]).catch(() => {});
+Promise.race([fontReady, new Promise((resolve) => setTimeout(resolve, 2500))]).finally(startGame);

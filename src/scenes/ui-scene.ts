@@ -162,7 +162,7 @@ export class UIScene extends Phaser.Scene {
       this.add
         .text(x + r - 8, y - r + 8, '', {
           fontFamily: FONT,
-          fontSize: '7px',
+          fontSize: '8px',
           color: '#a8e4ff',
           fontStyle: 'bold',
         })
@@ -363,7 +363,7 @@ export class UIScene extends Phaser.Scene {
     const skillToastMeta = this.add
       .text(-skillToastW / 2 + 42, 8, '', {
         fontFamily: FONT,
-        fontSize: '7px',
+        fontSize: '9px',
         color: '#b9c7d8',
       })
       .setOrigin(0, 0.5);
@@ -489,12 +489,12 @@ export class UIScene extends Phaser.Scene {
 
     const barY = PH / 2;
     const levelLabel = this.add
-      .text(6, barY, 'LV', { fontFamily: FONT, fontSize: '7px', color: '#eef5ff', fontStyle: 'bold' })
+      .text(6, barY, 'LV', { fontFamily: FONT, fontSize: '8px', color: '#eef5ff', fontStyle: 'bold' })
       .setOrigin(0, 0.5);
     levelLabel.setShadow(0, 1, '#000000', 2);
     panel.add(levelLabel);
     const levelText = this.add
-      .text(30, barY, '', { fontFamily: FONT, fontSize: '9px', color: '#fff0a6', fontStyle: 'bold' })
+      .text(30, barY, '', { fontFamily: FONT, fontSize: '10px', color: '#fff0a6', fontStyle: 'bold' })
       .setOrigin(0.5);
     levelText.setShadow(0, 1, '#000000', 2);
     panel.add(levelText);
@@ -514,14 +514,14 @@ export class UIScene extends Phaser.Scene {
     };
     const statLabel = (x: number, label: string): void => {
       const text = this.add
-        .text(x, barY, label, { fontFamily: FONT, fontSize: '6px', color: '#eef5ff', fontStyle: 'bold' })
+        .text(x, barY, label, { fontFamily: FONT, fontSize: '8px', color: '#eef5ff', fontStyle: 'bold' })
         .setOrigin(0, 0.5);
       text.setShadow(0, 1, '#000000', 2);
       panel.add(text);
     };
     const barText = (x: number, width: number): Phaser.GameObjects.Text => {
       const val = this.add
-        .text(x + width / 2, barY, '', { fontFamily: FONT, fontSize: '6px', color: '#ffffff', fontStyle: 'bold' })
+        .text(x + width / 2, barY, '', { fontFamily: FONT, fontSize: '8px', color: '#ffffff', fontStyle: 'bold' })
         .setOrigin(0.5);
       val.setShadow(0, 1, '#000000', 2);
       panel.add(val);
@@ -627,10 +627,10 @@ export class UIScene extends Phaser.Scene {
       .setAlpha(0.78);
     trRoot.add([trackerBack, trackerIcon]);
     const trTitle = this.add
-      .text(34, 5, '', { fontFamily: FONT, fontSize: '9px', color: '#f5f1e8', fontStyle: 'bold' })
+      .text(34, 4, '', { fontFamily: FONT, fontSize: '10px', color: '#f5f1e8', fontStyle: 'bold' })
       .setShadow(0, 1, '#000000', 2);
     const trObj = this.add
-      .text(34, 18, '', { fontFamily: FONT, fontSize: '8px', color: '#bfcbd8' })
+      .text(34, 18, '', { fontFamily: FONT, fontSize: '9px', color: '#c8d2df' })
       .setShadow(0, 1, '#000000', 2);
     const trGuideDivider = this.add.graphics().setVisible(false);
     trGuideDivider.lineStyle(1, 0xffffff, 0.16);
@@ -640,7 +640,7 @@ export class UIScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setVisible(false);
     const trGuideDistance = this.add
-      .text(trW - 22, 20, '', { fontFamily: FONT, fontSize: '7px', color: '#e8d899' })
+      .text(trW - 22, 19, '', { fontFamily: FONT, fontSize: '8px', color: '#f0dfa1' })
       .setOrigin(0.5, 0)
       .setShadow(0, 1, '#000000', 2)
       .setVisible(false);
@@ -724,7 +724,7 @@ export class UIScene extends Phaser.Scene {
       .setVisible(false);
     const miniDot = this.add.circle(0, 0, 3.5, 0xffe16a).setStrokeStyle(1.5, 0x2a1820, 1);
     const miniName = this.add
-      .text(0, 58, '', { fontFamily: FONT, fontSize: '8px', color: '#fff1bd' })
+      .text(0, 58, '', { fontFamily: FONT, fontSize: '9px', color: '#fff1bd', fontStyle: 'bold' })
       .setOrigin(0.5)
       .setAlpha(0.76)
       .setShadow(0, 1, '#000000', 2);
@@ -984,7 +984,7 @@ export class UIScene extends Phaser.Scene {
     const tag = this.add
       .text(-panelW / 2 + 42, -11, notice.kind === 'exp' ? 'EXP GAIN' : 'ITEM GET', {
         fontFamily: FONT,
-        fontSize: '7px',
+        fontSize: '8px',
         color: notice.color,
         fontStyle: 'bold',
       })
@@ -1099,7 +1099,7 @@ export class UIScene extends Phaser.Scene {
     const tag = this.add
       .text(textX, -15, data.complete ? 'OBJECTIVE COMPLETE' : 'QUEST PROGRESS', {
         fontFamily: FONT,
-        fontSize: '8px',
+        fontSize: '9px',
         color: data.complete ? '#ffd86b' : '#8fd0ff',
         fontStyle: 'bold',
       })

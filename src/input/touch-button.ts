@@ -64,7 +64,12 @@ export class TouchButton {
       this.hasIconContent = true;
       this.icon = scene.add.image(x, text ? y - 7 : y, iconTex).setScale(scale).setDepth(depth + 1);
       this.label = scene.add
-        .text(x, y + this.radius - 10, text, { fontFamily: FONT, fontSize: '8px', color: '#ffffff' })
+        .text(x, y + this.radius - 10, text, {
+          fontFamily: FONT,
+          fontSize: '9px',
+          color: '#ffffff',
+          fontStyle: 'bold',
+        })
         .setOrigin(0.5)
         .setDepth(depth + 1);
     } else {

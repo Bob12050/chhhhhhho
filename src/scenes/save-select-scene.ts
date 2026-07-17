@@ -96,7 +96,7 @@ export class SaveSelectScene extends Phaser.Scene {
       this.add.text(90, y + 55, mapName, { fontFamily: FONT, fontSize: '11px', color: '#d8e6ff' }).setDepth(2);
       const when = summary.savedAt ? new Date(summary.savedAt).toLocaleString('ja-JP') : '';
       this.add
-        .text(90, y + 72, when, { fontFamily: FONT, fontSize: '9px', color: '#8fa0b8' })
+        .text(90, y + 72, when, { fontFamily: FONT, fontSize: '10px', color: '#aebed1' })
         .setDepth(2);
       pillButton(this, w - 62, y + 27, 'つづき', () => void beginGame(this, slot, 'load'), {
         color: '#bfffce',

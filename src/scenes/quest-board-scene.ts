@@ -357,7 +357,7 @@ export class QuestBoardScene extends Phaser.Scene {
     this.content.add(
       this.add.text(x, y - 7, '★', {
         fontFamily: FONT,
-        fontSize: '8px',
+        fontSize: '9px',
         color: this.rankColor(rank),
       }).setOrigin(0.5),
     );

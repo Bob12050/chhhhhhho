@@ -1416,7 +1416,7 @@ export class InventoryScene extends Phaser.Scene {
       const state = this.add
         .text(x + cardW - 9, cardY + 13, selected ? '選択中' : '', {
           fontFamily: FONT,
-          fontSize: '8px',
+          fontSize: '9px',
           color: '#ffe9a8',
         })
         .setOrigin(1, 0)
@@ -1432,8 +1432,8 @@ export class InventoryScene extends Phaser.Scene {
       const meta = this.add
         .text(x + 10, cardY + 61, this.compactSkillText(def ? this.skillMeta(def) : '－', 18), {
           fontFamily: FONT,
-          fontSize: '9px',
-          color: '#9fb5cf',
+          fontSize: '10px',
+          color: '#b9c9da',
         })
         .setDepth(3);
       card.on('pointerup', () => {
@@ -1520,7 +1520,7 @@ export class InventoryScene extends Phaser.Scene {
       this.content.add(
         this.add.text(18, y + 46, this.skillMeta(def), {
           fontFamily: FONT,
-          fontSize: '9px',
+          fontSize: '10px',
           color: isElement(def.element) && def.element !== 'none'
             ? `#${ELEMENT_COLOR[def.element].toString(16).padStart(6, '0')}`
             : '#9fb5cf',
@@ -1595,8 +1595,8 @@ export class InventoryScene extends Phaser.Scene {
           this.content.add(
             this.add.text(18, y + 45, this.skillMeta(def), {
               fontFamily: FONT,
-              fontSize: '9px',
-              color: '#9fb5cf',
+              fontSize: '10px',
+              color: '#b9c9da',
             }),
           );
         }

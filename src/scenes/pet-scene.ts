@@ -182,7 +182,7 @@ export class PetScene extends Phaser.Scene {
     );
     if (lv < PET_MAX_LEVEL) {
       this.content.add(
-        this.add.text(70 + barW + 8, y + 26, `あと${petExpToNext(exp)}`, { fontFamily: FONT, fontSize: '9px', color: '#7e8499' }).setOrigin(0, 0.5),
+        this.add.text(70 + barW + 8, y + 26, `あと${petExpToNext(exp)}`, { fontFamily: FONT, fontSize: '10px', color: '#aeb9c9' }).setOrigin(0, 0.5),
       );
     }
     this.content.add(
@@ -190,7 +190,7 @@ export class PetScene extends Phaser.Scene {
     );
     if (def.description) {
       this.content.add(
-        this.add.text(70, y + 54, def.description, { fontFamily: FONT, fontSize: '9px', color: '#7e8499' }),
+        this.add.text(70, y + 54, def.description, { fontFamily: FONT, fontSize: '10px', color: '#aeb9c9' }),
       );
     }
 
