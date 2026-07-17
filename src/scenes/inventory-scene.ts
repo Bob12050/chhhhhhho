@@ -309,7 +309,7 @@ export class InventoryScene extends Phaser.Scene {
   /**
    * Stat difference between an item and whatever occupies its slot right now
    * (raw item stats — contributions are additive so this equals the real
-   * derived-stat change). Top 3 by magnitude, "…" when more differ.
+   * derived-stat change). The two largest changes stay legible on mobile.
    */
   private equipDiff(def: NonNullable<ReturnType<typeof getEquipment>>): { text: string; up: boolean }[] {
     const curId = gameState.equipment[def.slot as EquipSlot];
@@ -323,7 +323,7 @@ export class InventoryScene extends Phaser.Scene {
       if (d !== 0) diffs.push({ key: k, d });
     }
     diffs.sort((a, b) => Math.abs(b.d) - Math.abs(a.d));
-    const out = diffs.slice(0, 3).map(({ key, d }) => {
+    const out = diffs.slice(0, 2).map(({ key, d }) => {
       const val =
         key === 'critRate' || key === 'dropRate' || key === 'lifesteal' || key === 'goldRate'
           ? `${Math.round(d * 100)}%`
@@ -332,12 +332,16 @@ export class InventoryScene extends Phaser.Scene {
             : `${Math.round(d)}`;
       return { text: `${DIFF_LABEL[key] ?? key}${d > 0 ? '+' : ''}${val}`, up: d > 0 };
     });
-    if (diffs.length > 3) out.push({ text: '…', up: true });
+    if (diffs.length > 2) out.push({ text: '…', up: true });
     return out;
   }
 
   private renderTab(): void {
-    this.viewTop = this.tab === 'skill' ? (this.skillView === 'loadout' ? 274 : 150) : 86;
+    this.viewTop = this.tab === 'equipment'
+      ? 258
+      : this.tab === 'skill'
+        ? (this.skillView === 'loadout' ? 274 : 150)
+        : 86;
     this.content.removeAll(true);
     this.eqQueue = [];
     this.eqLive.clear();
@@ -456,13 +460,16 @@ export class InventoryScene extends Phaser.Scene {
   private iconCell(rowY: number, height: number, tex: string, iconTint: number, border: number): void {
     const cx = 26;
     const cy = rowY + height / 2;
+    const size = height >= 56 ? 36 : 30;
     this.content.add(
       this.add
-        .rectangle(cx, cy, 30, 30, 0x1c2036, 1)
+        .rectangle(cx, cy, size, size, 0x12182a, 1)
         .setStrokeStyle(2, border, 0.95),
     );
     if (this.textures.exists(tex)) {
-      this.content.add(this.add.image(cx, cy, tex).setTint(iconTint));
+      const icon = this.add.image(cx, cy, tex).setTint(iconTint);
+      if (height >= 56) icon.setDisplaySize(20, 20);
+      this.content.add(icon);
     }
   }
 
@@ -562,6 +569,11 @@ export class InventoryScene extends Phaser.Scene {
   }
 
   private renderEquipment(): void {
+    const fixedHeader = this.add
+      .rectangle(0, 86, this.scale.width, 172, 0x0b1426, 1)
+      .setOrigin(0)
+      .setDepth(1.9);
+    this.profileObjs.push(fixedHeader);
     this.renderProfileCard(94, 82);
     this.buildSlotChips();
     // Group identical owned pieces into one row with a count (no random
@@ -608,10 +620,10 @@ export class InventoryScene extends Phaser.Scene {
           a.localeCompare(b)
         );
       });
-      this.eqQueue.push({ kind: 'header', slot, count: ids.length, y, h: 26 });
-      y += 26;
+      this.eqQueue.push({ kind: 'header', slot, count: ids.length, y, h: 32 });
+      y += 32;
       for (const [id, count] of ids) {
-        const rowHeight = getEquipment(id)?.generated ? 58 : 44;
+        const rowHeight = getEquipment(id)?.generated ? 78 : 64;
         this.eqQueue.push({ kind: 'row', id, count, y, h: rowHeight, band: band++ });
         y += rowHeight;
       }
@@ -625,9 +637,10 @@ export class InventoryScene extends Phaser.Scene {
     const d = gameState.derived;
     this.content.add(
       this.add.text(16, y + 12, `物理攻撃 ${d.physAtk}   防御 ${d.def}   最大HP ${d.maxHp}`, {
-        fontFamily: 'system-ui, monospace',
+        fontFamily: FONT,
         fontSize: '12px',
-        color: '#cfe',
+        color: '#dcecff',
+        fontStyle: 'bold',
       }),
     );
     this.updateEquipWindow();
@@ -737,7 +750,7 @@ export class InventoryScene extends Phaser.Scene {
   /**
    * Create/destroy equipment entries so only those near the viewport are
    * live (a god-mode inventory froze the phone when every row was built up
-   * front). Heights vary (header 26 / row 44) so visibility is per entry.
+   * front). Heights vary, so visibility is calculated per entry.
    */
   private updateEquipWindow(): void {
     if (this.eqQueue.length === 0) return;
@@ -765,23 +778,33 @@ export class InventoryScene extends Phaser.Scene {
   private renderSlotHeader(slot: string, count: number, y: number): void {
     const w = this.scale.width;
     this.content.add(
-      this.add.text(16, y + 12, `― ${SLOT_LABEL[slot] ?? slot} (${count}) ―`, {
+      this.add
+        .rectangle(w / 2, y + 16, w - 24, 28, 0x0b1426, 0.88)
+        .setStrokeStyle(1, 0x33425f, 0.75),
+    );
+    this.content.add(
+      this.add.text(16, y + 16, `${SLOT_LABEL[slot] ?? slot}  ${count}個`, {
         fontFamily: FONT,
-        fontSize: '12px',
-        color: '#c9b27a',
+        fontSize: '13px',
+        color: '#ffe3a1',
+        fontStyle: 'bold',
       }).setOrigin(0, 0.5),
     );
     const curId = gameState.equipment[slot as EquipSlot];
     const curDef = curId ? getEquipment(curId) : undefined;
-    const curName = curDef
+    const fullCurName = curDef
       ? `${curDef.name}${curDef.generated?.upgradeLevel ? ` +${curDef.generated.upgradeLevel}` : ''}`
       : null;
+    const curName = fullCurName && fullCurName.length > 12
+      ? `${fullCurName.slice(0, 12)}…`
+      : fullCurName;
     this.content.add(
       this.add
-        .text(w - 16, y + 12, curName ? `装備中: ${curName}` : '装備なし', {
+        .text(w - 16, y + 16, curName ? `装備中  ${curName}` : '装備なし', {
           fontFamily: FONT,
-          fontSize: '11px',
-          color: curName ? '#9fe3a0' : '#7e8499',
+          fontSize: '12px',
+          color: curName ? '#b9f4c4' : '#a6adbd',
+          fontStyle: 'bold',
         })
         .setOrigin(1, 0.5),
     );
@@ -804,19 +827,23 @@ export class InventoryScene extends Phaser.Scene {
       const border = canEq ? rarityColor(def.rarity) : 0x4a4f5c;
       this.iconCell(y, rowH, this.equipIcon(def), canEq ? rarityColor(def.rarity) : 0x666a78, border);
       // Equipped pieces get a small green corner tick.
-      if (equipped) this.content.add(this.add.circle(38, y + 4, 4, 0x9fe3a0).setDepth(1));
-      const name = this.add.text(48, y + 3, `${def.name}${upgrade}${qty}${equipped ? '（装備中）' : ''}`, {
+      if (equipped) this.content.add(this.add.circle(40, y + 7, 5, 0x91f0ac).setDepth(1));
+      const name = this.add.text(48, y + 4, `${def.name}${upgrade}${qty}`, {
         fontFamily: FONT,
-        fontSize: '14px',
-        color: equipped ? '#9fe3a0' : canEq ? rarityColorHex(def.rarity) : '#666a78',
+        fontSize: '15px',
+        color: equipped ? '#ffe6a3' : canEq ? '#f7f9fc' : '#c3c8d4',
+        fontStyle: 'bold',
       });
-      name.setCrop(0, 0, Math.max(100, w - 142), 18);
+      name.setCrop(0, 0, Math.max(100, w - 146), 21);
       this.content.add(name);
-      // Rarity label (R-number + band name), coloured by rank.
-      const rarityText = this.add.text(48, y + 21, rarityLabel(def.rarity), {
+      // Keep rarity as a compact badge instead of tinting the item name.
+      const rarityText = this.add.text(48, y + 27, rarityLabel(def.rarity), {
         fontFamily: FONT,
         fontSize: '11px',
         color: rarityColorHex(def.rarity),
+        backgroundColor: '#111a2d',
+        padding: { x: 4, y: 2 },
+        fontStyle: 'bold',
       });
       this.content.add(rarityText);
       // Element badge for elemental weapons (e.g. 属性:火), coloured to match.
@@ -825,54 +852,69 @@ export class InventoryScene extends Phaser.Scene {
         const jobs = def.jobRequirements
           .map((jobId) => getJob(jobId)?.name ?? jobId)
           .join('・');
-        const badge = this.add.text(lineX, y + 21, `専用:${jobs}`, {
+        const badge = this.add.text(lineX, y + 29, `専用:${jobs}`, {
           fontFamily: FONT,
           fontSize: '11px',
-          color: '#ffd86b',
+          color: '#ffe08a',
+          fontStyle: 'bold',
         });
         this.content.add(badge);
         lineX = badge.x + badge.width + 8;
       }
       if (isElement(def.element) && def.element !== 'none') {
         const hex = `#${ELEMENT_COLOR[def.element].toString(16).padStart(6, '0')}`;
-        const badge = this.add.text(lineX, y + 21, `属性:${ELEMENT_LABEL[def.element]}`, {
+        const badge = this.add.text(lineX, y + 29, `属性:${ELEMENT_LABEL[def.element]}`, {
           fontFamily: FONT,
           fontSize: '11px',
           color: hex,
+          fontStyle: 'bold',
         });
         this.content.add(badge);
         lineX = badge.x + badge.width + 8;
       }
       // Stat diff vs the currently equipped piece (green up / red down), so
       // "should I switch?" is answerable without doing mental math.
+      lineX = 48;
       if (!equipped) {
         for (const seg of this.equipDiff(def)) {
-          const t = this.add.text(lineX, y + 21, seg.text, {
+          const t = this.add.text(lineX, y + 46, seg.text, {
             fontFamily: FONT,
-            fontSize: '11px',
-            color: seg.up ? '#9fe3a0' : '#e07a7a',
+            fontSize: '12px',
+            color: seg.up ? '#8ef0aa' : '#ff9b9b',
+            fontStyle: 'bold',
           });
           this.content.add(t);
           lineX = t.x + t.width + 6;
         }
+      } else {
+        this.content.add(
+          this.add.text(48, y + 46, '現在装備中', {
+            fontFamily: FONT,
+            fontSize: '12px',
+            color: '#9ff0b4',
+            fontStyle: 'bold',
+          }),
+        );
       }
       if (generated) {
-        const affixes = this.add.text(48, y + 36, `追加  ${affixSummary(def, 2)}`, {
+        const affixes = this.add.text(48, y + 62, `追加  ${affixSummary(def, 2)}`, {
           fontFamily: FONT,
-          fontSize: '10px',
-          color: '#9af7ff',
+          fontSize: '11px',
+          color: '#aef5ff',
+          fontStyle: 'bold',
         });
-        affixes.setCrop(0, 0, Math.max(90, w - 146), 14);
+        affixes.setCrop(0, 0, Math.max(90, w - 146), 15);
         this.content.add(affixes);
       }
       if (generated || canEq) {
         const btn = this.add
           .text(w - 16, y + rowH / 2, generated ? '詳細' : equipped ? 'はずす' : 'そうび', {
             fontFamily: FONT,
-            fontSize: '13px',
-            color: generated ? '#9af7ff' : '#9fd0ff',
-            backgroundColor: '#2a3050',
-            padding: { x: 10, y: 5 },
+            fontSize: '14px',
+            color: generated ? '#c6f7ff' : '#e2efff',
+            backgroundColor: '#303b64',
+            padding: { x: 10, y: 6 },
+            fontStyle: 'bold',
           })
           .setOrigin(1, 0.5)
           .setInteractive({ useHandCursor: true });
@@ -894,8 +936,9 @@ export class InventoryScene extends Phaser.Scene {
           this.add
             .text(w - 16, y + rowH / 2, label, {
               fontFamily: FONT,
-              fontSize: '12px',
-              color: '#a86a6a',
+              fontSize: '13px',
+              color: '#ffaaaa',
+              fontStyle: 'bold',
             })
             .setOrigin(1, 0.5),
         );
