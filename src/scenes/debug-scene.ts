@@ -62,7 +62,7 @@ export class DebugScene extends Phaser.Scene {
     this.btn(16, y, '全装備入手', () => this.grant(() => this.grantAllEquipment()));
     this.btn(160, y, 'ペット入手', () => this.grant(() => gameState.obtainPetItem('pet_egg_slime')));
     y += 40;
-    this.btn(16, y, 'レイヤー試着', () => this.previewPaperDoll(), 0x365070);
+    this.btn(16, y, '鉄装備試着', () => this.previewPaperDoll(), 0x365070);
     y += 40;
     this.btn(16, y, '全討伐証+12', () => this.grant(() => this.grantHuntProofs()), 0x275b55);
     this.btn(160, y, 'スコル4部位', () => this.previewSkollSet(), 0x275b55);
@@ -139,8 +139,8 @@ export class DebugScene extends Phaser.Scene {
       main_hand: 'iron_sword',
       head: 'iron_helm',
       torso: 'iron_plate',
-      hands: 'steel_gloves',
-      feet: 'steel_boots',
+      hands: 'iron_gloves',
+      feet: 'iron_boots',
     } as const;
     gs.jobId = 'fighter';
     gs.level = Math.max(10, gs.level);

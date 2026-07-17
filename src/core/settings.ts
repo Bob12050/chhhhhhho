@@ -1,15 +1,15 @@
 /** User settings persisted to localStorage. */
 export const SETTINGS_STORAGE_KEY = 'pixelrpg.settings.v1';
-const PAPER_DOLL_PILOT_REVISION = 1;
+const PAPER_DOLL_PILOT_REVISION = 2;
 
 export interface Settings {
   bgmVol: number; // 0..1
   sfxVol: number; // 0..1
-  /** Fighter-only equipment-layer pilot. False restores the original job art. */
+  /** Show supported equipment layers. False always restores the fixed job art. */
   paperDollPilot: boolean;
 }
 
-const DEFAULTS: Settings = { bgmVol: 1, sfxVol: 1, paperDollPilot: false };
+const DEFAULTS: Settings = { bgmVol: 1, sfxVol: 1, paperDollPilot: true };
 
 type StoredSettings = Partial<Settings> & {
   paperDollPilotRevision?: number;
@@ -28,11 +28,13 @@ export function loadSettings(): Settings {
     return {
       bgmVol: clamp01(p.bgmVol),
       sfxVol: clamp01(p.sfxVol),
-      // The first public pilot had mismatched anchors. Require a value saved by
-      // the revised settings screen so that every existing player rolls back.
+      // Ignore values saved by the rejected v1 pilot. Revision 2 uses the
+      // approved common anchor and starts enabled for existing players.
       paperDollPilot:
-        p.paperDollPilot === true
-        && p.paperDollPilotRevision === PAPER_DOLL_PILOT_REVISION,
+        p.paperDollPilotRevision === PAPER_DOLL_PILOT_REVISION
+        && typeof p.paperDollPilot === 'boolean'
+          ? p.paperDollPilot
+          : DEFAULTS.paperDollPilot,
     };
   } catch {
     return { ...DEFAULTS };

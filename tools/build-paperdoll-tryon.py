@@ -9,11 +9,25 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "art-source" / "paperdoll"
 OUTPUT_DIR = ROOT / "public" / "previews" / "paperdoll-iron"
+GAME_OUTPUT_DIR = ROOT / "public" / "assets" / "paperdoll-pilot"
 
 TILE_W = 360
 TILE_H = 500
 GROUND_Y = 458
 DIRECTIONS = ("down", "up", "left", "down-left", "up-left")
+
+GAME_FRAME_W = 96
+GAME_FRAME_H = 96
+GAME_ANCHOR_X = 48
+GAME_ANCHOR_Y = 84
+GAME_SOURCE_ANCHOR_X = 180
+GAME_SOURCE_ANCHOR_Y = 435
+GAME_SCALE = 0.18
+GAME_MAX_FRAMES = 4
+GAME_CARDINAL_DIRECTIONS = ("down", "up", "left")
+GAME_DIAGONAL_DIRECTIONS = ("down-left", "up-left")
+GAME_ANIMATIONS = ("idle", "walk", "attack", "cast", "hurt", "death")
+GAME_DIAGONAL_ANIMATIONS = ("idle", "walk", "attack")
 
 SOURCE_FILES = {
     "base": "player_base-turnaround-v1.png",
@@ -32,6 +46,16 @@ LAYER_FILES = {
     "feet": "feet-atlas-v1.png",
     "sword": "sword-atlas-v1.png",
     "shield": "shield-atlas-v1.png",
+}
+
+GAME_LAYER_STEMS = {
+    "base": "base",
+    "head": "helm-iron",
+    "torso": "torso-iron",
+    "hands": "hands-iron",
+    "feet": "feet-iron",
+    "sword": "sword-iron",
+    "shield": "shield-iron",
 }
 
 
@@ -426,6 +450,56 @@ def write_atlas(views: dict[str, Image.Image], destination: Path) -> None:
     atlas.save(destination, optimize=True)
 
 
+def game_frame(view: Image.Image) -> Image.Image:
+    """Scale one aligned try-on tile onto the game's 96px feet anchor."""
+    size = (round(TILE_W * GAME_SCALE), round(TILE_H * GAME_SCALE))
+    scaled = view.resize(size, Image.Resampling.LANCZOS)
+    frame = Image.new("RGBA", (GAME_FRAME_W, GAME_FRAME_H), (0, 0, 0, 0))
+    x = round(GAME_ANCHOR_X - GAME_SOURCE_ANCHOR_X * GAME_SCALE)
+    y = round(GAME_ANCHOR_Y - GAME_SOURCE_ANCHOR_Y * GAME_SCALE)
+    frame.alpha_composite(scaled, (x, y))
+    return frame
+
+
+def write_static_pose_sheet(
+    views: dict[str, Image.Image],
+    directions: tuple[str, ...],
+    animations: tuple[str, ...],
+    destination: Path,
+) -> None:
+    """Duplicate each grounded pose across animation frames for the first pilot."""
+    sheet = Image.new(
+        "RGBA",
+        (GAME_FRAME_W * GAME_MAX_FRAMES, GAME_FRAME_H * len(directions) * len(animations)),
+        (0, 0, 0, 0),
+    )
+    for direction_index, direction in enumerate(directions):
+        frame = game_frame(views[direction])
+        for animation_index, _animation in enumerate(animations):
+            row = direction_index * len(animations) + animation_index
+            for column in range(GAME_MAX_FRAMES):
+                sheet.alpha_composite(frame, (column * GAME_FRAME_W, row * GAME_FRAME_H))
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    sheet.save(destination, optimize=True)
+
+
+def write_game_sheets(layers: dict[str, dict[str, Image.Image]]) -> int:
+    for layer, stem in GAME_LAYER_STEMS.items():
+        write_static_pose_sheet(
+            layers[layer],
+            GAME_CARDINAL_DIRECTIONS,
+            GAME_ANIMATIONS,
+            GAME_OUTPUT_DIR / f"{stem}-cardinal-v2.png",
+        )
+        write_static_pose_sheet(
+            layers[layer],
+            GAME_DIAGONAL_DIRECTIONS,
+            GAME_DIAGONAL_ANIMATIONS,
+            GAME_OUTPUT_DIR / f"{stem}-diagonal-v2.png",
+        )
+    return len(GAME_LAYER_STEMS) * 2
+
+
 def main() -> None:
     base_views = load_views(SOURCE_FILES["base"])
     armor_views, armed_views = normalized_master_views()
@@ -452,7 +526,11 @@ def main() -> None:
     write_atlas(composite, OUTPUT_DIR / "composite-atlas-v1.png")
     write_atlas(composite, OUTPUT_DIR / "reference-atlas-v1.png")
     write_atlas(armor_views, OUTPUT_DIR / "armor-reference-atlas-v1.png")
-    print(f"Wrote {len(LAYER_FILES) + len(masks) + 3} try-on atlases to {OUTPUT_DIR}")
+    game_sheet_count = write_game_sheets(layers)
+    print(
+        f"Wrote {len(LAYER_FILES) + len(masks) + 3} try-on atlases to {OUTPUT_DIR} "
+        f"and {game_sheet_count} game sheets to {GAME_OUTPUT_DIR}"
+    )
 
 
 if __name__ == "__main__":

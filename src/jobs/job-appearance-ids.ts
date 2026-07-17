@@ -1,7 +1,7 @@
 /**
  * Canonical job-appearance ids (pure, no engine deps so validate-data can
- * import it). A job's `appearance` picks a fixed body look; equipment changes
- * stats only, never the sprite. Tier-1 jobs first; extend as art lands.
+ * import it). A job's `appearance` picks the fixed fallback body used whenever
+ * no supported paper-doll set is active. Tier-1 jobs first; extend as art lands.
  */
 export const JOB_APPEARANCE_IDS = [
   'fighter', 'mage', 'priest', 'thief', 'pet_raiser',

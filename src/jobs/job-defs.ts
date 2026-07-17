@@ -48,8 +48,8 @@ export interface JobDef {
   equippableWeaponTags: string[];
   skillTreeId?: string;
   /**
-   * Job-fixed appearance id (see job-appearance-ids). The player's body sprite
-   * is decided by this, not by equipment. Omitted = use the default body.
+   * Job-fixed fallback appearance id (see job-appearance-ids). Supported
+   * paper-doll equipment can temporarily replace it. Omitted = default body.
    */
   appearance?: string;
 }

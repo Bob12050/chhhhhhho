@@ -26,6 +26,16 @@ import {
 } from '@/endgame/investigation-forge';
 import { INVESTIGATION_SEAL_ID } from '@/endgame/investigations';
 import { activeBossSetStates } from '@/equipment/boss-set-bonuses';
+import { PaperDollAnimator } from '@/paperdoll/paper-doll-animator';
+import {
+  hasIronEquipmentAppearance,
+  resolveIronEquipmentAppearance,
+} from '@/paperdoll/iron-equipment';
+import {
+  applyIronEquipmentAppearance,
+  ironEquipmentTexturesAvailable,
+} from '@/paperdoll/iron-equipment-visual';
+import { loadSettings } from '@/core/settings';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
 
@@ -391,14 +401,25 @@ export class InventoryScene extends Phaser.Scene {
     const tierLabel = job ? (job.tier === 0 ? '初期職' : `${job.tier}次職`) : '';
     const art = appearanceTexKey(job?.appearance);
     const texture = art && this.textures.exists(art) ? art : TEX.playerBody;
+    const ironState = resolveIronEquipmentAppearance(gs.equipment);
+    const layeredPortrait = loadSettings().paperDollPilot
+      && hasIronEquipmentAppearance(ironState)
+      && ironEquipmentTexturesAvailable(this);
     const panel = ninePanel(this, w / 2, y + height / 2, w - 16, height).setDepth(2);
     this.profileObjs.push(panel);
 
-    const portrait = this.add
-      .sprite(60, y + height - 7, texture, frameIndex('down', 'idle', 0))
-      .setOrigin(0.5, 0.875)
-      .setScale(0.72)
-      .setDepth(3);
+    let portrait: Phaser.GameObjects.GameObject;
+    if (layeredPortrait) {
+      const doll = new PaperDollAnimator(this, 60, y + height - 7);
+      applyIronEquipmentAppearance(doll, ironState);
+      portrait = doll.container.setScale(0.72).setDepth(3);
+    } else {
+      portrait = this.add
+        .sprite(60, y + height - 7, texture, frameIndex('down', 'idle', 0))
+        .setOrigin(0.5, 0.875)
+        .setScale(0.72)
+        .setDepth(3);
+    }
     const name = this.add.text(108, y + 12, job?.name ?? gs.jobId, {
         fontFamily: FONT,
         fontSize: '16px',

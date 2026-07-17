@@ -236,8 +236,8 @@ export class WorldScene extends Phaser.Scene {
     // Map title flash.
     this.showMapName(this.map.name);
 
-    // Player. Fighter may use the optional equipment-layer pilot; every
-    // original fixed job sprite remains available through settings.
+    // Player. Supported iron pieces use the aligned equipment-layer pilot;
+    // every original fixed job sprite remains available through settings.
     // Map dimensions can change between releases; keep old saves inside the
     // current walkable world instead of spawning beyond a shortened edge.
     if (this.map.id === 'town' && !gameState.flags['town_wide_v1']) {

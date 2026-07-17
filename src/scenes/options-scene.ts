@@ -49,7 +49,7 @@ export class OptionsScene extends Phaser.Scene {
       bus.emit('sfx:play', { id: 'ui_tap' }); // audible feedback at the new level
     });
 
-    this.toggleRow(325, '装備レイヤー（試作）', this.settings.paperDollPilot, (enabled) => {
+    this.toggleRow(325, '装備の見た目反映', this.settings.paperDollPilot, (enabled) => {
       this.settings.paperDollPilot = enabled;
       this.apply();
       bus.emit('appearance:mode-changed', { layered: enabled });

@@ -3,8 +3,8 @@ import type { JobAppearanceId } from './job-appearance-ids';
 
 /**
  * Maps a job-appearance id to its body spritesheet texture key. The player's
- * look is decided by the active job (job-fixed appearance); equipment only
- * changes stats. Engine-side (imports TEX); validate-data uses the pure
+ * look is decided by the active job unless a supported paper-doll equipment
+ * set is active. Engine-side (imports TEX); validate-data uses the pure
  * `job-appearance-ids` list instead.
  */
 export const APPEARANCE_TEX: Record<JobAppearanceId, string> = {

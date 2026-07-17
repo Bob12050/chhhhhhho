@@ -48,8 +48,6 @@ export const TEX = {
   paperDollPilotHeadDiagonal: 'art.paperdoll.pilot.head.diagonal',
   paperDollPilotTorso: 'art.paperdoll.pilot.torso',
   paperDollPilotTorsoDiagonal: 'art.paperdoll.pilot.torso.diagonal',
-  paperDollPilotFarHand: 'art.paperdoll.pilot.hand.far',
-  paperDollPilotFarHandDiagonal: 'art.paperdoll.pilot.hand.far.diagonal',
   paperDollPilotNearHand: 'art.paperdoll.pilot.hand.near',
   paperDollPilotNearHandDiagonal: 'art.paperdoll.pilot.hand.near.diagonal',
   paperDollPilotFeet: 'art.paperdoll.pilot.feet',
