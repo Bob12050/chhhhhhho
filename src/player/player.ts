@@ -9,26 +9,15 @@ import { appearanceDiagonalTexKey, appearanceTexKey } from '@/jobs/job-appearanc
 import { gameState } from '@/player/game-state';
 import { directionFromVector, directionVector } from '@/config/directions';
 import { FONT } from '@/ui/theme';
-import { loadSettings } from '@/core/settings';
-import {
-  hasIronEquipmentAppearance,
-  resolveIronEquipmentAppearance,
-} from '@/paperdoll/iron-equipment';
-import {
-  applyIronEquipmentAppearance,
-  clearIronEquipmentAppearance,
-  ironEquipmentTexturesAvailable,
-} from '@/paperdoll/iron-equipment-visual';
-import { equippedJobRegaliaAppearance } from '@/equipment/job-regalia-appearance';
+import { clearIronEquipmentAppearance } from '@/paperdoll/iron-equipment-visual';
 
 /**
  * Player actor. Owns a single PaperDollAnimator (body sprite) and an Arcade
  * physics body for movement/collision. The paper-doll container follows the
  * physics body each frame, snapped to integer pixels.
  *
- * A complete head / torso / weapon class set uses the job's authored fixed
- * sprite. Without a complete set, supported iron pieces use the aligned paper
- * doll; otherwise the neutral adventurer body is shown.
+ * Every promoted job uses its authored fixed sprite. Equipment still changes
+ * stats, but never replaces the character's job identity or silhouette.
  */
 
 export class Player {
@@ -96,30 +85,18 @@ export class Player {
     this.doll.play('idle');
   }
 
-  /** Resolve class regalia, supported paper-doll gear, or the neutral body. */
+  /** Restore the active job's authored character art. */
   setJobAppearance(jobId: string): void {
     const job = getJob(jobId);
-    const regaliaAppearance = equippedJobRegaliaAppearance(gameState.equipment);
-    const regaliaKey = appearanceTexKey(regaliaAppearance);
-    const hasRegaliaArt = !!regaliaKey && this.scene.textures.exists(regaliaKey);
-    const ironState = resolveIronEquipmentAppearance(gameState.equipment);
-    const layeredAppearance = !hasRegaliaArt
-      && loadSettings().paperDollPilot
-      && hasIronEquipmentAppearance(ironState)
-      && ironEquipmentTexturesAvailable(this.scene);
+    const appearance = job?.appearance;
+    const key = appearanceTexKey(appearance);
+    const texture = key && this.scene.textures.exists(key) ? key : TEX.playerBody;
     clearIronEquipmentAppearance(this.doll);
-
-    if (hasRegaliaArt) {
-      this.doll.setLayer('base_body', regaliaKey, {
-        diagonalTextureKey: appearanceDiagonalTexKey(regaliaAppearance),
-      });
-    } else if (layeredAppearance) {
-      applyIronEquipmentAppearance(this.doll, ironState);
-    } else {
-      this.doll.setLayer('base_body', TEX.playerBody, {
-        diagonalTextureKey: TEX.playerBodyDiagonal,
-      });
-    }
+    this.doll.setLayer('base_body', texture, {
+      diagonalTextureKey: texture === TEX.playerBody
+        ? TEX.playerBodyDiagonal
+        : appearanceDiagonalTexKey(appearance),
+    });
     this.jobPlateText.setText(job?.name ?? jobId);
     const plateW = Math.ceil(this.jobPlateText.width) + 12;
     this.jobPlateBack.clear();
@@ -127,11 +104,6 @@ export class Player {
     this.jobPlateBack.fillRoundedRect(-plateW / 2, -7, plateW, 14, 3);
     this.jobPlateBack.lineStyle(1, 0xe4ca72, 0.66);
     this.jobPlateBack.strokeRoundedRect(-plateW / 2, -7, plateW, 14, 3);
-  }
-
-  /** Re-evaluate the active body and every supported equipment layer. */
-  refreshEquipmentAppearance(): void {
-    this.setJobAppearance(gameState.jobId);
   }
 
   getDirection(): Direction {

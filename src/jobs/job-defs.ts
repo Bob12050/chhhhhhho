@@ -47,7 +47,7 @@ export interface JobDef {
   derivedModifiers?: Partial<DerivedStats>;
   equippableWeaponTags: string[];
   skillTreeId?: string;
-  /** Original full-body art used by the job's quest-earned class regalia. */
+  /** Full-body character art shown whenever this job is active. */
   appearance?: string;
 }
 

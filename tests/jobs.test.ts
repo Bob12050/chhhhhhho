@@ -63,7 +63,7 @@ describe('jobs / job change', () => {
     expect(gs.jobLevelOf('fighter')).toBe(35);
   });
 
-  it('every promoted job keeps a valid appearance asset for its regalia', () => {
+  it('every promoted job keeps a valid fixed character appearance', () => {
     const promoted = allJobs().filter((j) => j.tier >= 1);
     expect(promoted.length).toBeGreaterThan(0);
     const valid = new Set<string>(JOB_APPEARANCE_IDS);

@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { allEquipment, getEquipment } from '@/data/items';
 import { huntSimulationQuests } from '@/balance/hunt-simulator';
-import {
-  equippedJobRegaliaAppearance,
-  equippedJobRegaliaProgress,
-} from '@/equipment/job-regalia-appearance';
+import { equippedJobRegaliaProgress } from '@/equipment/job-regalia-appearance';
 import { allJobs } from '@/jobs/job-defs';
 import {
   JOB_REGALIA,
@@ -91,7 +88,7 @@ describe('job regalia', () => {
     expect(availableQuests(gs).some((quest) => quest.id === questId)).toBe(false);
   });
 
-  it('shows the authored look only for a complete set and removes all pieces on job change', () => {
+  it('tracks set completeness and removes all pieces on job change', () => {
     const gs = new GameState();
     const ids = jobRegaliaItemIds('fighter');
     gs.jobId = 'fighter';
@@ -102,10 +99,8 @@ describe('job regalia', () => {
     expect(gs.canEquip(ids.torso)).toBe(true);
     gs.equip('head', ids.head);
     gs.equip('torso', ids.torso);
-    expect(equippedJobRegaliaAppearance(gs.equipment)).toBeUndefined();
     expect(equippedJobRegaliaProgress(gs.equipment)).toMatchObject({ count: 2, complete: false });
     gs.equip('main_hand', ids.weapon);
-    expect(equippedJobRegaliaAppearance(gs.equipment)).toBe('fighter');
     expect(equippedJobRegaliaProgress(gs.equipment)).toEqual({
       appearance: 'fighter',
       count: 3,

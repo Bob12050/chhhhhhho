@@ -49,19 +49,13 @@ export class OptionsScene extends Phaser.Scene {
       bus.emit('sfx:play', { id: 'ui_tap' }); // audible feedback at the new level
     });
 
-    this.toggleRow(325, '装備の見た目反映', this.settings.paperDollPilot, (enabled) => {
-      this.settings.paperDollPilot = enabled;
-      this.apply();
-      bus.emit('appearance:mode-changed', { layered: enabled });
-    });
-
-    this.toggleRow(395, 'デバッグモード', isDebugEnabled(), (enabled) => {
+    this.toggleRow(335, 'デバッグモード', isDebugEnabled(), (enabled) => {
       setDebugEnabled(enabled);
       this.syncDebugScenes(enabled);
     });
 
     this.add
-      .text(w / 2, 445, '設定は自動で保存されます', { fontFamily: FONT, fontSize: '11px', color: '#9aa0b5' })
+      .text(w / 2, 385, '設定は自動で保存されます', { fontFamily: FONT, fontSize: '11px', color: '#9aa0b5' })
       .setOrigin(0.5);
 
     pillButton(this, w / 2, h - 60, 'とじる', () => this.close(), {

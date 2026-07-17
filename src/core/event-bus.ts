@@ -47,7 +47,6 @@ export interface GameEvents {
 
   // Equipment
   'equipment:changed': { slot: string };
-  'appearance:mode-changed': { layered: boolean };
 
   // Economy / crafting
   'gold:changed': { current: number };

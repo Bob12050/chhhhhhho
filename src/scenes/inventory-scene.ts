@@ -26,20 +26,7 @@ import {
 } from '@/endgame/investigation-forge';
 import { INVESTIGATION_SEAL_ID } from '@/endgame/investigations';
 import { activeBossSetStates } from '@/equipment/boss-set-bonuses';
-import { PaperDollAnimator } from '@/paperdoll/paper-doll-animator';
-import {
-  hasIronEquipmentAppearance,
-  resolveIronEquipmentAppearance,
-} from '@/paperdoll/iron-equipment';
-import {
-  applyIronEquipmentAppearance,
-  ironEquipmentTexturesAvailable,
-} from '@/paperdoll/iron-equipment-visual';
-import {
-  equippedJobRegaliaAppearance,
-  equippedJobRegaliaProgress,
-} from '@/equipment/job-regalia-appearance';
-import { loadSettings } from '@/core/settings';
+import { equippedJobRegaliaProgress } from '@/equipment/job-regalia-appearance';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
 
@@ -403,28 +390,16 @@ export class InventoryScene extends Phaser.Scene {
     const gs = gameState;
     const job = getJob(gs.jobId);
     const tierLabel = job ? (job.tier === 0 ? '初期職' : `${job.tier}次職`) : '';
-    const art = appearanceTexKey(equippedJobRegaliaAppearance(gs.equipment));
+    const art = appearanceTexKey(job?.appearance);
     const texture = art && this.textures.exists(art) ? art : TEX.playerBody;
-    const ironState = resolveIronEquipmentAppearance(gs.equipment);
-    const layeredPortrait = texture === TEX.playerBody
-      && loadSettings().paperDollPilot
-      && hasIronEquipmentAppearance(ironState)
-      && ironEquipmentTexturesAvailable(this);
     const panel = ninePanel(this, w / 2, y + height / 2, w - 16, height).setDepth(2);
     this.profileObjs.push(panel);
 
-    let portrait: Phaser.GameObjects.GameObject;
-    if (layeredPortrait) {
-      const doll = new PaperDollAnimator(this, 60, y + height - 7);
-      applyIronEquipmentAppearance(doll, ironState);
-      portrait = doll.container.setScale(0.72).setDepth(3);
-    } else {
-      portrait = this.add
-        .sprite(60, y + height - 7, texture, frameIndex('down', 'idle', 0))
-        .setOrigin(0.5, 0.875)
-        .setScale(0.72)
-        .setDepth(3);
-    }
+    const portrait = this.add
+      .sprite(60, y + height - 7, texture, frameIndex('down', 'idle', 0))
+      .setOrigin(0.5, 0.875)
+      .setScale(0.72)
+      .setDepth(3);
     const name = this.add.text(108, y + 12, job?.name ?? gs.jobId, {
         fontFamily: FONT,
         fontSize: '16px',
@@ -666,7 +641,7 @@ export class InventoryScene extends Phaser.Scene {
     const regalia = equippedJobRegaliaProgress(gameState.equipment);
     const headingY = startY + 10;
     this.content.add(
-      this.add.text(16, headingY, 'セット効果', {
+      this.add.text(16, headingY, 'セット装備', {
         fontFamily: FONT,
         fontSize: '11px',
         color: '#c9b27a',
@@ -699,7 +674,7 @@ export class InventoryScene extends Phaser.Scene {
         }).setOrigin(1, 0.5),
       );
       this.content.add(
-        this.add.text(16, y + 30, regalia.complete ? '● 固有外見 発動中' : '○ 3点装備で固有外見', {
+        this.add.text(16, y + 30, regalia.complete ? '● 専用装備 3点装備中' : `○ あと${3 - regalia.count}点で一式`, {
           fontFamily: FONT,
           fontSize: '10px',
           color: regalia.complete ? '#9fe3a0' : '#727b91',

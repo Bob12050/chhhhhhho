@@ -4,7 +4,6 @@ import { beginGame } from '@/core/game-flow';
 import { getMap } from '@/maps/map-def';
 import { getJob } from '@/jobs/job-defs';
 import { appearanceTexKey } from '@/jobs/job-appearance';
-import { equippedJobRegaliaAppearance } from '@/equipment/job-regalia-appearance';
 import { frameIndex } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
 import { FONT, addSceneBackdrop, pillButton, ninePanel, titlePlate } from '@/ui/theme';
@@ -75,11 +74,7 @@ export class SaveSelectScene extends Phaser.Scene {
 
     if (summary.exists) {
       const job = summary.jobId ? getJob(summary.jobId) : undefined;
-      const art = appearanceTexKey(equippedJobRegaliaAppearance({
-        head: summary.headId,
-        torso: summary.torsoId,
-        main_hand: summary.mainHandId,
-      }));
+      const art = appearanceTexKey(job?.appearance);
       const texture = art && this.textures.exists(art) ? art : TEX.playerBody;
       this.add
         .ellipse(54, y + 76, 44, 12, 0x050814, 0.52)

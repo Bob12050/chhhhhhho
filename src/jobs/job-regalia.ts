@@ -104,7 +104,7 @@ export function splitJobRegaliaDerived(
   return out;
 }
 
-/** Three exact-job pieces complete the authored class appearance together. */
+/** Three exact-job pieces form the job's dedicated equipment set. */
 export function buildJobRegaliaEquipment(): EquipmentDef[] {
   return JOB_REGALIA.flatMap((entry) => {
     const split = splitJobRegaliaDerived(entry.derived);
@@ -125,7 +125,7 @@ export function buildJobRegaliaEquipment(): EquipmentDef[] {
         derived: split[part],
         sellPrice: 0,
         series: entry.itemName,
-        description: `${entry.jobName}専用の${meta.label}。頭・胴・武器の3点を装備すると固有の姿が完成する。`,
+        description: `${entry.jobName}専用の${meta.label}。職業の力を引き出す、頭・胴・武器3点の職装。`,
       };
     });
   });
