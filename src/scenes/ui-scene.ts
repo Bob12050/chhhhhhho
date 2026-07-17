@@ -18,6 +18,23 @@ import { TEX } from '@/assets/gen/textures';
 import { TutorialCoach } from '@/ui/tutorial-coach';
 import { isUpdateReady } from '@/core/pwa';
 import { INTRO_PENDING_FLAG, INTRO_QUEST_ID } from '@/tutorial/onboarding';
+import {
+  getConsumable,
+  getEquipment,
+  getMaterial,
+  getPetItem,
+  itemDisplayName,
+} from '@/data/items';
+import { rarityColorHex } from '@/data/rarity';
+
+interface RewardNotice {
+  key: string;
+  kind: 'item' | 'exp';
+  label: string;
+  amount: number;
+  color: string;
+  icon: string;
+}
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
@@ -33,6 +50,7 @@ export class UIScene extends Phaser.Scene {
   private hpBar!: Phaser.GameObjects.Rectangle;
   private mpBar!: Phaser.GameObjects.Rectangle;
   private expBar!: Phaser.GameObjects.Rectangle;
+  private expText!: Phaser.GameObjects.Text;
   private updateText!: Phaser.GameObjects.Text;
   private lowHpVignette!: Phaser.GameObjects.Graphics;
   private lowHpTween: Phaser.Tweens.Tween | null = null;
@@ -44,6 +62,13 @@ export class UIScene extends Phaser.Scene {
   private bossIntroRoot: Phaser.GameObjects.Container | null = null;
   private questStartRoot: Phaser.GameObjects.Container | null = null;
   private questProgressRoot: Phaser.GameObjects.Container | null = null;
+  private rewardFeedX = 0;
+  private rewardFeedY = 0;
+  private rewardQueue: RewardNotice[] = [];
+  private activeReward: RewardNotice | null = null;
+  private rewardRoot: Phaser.GameObjects.Container | null = null;
+  private rewardAmountText: Phaser.GameObjects.Text | null = null;
+  private rewardTimer: Phaser.Time.TimerEvent | null = null;
 
   constructor() {
     super('UI');
@@ -56,6 +81,10 @@ export class UIScene extends Phaser.Scene {
     const cssPerLogical = this.scale.displaySize.width / this.scale.gameSize.width;
     const insets = readInsets(cssPerLogical || 1);
     const bottomPad = Math.max(insets.bottom, 12) + 8;
+    this.rewardFeedX = w / 2;
+    this.rewardFeedY = Math.max(insets.top + 88, 96);
+    this.rewardQueue = [];
+    this.activeReward = null;
 
     const depth = HUD_DEPTH;
     const fitText = (txt: Phaser.GameObjects.Text, value: string, maxWidth: number): void => {
@@ -502,6 +531,7 @@ export class UIScene extends Phaser.Scene {
     const expX = 42;
     const expW = 61;
     this.expBar = makeBar(expX, expW, 0xf2d45c);
+    this.expText = barText(expX, expW);
     const expSegments = this.add.graphics();
     expSegments.lineStyle(1, 0x172034, 0.58);
     for (let i = 1; i < 8; i++) {
@@ -545,11 +575,32 @@ export class UIScene extends Phaser.Scene {
       }),
     );
     const setExp = (cur: number, toNext: number): void => {
-      this.expBar.scaleX = toNext > 0 ? Phaser.Math.Clamp(cur / toNext, 0, 1) : 0;
+      const progress = toNext > 0 ? Phaser.Math.Clamp(cur / toNext, 0, 1) : 0;
+      this.expBar.scaleX = progress;
+      this.expText.setText(`EXP ${Math.floor(progress * 100)}%`);
     };
     setExp(gameState.exp, expToNext(gameState.level));
-    this.busOff.push(bus.on('player:exp-changed', ({ current, toNext }) => setExp(current, toNext)));
+    this.busOff.push(
+      bus.on('player:exp-changed', ({ current, toNext, gained }) => {
+        setExp(current, toNext);
+        if (gained > 0) {
+          this.enqueueReward({
+            key: 'exp',
+            kind: 'exp',
+            label: '経験値',
+            amount: gained,
+            color: '#7fe7ff',
+            icon: TEX.iconGem,
+          });
+        }
+      }),
+    );
     this.busOff.push(bus.on('player:level-up', () => setExp(gameState.exp, expToNext(gameState.level))));
+    this.busOff.push(
+      bus.on('item:picked-up', ({ itemId, quantity }) => {
+        this.enqueueItemReward(itemId, quantity);
+      }),
+    );
 
     // Quest tracker: current goal pinned under the HUD block so the player
     // always knows what to do next ("game tells, player does, game rewards").
@@ -840,7 +891,184 @@ export class UIScene extends Phaser.Scene {
       this.questProgressRoot = null;
       this.bossIntroRoot?.destroy();
       this.bossIntroRoot = null;
+      this.clearRewardFeed();
     });
+  }
+
+  private enqueueItemReward(itemId: string, quantity: number): void {
+    if (quantity <= 0) return;
+    const material = getMaterial(itemId);
+    const consumable = getConsumable(itemId);
+    const equipment = getEquipment(itemId);
+    const petItem = getPetItem(itemId);
+    const rarity = material?.rarity ?? equipment?.rarity;
+    const color = petItem
+      ? '#ff9ed2'
+      : consumable
+        ? '#8ee6ad'
+        : rarityColorHex(rarity);
+    const icon = equipment
+      ? TEX.iconSword
+      : consumable
+        ? TEX.iconFlask
+        : petItem
+          ? TEX.iconBag
+          : TEX.iconGem;
+    this.enqueueReward({
+      key: `item:${itemId}`,
+      kind: 'item',
+      label: itemDisplayName(itemId),
+      amount: quantity,
+      color,
+      icon,
+    });
+  }
+
+  private enqueueReward(notice: RewardNotice): void {
+    if (notice.amount <= 0) return;
+    if (this.activeReward?.key === notice.key) {
+      this.activeReward.amount += notice.amount;
+      this.updateRewardAmount();
+      this.armRewardTimer();
+      if (this.rewardRoot) {
+        this.tweens.killTweensOf(this.rewardRoot);
+        this.rewardRoot.setAlpha(1).setScale(1);
+        this.tweens.add({
+          targets: this.rewardRoot,
+          scale: 1.045,
+          duration: 90,
+          yoyo: true,
+          ease: 'Quad.easeOut',
+        });
+      }
+      return;
+    }
+    const queued = this.rewardQueue.find((entry) => entry.key === notice.key);
+    if (queued) {
+      queued.amount += notice.amount;
+      return;
+    }
+    if (this.rewardQueue.length >= 6) this.rewardQueue.shift();
+    this.rewardQueue.push({ ...notice });
+    this.showNextReward();
+  }
+
+  private showNextReward(): void {
+    if (this.activeReward || this.rewardRoot) return;
+    const notice = this.rewardQueue.shift();
+    if (!notice) return;
+    this.activeReward = notice;
+
+    const panelW = Math.min(this.scale.width - 42, 222);
+    const panelH = 38;
+    const color = Phaser.Display.Color.HexStringToColor(notice.color).color;
+    const root = this.add
+      .container(this.rewardFeedX + 14, this.rewardFeedY)
+      .setDepth(HUD_DEPTH + 920)
+      .setAlpha(0)
+      .setScale(0.97);
+    this.rewardRoot = root;
+
+    const shadow = this.add.rectangle(2, 3, panelW, panelH, 0x000000, 0.48);
+    const back = this.add
+      .rectangle(0, 0, panelW, panelH, 0x071321, 0.96)
+      .setStrokeStyle(1, color, 0.72);
+    const accent = this.add.rectangle(-panelW / 2 + 3, 0, 4, panelH - 7, color, 0.96);
+    const iconWell = this.add
+      .circle(-panelW / 2 + 22, 0, 13, 0x111f33, 1)
+      .setStrokeStyle(1, color, 0.82);
+    const icon = this.add
+      .image(-panelW / 2 + 22, 0, notice.icon)
+      .setDisplaySize(15, 15)
+      .setTint(color);
+    const tag = this.add
+      .text(-panelW / 2 + 42, -11, notice.kind === 'exp' ? 'EXP GAIN' : 'ITEM GET', {
+        fontFamily: FONT,
+        fontSize: '7px',
+        color: notice.color,
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+    const title = this.add
+      .text(-panelW / 2 + 42, 7, notice.label, {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+    title.setShadow(0, 1, '#000000', 2);
+    let shortLabel = notice.label;
+    const titleMaxW = panelW - 128;
+    while (title.width > titleMaxW && shortLabel.length > 4) {
+      shortLabel = shortLabel.slice(0, -2);
+      title.setText(`${shortLabel}…`);
+    }
+    this.rewardAmountText = this.add
+      .text(panelW / 2 - 10, 2, '', {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: notice.color,
+        fontStyle: 'bold',
+      })
+      .setOrigin(1, 0.5);
+    this.rewardAmountText.setShadow(0, 1, '#000000', 2);
+    root.add([shadow, back, accent, iconWell, icon, tag, title, this.rewardAmountText]);
+    this.updateRewardAmount();
+
+    this.tweens.add({
+      targets: root,
+      x: this.rewardFeedX,
+      alpha: 1,
+      scale: 1,
+      duration: 180,
+      ease: 'Cubic.Out',
+    });
+    this.armRewardTimer();
+  }
+
+  private updateRewardAmount(): void {
+    if (!this.activeReward || !this.rewardAmountText) return;
+    this.rewardAmountText.setText(
+      this.activeReward.kind === 'exp'
+        ? `+${this.activeReward.amount} EXP`
+        : `×${this.activeReward.amount}`,
+    );
+  }
+
+  private armRewardTimer(): void {
+    this.rewardTimer?.remove(false);
+    this.rewardTimer = this.time.delayedCall(1850, () => {
+      const root = this.rewardRoot;
+      if (!root) return;
+      this.tweens.add({
+        targets: root,
+        x: this.rewardFeedX - 10,
+        alpha: 0,
+        duration: 240,
+        ease: 'Quad.easeIn',
+        onComplete: () => {
+          if (this.rewardRoot === root) {
+            root.destroy(true);
+            this.rewardRoot = null;
+            this.rewardAmountText = null;
+            this.activeReward = null;
+            this.rewardTimer = null;
+            this.showNextReward();
+          }
+        },
+      });
+    });
+  }
+
+  private clearRewardFeed(): void {
+    this.rewardTimer?.remove(false);
+    this.rewardTimer = null;
+    this.rewardRoot?.destroy(true);
+    this.rewardRoot = null;
+    this.rewardAmountText = null;
+    this.activeReward = null;
+    this.rewardQueue = [];
   }
 
   private showQuestProgress(data: GameEvents['quest:progress']): void {

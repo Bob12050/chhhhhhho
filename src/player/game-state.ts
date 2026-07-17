@@ -547,6 +547,7 @@ export class GameState {
       current: this.exp,
       toNext: expToNext(this.level),
       level: this.level,
+      gained: amount,
     });
   }
 

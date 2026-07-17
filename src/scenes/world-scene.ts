@@ -1860,7 +1860,7 @@ export class WorldScene extends Phaser.Scene {
       const proof = { itemId: proofExchange.proofItemId, qty: 1 };
       earnedDrops.push(proof);
       this.grantLoot(proof.itemId, proof.qty);
-      this.floatText(
+      this.rewardFloatText(
         x,
         y - 68,
         `+${itemDisplayName(proof.itemId)}`,
@@ -1871,14 +1871,21 @@ export class WorldScene extends Phaser.Scene {
       // 歴戦 individuals double every drop chance on top of the player's bonus.
       const dropBonus = gameState.derived.dropRate + (veteran ? VETERAN_MODS.dropBonusAdd : 0);
       const drops = rollDrops(table, this.rng, { firstKill, dropBonus });
-      for (const d of drops) {
+      for (const [dropIndex, d] of drops.entries()) {
         earnedDrops.push(d);
         if (completedHunt) {
           this.grantLoot(d.itemId, d.qty);
-          this.floatText(x, y - 18, `+${itemDisplayName(d.itemId)}×${d.qty}`, rarityColorHex(this.itemRarity(d.itemId)));
+          this.rewardFloatText(
+            x,
+            y - 18 - dropIndex * 18,
+            `+${itemDisplayName(d.itemId)}×${d.qty}`,
+            rarityColorHex(this.itemRarity(d.itemId)),
+          );
         } else {
-          const ox = this.rng.intRange(-12, 12);
-          const oy = this.rng.intRange(-6, 10);
+          const angle = -Math.PI / 2 + (Math.PI * 2 * dropIndex) / Math.max(1, drops.length);
+          const radius = drops.length > 1 ? 22 : 8;
+          const ox = Math.round(Math.cos(angle) * radius) + this.rng.intRange(-3, 3);
+          const oy = Math.round(Math.sin(angle) * radius * 0.65) + this.rng.intRange(-2, 3);
           this.spawnLoot(x + ox, y + oy, d.itemId, d.qty);
         }
       }
@@ -1889,10 +1896,18 @@ export class WorldScene extends Phaser.Scene {
       // 金運 (goldRate) scales combat gold; shop sells stay untouched.
       combatGold = Math.round(def.goldReward * rewardMult * (1 + gameState.derived.goldRate));
       gameState.addGold(combatGold);
-      this.floatText(x + 14, y - 24, `+${combatGold}G`);
+      this.rewardFloatText(x + 18, y - 22, `+${combatGold}G`, '#ffe06b');
     }
     const expGain = Math.round(def.expReward * rewardMult);
     gameState.gainExp(expGain);
+    if (expGain > 0) {
+      this.rewardFloatText(
+        x - 14,
+        y - (def.isBoss ? 76 : 42),
+        `EXP +${expGain}`,
+        '#7fe7ff',
+      );
+    }
     // The active pet learns from watching (share of kill exp → its level).
     if (gameState.activePetId) {
       gameState.gainPetExp(gameState.activePetId, Math.round(expGain * PET_EXP_SHARE));
@@ -2018,42 +2033,78 @@ export class WorldScene extends Phaser.Scene {
     drop.setOrigin(0.5, 0.5);
     drop.setData('itemId', itemId);
     drop.setData('qty', qty);
-    drop.setDepth(Math.round(y));
+    drop.setDisplaySize(20, 20);
+    drop.setDepth(Math.round(y) + 2);
 
-    // Rarity feedback: tint the pickup and, for rare+ drops, raise a pulsing
-    // light beam (classic loot signal). Alpha-only animation keeps it
-    // pixel-art friendly (no blur/free-scale).
-    // Thresholds on the R1〜R10 scale: pulse for アンコモン+ (R3), beam for
-    // レア+ (R5), thicker beam for レジェンド+ (R8).
     const rank = this.itemRank(itemId);
-    drop.setTint(rarityColor(this.itemRarity(itemId)));
+    const color = rarityColor(this.itemRarity(itemId));
+    const colorHex = rarityColorHex(this.itemRarity(itemId));
+    drop.setTint(color);
+
+    // Every drop gets a dark well, a rarity ring, and a persistent name. The
+    // map is intentionally colourful, so relying on tint alone made common
+    // materials almost disappear into grass and flowers.
+    const halo = this.add
+      .circle(x, y, 14, 0x07111e, 0.86)
+      .setStrokeStyle(rank >= 5 ? 3 : 2, color, 0.96)
+      .setDepth(Math.round(y) + 1);
+    const labelText = `${itemDisplayName(itemId)}${qty > 1 ? `  ×${qty}` : ''}`;
+    const dropLabel = this.add
+      .text(x, y - 17, labelText, {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: colorHex,
+        fontStyle: 'bold',
+        backgroundColor: '#071321',
+        padding: { x: 4, y: 2 },
+        stroke: '#02060d',
+        strokeThickness: 2,
+      })
+      .setOrigin(0.5, 1)
+      .setDepth(8998);
+    drop.setData('halo', halo);
+    drop.setData('dropLabel', dropLabel);
+
+    const targetScaleX = drop.scaleX;
+    const targetScaleY = drop.scaleY;
+    drop.setScale(targetScaleX * 0.55, targetScaleY * 0.55);
+    this.tweens.add({
+      targets: drop,
+      scaleX: targetScaleX,
+      scaleY: targetScaleY,
+      duration: 220,
+      ease: 'Back.easeOut',
+    });
+    this.tweens.add({
+      targets: halo,
+      alpha: rank >= 5 ? 0.42 : 0.62,
+      scale: rank >= 5 ? 1.15 : 1.08,
+      duration: rank >= 5 ? 520 : 760,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+
+    // Rare drops also receive a vertical light beam, but the name and ring
+    // above ensure even common drops remain unmistakable.
     if (rank >= 3) {
-      this.tweens.add({
-        targets: drop,
-        alpha: 0.55,
-        duration: 480,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
-    }
-    if (rank >= 5) {
-      const color = rarityColor(this.itemRarity(itemId));
-      const h = 28 + Math.max(0, rank - 5) * 10;
+      const h = 24 + Math.max(0, rank - 3) * 8;
       const beam = this.add
-        .rectangle(x, y - h / 2, rank >= 8 ? 6 : 4, h, color, 0.5)
+        .rectangle(x, y - h / 2, rank >= 8 ? 7 : rank >= 5 ? 5 : 3, h, color, 0.42)
         .setDepth(Math.round(y) - 1)
         .setBlendMode(Phaser.BlendModes.ADD);
       drop.setData('beam', beam);
+      drop.setData('beamHeight', h);
       this.tweens.add({
         targets: beam,
-        alpha: 0.15,
+        alpha: 0.12,
         duration: 520,
         yoyo: true,
         repeat: -1,
         ease: 'Sine.InOut',
       });
     }
+    bus.emit('loot:dropped', { itemId, quantity: qty, x, y });
   }
 
   private itemRarity(id: string): number | undefined {
@@ -2070,25 +2121,48 @@ export class WorldScene extends Phaser.Scene {
     const qty = (l.getData('qty') as number | undefined) ?? 1;
     this.grantLoot(itemId, qty);
     const label = qty > 1 ? `+${itemDisplayName(itemId)}×${qty}` : `+${itemDisplayName(itemId)}`;
-    this.floatText(l.x, l.y - 18, label, rarityColorHex(this.itemRarity(itemId)));
-    (l.getData('beam') as Phaser.GameObjects.Rectangle | undefined)?.destroy();
+    this.rewardFloatText(l.x, l.y - 24, label, rarityColorHex(this.itemRarity(itemId)));
+    this.destroyLootDecoration(l);
     l.destroy();
   }
 
   private grantLoot(itemId: string, qty: number): void {
     if (getMaterial(itemId)) gameState.addMaterial(itemId, qty);
-    else if (getConsumable(itemId)) gameState.addConsumable(itemId, qty);
+    else if (getConsumable(itemId)) {
+      gameState.addConsumable(itemId, qty);
+      bus.emit('item:picked-up', { itemId, quantity: qty });
+    }
     else if (getPetItem(itemId)) {
       // Eggs go to the bag; hatching happens on the pet screen (🐾).
       for (let i = 0; i < qty; i++) gameState.addEgg(itemId);
+      bus.emit('item:picked-up', { itemId, quantity: qty });
       this.floatText(this.player.x, this.player.y - 52, 'たまごを拾った！ペット画面で孵化できる', '#ffd0e8');
-    } else if (getEquipment(itemId)) for (let i = 0; i < qty; i++) gameState.addEquipment(itemId);
+    } else if (getEquipment(itemId)) {
+      for (let i = 0; i < qty; i++) gameState.addEquipment(itemId);
+      bus.emit('item:picked-up', { itemId, quantity: qty });
+    }
+  }
+
+  private destroyLootDecoration(drop: Phaser.Physics.Arcade.Image): void {
+    for (const key of ['halo', 'dropLabel', 'beam']) {
+      const obj = drop.getData(key) as Phaser.GameObjects.GameObject | undefined;
+      if (!obj) continue;
+      this.tweens.killTweensOf(obj);
+      obj.destroy();
+    }
   }
 
   private updateLootMagnet(_delta: number): void {
     for (const obj of this.loot.getChildren()) {
       const l = obj as Phaser.Physics.Arcade.Image;
       if (!l.active) continue;
+      const halo = l.getData('halo') as Phaser.GameObjects.Arc | undefined;
+      const dropLabel = l.getData('dropLabel') as Phaser.GameObjects.Text | undefined;
+      const beam = l.getData('beam') as Phaser.GameObjects.Rectangle | undefined;
+      const beamHeight = (l.getData('beamHeight') as number | undefined) ?? 0;
+      halo?.setPosition(l.x, l.y);
+      dropLabel?.setPosition(l.x, l.y - 17);
+      beam?.setPosition(l.x, l.y - beamHeight / 2);
       const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, l.x, l.y);
       if (dist <= LOOT_PICKUP_RADIUS) {
         this.pickup(l);
@@ -2533,6 +2607,37 @@ export class WorldScene extends Phaser.Scene {
       distance: Math.max(1, Math.round(Math.hypot(dx, dy) / 16)),
       angle: Math.atan2(dy, dx),
       hint: target.hint,
+    });
+  }
+
+  /** High-contrast, longer-lived feedback reserved for earned rewards. */
+  private rewardFloatText(x: number, y: number, msg: string, color: string): void {
+    const t = this.add
+      .text(x, y, msg, {
+        fontFamily: FONT,
+        fontSize: '13px',
+        color,
+        fontStyle: 'bold',
+        stroke: '#02060d',
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5)
+      .setDepth(9004)
+      .setScale(0.88);
+    t.setShadow(0, 2, '#000000', 3);
+    this.tweens.add({
+      targets: t,
+      y: y - 24,
+      scale: 1,
+      duration: 460,
+      ease: 'Back.easeOut',
+    });
+    this.tweens.add({
+      targets: t,
+      alpha: 0,
+      delay: 1150,
+      duration: 380,
+      onComplete: () => t.destroy(),
     });
   }
 

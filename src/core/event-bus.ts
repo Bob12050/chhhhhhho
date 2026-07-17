@@ -8,7 +8,7 @@ export interface GameEvents {
   // Player / stats
   'player:hp-changed': { current: number; max: number };
   'player:mp-changed': { current: number; max: number };
-  'player:exp-changed': { current: number; toNext: number; level: number };
+  'player:exp-changed': { current: number; toNext: number; level: number; gained: number };
   'player:level-up': { level: number; statPoints: number };
   'player:stats-recomputed': Record<string, never>;
 
@@ -20,7 +20,7 @@ export interface GameEvents {
   'enemy:died': { enemyId: string; x: number; y: number };
 
   // Loot / inventory
-  'loot:dropped': { itemId: string; x: number; y: number };
+  'loot:dropped': { itemId: string; quantity: number; x: number; y: number };
   'inventory:changed': Record<string, never>;
   'item:picked-up': { itemId: string; quantity: number };
   'item:used': { itemId: string };
