@@ -129,6 +129,9 @@ export interface GameEvents {
   'app:orientation-blocked': { blocked: boolean };
   'app:visibility-hidden': Record<string, never>;
 
+  // Settings
+  'settings:controls-changed': Record<string, never>;
+
   // Audio: request a one-shot sound effect (handled by the SoundEngine).
   'sfx:play': { id: SfxId };
 }

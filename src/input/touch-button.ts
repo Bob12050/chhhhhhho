@@ -24,6 +24,7 @@ export class TouchButton {
   private readonly radius: number;
   private accent: number;
   private readonly style: TouchButtonStyle;
+  private opacityMultiplier = 1;
 
   onChange: ((down: boolean) => void) | null = null;
 
@@ -128,10 +129,11 @@ export class TouchButton {
         : this.unavailable
           ? idleContent * 0.55
           : idleContent;
-    this.circle.setAlpha(shellAlpha);
-    this.inner.setAlpha(shellAlpha);
-    this.label.setAlpha(contentAlpha);
-    this.icon?.setAlpha(contentAlpha);
+    const multiplier = pressed ? 1 : this.opacityMultiplier;
+    this.circle.setAlpha(shellAlpha * multiplier);
+    this.inner.setAlpha(shellAlpha * multiplier);
+    this.label.setAlpha(contentAlpha * multiplier);
+    this.icon?.setAlpha(contentAlpha * multiplier);
     this.label.setColor(this.unavailable && !pressed ? '#aab3be' : '#ffffff');
     this.icon?.setTint(this.unavailable && !pressed ? 0x98a3ae : 0xffffff);
   }
@@ -182,6 +184,12 @@ export class TouchButton {
     if (this.accent === color) return;
     this.accent = color;
     this.resetAppearance();
+  }
+
+  /** Apply the player's idle-visibility preference without weakening press feedback. */
+  setOpacityMultiplier(value: number): void {
+    this.opacityMultiplier = Phaser.Math.Clamp(value, 0.5, 1);
+    this.applyOpacity(false);
   }
 
   /** Muted but still tappable, so the player can receive a useful reason. */

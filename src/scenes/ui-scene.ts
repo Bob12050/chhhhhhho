@@ -2,7 +2,9 @@ import Phaser from 'phaser';
 import { input } from '@/input/input-state';
 import { VirtualStick } from '@/input/virtual-stick';
 import { TouchButton } from '@/input/touch-button';
+import { buildControlLayout } from '@/input/control-layout';
 import { readInsets } from '@/core/safe-area';
+import { loadSettings } from '@/core/settings';
 import { bus, type GameEvents } from '@/core/event-bus';
 import { gameState } from '@/player/game-state';
 import { getMap } from '@/maps/map-def';
@@ -81,6 +83,17 @@ export class UIScene extends Phaser.Scene {
     const cssPerLogical = this.scale.displaySize.width / this.scale.gameSize.width;
     const insets = readInsets(cssPerLogical || 1);
     const bottomPad = Math.max(insets.bottom, 12) + 8;
+    const settings = loadSettings();
+    const controlScale = settings.controlScale;
+    const controlOpacity = settings.controlOpacity;
+    const controls = buildControlLayout(
+      w,
+      h,
+      bottomPad,
+      { left: insets.left, right: insets.right },
+      controlScale,
+      settings.leftHanded,
+    );
     this.rewardFeedX = w / 2;
     this.rewardFeedY = Math.max(insets.top + 88, 96);
     this.rewardQueue = [];
@@ -96,22 +109,28 @@ export class UIScene extends Phaser.Scene {
       }
     };
 
-    // Virtual stick on the lower-left half.
+    // Virtual stick on the selected movement half.
     this.stick = new VirtualStick(
       this,
-      new Phaser.Geom.Rectangle(0, h * 0.45, w * 0.5, h * 0.55),
+      new Phaser.Geom.Rectangle(
+        controls.stickZone.x,
+        controls.stickZone.y,
+        controls.stickZone.width,
+        controls.stickZone.height,
+      ),
       depth,
+      { scale: controlScale, opacity: controlOpacity, standby: controls.stickStandby },
     );
 
-    // Buttons lower-right, above the home indicator.
-    const baseX = w - insets.right - 44;
-    const baseY = h - bottomPad - 44;
+    // Combat cluster on the selected action side, above the home indicator.
+    const baseX = controls.attack.x;
+    const baseY = controls.attack.y;
 
     const attackBtn = new TouchButton(
       this,
-      baseX,
-      baseY,
-      32,
+      controls.attack.x,
+      controls.attack.y,
+      32 * controlScale,
       '',
       0xcc5555,
       depth,
@@ -122,9 +141,9 @@ export class UIScene extends Phaser.Scene {
 
     const skillBtn = new TouchButton(
       this,
-      baseX - 76,
-      baseY + 6,
-      28,
+      controls.skill1.x,
+      controls.skill1.y,
+      28 * controlScale,
       'S1',
       0x5a78ba,
       depth,
@@ -135,9 +154,9 @@ export class UIScene extends Phaser.Scene {
 
     const skill2Btn = new TouchButton(
       this,
-      baseX - 60,
-      baseY - 58,
-      26,
+      controls.skill2.x,
+      controls.skill2.y,
+      26 * controlScale,
       'S2',
       0x6870b5,
       depth,
@@ -148,8 +167,8 @@ export class UIScene extends Phaser.Scene {
 
     const skillButtons = [skillBtn, skill2Btn];
     const skillButtonGeom = [
-      { x: baseX - 76, y: baseY + 6, r: 28 },
-      { x: baseX - 60, y: baseY - 58, r: 26 },
+      { x: controls.skill1.x, y: controls.skill1.y, r: 28 * controlScale },
+      { x: controls.skill2.x, y: controls.skill2.y, r: 26 * controlScale },
     ];
     const skillCooling = [false, false];
     const skillCostBacks = skillButtonGeom.map(({ x, y, r }) =>
@@ -207,9 +226,9 @@ export class UIScene extends Phaser.Scene {
 
     const dodgeBtn = new TouchButton(
       this,
-      baseX + 2,
-      baseY - 76,
-      26,
+      controls.dodge.x,
+      controls.dodge.y,
+      26 * controlScale,
       '回避',
       0x538e78,
       depth,
@@ -223,9 +242,9 @@ export class UIScene extends Phaser.Scene {
     const POTION_IDS = ['potion_hp', 'potion_hp_l'];
     const potBtn = new TouchButton(
       this,
-      baseX - 64,
-      baseY - 122,
-      24,
+      controls.potion.x,
+      controls.potion.y,
+      24 * controlScale,
       '',
       0xa95765,
       depth,
@@ -233,7 +252,11 @@ export class UIScene extends Phaser.Scene {
       'utility',
     );
     const potCount = this.add
-      .text(baseX - 44, baseY - 138, '', { fontFamily: FONT, fontSize: '11px', color: '#ffffff' })
+      .text(controls.potionCount.x, controls.potionCount.y, '', {
+        fontFamily: FONT,
+        fontSize: `${Math.round(11 * controlScale)}px`,
+        color: '#ffffff',
+      })
       .setOrigin(0.5)
       .setDepth(depth + 2);
     const refreshPotions = (): void => {
@@ -260,6 +283,7 @@ export class UIScene extends Phaser.Scene {
 
     // Safe zone (town): dim the combat buttons so the screen isn't "戦闘UI全開".
     const combatButtons = [attackBtn, skillBtn, skill2Btn, dodgeBtn, potBtn];
+    combatButtons.forEach((button) => button.setOpacityMultiplier(controlOpacity));
     const setCombatDim = (dim: boolean): void => {
       combatButtons.forEach((b) => b.setDimmed(dim));
     };
@@ -268,10 +292,10 @@ export class UIScene extends Phaser.Scene {
 
     // Cooldown sweep overlays for the two skill buttons (slot 0 = S1, 1 = S2).
     const cdGeom = [
-      { x: baseX - 76, y: baseY + 6, r: 28 },
-      { x: baseX - 60, y: baseY - 58, r: 26 },
-      { x: baseX + 2, y: baseY - 76, r: 26 }, // dodge (slot 2)
-      { x: baseX - 64, y: baseY - 122, r: 24 }, // potion (slot 3)
+      { x: controls.skill1.x, y: controls.skill1.y, r: 28 * controlScale },
+      { x: controls.skill2.x, y: controls.skill2.y, r: 26 * controlScale },
+      { x: controls.dodge.x, y: controls.dodge.y, r: 26 * controlScale }, // dodge (slot 2)
+      { x: controls.potion.x, y: controls.potion.y, r: 24 * controlScale }, // potion (slot 3)
     ];
     const cdGfx = cdGeom.map(() => this.add.graphics().setDepth(depth + 1));
     const cdLabels = cdGeom.map(({ x, y }) =>
@@ -345,7 +369,7 @@ export class UIScene extends Phaser.Scene {
     const skillToastW = Math.min(138, w - 24);
     const skillToastY = Math.max(insets.top + 118, baseY - 170);
     const skillToastX = Phaser.Math.Clamp(
-      baseX - 42,
+      baseX + (settings.leftHanded ? 42 : -42) * controlScale,
       skillToastW / 2 + 8,
       w - skillToastW / 2 - 8,
     );
@@ -448,7 +472,7 @@ export class UIScene extends Phaser.Scene {
       this,
       w / 2,
       h - bottomPad - 110,
-      28,
+      28 * controlScale,
       '調べる',
       0x4f9870,
       depth,
@@ -456,6 +480,7 @@ export class UIScene extends Phaser.Scene {
       'primary',
     );
     this.interactBtn.onChange = (d) => input.setButton('interact', d);
+    this.interactBtn.setOpacityMultiplier(controlOpacity);
     this.interactBtn.setVisible(false);
 
     // Full-width battle strip: the retired minimap gives HP/MP enough room to
@@ -769,6 +794,22 @@ export class UIScene extends Phaser.Scene {
       .setDepth(depth)
       .setVisible(isUpdateReady());
     this.busOff.push(bus.on('pwa:update-available', () => this.updateText.setVisible(true)));
+    let controlsRestartQueued = false;
+    this.busOff.push(
+      bus.on('settings:controls-changed', () => {
+        if (controlsRestartQueued) return;
+        controlsRestartQueued = true;
+        const restart = (): void => {
+          if (this.scene.isActive('UI')) this.scene.restart();
+        };
+        const inventory = this.scene.get('Inventory');
+        if (inventory.scene.isActive()) {
+          inventory.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.time.delayedCall(0, restart));
+        } else {
+          this.time.delayedCall(0, restart);
+        }
+      }),
+    );
 
     this.installKeyboardDev();
 
@@ -784,7 +825,7 @@ export class UIScene extends Phaser.Scene {
       this.coach = new TutorialCoach(
         this,
         {
-          stick: { x: insets.left + 60, y: baseY },
+          stick: controls.stickStandby,
           attack: { x: baseX, y: baseY },
           bag: { x: bagX, y: bagY },
         },

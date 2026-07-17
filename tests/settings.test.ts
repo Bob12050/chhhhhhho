@@ -17,10 +17,15 @@ function installStorage(initial?: string): Map<string, string> {
 
 afterEach(() => vi.unstubAllGlobals());
 
-describe('appearance settings', () => {
+describe('persisted settings', () => {
   it('enables the aligned equipment appearance by default', () => {
     installStorage();
-    expect(loadSettings().paperDollPilot).toBe(true);
+    expect(loadSettings()).toMatchObject({
+      paperDollPilot: true,
+      controlScale: 1,
+      controlOpacity: 0.82,
+      leftHanded: false,
+    });
   });
 
   it('re-enables appearance when migrating an older renderer', () => {
@@ -35,11 +40,34 @@ describe('appearance settings', () => {
 
   it('allows the aligned appearance to be disabled manually', () => {
     installStorage();
-    saveSettings({ bgmVol: 0.5, sfxVol: 0.75, paperDollPilot: false });
+    saveSettings({
+      bgmVol: 0.5,
+      sfxVol: 0.75,
+      paperDollPilot: false,
+      controlScale: 1.12,
+      controlOpacity: 0.6,
+      leftHanded: true,
+    });
     expect(loadSettings()).toEqual({
       bgmVol: 0.5,
       sfxVol: 0.75,
       paperDollPilot: false,
+      controlScale: 1.12,
+      controlOpacity: 0.6,
+      leftHanded: true,
+    });
+  });
+
+  it('sanitizes invalid mobile control values from storage', () => {
+    installStorage(JSON.stringify({
+      controlScale: 9,
+      controlOpacity: -1,
+      leftHanded: 'yes',
+    }));
+    expect(loadSettings()).toMatchObject({
+      controlScale: 1.2,
+      controlOpacity: 0.5,
+      leftHanded: false,
     });
   });
 });
