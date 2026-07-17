@@ -11,6 +11,22 @@ let versionCheckInFlight = false;
 
 const currentBuildVersion = import.meta.env.VITE_BUILD_VERSION ?? 'dev';
 
+async function registerUncachedWorker(
+  swUrl: string,
+  fallback: ServiceWorkerRegistration,
+): Promise<ServiceWorkerRegistration> {
+  try {
+    const uncachedUrl = new URL(swUrl, window.location.href);
+    const scope = new URL('./', document.baseURI).pathname;
+    return await navigator.serviceWorker.register(uncachedUrl, {
+      scope,
+      updateViaCache: 'none',
+    });
+  } catch {
+    return fallback;
+  }
+}
+
 function reloadForUpdate(version?: string): void {
   if (reloadStarted) return;
   reloadStarted = true;
@@ -58,19 +74,21 @@ export async function registerServiceWorker(): Promise<void> {
     onOfflineReady() {
       // App shell cached; offline launch is ready.
     },
-    onRegisteredSW(_swUrl: string, r?: ServiceWorkerRegistration) {
+    onRegisteredSW(swUrl: string, r?: ServiceWorkerRegistration) {
       if (!r) return;
-      const check = (): void => {
-        void r.update().catch(() => undefined);
-        void checkBuildVersion();
-      };
-      check();
-      window.setInterval(check, 30_000);
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') check();
+      void registerUncachedWorker(swUrl, r).then((registration) => {
+        const check = (): void => {
+          void registration.update().catch(() => undefined);
+          void checkBuildVersion();
+        };
+        check();
+        window.setInterval(check, 30_000);
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') check();
+        });
+        window.addEventListener('focus', check);
+        window.addEventListener('pageshow', check);
       });
-      window.addEventListener('focus', check);
-      window.addEventListener('pageshow', check);
     },
   });
   applyUpdateFn = async () => {

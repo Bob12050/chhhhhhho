@@ -600,6 +600,9 @@ try {
 
   // ---- hunt quest: sequential waves via the real arena flow ----
   step = 'hunt';
+  // This step verifies the arena/quest/reward flow, not rank-2 balance.
+  // Remove combat RNG from the deploy gate so a slow runner cannot time out.
+  await page.evaluate(() => window.__test.powerUp(99));
   const accepted = await page.evaluate(() => window.__test.acceptQuest('hunt_r2_01_zephys'));
   check('狩猟クエストを受注できる', accepted === true);
   await page.evaluate(() => window.__test.warp('arena_plain'));
