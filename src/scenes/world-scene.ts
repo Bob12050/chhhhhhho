@@ -368,7 +368,7 @@ export class WorldScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player.body, true, 0.15, 0.15);
     this.physics.add.collider(this.player.body, this.obstacles);
     // Tell the persistent HUD about the new zone only once the player exists,
-    // so the minimap can place its marker immediately.
+    // so map-aware HUD systems receive the spawn position immediately.
     bus.emit('world:map-ready', {
       safe: !!this.map.safe,
       mapId: this.map.id,
@@ -1018,7 +1018,7 @@ export class WorldScene extends Phaser.Scene {
     }
     const w = this.scale.width;
     const x = 24;
-    const y = 102; // compact status panel bottom + minimap caption clearance
+    const y = 102; // status strip and menu-shortcut row clearance
     const cardW = w - 48;
     const cardH = 46;
     const bg = this.add.container(0, 0).setScrollFactor(0).setDepth(8000);

@@ -32,7 +32,7 @@ export interface GameEvents {
   'debug:warp': Record<string, never>;
   'debug:boss-phase': Record<string, never>;
   'map:travel': Record<string, never>;
-  /** Fired when a map finishes building; drives the town-mode HUD and minimap. */
+  /** Fired when a map finishes building; drives map-aware HUD state. */
   'world:map-ready': {
     safe: boolean;
     mapId: string;
@@ -42,7 +42,7 @@ export interface GameEvents {
     playerX: number;
     playerY: number;
   };
-  /** Throttled world position for the HUD minimap marker. */
+  /** Throttled world position for navigation and diagnostic overlays. */
   'world:player-position': { mapId: string; x: number; y: number };
 
   // Equipment
@@ -82,7 +82,7 @@ export interface GameEvents {
     total: number;
     complete: boolean;
   };
-  /** Live navigation target for the pinned quest tracker and minimap. */
+  /** Live navigation target for the pinned quest tracker. */
   'quest:guide':
     | { active: false }
     | {

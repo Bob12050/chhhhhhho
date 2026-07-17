@@ -38,7 +38,7 @@ interface RewardNotice {
 
 /**
  * Always-on UI overlay: virtual stick (lower-left), attack + skill + interact
- * buttons (lower-right), compact hunter/quest panels, and a live minimap.
+ * buttons (lower-right), compact hunter/quest panels, and menu shortcuts.
  * Renders above the world and keeps controls clear of the home-indicator safe
  * area. Also provides a dev keyboard fallback.
  */
@@ -458,12 +458,15 @@ export class UIScene extends Phaser.Scene {
     this.interactBtn.onChange = (d) => input.setButton('interact', d);
     this.interactBtn.setVisible(false);
 
-    // Thin battle strip: progression and survival stay in one glanceable row.
-    // Job identity now travels with the avatar instead of competing for HUD space.
+    // Full-width battle strip: the retired minimap gives HP/MP enough room to
+    // stay readable at a glance, including late-game four-digit values.
     const px = insets.left + 6;
     const py = insets.top + 6;
-    const PW = 256;
-    const PH = 30;
+    const PW = w - insets.left - insets.right - 12;
+    const PH = 38;
+    const levelDivider = 40;
+    const expDivider = 112;
+    const hpDivider = Math.floor((PW + expDivider) / 2);
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
     const panelBack = this.add.graphics();
     panelBack.fillStyle(0x000000, 0.28);
@@ -475,9 +478,9 @@ export class UIScene extends Phaser.Scene {
     panelBack.lineStyle(1, 0xf7e8a5, 0.62);
     panelBack.lineBetween(3, 2, PW - 3, 2);
     panelBack.lineStyle(1, 0x72839d, 0.38);
-    panelBack.lineBetween(39, 4, 39, PH - 4);
-    panelBack.lineBetween(106, 4, 106, PH - 4);
-    panelBack.lineBetween(180, 4, 180, PH - 4);
+    panelBack.lineBetween(levelDivider, 4, levelDivider, PH - 4);
+    panelBack.lineBetween(expDivider, 4, expDivider, PH - 4);
+    panelBack.lineBetween(hpDivider, 4, hpDivider, PH - 4);
     panel.add(panelBack);
 
     // Low-HP danger vignette (full screen, just under the HUD).
@@ -489,12 +492,12 @@ export class UIScene extends Phaser.Scene {
 
     const barY = PH / 2;
     const levelLabel = this.add
-      .text(6, barY, 'LV', { fontFamily: FONT, fontSize: '8px', color: '#eef5ff', fontStyle: 'bold' })
+      .text(6, barY, 'LV', { fontFamily: FONT, fontSize: '9px', color: '#eef5ff', fontStyle: 'bold' })
       .setOrigin(0, 0.5);
     levelLabel.setShadow(0, 1, '#000000', 2);
     panel.add(levelLabel);
     const levelText = this.add
-      .text(30, barY, '', { fontFamily: FONT, fontSize: '10px', color: '#fff0a6', fontStyle: 'bold' })
+      .text(30, barY, '', { fontFamily: FONT, fontSize: '11px', color: '#fff0a6', fontStyle: 'bold' })
       .setOrigin(0.5);
     levelText.setShadow(0, 1, '#000000', 2);
     panel.add(levelText);
@@ -505,50 +508,51 @@ export class UIScene extends Phaser.Scene {
 
     const makeBar = (x: number, width: number, color: number): Phaser.GameObjects.Rectangle => {
       const back = this.add
-        .rectangle(x, barY, width, 10, 0x02060c, 0.95)
+        .rectangle(x, barY, width, 14, 0x02060c, 0.95)
         .setOrigin(0, 0.5)
         .setStrokeStyle(1, 0xb9c9dd, 0.42);
-      const fill = this.add.rectangle(x + 1, barY, width - 2, 8, color, 0.98).setOrigin(0, 0.5);
+      const fill = this.add.rectangle(x + 1, barY, width - 2, 12, color, 0.98).setOrigin(0, 0.5);
       panel.add([back, fill]);
       return fill;
     };
     const statLabel = (x: number, label: string): void => {
       const text = this.add
-        .text(x, barY, label, { fontFamily: FONT, fontSize: '8px', color: '#eef5ff', fontStyle: 'bold' })
+        .text(x, barY, label, { fontFamily: FONT, fontSize: '9px', color: '#eef5ff', fontStyle: 'bold' })
         .setOrigin(0, 0.5);
       text.setShadow(0, 1, '#000000', 2);
       panel.add(text);
     };
     const barText = (x: number, width: number): Phaser.GameObjects.Text => {
       const val = this.add
-        .text(x + width / 2, barY, '', { fontFamily: FONT, fontSize: '8px', color: '#ffffff', fontStyle: 'bold' })
+        .text(x + width / 2, barY, '', { fontFamily: FONT, fontSize: '9px', color: '#ffffff', fontStyle: 'bold' })
         .setOrigin(0.5);
       val.setShadow(0, 1, '#000000', 2);
       panel.add(val);
       return val;
     };
 
-    const expX = 42;
-    const expW = 61;
+    const expX = levelDivider + 5;
+    const expW = expDivider - expX - 5;
     this.expBar = makeBar(expX, expW, 0xf2d45c);
     this.expText = barText(expX, expW);
     const expSegments = this.add.graphics();
     expSegments.lineStyle(1, 0x172034, 0.58);
     for (let i = 1; i < 8; i++) {
       const sx = Math.round(expX + (expW * i) / 8);
-      expSegments.lineBetween(sx, barY - 4, sx, barY + 4);
+      expSegments.lineBetween(sx, barY - 6, sx, barY + 6);
     }
     panel.add(expSegments);
 
-    const hpX = 123;
-    const mpX = 198;
-    const statW = 55;
-    statLabel(109, 'HP');
-    this.hpBar = makeBar(hpX, statW, 0xf17c78);
-    this.hpText = barText(hpX, statW);
-    statLabel(184, 'MP');
-    this.mpBar = makeBar(mpX, statW, 0x5ee0e6);
-    this.mpText = barText(mpX, statW);
+    const hpX = expDivider + 24;
+    const hpW = hpDivider - hpX - 5;
+    const mpX = hpDivider + 24;
+    const mpW = PW - mpX - 5;
+    statLabel(expDivider + 5, 'HP');
+    this.hpBar = makeBar(hpX, hpW, 0xf17c78);
+    this.hpText = barText(hpX, hpW);
+    statLabel(hpDivider + 5, 'MP');
+    this.mpBar = makeBar(mpX, mpW, 0x5ee0e6);
+    this.mpText = barText(mpX, mpW);
 
     // Initial values (bars need a fill before the first bus event).
     const d0 = gameState.derived;
@@ -703,109 +707,6 @@ export class UIScene extends Phaser.Scene {
     );
     this.busOff.push(bus.on('boss:intro', (data) => this.showBossIntro(data)));
 
-    // Live minimap: intentionally compact, but it gives the upper-right a
-    // recognisable RPG silhouette and makes map position visible at a glance.
-    const miniSize = 92;
-    const miniInner = 64;
-    const miniX = w - insets.right - 48;
-    const miniY = insets.top + 48;
-    const miniG = this.add.graphics();
-    const miniFrame = this.add
-      .image(0, 0, TEX.hudMinimapFrame)
-      .setDisplaySize(92, 104)
-      .setAlpha(0.8);
-    const miniGuideRing = this.add
-      .circle(0, 0, 5)
-      .setStrokeStyle(1.5, 0xffd86b, 0.95)
-      .setVisible(false);
-    const miniGuideDot = this.add
-      .circle(0, 0, 2.5, 0xffd86b, 1)
-      .setStrokeStyle(1, 0x2a1820, 1)
-      .setVisible(false);
-    const miniDot = this.add.circle(0, 0, 3.5, 0xffe16a).setStrokeStyle(1.5, 0x2a1820, 1);
-    const miniName = this.add
-      .text(0, 58, '', { fontFamily: FONT, fontSize: '9px', color: '#fff1bd', fontStyle: 'bold' })
-      .setOrigin(0.5)
-      .setAlpha(0.76)
-      .setShadow(0, 1, '#000000', 2);
-    const miniRoot = this.add
-      .container(miniX, miniY, [miniG, miniFrame, miniGuideRing, miniGuideDot, miniDot, miniName])
-      .setDepth(depth);
-    miniRoot.setSize(miniSize, 104).setInteractive({ useHandCursor: true });
-    miniRoot.on('pointerup', () => bus.emit('ui:open-map', {}));
-
-    let miniMap = getMap(gameState.mapId);
-    let miniWidth = miniMap?.size.w ?? 1;
-    let miniHeight = miniMap?.size.h ?? 1;
-    const positionGuideMarker = (): void => {
-      if (!currentGuide?.active || currentGuide.mapId !== miniMap?.id) {
-        miniGuideRing.setVisible(false);
-        miniGuideDot.setVisible(false);
-        return;
-      }
-      const half = miniInner / 2;
-      const gx = Phaser.Math.Clamp(
-        (currentGuide.targetX / miniWidth - 0.5) * miniInner,
-        -half + 4,
-        half - 4,
-      );
-      const gy = Phaser.Math.Clamp(
-        (currentGuide.targetY / miniHeight - 0.5) * miniInner,
-        -half + 4,
-        half - 4,
-      );
-      miniGuideRing.setPosition(gx, gy).setVisible(true);
-      miniGuideDot.setPosition(gx, gy).setVisible(true);
-    };
-    const drawMiniMap = (x: number, y: number): void => {
-      const half = miniInner / 2;
-      const ground = miniMap?.ground === 'stone' ? 0x536172 : miniMap?.ground === 'floor' ? 0x62515e : 0x45694a;
-      miniG.clear();
-      miniG.fillStyle(0x050912, 0.94);
-      miniG.fillRoundedRect(-half - 3, -half - 3, miniInner + 6, miniInner + 6, 8);
-      miniG.fillStyle(ground, 0.95);
-      miniG.fillRoundedRect(-half, -half, miniInner, miniInner, 7);
-      if (miniMap?.path) {
-        miniG.fillStyle(0xc49a62, 0.72);
-        const thickness = Math.max(4, Math.round((miniMap.path.thickness / (miniMap.path.axis === 'v' ? miniWidth : miniHeight)) * miniInner));
-        if (miniMap.path.axis === 'v') miniG.fillRect(-thickness / 2, -half, thickness, miniInner);
-        else miniG.fillRect(-half, -thickness / 2, miniInner, thickness);
-      }
-      for (const portal of miniMap?.portals ?? []) {
-        const px = Phaser.Math.Clamp(((portal.rect[0] + portal.rect[2] / 2) / miniWidth - 0.5) * miniInner, -half + 3, half - 3);
-        const py = Phaser.Math.Clamp(((portal.rect[1] + portal.rect[3] / 2) / miniHeight - 0.5) * miniInner, -half + 3, half - 3);
-        miniG.fillStyle(portal.requiresFlag && !gameState.flags[portal.requiresFlag] ? 0xc45a62 : 0x8ddcff, 0.95);
-        miniG.fillCircle(px, py, 2);
-      }
-      miniG.lineStyle(1, 0xffffff, 0.12);
-      miniG.strokeRoundedRect(-half, -half, miniInner, miniInner, 7);
-      miniDot.setPosition(
-        Phaser.Math.Clamp((x / miniWidth - 0.5) * miniInner, -half + 4, half - 4),
-        Phaser.Math.Clamp((y / miniHeight - 0.5) * miniInner, -half + 4, half - 4),
-      );
-      positionGuideMarker();
-    };
-    const refreshMiniMap = (data: {
-      mapId: string;
-      mapName?: string;
-      mapWidth?: number;
-      mapHeight?: number;
-      x: number;
-      y: number;
-    }): void => {
-      miniMap = getMap(data.mapId) ?? miniMap;
-      miniWidth = data.mapWidth ?? miniMap?.size.w ?? miniWidth;
-      miniHeight = data.mapHeight ?? miniMap?.size.h ?? miniHeight;
-      miniName.setText(data.mapName ?? miniMap?.name ?? '');
-      drawMiniMap(data.x, data.y);
-    };
-    refreshMiniMap({ mapId: gameState.mapId, x: gameState.x, y: gameState.y });
-    this.busOff.push(
-      bus.on('world:map-ready', ({ mapId, mapName, mapWidth, mapHeight, playerX, playerY }) =>
-        refreshMiniMap({ mapId, mapName, mapWidth, mapHeight, x: playerX, y: playerY }),
-      ),
-    );
-    this.busOff.push(bus.on('world:player-position', ({ mapId, x, y }) => refreshMiniMap({ mapId, x, y })));
     this.busOff.push(
       bus.on('quest:guide', (guide) => {
         currentGuide = guide.active ? guide : null;
@@ -816,22 +717,36 @@ export class UIScene extends Phaser.Scene {
           trGuideArrow.setRotation(guide.angle + Math.PI / 2);
           trGuideDistance.setText(`${guide.distance}m`);
         }
-        positionGuideMarker();
         refreshTracker();
       }),
     );
 
-    // Attach inventory to the minimap's lower-right corner. This keeps the
-    // status strip wide while leaving a full-size, thumb-friendly touch target.
-    const bagX = miniX + 24;
-    const bagY = miniY + 27;
+    // Explicit menu shortcuts replace the minimap. They share one row and use
+    // full 48px touch targets, so neither hides status values or map scenery.
+    const bagX = w - insets.right - 30;
+    const bagY = trY + 19;
+    const mapX = bagX - 54;
+    const mapButton = new TouchButton(
+      this,
+      mapX,
+      bagY,
+      24,
+      'マップ',
+      0x4f82a6,
+      depth + 2,
+      TEX.iconMap,
+      'utility',
+    );
+    mapButton.onChange = (down) => {
+      if (down) bus.emit('ui:open-map', {});
+    };
     const bag = new TouchButton(
       this,
       bagX,
       bagY,
       24,
-      '',
-      0x63728d,
+      'もちもの',
+      0x776a98,
       depth + 2,
       TEX.iconBag,
       'utility',
