@@ -43,6 +43,9 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Phaser and the authored game data ship as one bundle. Keep it
+        // available offline while leaving enough room for future chapters.
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // Never precache index.html. GitHub Pages gives HTML a ten-minute HTTP
         // cache, and putting that response behind another cache can pin an old
         // hashed bundle on iOS even after a successful deployment.

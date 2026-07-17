@@ -678,12 +678,26 @@ try {
   await page.waitForTimeout(500);
   await page.keyboard.press('Escape'); await page.waitForTimeout(600);
 
-  // ---- bestiary opens ----
+  // ---- regional bestiary + one-time completion reward ----
   step = 'bestiary';
+  const grasslandIds = ['slime', 'bat', 'boss_zephys', 'boss_wolf_alpha', 'boss_skoll'];
+  for (const enemyId of grasslandIds) {
+    await page.evaluate((id) => window.__test.discoverEnemy(id), enemyId);
+  }
+  const beforeBestiaryReward = await snap(page);
   await page.mouse.click(336, 75); await page.waitForTimeout(900);
   await page.mouse.click(138, 632); await page.waitForTimeout(800); // framed 図鑑 action
-  // Detail for the first (slime) row must open without errors.
-  await page.mouse.click(180, 134); await page.waitForTimeout(600);
+  await page.mouse.click(313, 127); await page.waitForTimeout(500); // 草原地方: 受け取る
+  const afterBestiaryReward = await snap(page);
+  check(
+    '地域図鑑の達成報酬を受け取れる',
+    afterBestiaryReward.gold === beforeBestiaryReward.gold + 500
+      && (afterBestiaryReward.materials['sky_crown'] ?? 0)
+        === (beforeBestiaryReward.materials['sky_crown'] ?? 0) + 1,
+    `gold ${beforeBestiaryReward.gold}→${afterBestiaryReward.gold}`,
+  );
+  await page.mouse.click(180, 112); await page.waitForTimeout(400); // 草原地方を展開
+  await page.mouse.click(180, 180); await page.waitForTimeout(600);
   await page.keyboard.press('Escape'); await page.waitForTimeout(400);
   await page.keyboard.press('Escape'); await page.waitForTimeout(400);
   check('図鑑が開ける（エラーなし）', pageErrors.length === 0, pageErrors[0]);

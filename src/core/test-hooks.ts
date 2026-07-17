@@ -16,6 +16,7 @@ import { saveManager } from '@/save/save-manager';
 import { syncInvestigationQuests } from '@/endgame/investigations';
 import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
 import { getEquipment } from '@/data/items';
+import { getEnemyDef } from '@/enemies/enemy-defs';
 
 export interface TestHooks {
   activeScenes(): string[];
@@ -53,6 +54,8 @@ export interface TestHooks {
   turnInQuest(id: string): boolean;
   /** Credit a kill toward active quests without fighting (E2E scenario setup). */
   recordKill(enemyId: string): void;
+  /** Register one bestiary discovery without spawning combat (visual QA only). */
+  discoverEnemy(enemyId: string): boolean;
   /** Visual QA only: bypass unlock requirements and swap the active job look. */
   forceJob(id: string): boolean;
   /** Warp to a map's default spawn (or x/y) via the real travel path. */
@@ -150,6 +153,11 @@ export function installTestHooks(game: Phaser.Game): void {
     turnInQuest: (id: string) => turnInQuest(gameState, id),
     recordKill: (enemyId: string) => {
       recordKill(gameState, enemyId);
+    },
+    discoverEnemy: (enemyId: string) => {
+      if (!getEnemyDef(enemyId)) return false;
+      gameState.addKill(enemyId);
+      return true;
     },
     forceJob: (id: string) => {
       if (!getJob(id)) return false;
