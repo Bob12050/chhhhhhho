@@ -1,5 +1,5 @@
 import { Rng } from '@/core/rng';
-import { getEnemyDef } from '@/enemies/enemy-defs';
+import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
 import type { GameState } from '@/player/game-state';
 import {
   allQuests,
@@ -14,15 +14,25 @@ export const INVESTIGATION_BOARD_SIZE = 3;
 
 interface Candidate {
   quest: QuestDef;
+  enemy: EnemyDef;
   enemyId: string;
   enemyName: string;
 }
 
 const CONDITIONS = [
-  { label: '生命反応増大', hpBonus: 0.18, damageBonus: 0 },
-  { label: '攻撃性増大', hpBonus: 0, damageBonus: 0.08 },
-  { label: '深層共鳴', hpBonus: 0.1, damageBonus: 0.04 },
+  { label: '生命反応増大', hpRate: 1.1, damageRate: 1 },
+  { label: '攻撃性増大', hpRate: 1, damageRate: 1.06 },
+  { label: '深層共鳴', hpRate: 1.05, damageRate: 1.03 },
 ] as const;
+
+// Investigation bosses span several authored ranks, so multiplying every base
+// stat by the same value makes late bosses walls and early bosses trivial. Aim
+// each contract at one shared threat curve instead, then let the condition add
+// a small, readable variation around it.
+const BASE_TARGET_HP = 24_500;
+const HP_PER_THREAT = 850;
+const BASE_TARGET_DAMAGE = 315;
+const DAMAGE_PER_THREAT = 3.5;
 
 function candidates(): Candidate[] {
   const byEnemy = new Map<string, Candidate>();
@@ -39,7 +49,7 @@ function candidates(): Candidate[] {
     const enemyId = quest.objectives[0].enemyId;
     const enemy = getEnemyDef(enemyId);
     if (!enemy?.isBoss || byEnemy.has(enemyId)) continue;
-    byEnemy.set(enemyId, { quest, enemyId, enemyName: enemy.name });
+    byEnemy.set(enemyId, { quest, enemy, enemyId, enemyName: enemy.name });
   }
   return [...byEnemy.values()].sort((a, b) => a.enemyId.localeCompare(b.enemyId));
 }
@@ -65,8 +75,11 @@ export function syncInvestigationQuests(gs: GameState): QuestDef[] {
     const pick = pool.splice(rng.intRange(0, pool.length - 1), 1)[0];
     const threat = Math.min(10, baseThreat + rng.intRange(0, 2));
     const condition = CONDITIONS[rng.intRange(0, CONDITIONS.length - 1)];
-    const hpMult = Number((1.1 + threat * 0.14 + condition.hpBonus).toFixed(2));
-    const dmgMult = Number((1.02 + threat * 0.045 + condition.damageBonus).toFixed(2));
+    const targetHp = (BASE_TARGET_HP + (threat - 1) * HP_PER_THREAT) * condition.hpRate;
+    const targetDamage =
+      (BASE_TARGET_DAMAGE + (threat - 1) * DAMAGE_PER_THREAT) * condition.damageRate;
+    const hpMult = Number((targetHp / pick.enemy.maxHp).toFixed(3));
+    const dmgMult = Number((targetDamage / pick.enemy.contactDamage).toFixed(3));
     const sealQty = 1 + Math.floor((threat - 1) / 3);
     defs.push({
       id: `${INVESTIGATION_PREFIX}${gs.investigationSeed.toString(16)}_${index}`,
@@ -75,7 +88,7 @@ export function syncInvestigationQuests(gs: GameState): QuestDef[] {
       description: `危険度${threat}・${condition.label}`,
       objectives: [{ type: 'kill', enemyId: pick.enemyId, count: 1 }],
       require: {
-        minLevel: 90 + Math.min(6, Math.floor(threat / 2)),
+        minLevel: Math.max(94, 90 + Math.min(6, Math.floor(threat / 2))),
         flag: 'main_story_complete',
       },
       rewards: {

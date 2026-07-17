@@ -658,7 +658,7 @@ export class QuestBoardScene extends Phaser.Scene {
         16,
         y + 20,
         q.investigation
-          ? `${q.investigation.condition}  HP×${q.huntModifiers?.hpMult ?? 1} 攻×${q.huntModifiers?.dmgMult ?? 1}`
+          ? `${q.investigation.condition}  推奨Lv${q.require?.minLevel ?? 94}`
           : this.objectiveText(q, state === 'active'),
         {
         fontFamily: FONT,

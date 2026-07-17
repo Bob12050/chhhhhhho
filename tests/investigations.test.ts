@@ -9,6 +9,7 @@ import { getQuest, replaceRuntimeQuests } from '@/quests/quest-defs';
 import { acceptQuest, availableQuests, turnInQuest } from '@/quests/quests';
 import { getEquipment, replaceRuntimeEquipment } from '@/data/items';
 import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
+import { getEnemyDef } from '@/enemies/enemy-defs';
 
 function postClearState(): GameState {
   const gs = new GameState();
@@ -35,8 +36,9 @@ describe('post-clear investigations', () => {
     expect(new Set(first.map((q) => q.objectives[0].enemyId)).size).toBe(3);
     for (const quest of first) {
       expect(quest.investigation?.threat).toBeGreaterThanOrEqual(1);
-      expect(quest.huntModifiers?.hpMult).toBeGreaterThan(1);
-      expect(quest.huntModifiers?.dmgMult).toBeGreaterThan(1);
+      expect(quest.huntModifiers?.hpMult).toBeGreaterThan(0);
+      expect(quest.huntModifiers?.dmgMult).toBeGreaterThan(0);
+      expect(quest.require?.minLevel).toBeGreaterThanOrEqual(94);
       expect(quest.rewards.items?.[INVESTIGATION_SEAL_ID]).toBeGreaterThan(0);
     }
     expect(availableQuests(gs).filter((q) => q.investigation)).toHaveLength(3);
@@ -98,6 +100,29 @@ describe('post-clear investigations', () => {
 
     expect(new Set(rewards.map((reward) => reward.id)).size).toBe(board.length);
     expect(new Set(rewardSignatures).size).toBe(board.length);
+  });
+
+  it('normalizes different bosses onto one threat curve', () => {
+    const gs = postClearState();
+    gs.investigationsCompleted = 18;
+    const hpValues: number[] = [];
+    const damageValues: number[] = [];
+    const enemies = new Set<string>();
+
+    for (let seed = 1; seed <= 40; seed++) {
+      gs.investigationSeed = seed;
+      for (const quest of syncInvestigationQuests(gs)) {
+        const enemyId = quest.objectives[0].enemyId;
+        const enemy = getEnemyDef(enemyId)!;
+        enemies.add(enemyId);
+        hpValues.push(enemy.maxHp * (quest.huntModifiers?.hpMult ?? 1));
+        damageValues.push(enemy.contactDamage * (quest.huntModifiers?.dmgMult ?? 1));
+      }
+    }
+
+    expect(enemies.size).toBeGreaterThan(10);
+    expect(Math.max(...hpValues) / Math.min(...hpValues)).toBeLessThan(1.12);
+    expect(Math.max(...damageValues) / Math.min(...damageValues)).toBeLessThan(1.08);
   });
 
   it.each([
