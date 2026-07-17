@@ -99,12 +99,22 @@ function rollAffixes(base: EquipmentDef, rank: number, rng: Rng): EquipmentAffix
   return out;
 }
 
+function contractHash(questId: string): number {
+  let hash = 2166136261;
+  for (let i = 0; i < questId.length; i++) {
+    hash ^= questId.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
 function lootSeed(gs: GameState, quest: QuestDef): number {
   const boardSeed = quest.investigation?.boardSeed ?? gs.investigationSeed;
   return (
     boardSeed
     ^ Math.imul(gs.investigationsCompleted + 1, 0x85ebca6b)
     ^ Math.imul(gs.slot + 1, 0xc2b2ae35)
+    ^ Math.imul(contractHash(quest.id), 0x27d4eb2d)
   ) >>> 0;
 }
 
@@ -118,9 +128,10 @@ export function generateInvestigationEquipment(gs: GameState, quest: QuestDef): 
   const derived = { ...base.derived };
   const mutable = derived as Record<keyof DerivedStats, number | undefined>;
   for (const affix of affixes) mutable[affix.stat] = (mutable[affix.stat] ?? 0) + affix.value;
+  const contractKey = contractHash(quest.id).toString(36);
   const id = `ig_${gs.slot}_${quest.investigation.boardSeed.toString(36)}_${(
     gs.investigationsCompleted + 1
-  ).toString(36)}`;
+  ).toString(36)}_${contractKey}`;
 
   const def: EquipmentDef = {
     ...base,

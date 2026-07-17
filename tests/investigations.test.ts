@@ -85,6 +85,21 @@ describe('post-clear investigations', () => {
     expect(first.generated?.threat).toBe(quest.investigation?.threat);
   });
 
+  it('rolls a distinct reward for each contract on the same board', () => {
+    const gs = postClearState();
+    const board = syncInvestigationQuests(gs);
+    const rewards = board.map((quest) => generateInvestigationEquipment(gs, quest));
+    const rewardSignatures = rewards.map((reward) =>
+      JSON.stringify({
+        baseId: reward.generated?.baseId,
+        affixes: reward.generated?.affixes,
+      }),
+    );
+
+    expect(new Set(rewards.map((reward) => reward.id)).size).toBe(board.length);
+    expect(new Set(rewardSignatures).size).toBe(board.length);
+  });
+
   it.each([
     [8, 2],
     [9, 3],
