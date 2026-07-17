@@ -33,22 +33,16 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   sheet(TEX.playerBody, 'assets/char/player_body-storybook-v2.png'),
   sheet(TEX.playerBodyDiagonal, 'assets/char/player_body-diagonal-v1.png'),
   sheet(TEX.playerBodyBald, 'assets/char/player_body_bald.png'),
-  // Iron equipment pilot generated from the approved aligned turnaround. The
-  // v1 sheets stay on disk as a rollback; versioned URLs bypass mobile caches.
-  sheet(TEX.paperDollPilotBase, 'assets/paperdoll-pilot/base-cardinal-v2.png'),
-  sheet(TEX.paperDollPilotBaseDiagonal, 'assets/paperdoll-pilot/base-diagonal-v2.png'),
-  sheet(TEX.paperDollPilotHead, 'assets/paperdoll-pilot/helm-iron-cardinal-v2.png'),
-  sheet(TEX.paperDollPilotHeadDiagonal, 'assets/paperdoll-pilot/helm-iron-diagonal-v2.png'),
-  sheet(TEX.paperDollPilotTorso, 'assets/paperdoll-pilot/torso-iron-cardinal-v2.png'),
-  sheet(TEX.paperDollPilotTorsoDiagonal, 'assets/paperdoll-pilot/torso-iron-diagonal-v2.png'),
-  sheet(TEX.paperDollPilotNearHand, 'assets/paperdoll-pilot/hands-iron-cardinal-v2.png'),
-  sheet(TEX.paperDollPilotNearHandDiagonal, 'assets/paperdoll-pilot/hands-iron-diagonal-v2.png'),
-  sheet(TEX.paperDollPilotFeet, 'assets/paperdoll-pilot/feet-iron-cardinal-v2.png'),
-  sheet(TEX.paperDollPilotFeetDiagonal, 'assets/paperdoll-pilot/feet-iron-diagonal-v2.png'),
-  sheet(TEX.paperDollPilotSword, 'assets/paperdoll-pilot/sword-iron-cardinal-v2.png'),
-  sheet(TEX.paperDollPilotSwordDiagonal, 'assets/paperdoll-pilot/sword-iron-diagonal-v2.png'),
-  sheet(TEX.paperDollPilotShield, 'assets/paperdoll-pilot/shield-iron-cardinal-v2.png'),
-  sheet(TEX.paperDollPilotShieldDiagonal, 'assets/paperdoll-pilot/shield-iron-diagonal-v2.png'),
+  // Earlier sheets stay on disk as a rollback. V3 renders only the stable
+  // head / precomposed outfit / weapon appearance slots.
+  sheet(TEX.paperDollPilotBase, 'assets/paperdoll-pilot/base-cardinal-v3.png'),
+  sheet(TEX.paperDollPilotBaseDiagonal, 'assets/paperdoll-pilot/base-diagonal-v3.png'),
+  sheet(TEX.paperDollPilotHead, 'assets/paperdoll-pilot/helm-iron-cardinal-v3.png'),
+  sheet(TEX.paperDollPilotHeadDiagonal, 'assets/paperdoll-pilot/helm-iron-diagonal-v3.png'),
+  sheet(TEX.paperDollPilotOutfit, 'assets/paperdoll-pilot/outfit-iron-cardinal-v3.png'),
+  sheet(TEX.paperDollPilotOutfitDiagonal, 'assets/paperdoll-pilot/outfit-iron-diagonal-v3.png'),
+  sheet(TEX.paperDollPilotWeapon, 'assets/paperdoll-pilot/weapon-iron-cardinal-v3.png'),
+  sheet(TEX.paperDollPilotWeaponDiagonal, 'assets/paperdoll-pilot/weapon-iron-diagonal-v3.png'),
   // Job-fixed appearance bodies (drop these PNGs to give a job its own look).
   sheet(TEX.jobFighter, 'assets/char/job_fighter-storybook-v3.png'),
   sheet(TEX.jobFighterDiagonal, 'assets/char/job_fighter-diagonal-v1.png'),

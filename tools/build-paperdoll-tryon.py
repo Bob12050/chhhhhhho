@@ -51,11 +51,8 @@ LAYER_FILES = {
 GAME_LAYER_STEMS = {
     "base": "base",
     "head": "helm-iron",
-    "torso": "torso-iron",
-    "hands": "hands-iron",
-    "feet": "feet-iron",
-    "sword": "sword-iron",
-    "shield": "shield-iron",
+    "outfit": "outfit-iron",
+    "weapon": "weapon-iron",
 }
 
 
@@ -240,8 +237,8 @@ def mask_from_polygons(polygons: list[list[tuple[int, int]]]) -> Image.Image:
 
 
 def layer_shapes(direction: str) -> dict[str, list[list[tuple[int, int]]]]:
-    common_head = [[(82, 18), (278, 18), (282, 165), (246, 218), (114, 218), (78, 165)]]
-    common_torso = [[(72, 180), (288, 180), (298, 356), (62, 356)]]
+    common_head = [[(88, 18), (272, 18), (278, 158), (236, 188), (124, 188), (82, 158)]]
+    common_torso = [[(68, 158), (292, 158), (298, 356), (62, 356)]]
     common_hands = [
         [(70, 210), (135, 210), (142, 354), (64, 354)],
         [(225, 210), (292, 210), (296, 354), (218, 354)],
@@ -274,8 +271,8 @@ def layer_shapes(direction: str) -> dict[str, list[list[tuple[int, int]]]]:
         }
     if direction == "left":
         return {
-            "head": [[(92, 26), (258, 28), (270, 166), (236, 218), (112, 218), (86, 160)]],
-            "torso": [[(94, 184), (262, 184), (274, 360), (86, 360)]],
+            "head": [[(96, 26), (254, 28), (264, 158), (226, 190), (120, 190), (90, 154)]],
+            "torso": [[(88, 158), (268, 158), (274, 360), (86, 360)]],
             "hands": [[(86, 214), (158, 214), (166, 354), (78, 354)]],
             "feet": [[(106, 338), (260, 338), (266, 434), (100, 434)]],
             "sword": [[(48, 426), (72, 442), (172, 338), (148, 306)]],
@@ -283,7 +280,7 @@ def layer_shapes(direction: str) -> dict[str, list[list[tuple[int, int]]]]:
         }
     if direction == "down-left":
         return {
-            "head": [[(78, 18), (276, 18), (284, 166), (246, 220), (110, 220), (72, 164)]],
+            "head": [[(84, 18), (272, 18), (278, 158), (236, 190), (118, 190), (78, 158)]],
             "torso": common_torso,
             "hands": common_hands,
             "feet": common_feet,
@@ -294,7 +291,7 @@ def layer_shapes(direction: str) -> dict[str, list[list[tuple[int, int]]]]:
             "shield": [[(190, 244), (260, 238), (288, 278), (280, 376), (238, 410), (194, 382), (182, 298)]],
         }
     return {
-        "head": [[(80, 14), (286, 14), (290, 176), (252, 224), (108, 224), (74, 168)]],
+        "head": [[(86, 14), (280, 14), (284, 162), (240, 194), (118, 194), (80, 160)]],
         "torso": common_torso,
         "hands": common_hands,
         "feet": common_feet,
@@ -450,6 +447,74 @@ def write_atlas(views: dict[str, Image.Image], destination: Path) -> None:
     atlas.save(destination, optimize=True)
 
 
+def build_outfit_views(
+    layers: dict[str, dict[str, Image.Image]],
+    masks: dict[str, dict[str, Image.Image]],
+) -> dict[str, Image.Image]:
+    """Bake torso, hands, feet and shield into one complete body texture."""
+    outfits: dict[str, Image.Image] = {}
+    for direction in DIRECTIONS:
+        tile = layers["base"][direction].copy()
+        for layer in ("torso", "hands", "feet"):
+            alpha = ImageChops.multiply(
+                tile.getchannel("A"),
+                ImageChops.invert(masks[layer][direction].getchannel("A")),
+            )
+            tile.putalpha(alpha)
+            tile.alpha_composite(layers[layer][direction])
+        tile.alpha_composite(layers["shield"][direction])
+        outfits[direction] = tile
+    return outfits
+
+
+def build_default_head_views(
+    head_views: dict[str, Image.Image],
+) -> dict[str, Image.Image]:
+    """Palette-swap the aligned helm into a neutral leather under-cap."""
+    defaults: dict[str, Image.Image] = {}
+    face_polygons = {
+        "down": [[(118, 102), (242, 102), (250, 154), (232, 206), (128, 206), (110, 154)]],
+        "up": [],
+        "left": [[(100, 102), (178, 102), (184, 158), (164, 208), (106, 196), (96, 146)]],
+        "down-left": [[(106, 102), (230, 102), (238, 154), (218, 208), (118, 208), (100, 154)]],
+        "up-left": [[(98, 114), (160, 108), (166, 170), (148, 208), (106, 196), (96, 148)]],
+    }
+    for direction, source in head_views.items():
+        output = source.copy()
+        pixels = output.load()
+        face_mask = mask_from_polygons(face_polygons[direction])
+        face_pixels = face_mask.load()
+        for y in range(output.height):
+            for x in range(output.width):
+                red, green, blue, alpha = pixels[x, y]
+                if alpha == 0:
+                    continue
+                if face_pixels[x, y] > 0:
+                    pixels[x, y] = (0, 0, 0, 0)
+                    continue
+                light = (red + green + blue) / (3 * 255)
+                pixels[x, y] = (
+                    round(48 + 118 * light),
+                    round(29 + 72 * light),
+                    round(22 + 48 * light),
+                    alpha,
+                )
+        defaults[direction] = output
+    return defaults
+
+
+def composite_views(
+    bases: dict[str, Image.Image],
+    overlays: dict[str, Image.Image],
+) -> dict[str, Image.Image]:
+    composites: dict[str, Image.Image] = {}
+    for direction in DIRECTIONS:
+        tile = bases[direction].copy()
+        tile.alpha_composite(overlays[direction])
+        composites[direction] = tile
+    return composites
+
+
 def game_frame(view: Image.Image) -> Image.Image:
     """Scale one aligned try-on tile onto the game's 96px feet anchor."""
     size = (round(TILE_W * GAME_SCALE), round(TILE_H * GAME_SCALE))
@@ -483,19 +548,30 @@ def write_static_pose_sheet(
     sheet.save(destination, optimize=True)
 
 
-def write_game_sheets(layers: dict[str, dict[str, Image.Image]]) -> int:
+def write_game_sheets(
+    base_views: dict[str, Image.Image],
+    head_views: dict[str, Image.Image],
+    outfits: dict[str, Image.Image],
+    weapon_views: dict[str, Image.Image],
+) -> int:
+    game_layers = {
+        "base": base_views,
+        "head": head_views,
+        "outfit": outfits,
+        "weapon": weapon_views,
+    }
     for layer, stem in GAME_LAYER_STEMS.items():
         write_static_pose_sheet(
-            layers[layer],
+            game_layers[layer],
             GAME_CARDINAL_DIRECTIONS,
             GAME_ANIMATIONS,
-            GAME_OUTPUT_DIR / f"{stem}-cardinal-v2.png",
+            GAME_OUTPUT_DIR / f"{stem}-cardinal-v3.png",
         )
         write_static_pose_sheet(
-            layers[layer],
+            game_layers[layer],
             GAME_DIAGONAL_DIRECTIONS,
             GAME_DIAGONAL_ANIMATIONS,
-            GAME_OUTPUT_DIR / f"{stem}-diagonal-v2.png",
+            GAME_OUTPUT_DIR / f"{stem}-diagonal-v3.png",
         )
     return len(GAME_LAYER_STEMS) * 2
 
@@ -504,31 +580,33 @@ def main() -> None:
     base_views = load_views(SOURCE_FILES["base"])
     armor_views, armed_views = normalized_master_views()
     layers, masks = build_layers(base_views, armor_views, armed_views)
+    default_heads = build_default_head_views(layers["head"])
+    default_bases = composite_views(layers["base"], default_heads)
+    outfits = composite_views(build_outfit_views(layers, masks), default_heads)
 
     for layer, filename in LAYER_FILES.items():
         write_atlas(layers[layer], OUTPUT_DIR / filename)
     for layer, views in masks.items():
         write_atlas(views, OUTPUT_DIR / f"mask-{layer}-atlas-v1.png")
 
+    write_atlas(outfits, OUTPUT_DIR / "outfit-atlas-v2.png")
     composite: dict[str, Image.Image] = {}
     for direction in DIRECTIONS:
-        tile = layers["base"][direction].copy()
-        for layer in ARMOR_LAYERS:
-            alpha = ImageChops.multiply(
-                tile.getchannel("A"),
-                ImageChops.invert(masks[layer][direction].getchannel("A")),
-            )
-            tile.putalpha(alpha)
-            tile.alpha_composite(layers[layer][direction])
-        for layer in WEAPON_LAYERS:
-            tile.alpha_composite(layers[layer][direction])
+        tile = outfits[direction].copy()
+        tile.alpha_composite(layers["head"][direction])
+        tile.alpha_composite(layers["sword"][direction])
         composite[direction] = tile
     write_atlas(composite, OUTPUT_DIR / "composite-atlas-v1.png")
     write_atlas(composite, OUTPUT_DIR / "reference-atlas-v1.png")
     write_atlas(armor_views, OUTPUT_DIR / "armor-reference-atlas-v1.png")
-    game_sheet_count = write_game_sheets(layers)
+    game_sheet_count = write_game_sheets(
+        default_bases,
+        layers["head"],
+        outfits,
+        layers["sword"],
+    )
     print(
-        f"Wrote {len(LAYER_FILES) + len(masks) + 3} try-on atlases to {OUTPUT_DIR} "
+        f"Wrote {len(LAYER_FILES) + len(masks) + 4} try-on atlases to {OUTPUT_DIR} "
         f"and {game_sheet_count} game sheets to {GAME_OUTPUT_DIR}"
     )
 

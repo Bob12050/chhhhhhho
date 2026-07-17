@@ -23,12 +23,12 @@ describe('appearance settings', () => {
     expect(loadSettings().paperDollPilot).toBe(true);
   });
 
-  it('re-enables appearance when migrating the rejected first pilot', () => {
+  it('re-enables appearance when migrating an older renderer', () => {
     installStorage(JSON.stringify({
       bgmVol: 1,
       sfxVol: 1,
       paperDollPilot: false,
-      paperDollPilotRevision: 1,
+      paperDollPilotRevision: 2,
     }));
     expect(loadSettings().paperDollPilot).toBe(true);
   });

@@ -5,7 +5,7 @@ import {
 } from '@/paperdoll/iron-equipment';
 
 describe('iron equipment appearance', () => {
-  it('maps each supported iron item to its own visual layer', () => {
+  it('maps equipment to the three stable appearance slots', () => {
     const state = resolveIronEquipmentAppearance({
       head: 'iron_helm',
       torso: 'iron_plate',
@@ -16,11 +16,8 @@ describe('iron equipment appearance', () => {
 
     expect(state).toEqual({
       head: true,
-      torso: true,
-      hands: true,
-      feet: true,
-      sword: true,
-      shield: true,
+      outfit: true,
+      weapon: true,
     });
     expect(hasIronEquipmentAppearance(state)).toBe(true);
   });
@@ -38,8 +35,13 @@ describe('iron equipment appearance', () => {
     expect(Object.values(state).every((visible) => !visible)).toBe(true);
   });
 
-  it('bundles the shield with the iron plate until an off-hand slot exists', () => {
-    expect(resolveIronEquipmentAppearance({ torso: 'iron_plate' }).shield).toBe(true);
-    expect(resolveIronEquipmentAppearance({ torso: null }).shield).toBe(false);
+  it('keeps hands and feet as stat slots without creating visual layers', () => {
+    const state = resolveIronEquipmentAppearance({
+      hands: 'iron_gloves',
+      feet: 'iron_boots',
+    });
+
+    expect(state).toEqual({ head: false, outfit: false, weapon: false });
+    expect(hasIronEquipmentAppearance(state)).toBe(false);
   });
 });

@@ -1,6 +1,6 @@
 /** User settings persisted to localStorage. */
 export const SETTINGS_STORAGE_KEY = 'pixelrpg.settings.v1';
-const PAPER_DOLL_PILOT_REVISION = 2;
+const PAPER_DOLL_PILOT_REVISION = 3;
 
 export interface Settings {
   bgmVol: number; // 0..1
@@ -28,8 +28,8 @@ export function loadSettings(): Settings {
     return {
       bgmVol: clamp01(p.bgmVol),
       sfxVol: clamp01(p.sfxVol),
-      // Ignore values saved by the rejected v1 pilot. Revision 2 uses the
-      // approved common anchor and starts enabled for existing players.
+      // Each substantially revised renderer gets a fresh default so existing
+      // saves actually exercise the newly approved implementation.
       paperDollPilot:
         p.paperDollPilotRevision === PAPER_DOLL_PILOT_REVISION
         && typeof p.paperDollPilot === 'boolean'

@@ -46,16 +46,10 @@ export const TEX = {
   paperDollPilotBaseDiagonal: 'art.paperdoll.pilot.base.diagonal',
   paperDollPilotHead: 'art.paperdoll.pilot.head',
   paperDollPilotHeadDiagonal: 'art.paperdoll.pilot.head.diagonal',
-  paperDollPilotTorso: 'art.paperdoll.pilot.torso',
-  paperDollPilotTorsoDiagonal: 'art.paperdoll.pilot.torso.diagonal',
-  paperDollPilotNearHand: 'art.paperdoll.pilot.hand.near',
-  paperDollPilotNearHandDiagonal: 'art.paperdoll.pilot.hand.near.diagonal',
-  paperDollPilotFeet: 'art.paperdoll.pilot.feet',
-  paperDollPilotFeetDiagonal: 'art.paperdoll.pilot.feet.diagonal',
-  paperDollPilotSword: 'art.paperdoll.pilot.sword',
-  paperDollPilotSwordDiagonal: 'art.paperdoll.pilot.sword.diagonal',
-  paperDollPilotShield: 'art.paperdoll.pilot.shield',
-  paperDollPilotShieldDiagonal: 'art.paperdoll.pilot.shield.diagonal',
+  paperDollPilotOutfit: 'art.paperdoll.pilot.outfit',
+  paperDollPilotOutfitDiagonal: 'art.paperdoll.pilot.outfit.diagonal',
+  paperDollPilotWeapon: 'art.paperdoll.pilot.weapon',
+  paperDollPilotWeaponDiagonal: 'art.paperdoll.pilot.weapon.diagonal',
   // Job-fixed appearance bodies (look is decided by job, not equipment). Real
   // art ships as PNGs (manifest); until a job's PNG exists the player falls back
   // to `playerBody`. NOT in SPECS on purpose so the fallback check can work.

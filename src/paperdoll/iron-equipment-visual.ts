@@ -22,16 +22,10 @@ const REQUIRED_TEXTURES = [
   TEX.paperDollPilotBaseDiagonal,
   TEX.paperDollPilotHead,
   TEX.paperDollPilotHeadDiagonal,
-  TEX.paperDollPilotTorso,
-  TEX.paperDollPilotTorsoDiagonal,
-  TEX.paperDollPilotNearHand,
-  TEX.paperDollPilotNearHandDiagonal,
-  TEX.paperDollPilotFeet,
-  TEX.paperDollPilotFeetDiagonal,
-  TEX.paperDollPilotSword,
-  TEX.paperDollPilotSwordDiagonal,
-  TEX.paperDollPilotShield,
-  TEX.paperDollPilotShieldDiagonal,
+  TEX.paperDollPilotOutfit,
+  TEX.paperDollPilotOutfitDiagonal,
+  TEX.paperDollPilotWeapon,
+  TEX.paperDollPilotWeaponDiagonal,
 ] as const;
 
 export function ironEquipmentTexturesAvailable(scene: Phaser.Scene): boolean {
@@ -46,17 +40,15 @@ export function applyIronEquipmentAppearance(
   doll: PaperDollAnimator,
   state: IronEquipmentAppearance,
 ): void {
-  doll.setLayer('base_body', TEX.paperDollPilotBase, {
-    diagonalTextureKey: TEX.paperDollPilotBaseDiagonal,
+  doll.setLayer('base_body', state.outfit ? TEX.paperDollPilotOutfit : TEX.paperDollPilotBase, {
+    diagonalTextureKey: state.outfit
+      ? TEX.paperDollPilotOutfitDiagonal
+      : TEX.paperDollPilotBaseDiagonal,
   });
   setPart(doll, 'head', state.head, TEX.paperDollPilotHead, TEX.paperDollPilotHeadDiagonal);
-  setPart(doll, 'torso', state.torso, TEX.paperDollPilotTorso, TEX.paperDollPilotTorsoDiagonal);
-  setPart(doll, 'near_hand', state.hands, TEX.paperDollPilotNearHand, TEX.paperDollPilotNearHandDiagonal);
-  setPart(doll, 'feet', state.feet, TEX.paperDollPilotFeet, TEX.paperDollPilotFeetDiagonal);
-  // Weapon layers contain their gripping hands, so they stay in the two
-  // always-front groups instead of disappearing behind the body when facing up.
-  setPart(doll, 'front_effect', state.sword, TEX.paperDollPilotSword, TEX.paperDollPilotSwordDiagonal);
-  setPart(doll, 'front_accessory', state.shield, TEX.paperDollPilotShield, TEX.paperDollPilotShieldDiagonal);
+  // The authored weapon includes its gripping hand, so it stays in an
+  // always-front group instead of disappearing behind the body when facing up.
+  setPart(doll, 'front_effect', state.weapon, TEX.paperDollPilotWeapon, TEX.paperDollPilotWeaponDiagonal);
 }
 
 function setPart(
