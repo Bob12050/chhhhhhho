@@ -680,7 +680,7 @@ export class InventoryScene extends Phaser.Scene {
       this.eqQueue.push({ kind: 'header', slot, count: ids.length, y, h: 32 });
       y += 32;
       for (const [id, count] of ids) {
-        const rowHeight = getEquipment(id)?.generated ? 78 : 64;
+        const rowHeight = getEquipment(id)?.generated ? 88 : 72;
         this.eqQueue.push({ kind: 'row', id, count, y, h: rowHeight, band: band++ });
         y += rowHeight;
       }
@@ -883,18 +883,27 @@ export class InventoryScene extends Phaser.Scene {
       // Icon cell: greyed border when the piece can't be equipped, else rarity.
       const border = canEq ? rarityColor(def.rarity) : 0x4a4f5c;
       this.iconCell(y, rowH, this.equipIcon(def), canEq ? rarityColor(def.rarity) : 0x666a78, border);
-      // Equipped pieces get a small green corner tick.
-      if (equipped) this.content.add(this.add.circle(40, y + 7, 5, 0x91f0ac).setDepth(1));
-      const name = this.add.text(48, y + 4, `${def.name}${upgrade}${qty}`, {
+      // Keep the equipped marker inside the icon corner so it never crowds the name.
+      if (equipped) {
+        this.content.add(
+          this.add.circle(41, y + 8, 5, 0x91f0ac).setStrokeStyle(2, 0x0b1426, 1).setDepth(1),
+        );
+      }
+      const maxNameWidth = Math.max(100, w - 150);
+      const name = this.add.text(52, y + 5, `${def.name}${upgrade}${qty}`, {
         fontFamily: FONT,
-        fontSize: '15px',
+        fontSize: '16px',
         color: equipped ? '#ffe6a3' : canEq ? '#f7f9fc' : '#c3c8d4',
         fontStyle: 'bold',
       });
-      name.setCrop(0, 0, Math.max(100, w - 146), 21);
+      let nameSize = 16;
+      while (name.width > maxNameWidth && nameSize > 12) {
+        nameSize -= 1;
+        name.setFontSize(nameSize);
+      }
       this.content.add(name);
       // Keep rarity as a compact badge instead of tinting the item name.
-      const rarityText = this.add.text(48, y + 27, rarityLabel(def.rarity), {
+      const rarityText = this.add.text(52, y + 31, rarityLabel(def.rarity), {
         fontFamily: FONT,
         fontSize: '11px',
         color: rarityColorHex(def.rarity),
@@ -909,7 +918,7 @@ export class InventoryScene extends Phaser.Scene {
         const jobs = def.jobRequirements
           .map((jobId) => getJob(jobId)?.name ?? jobId)
           .join('・');
-        const badge = this.add.text(lineX, y + 29, `専用:${jobs}`, {
+        const badge = this.add.text(lineX, y + 33, `専用:${jobs}`, {
           fontFamily: FONT,
           fontSize: '11px',
           color: '#ffe08a',
@@ -920,7 +929,7 @@ export class InventoryScene extends Phaser.Scene {
       }
       if (isElement(def.element) && def.element !== 'none') {
         const hex = `#${ELEMENT_COLOR[def.element].toString(16).padStart(6, '0')}`;
-        const badge = this.add.text(lineX, y + 29, `属性:${ELEMENT_LABEL[def.element]}`, {
+        const badge = this.add.text(lineX, y + 33, `属性:${ELEMENT_LABEL[def.element]}`, {
           fontFamily: FONT,
           fontSize: '11px',
           color: hex,
@@ -931,10 +940,10 @@ export class InventoryScene extends Phaser.Scene {
       }
       // Stat diff vs the currently equipped piece (green up / red down), so
       // "should I switch?" is answerable without doing mental math.
-      lineX = 48;
+      lineX = 52;
       if (!equipped) {
         for (const seg of this.equipDiff(def)) {
-          const t = this.add.text(lineX, y + 46, seg.text, {
+          const t = this.add.text(lineX, y + 52, seg.text, {
             fontFamily: FONT,
             fontSize: '12px',
             color: seg.up ? '#8ef0aa' : '#ff9b9b',
@@ -945,7 +954,7 @@ export class InventoryScene extends Phaser.Scene {
         }
       } else {
         this.content.add(
-          this.add.text(48, y + 46, '現在装備中', {
+          this.add.text(52, y + 52, '現在装備中', {
             fontFamily: FONT,
             fontSize: '12px',
             color: '#9ff0b4',
@@ -954,13 +963,13 @@ export class InventoryScene extends Phaser.Scene {
         );
       }
       if (generated) {
-        const affixes = this.add.text(48, y + 62, `追加  ${affixSummary(def, 2)}`, {
+        const affixes = this.add.text(52, y + 70, `追加  ${affixSummary(def, 2)}`, {
           fontFamily: FONT,
           fontSize: '11px',
           color: '#aef5ff',
           fontStyle: 'bold',
         });
-        affixes.setCrop(0, 0, Math.max(90, w - 146), 15);
+        affixes.setCrop(0, 0, Math.max(90, w - 150), Math.ceil(affixes.height));
         this.content.add(affixes);
       }
       if (generated || canEq) {
