@@ -15,7 +15,12 @@ import {
 import { getSkill } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
 import { getQuest } from '@/quests/quest-defs';
-import { canEquipClass, canEquipWeapon, canEquipTier } from '@/equipment/restrictions';
+import {
+  canEquipClass,
+  canEquipJob,
+  canEquipWeapon,
+  canEquipTier,
+} from '@/equipment/restrictions';
 import { getPet } from '@/pets/pet-defs';
 import { petLevelFromExp, scaledPassive, DUPLICATE_EGG_EXP } from '@/pets/pet-growth';
 import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
@@ -151,14 +156,16 @@ export class GameState {
 
   /**
    * Why the current job can't equip this item (or null if it can):
+   *  - 'job'    : exact-job class regalia restriction
    *  - 'tier'   : rarity needs a higher job tier (rarity↔progression gate)
    *  - 'weapon' : weapon tag not allowed by the job
    *  - 'class'  : armour/accessory class-family restriction
    */
-  equipBlock(itemId: string): 'tier' | 'weapon' | 'class' | null {
+  equipBlock(itemId: string): 'job' | 'tier' | 'weapon' | 'class' | null {
     const def = getEquipment(itemId);
     if (!def) return null;
     const job = getJob(this.jobId);
+    if (!canEquipJob(this.jobId, def.jobRequirements)) return 'job';
     if (!canEquipTier(job?.tier ?? 0, def.rarity)) return 'tier';
     if (def.slot === 'main_hand') {
       return canEquipWeapon(job?.equippableWeaponTags ?? [], def.weaponTags) ? null : 'weapon';
@@ -233,10 +240,17 @@ export class GameState {
     this.level = this.jobLevels[id] ?? 1;
     this.exp = this.jobExp[id] ?? 0;
     if (!this.unlockedJobs.includes(id)) this.unlockedJobs.push(id);
-    // Unequip a weapon the new job can't use.
-    const wpn = this.equipment.main_hand;
-    if (wpn && !this.canEquip(wpn)) this.equipment.main_hand = null;
+    // Every slot obeys the new job's gates. This is especially important for
+    // exact-job regalia, but also repairs family armour left on by old saves.
+    const unequipped: EquipSlot[] = [];
+    for (const slot of EQUIP_SLOTS) {
+      const itemId = this.equipment[slot];
+      if (!itemId || this.canEquip(itemId)) continue;
+      this.equipment[slot] = null;
+      unequipped.push(slot);
+    }
     this.recompute();
+    for (const slot of unequipped) bus.emit('equipment:changed', { slot });
     bus.emit('job:changed', { jobId: id });
     return true;
   }
@@ -664,6 +678,9 @@ export class GameState {
       // Invariant: an equipped item is always owned (covers pre-M3 saves).
       const eq = this.equipment[slot];
       if (eq && !this.equipmentOwned.includes(eq)) this.equipmentOwned.push(eq);
+      // Legacy saves may contain gear above the currently active tier. Preserve
+      // that old behaviour, but never restore exact-job regalia on another job.
+      if (eq && this.equipBlock(eq) === 'job') this.equipment[slot] = null;
     }
     this.recompute(false);
     if (data.player.hp < 0) this.hp = this.derived.maxHp;

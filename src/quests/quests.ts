@@ -17,6 +17,7 @@ export function requireMet(gs: GameState, q: QuestDef): boolean {
   const r = q.require;
   if (!r) return true;
   if (r.minLevel != null && gs.level < r.minLevel) return false;
+  if (r.jobId && gs.jobId !== r.jobId) return false;
   if (r.questDone && !gs.completedQuests.includes(r.questDone)) return false;
   if (r.flag && !gs.flags[r.flag]) return false;
   return true;
@@ -71,6 +72,7 @@ export function recordKill(gs: GameState, enemyId: string): boolean {
   for (const qid of gs.activeQuests) {
     const q = getQuest(qid);
     if (!q) continue;
+    if (q.require?.jobId && q.require.jobId !== gs.jobId) continue;
     for (const obj of q.objectives) {
       if (obj.enemyId !== enemyId) continue;
       const cur = gs.questProgress[qid]?.[enemyId] ?? 0;
@@ -95,6 +97,7 @@ export function recordKill(gs: GameState, enemyId: string): boolean {
 export function isComplete(gs: GameState, questId: string): boolean {
   const q = getQuest(questId);
   if (!q) return false;
+  if (q.require?.jobId && q.require.jobId !== gs.jobId) return false;
   return q.objectives.every((o) => (gs.questProgress[questId]?.[o.enemyId] ?? 0) >= o.count);
 }
 

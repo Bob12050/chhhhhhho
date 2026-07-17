@@ -63,11 +63,11 @@ describe('jobs / job change', () => {
     expect(gs.jobLevelOf('fighter')).toBe(35);
   });
 
-  it('job-fixed appearance: every 1次職 has a valid appearance id', () => {
-    const tier1 = allJobs().filter((j) => j.tier === 1);
-    expect(tier1.length).toBeGreaterThan(0);
+  it('every promoted job keeps a valid appearance asset for its regalia', () => {
+    const promoted = allJobs().filter((j) => j.tier >= 1);
+    expect(promoted.length).toBeGreaterThan(0);
     const valid = new Set<string>(JOB_APPEARANCE_IDS);
-    for (const j of tier1) {
+    for (const j of promoted) {
       expect(j.appearance, `${j.id} appearance`).toBeTruthy();
       expect(valid.has(j.appearance!), `${j.id} appearance "${j.appearance}"`).toBe(true);
     }

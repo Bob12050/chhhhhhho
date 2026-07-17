@@ -2,10 +2,8 @@ import { TEX } from '@/assets/gen/textures';
 import type { JobAppearanceId } from './job-appearance-ids';
 
 /**
- * Maps a job-appearance id to its body spritesheet texture key. The player's
- * look is decided by the active job unless a supported paper-doll equipment
- * set is active. Engine-side (imports TEX); validate-data uses the pure
- * `job-appearance-ids` list instead.
+ * Maps a class-regalia appearance id to its full-body spritesheet texture key.
+ * Engine-side (imports TEX); validate-data uses the pure id list instead.
  */
 export const APPEARANCE_TEX: Record<JobAppearanceId, string> = {
   fighter: TEX.jobFighter,

@@ -1,4 +1,5 @@
 import questsJson from '@/data/defs/quests.json';
+import { buildJobRegaliaQuests } from '@/jobs/job-regalia';
 
 /**
  * Quest definitions (data-driven). v1 supports kill objectives (normal enemies
@@ -19,6 +20,8 @@ export interface QuestReward {
 export interface QuestRequire {
   /** Minimum active-job level to accept. */
   minLevel?: number;
+  /** Exact active job required for a class trial. */
+  jobId?: string;
   /** A prerequisite quest must be completed first. */
   questDone?: string;
   /** A save flag must be set. */
@@ -79,6 +82,7 @@ interface QuestsFile {
 
 const quests = new Map<string, QuestDef>();
 for (const q of (questsJson as unknown as QuestsFile).quests) quests.set(q.id, q);
+for (const q of buildJobRegaliaQuests()) quests.set(q.id, q);
 const runtimeGroups = new Map<string, Set<string>>();
 
 export function getQuest(id: string): QuestDef | undefined {

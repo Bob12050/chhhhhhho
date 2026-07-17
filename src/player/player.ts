@@ -19,15 +19,16 @@ import {
   clearIronEquipmentAppearance,
   ironEquipmentTexturesAvailable,
 } from '@/paperdoll/iron-equipment-visual';
+import { equippedJobRegaliaAppearance } from '@/equipment/job-regalia-appearance';
 
 /**
  * Player actor. Owns a single PaperDollAnimator (body sprite) and an Arcade
  * physics body for movement/collision. The paper-doll container follows the
  * physics body each frame, snapped to integer pixels.
  *
- * Jobs normally use their original fixed sprite. Equipping one of the iron
- * pilot pieces swaps to the aligned layered body; disabling the setting or
- * removing the last supported piece restores the untouched job sheet.
+ * A class-regalia torso uses the job's original fixed sprite as a full-body
+ * outfit. Without regalia, supported iron pieces use the aligned paper doll;
+ * otherwise the neutral adventurer body is shown.
  */
 
 export class Player {
@@ -95,25 +96,28 @@ export class Player {
     this.doll.play('idle');
   }
 
-  /** Set either the iron paper doll or the untouched fixed job art. */
+  /** Resolve class regalia, supported paper-doll gear, or the neutral body. */
   setJobAppearance(jobId: string): void {
     const job = getJob(jobId);
-    const appearance = job?.appearance;
+    const regaliaAppearance = equippedJobRegaliaAppearance(gameState.equipment);
+    const regaliaKey = appearanceTexKey(regaliaAppearance);
+    const hasRegaliaArt = !!regaliaKey && this.scene.textures.exists(regaliaKey);
     const ironState = resolveIronEquipmentAppearance(gameState.equipment);
-    const layeredAppearance = loadSettings().paperDollPilot
+    const layeredAppearance = !hasRegaliaArt
+      && loadSettings().paperDollPilot
       && hasIronEquipmentAppearance(ironState)
       && ironEquipmentTexturesAvailable(this.scene);
     clearIronEquipmentAppearance(this.doll);
 
-    if (layeredAppearance) {
+    if (hasRegaliaArt) {
+      this.doll.setLayer('base_body', regaliaKey, {
+        diagonalTextureKey: appearanceDiagonalTexKey(regaliaAppearance),
+      });
+    } else if (layeredAppearance) {
       applyIronEquipmentAppearance(this.doll, ironState);
     } else {
-      const key = appearanceTexKey(appearance);
-      const tex = key && this.scene.textures.exists(key) ? key : TEX.playerBody;
-      this.doll.setLayer('base_body', tex, {
-        diagonalTextureKey: tex === TEX.playerBody
-          ? TEX.playerBodyDiagonal
-          : appearanceDiagonalTexKey(appearance),
+      this.doll.setLayer('base_body', TEX.playerBody, {
+        diagonalTextureKey: TEX.playerBodyDiagonal,
       });
     }
     this.jobPlateText.setText(job?.name ?? jobId);

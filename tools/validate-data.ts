@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { EQUIP_SLOTS } from '../src/equipment/slots';
 import { VISUAL_ID_SET } from '../src/data/visual-ids';
-import { isValidRank } from '../src/data/rarity';
+import { isValidRank, minJobTierForRank } from '../src/data/rarity';
 import { CLASS_FAMILIES } from '../src/jobs/job-defs';
 import { JOB_APPEARANCE_IDS } from '../src/jobs/job-appearance-ids';
 import { ELEMENTS } from '../src/combat/elements';
@@ -74,6 +74,8 @@ function validateItems(): void {
       rarity?: number;
       weaponTags?: string[];
       classRestrictions?: string[];
+      jobRequirements?: string[];
+      appearance?: string;
       derived?: Record<string, number>;
       sellPrice?: number;
       element?: string;
@@ -81,6 +83,10 @@ function validateItems(): void {
   };
 
   const ids = new Set<string>();
+  const jobIds = new Set(
+    readJson<{ jobs: { id: string }[] }>('src/data/defs/jobs.json').jobs.map((job) => job.id),
+  );
+  const appearanceIds = new Set<string>(JOB_APPEARANCE_IDS);
   const check = (id: string, where: string): void => {
     if (!id) err(`${where}: empty id`);
     if (ids.has(id)) err(`Duplicate item id: ${id}`);
@@ -120,6 +126,15 @@ function validateItems(): void {
       for (const f of e.classRestrictions) {
         if (!CLASS_FAMILY_SET.has(f)) err(`Equipment ${e.id}: unknown class family "${f}"`);
       }
+    }
+    for (const jobId of e.jobRequirements ?? []) {
+      if (!jobIds.has(jobId)) err(`Equipment ${e.id}: unknown job requirement "${jobId}"`);
+    }
+    if (e.appearance != null && !appearanceIds.has(e.appearance)) {
+      err(`Equipment ${e.id}: unknown appearance "${e.appearance}"`);
+    }
+    if (e.appearance != null && !e.jobRequirements?.length) {
+      err(`Equipment ${e.id}: full-body appearance needs an exact job requirement`);
     }
     for (const k of Object.keys(e.derived ?? {})) {
       if (!DERIVED_KEYS.has(k)) err(`Equipment ${e.id}: invalid derived stat "${k}"`);
@@ -364,11 +379,15 @@ function collectItemIds(): Set<string> {
     petItems: { id: string }[];
     equipment: { id: string }[];
   }>('src/data/defs/items.json');
+  const regalia = readJson<{ regalia: { jobId: string }[] }>(
+    'src/data/defs/job-regalia.json',
+  );
   return new Set<string>([
     ...file.materials.map((m) => m.id),
     ...(file.consumables ?? []).map((c) => c.id),
     ...(file.petItems ?? []).map((p) => p.id),
     ...file.equipment.map((e) => e.id),
+    ...regalia.regalia.map((entry) => `job_regalia_${entry.jobId}`),
   ]);
 }
 
@@ -797,13 +816,92 @@ function validateJobs(skillIds: Set<string>): void {
   }
 }
 
+function validateJobRegalia(enemyIds: Set<string>, mapIds: Set<string>): void {
+  type Regalia = {
+    jobId: string;
+    jobName: string;
+    itemName: string;
+    appearance: string;
+    rarity: number;
+    levelRequirement: number;
+    rank: number;
+    trialName: string;
+    huntMap: string;
+    enemyId: string;
+    derived: Record<string, number>;
+  };
+  const entries = readJson<{ regalia: Regalia[] }>(
+    'src/data/defs/job-regalia.json',
+  ).regalia;
+  const jobs = readJson<{
+    jobs: { id: string; name: string; tier: number; appearance?: string }[];
+  }>('src/data/defs/jobs.json').jobs;
+  const jobsById = new Map(jobs.map((job) => [job.id, job]));
+  const appearanceIds = new Set<string>(JOB_APPEARANCE_IDS);
+  const baseItemIds = new Set(
+    readJson<{ equipment: { id: string }[] }>('src/data/defs/items.json').equipment
+      .map((item) => item.id),
+  );
+  const baseQuestIds = new Set(
+    readJson<{ quests: { id: string }[] }>('src/data/defs/quests.json').quests
+      .map((quest) => quest.id),
+  );
+  const seenJobs = new Set<string>();
+  const seenItems = new Set<string>();
+  const seenQuests = new Set<string>();
+
+  for (const entry of entries) {
+    const at = `Job regalia ${entry.jobId}`;
+    const job = jobsById.get(entry.jobId);
+    if (!job) {
+      err(`${at}: unknown job`);
+      continue;
+    }
+    if (seenJobs.has(entry.jobId)) err(`${at}: duplicate job entry`);
+    seenJobs.add(entry.jobId);
+    if (entry.jobName !== job.name) err(`${at}: jobName does not match jobs.json`);
+    if (entry.appearance !== job.appearance) err(`${at}: appearance does not match the job`);
+    if (!appearanceIds.has(entry.appearance)) {
+      err(`${at}: unknown appearance "${entry.appearance}"`);
+    }
+    if (!isValidRank(entry.rarity)) err(`${at}: rarity must be R1〜R10`);
+    if (minJobTierForRank(entry.rarity) !== job.tier) {
+      err(`${at}: rarity R${entry.rarity} does not match job tier ${job.tier}`);
+    }
+    if (!Number.isInteger(entry.levelRequirement) || entry.levelRequirement < 1 || entry.levelRequirement > 99) {
+      err(`${at}: levelRequirement must be an integer 1〜99`);
+    }
+    if (!Number.isInteger(entry.rank) || entry.rank < 1 || entry.rank > 7) {
+      err(`${at}: rank must be an integer 1〜7`);
+    }
+    if (!entry.itemName || !entry.trialName) err(`${at}: itemName and trialName are required`);
+    if (!enemyIds.has(entry.enemyId)) err(`${at}: unknown enemy "${entry.enemyId}"`);
+    if (!mapIds.has(entry.huntMap)) err(`${at}: unknown huntMap "${entry.huntMap}"`);
+    if (!bossSpawnMaps.has(entry.huntMap)) err(`${at}: huntMap has no boss spawn`);
+    for (const key of Object.keys(entry.derived ?? {})) {
+      if (!DERIVED_KEYS.has(key)) err(`${at}: invalid derived stat "${key}"`);
+    }
+
+    const itemId = `job_regalia_${entry.jobId}`;
+    const questId = `job_regalia_trial_${entry.jobId}`;
+    if (seenItems.has(itemId) || baseItemIds.has(itemId)) err(`${at}: duplicate item id "${itemId}"`);
+    if (seenQuests.has(questId) || baseQuestIds.has(questId)) err(`${at}: duplicate quest id "${questId}"`);
+    seenItems.add(itemId);
+    seenQuests.add(questId);
+  }
+
+  for (const job of jobs.filter((entry) => entry.appearance)) {
+    if (!seenJobs.has(job.id)) err(`Job regalia: ${job.id} has no class outfit`);
+  }
+}
+
 function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set<string>): void {
   const file = readJson<{
     quests: {
       id: string;
       type: string;
       objectives: { type: string; enemyId: string; count: number }[];
-      require?: { questDone?: string };
+      require?: { questDone?: string; jobId?: string };
       rewards: { items?: Record<string, number> };
       huntMap?: string;
       huntModifiers?: { hpMult?: unknown; dmgMult?: unknown };
@@ -813,6 +911,9 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set
   }>('src/data/defs/quests.json');
   const QTYPES = new Set(['subjugation', 'unlock', 'hunt', 'main']);
   const ids = new Set(file.quests.map((q) => q.id));
+  const jobIds = new Set(
+    readJson<{ jobs: { id: string }[] }>('src/data/defs/jobs.json').jobs.map((job) => job.id),
+  );
   for (const q of file.quests) {
     if (q.huntMap && !mapIds.has(q.huntMap))
       err(`Quest ${q.id}: huntMap "${q.huntMap}" is not a known map`);
@@ -841,6 +942,8 @@ function validateQuests(itemIds: Set<string>, enemyIds: Set<string>, mapIds: Set
     }
     if (q.require?.questDone && !ids.has(q.require.questDone))
       err(`Quest ${q.id}: requires unknown quest "${q.require.questDone}"`);
+    if (q.require?.jobId && !jobIds.has(q.require.jobId))
+      err(`Quest ${q.id}: requires unknown job "${q.require.jobId}"`);
     for (const id of Object.keys(q.rewards?.items ?? {})) {
       if (!itemIds.has(id)) err(`Quest ${q.id}: reward item "${id}" not in items.json`);
     }
@@ -907,6 +1010,7 @@ const skillIds = validateSkills();
 validateJobs(skillIds);
 validatePets();
 validateQuests(itemIds, enemyIds, mapIds);
+validateJobRegalia(enemyIds, mapIds);
 validateShops(itemIds);
 validateTutorial();
 

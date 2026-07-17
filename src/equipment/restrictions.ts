@@ -19,6 +19,12 @@ export function canEquipClass(
   return classRestrictions.includes(family);
 }
 
+/** Exact-job gate used by class regalia. Empty/undefined means unrestricted. */
+export function canEquipJob(jobId: string, jobRequirements: string[] | undefined): boolean {
+  if (!jobRequirements || jobRequirements.length === 0) return true;
+  return jobRequirements.includes(jobId);
+}
+
 /** Weapon-tag gate: at least one of the item's tags must be allowed by the job. */
 export function canEquipWeapon(
   allowedTags: readonly string[],

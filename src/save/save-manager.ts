@@ -19,6 +19,7 @@ export interface SlotSummary {
   exists: boolean;
   level?: number;
   jobId?: string;
+  torsoId?: string | null;
   mapId?: string;
   savedAt?: number;
 }
@@ -88,6 +89,7 @@ export class SaveManager {
               exists: true,
               level: raw.player?.level,
               jobId: raw.player?.jobId,
+              torsoId: raw.equipment?.torso ?? null,
               mapId: raw.mapId,
               savedAt: raw.savedAt,
             }

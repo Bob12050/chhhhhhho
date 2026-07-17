@@ -47,10 +47,7 @@ export interface JobDef {
   derivedModifiers?: Partial<DerivedStats>;
   equippableWeaponTags: string[];
   skillTreeId?: string;
-  /**
-   * Job-fixed fallback appearance id (see job-appearance-ids). Supported
-   * paper-doll equipment can temporarily replace it. Omitted = default body.
-   */
+  /** Original full-body art used by the job's quest-earned class regalia. */
   appearance?: string;
 }
 

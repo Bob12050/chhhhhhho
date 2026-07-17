@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { canEquipClass, canEquipWeapon, canEquipTier } from '@/equipment/restrictions';
+import {
+  canEquipClass,
+  canEquipJob,
+  canEquipWeapon,
+  canEquipTier,
+} from '@/equipment/restrictions';
 import { minJobTierForRank } from '@/data/rarity';
 
 /**
@@ -22,6 +27,15 @@ describe('canEquipClass (armour/accessory)', () => {
 
   it('the familyless starter (adventurer) cannot wear class-locked gear', () => {
     expect(canEquipClass(undefined, ['warrior'])).toBe(false);
+  });
+});
+
+describe('canEquipJob (class regalia)', () => {
+  it('allows unrestricted gear and only the named job for exact-job gear', () => {
+    expect(canEquipJob('fighter', undefined)).toBe(true);
+    expect(canEquipJob('fighter', [])).toBe(true);
+    expect(canEquipJob('fighter', ['fighter'])).toBe(true);
+    expect(canEquipJob('mage', ['fighter'])).toBe(false);
   });
 });
 

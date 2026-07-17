@@ -1,6 +1,7 @@
 import itemsJson from './defs/items.json';
 import type { DerivedStats } from '@/stats/stats';
 import type { EquipSlot } from '@/equipment/slots';
+import { buildJobRegaliaEquipment } from '@/jobs/job-regalia';
 
 /**
  * Item definitions (immutable). Loaded from JSON so content is data-driven and
@@ -59,6 +60,8 @@ export interface EquipmentDef {
   /** Rarity rank R1〜R10 (color/label derived). */
   rarity: number;
   visualId: string;
+  /** Full-body job appearance used by one-piece class regalia. */
+  appearance?: string;
   /** Weapon type tags (main_hand only); gated against the job's allowed tags. */
   weaponTags?: string[];
   /**
@@ -97,6 +100,7 @@ for (const m of file.materials) materials.set(m.id, m);
 for (const c of file.consumables) consumables.set(c.id, c);
 for (const p of file.petItems ?? []) petItems.set(p.id, p);
 for (const e of file.equipment) equipment.set(e.id, e);
+for (const e of buildJobRegaliaEquipment()) equipment.set(e.id, e);
 
 export function getMaterial(id: string): MaterialDef | undefined {
   return materials.get(id);

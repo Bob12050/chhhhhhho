@@ -35,6 +35,7 @@ import {
   applyIronEquipmentAppearance,
   ironEquipmentTexturesAvailable,
 } from '@/paperdoll/iron-equipment-visual';
+import { equippedJobRegaliaAppearance } from '@/equipment/job-regalia-appearance';
 import { loadSettings } from '@/core/settings';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
@@ -399,10 +400,11 @@ export class InventoryScene extends Phaser.Scene {
     const gs = gameState;
     const job = getJob(gs.jobId);
     const tierLabel = job ? (job.tier === 0 ? '初期職' : `${job.tier}次職`) : '';
-    const art = appearanceTexKey(job?.appearance);
+    const art = appearanceTexKey(equippedJobRegaliaAppearance(gs.equipment));
     const texture = art && this.textures.exists(art) ? art : TEX.playerBody;
     const ironState = resolveIronEquipmentAppearance(gs.equipment);
-    const layeredPortrait = loadSettings().paperDollPilot
+    const layeredPortrait = texture === TEX.playerBody
+      && loadSettings().paperDollPilot
       && hasIronEquipmentAppearance(ironState)
       && ironEquipmentTexturesAvailable(this);
     const panel = ninePanel(this, w / 2, y + height / 2, w - 16, height).setDepth(2);
@@ -805,6 +807,18 @@ export class InventoryScene extends Phaser.Scene {
       this.content.add(rarityText);
       // Element badge for elemental weapons (e.g. 属性:火), coloured to match.
       let lineX = rarityText.x + rarityText.width + 8;
+      if (def.jobRequirements?.length) {
+        const jobs = def.jobRequirements
+          .map((jobId) => getJob(jobId)?.name ?? jobId)
+          .join('・');
+        const badge = this.add.text(lineX, y + 21, `専用:${jobs}`, {
+          fontFamily: FONT,
+          fontSize: '11px',
+          color: '#ffd86b',
+        });
+        this.content.add(badge);
+        lineX = badge.x + badge.width + 8;
+      }
       if (isElement(def.element) && def.element !== 'none') {
         const hex = `#${ELEMENT_COLOR[def.element].toString(16).padStart(6, '0')}`;
         const badge = this.add.text(lineX, y + 21, `属性:${ELEMENT_LABEL[def.element]}`, {

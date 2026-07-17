@@ -250,6 +250,7 @@ function bestSwordGear(level: number): EquipmentDef[] {
         entry.slot === slot &&
         entry.levelRequirement <= level &&
         isObtainableAtLevel(entry, level) &&
+        !entry.jobRequirements?.length &&
         (slot !== 'main_hand' || (entry.weaponTags ?? []).includes('sword')),
     );
     pool.sort((a, b) => gearScore(b) - gearScore(a));
@@ -455,7 +456,9 @@ function encounterWaves(
 
 export function huntSimulationQuests(): QuestDef[] {
   return allQuests()
-    .filter((quest) => !!quest.huntMap && quest.type !== 'main')
+    // Class-regalia trials need a job-specific benchmark. Keep the existing
+    // generic sword-user balance report focused on shared hunt content.
+    .filter((quest) => !!quest.huntMap && quest.type !== 'main' && !quest.require?.jobId)
     .sort(
       (a, b) =>
         (a.rank ?? 1) - (b.rank ?? 1) ||

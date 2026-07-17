@@ -200,7 +200,11 @@ export class QuestBoardScene extends Phaser.Scene {
 
   /** ★1〜★7 selector rows for the 大型狩猟 tab. Tapping a rank drills in. */
   private renderRankList(y: number, w: number): number {
-    const hunts = allQuests().filter((q) => !!q.huntMap && !q.investigation);
+    const hunts = allQuests().filter(
+      (q) => !!q.huntMap
+        && !q.investigation
+        && (!q.require?.jobId || q.require.jobId === gameState.jobId),
+    );
     const availSet = new Set(availableQuests(gameState).map((q) => q.id));
     const ranks = [...new Set(hunts.map((q) => q.rank ?? 1))].sort((a, b) => a - b);
     for (const r of ranks) {
@@ -271,6 +275,7 @@ export class QuestBoardScene extends Phaser.Scene {
 
     const inScope = (q: QuestDef): boolean => {
       if (!this.inTab(q)) return false;
+      if (q.require?.jobId && q.require.jobId !== gameState.jobId) return false;
       if (this.tab === 'hunt' && this.selectedRank !== null) return (q.rank ?? 1) === this.selectedRank;
       return true;
     };
