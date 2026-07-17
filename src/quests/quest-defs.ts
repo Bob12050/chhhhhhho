@@ -43,7 +43,7 @@ export interface InvestigationMeta {
   boardSeed: number;
 }
 
-/** 'main' = the one-shot story line (own board tab, chained, non-repeatable). */
+/** 'main' = the chained, non-repeatable story line shown above the ★rank list. */
 export type QuestType = 'subjugation' | 'unlock' | 'hunt' | 'main';
 
 export interface QuestDef {

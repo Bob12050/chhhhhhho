@@ -12,12 +12,14 @@ import {
   objectiveProgress,
 } from '@/quests/quests';
 import { getMap, spawnPoint } from '@/maps/map-def';
+import { getJob } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
 import { FONT, UI, addPanelChrome, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
 import { INVESTIGATION_SEAL_ID } from '@/endgame/investigations';
 import { affixSummary } from '@/endgame/investigation-loot';
 
-type BoardTab = 'main' | 'normal' | 'hunt' | 'investigation';
+type BoardTab = 'main' | 'job' | 'investigation';
+type QuestViewState = 'active' | 'available' | 'done' | 'locked';
 
 /**
  * Quest Board overlay (opened by the town board NPC). Lists active quests (with
@@ -33,7 +35,7 @@ export class QuestBoardScene extends Phaser.Scene {
   private viewBottom = 0;
   private tab: BoardTab = 'main';
   private tabButtons: { id: BoardTab; tab: TabHandle }[] = [];
-  /** In the 大型狩猟 tab: null = show the ★rank list, else the picked rank's quests. */
+  /** In メインクエスト: null = overview, otherwise the selected ★rank. */
   private selectedRank: number | null = null;
 
   constructor() {
@@ -55,19 +57,14 @@ export class QuestBoardScene extends Phaser.Scene {
       .setOrigin(0, 0.5)
       .setDepth(3);
 
-    // Category tabs: メイン / 通常 / 大型狩猟 (MH style).
+    // Standard quests share the ★1〜★7 main list. Job trials stay separate.
     this.tabButtons = [];
     const tabs: { id: BoardTab; label: string }[] = [
-      { id: 'main', label: 'メイン' },
-      { id: 'normal', label: '通常' },
-      { id: 'hunt', label: '大型狩猟' },
+      { id: 'main', label: 'メインクエスト' },
+      { id: 'job', label: '職業専用' },
     ];
     if (gameState.flags['main_story_complete']) tabs.push({ id: 'investigation', label: '調査' });
-    // Land on the story tab only while it still has something to do.
-    const storyPending = allQuests().some(
-      (q) => q.type === 'main' && !gameState.completedQuests.includes(q.id),
-    );
-    this.tab = storyPending ? 'main' : gameState.flags['main_story_complete'] ? 'investigation' : 'hunt';
+    this.tab = 'main';
     const tabW = (w - 12) / tabs.length;
     tabs.forEach((t, i) => {
       const tab = tabChip(this, 6 + tabW * (i + 0.5), 68, tabW, t.label, () => {
@@ -124,14 +121,12 @@ export class QuestBoardScene extends Phaser.Scene {
     this.content.y = -this.scrollY;
   }
 
-  /** メイン = story line; 大型狩猟 = arena hunts; 通常 = the rest. */
+  /** Main owns story + all ★ranked standard quests; exact-job trials are separate. */
   private inTab(q: QuestDef): boolean {
-    if (this.tab === 'main') return q.type === 'main';
     if (this.tab === 'investigation') return !!q.investigation;
     if (q.investigation) return false;
-    if (q.type === 'main') return false;
-    const isHunt = !!q.huntMap;
-    return this.tab === 'hunt' ? isHunt : !isHunt;
+    if (this.tab === 'job') return q.require?.jobId === gameState.jobId;
+    return !q.require?.jobId;
   }
 
   private byRank = (a: QuestDef, b: QuestDef): number =>
@@ -152,9 +147,11 @@ export class QuestBoardScene extends Phaser.Scene {
 
     let y = this.viewTop + 8;
     if (this.tab === 'investigation') y = this.renderInvestigationStatus(y, w);
-    // 大型狩猟 tab, no rank picked yet: show the ★rank menu (drill-down).
-    if (this.tab === 'hunt' && this.selectedRank === null) {
+    if (this.tab === 'main' && this.selectedRank === null) {
+      y = this.renderStorySection(y, w);
       y = this.renderRankList(y, w);
+    } else if (this.tab === 'job') {
+      y = this.renderJobQuestList(y, w);
     } else {
       y = this.renderQuestList(y, w);
     }
@@ -198,20 +195,80 @@ export class QuestBoardScene extends Phaser.Scene {
     return y + 52;
   }
 
-  /** ★1〜★7 selector rows for the 大型狩猟 tab. Tapping a rank drills in. */
+  private renderStorySection(y: number, w: number): number {
+    const stories = allQuests().filter((q) => q.type === 'main');
+    const activeIds = new Set(gameState.activeQuests);
+    const availableIds = new Set(availableQuests(gameState).map((q) => q.id));
+    const completedIds = new Set(gameState.completedQuests);
+    const active = stories.filter((q) => activeIds.has(q.id));
+    const available = stories.filter((q) => availableIds.has(q.id));
+    const current = [...active, ...available];
+    const completed = stories.filter((q) => completedIds.has(q.id)).length;
+
+    y = this.heading(`物語  ${completed}/${stories.length}章`, y, w);
+    if (current.length) {
+      for (const q of current) {
+        y = this.renderQuest(q, y, w, activeIds.has(q.id) ? 'active' : 'available');
+      }
+      return y + 4;
+    }
+
+    const next = stories.find((q) => !completedIds.has(q.id));
+    const strip = this.add.graphics();
+    strip.fillStyle(0x151b2a, 0.96);
+    strip.fillRoundedRect(12, y, w - 24, 46, 5);
+    strip.lineStyle(1, 0xffffff, 0.08);
+    strip.strokeRoundedRect(12, y, w - 24, 46, 5);
+    this.content.add(strip);
+    if (!next) {
+      this.content.add(
+        this.add.text(22, y + 14, '全章クリア', {
+          fontFamily: FONT,
+          fontSize: '14px',
+          color: '#ffd86b',
+          fontStyle: 'bold',
+        }),
+      );
+    } else {
+      const activeHunt = gameState.activeQuests
+        .map((id) => getQuest(id))
+        .find((q): q is QuestDef => !!q?.huntMap);
+      const requirement = activeHunt
+        ? `「${activeHunt.name}」進行中`
+        : next.require?.minLevel != null && gameState.level < next.require.minLevel
+          ? `Lv${next.require.minLevel}で解放`
+          : '前章クリアで解放';
+      this.content.add(
+        this.add.text(22, y + 7, next.name, {
+          fontFamily: FONT,
+          fontSize: '13px',
+          color: '#d7dbea',
+        }),
+      );
+      this.content.add(
+        this.add.text(22, y + 26, requirement, {
+          fontFamily: FONT,
+          fontSize: '11px',
+          color: '#9aa0b5',
+        }),
+      );
+    }
+    return y + 58;
+  }
+
+  /** ★1〜★7 selector for every standard quest formerly split across two tabs. */
   private renderRankList(y: number, w: number): number {
-    const hunts = allQuests().filter(
-      (q) => !!q.huntMap
-        && !q.investigation
-        && (!q.require?.jobId || q.require.jobId === gameState.jobId),
-    );
+    const ranked = allQuests().filter((q) => this.inTab(q) && q.type !== 'main');
     const availSet = new Set(availableQuests(gameState).map((q) => q.id));
-    const ranks = [...new Set(hunts.map((q) => q.rank ?? 1))].sort((a, b) => a - b);
-    for (const r of ranks) {
-      const inRank = hunts.filter((q) => (q.rank ?? 1) === r);
+    const activeSet = new Set(gameState.activeQuests);
+    const doneSet = new Set(gameState.completedQuests);
+    for (let r = 1; r <= 7; r++) {
+      const inRank = ranked.filter((q) => (q.rank ?? 1) === r);
       const availCount = inRank.filter((q) => availSet.has(q.id)).length;
+      const activeCount = inRank.filter((q) => activeSet.has(q.id)).length;
+      const doneCount = inRank.filter((q) => doneSet.has(q.id)).length;
       const row = this.add
-        .rectangle(w / 2, y + 22, w - 24, 48, 0x20233a, 1)
+        .rectangle(w / 2, y, w - 24, 48, 0x20233a, 1)
         .setOrigin(0.5, 0)
         .setStrokeStyle(1, 0x39406a);
       this.content.add(row);
@@ -219,10 +276,12 @@ export class QuestBoardScene extends Phaser.Scene {
         this.add.text(24, y + 12, '★'.repeat(r), { fontFamily: FONT, fontSize: '18px', color: this.rankColor(r) }),
       );
       this.content.add(
-        this.add.text(24, y + 38, `受注できる ${availCount} / 全${inRank.length}`, {
+        this.add.text(24, y + 32, activeCount > 0
+          ? `進行中 ${activeCount}  受注 ${availCount}`
+          : `受注 ${availCount}  達成 ${doneCount}/${inRank.length}`, {
           fontFamily: FONT,
           fontSize: '11px',
-          color: availCount > 0 ? '#9fe3a0' : '#9aa0b5',
+          color: activeCount > 0 ? '#ffd86b' : availCount > 0 ? '#9fe3a0' : '#9aa0b5',
         }),
       );
       this.content.add(
@@ -235,14 +294,72 @@ export class QuestBoardScene extends Phaser.Scene {
         this.scrollY = 0;
         this.render();
       });
-      y += 60;
+      y += 56;
     }
     return y;
   }
 
-  /** Flat quest list for the 通常 tab, or a single ★rank inside the 大型狩猟 tab. */
+  private renderJobQuestList(y: number, w: number): number {
+    const job = getJob(gameState.jobId);
+    const quest = allQuests().find((q) => q.require?.jobId === gameState.jobId);
+    const strip = this.add.graphics();
+    strip.fillStyle(0x111d2d, 0.98);
+    strip.fillRoundedRect(10, y, w - 20, 48, 5);
+    strip.fillStyle(0xffd86b, 0.82);
+    strip.fillRect(10, y + 8, 3, 32);
+    strip.lineStyle(1, 0xffffff, 0.08);
+    strip.strokeRoundedRect(10, y, w - 20, 48, 5);
+    this.content.add(strip);
+    this.content.add(
+      this.add.text(22, y + 7, `現在職  ${job?.name ?? gameState.jobId}`, {
+        fontFamily: FONT,
+        fontSize: '13px',
+        color: '#ffe9a8',
+        fontStyle: 'bold',
+      }),
+    );
+    this.content.add(
+      this.add.text(22, y + 27, quest ? `職装試練  ★${quest.rank ?? 1}` : '専用試練なし', {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#aab8c8',
+      }),
+    );
+    y += 60;
+
+    if (!quest) {
+      this.content.add(
+        this.add.text(16, y, 'この職業には専用クエストがありません。', {
+          fontFamily: FONT,
+          fontSize: '13px',
+          color: '#9aa0b4',
+        }),
+      );
+      return y + 30;
+    }
+
+    const active = gameState.activeQuests.includes(quest.id);
+    const done = gameState.completedQuests.includes(quest.id);
+    const available = availableQuests(gameState).some((q) => q.id === quest.id);
+    const state: QuestViewState = active ? 'active' : done ? 'done' : available ? 'available' : 'locked';
+    y = this.heading(state === 'done' ? '獲得済み' : state === 'locked' ? '解放条件' : state === 'active' ? '進行中' : '受注できる', y, w);
+    return this.renderQuest(quest, y, w, state, this.jobQuestLockReason(quest));
+  }
+
+  private jobQuestLockReason(q: QuestDef): string {
+    if (q.require?.minLevel != null && gameState.level < q.require.minLevel) {
+      return `Lv${q.require.minLevel}で解放`;
+    }
+    const activeHunt = gameState.activeQuests
+      .map((id) => getQuest(id))
+      .find((quest): quest is QuestDef => !!quest?.huntMap);
+    if (activeHunt) return 'ほかの狩猟が進行中';
+    return '条件未達成';
+  }
+
+  /** Quest list for a selected main rank or the post-story investigation board. */
   private renderQuestList(y: number, w: number): number {
-    if (this.tab === 'hunt' && this.selectedRank !== null) {
+    if (this.tab === 'main' && this.selectedRank !== null) {
       const back = this.add
         .text(16, y, '← ランク一覧へ戻る', { fontFamily: FONT, fontSize: '13px', color: '#9fd0ff' })
         .setInteractive({ useHandCursor: true });
@@ -256,10 +373,8 @@ export class QuestBoardScene extends Phaser.Scene {
       y += 28;
       // Direct ★rank switcher so hopping between ranks doesn't need the
       // drill-down round trip (10 quests per rank makes hopping common).
-      const ranks = [...new Set(allQuests().filter((q) => !!q.huntMap && !q.investigation).map((q) => q.rank ?? 1))]
-        .sort((a, b) => a - b);
       let cx = 14;
-      for (const r of ranks) {
+      for (let r = 1; r <= 7; r++) {
         const chip = tabChip(this, cx + 23, y + 17, 46, `★${r}`, () => {
           if (this.dragged) return;
           this.selectedRank = r;
@@ -275,8 +390,10 @@ export class QuestBoardScene extends Phaser.Scene {
 
     const inScope = (q: QuestDef): boolean => {
       if (!this.inTab(q)) return false;
-      if (q.require?.jobId && q.require.jobId !== gameState.jobId) return false;
-      if (this.tab === 'hunt' && this.selectedRank !== null) return (q.rank ?? 1) === this.selectedRank;
+      if (this.tab === 'main') {
+        if (q.type === 'main' || this.selectedRank === null) return false;
+        return (q.rank ?? 1) === this.selectedRank;
+      }
       return true;
     };
     const active = (gameState.activeQuests.map((id) => getQuest(id)).filter(Boolean) as QuestDef[])
@@ -303,7 +420,7 @@ export class QuestBoardScene extends Phaser.Scene {
       for (const q of done) y = this.renderQuest(q, y, w, 'done');
     }
     if (!active.length && !avail.length && !done.length) {
-      const msg = this.tab === 'hunt' ? 'このランクの狩猟はまだありません。' : '今は受けられるクエストがありません。';
+      const msg = this.tab === 'main' ? 'このランクのクエストはまだありません。' : '今は受けられるクエストがありません。';
       this.content.add(
         this.add.text(16, y, msg, { fontFamily: FONT, fontSize: '13px', color: '#9aa0b4' }),
       );
@@ -351,12 +468,24 @@ export class QuestBoardScene extends Phaser.Scene {
       .join('  ');
   }
 
-  private renderQuest(q: QuestDef, y: number, w: number, state: 'active' | 'available' | 'done'): number {
+  private renderQuest(
+    q: QuestDef,
+    y: number,
+    w: number,
+    state: QuestViewState,
+    lockedReason = '',
+  ): number {
     const titleColor = state === 'done' ? '#6b7088' : q.type === 'unlock' ? '#ffe9a8' : '#ffffff';
     // MH-style star rank prefix, colored by rank (dimmed once done).
     const rank = q.rank ?? 1;
     // Story chapters carry a book mark instead of a meaningless ★1.
-    const marker = q.investigation ? `◆${q.investigation.threat}` : q.type === 'main' ? '📖' : `★${rank}`;
+    const marker = q.investigation
+      ? `◆${q.investigation.threat}`
+      : q.type === 'main'
+        ? '📖'
+        : q.require?.jobId
+          ? '◆'
+          : `★${rank}`;
     const starTxt = this.add.text(16, y, marker, {
       fontFamily: FONT,
       fontSize: '15px',
@@ -368,6 +497,17 @@ export class QuestBoardScene extends Phaser.Scene {
       fontSize: '15px',
       color: titleColor,
     });
+    const statusSpace = state === 'available'
+      ? 116
+      : state === 'locked'
+        ? 132
+        : state === 'active'
+          ? 74
+          : 34;
+    const maxTitleWidth = Math.max(100, w - nameTxt.x - statusSpace);
+    for (let size = 14; nameTxt.width > maxTitleWidth && size >= 11; size--) {
+      nameTxt.setFontSize(size);
+    }
     this.content.add(nameTxt);
     if (q.veteran) {
       // 歴戦 badge: stronger target, better rewards — worth calling out.
@@ -433,13 +573,23 @@ export class QuestBoardScene extends Phaser.Scene {
             .setOrigin(1, 0),
         );
       }
-    } else {
+    } else if (state === 'done') {
       this.content.add(
         this.add
           .text(w - 16, y + 10, '済', {
             fontFamily: FONT,
             fontSize: '12px',
             color: '#6b7088',
+          })
+          .setOrigin(1, 0),
+      );
+    } else {
+      this.content.add(
+        this.add
+          .text(w - 16, y + 10, lockedReason, {
+            fontFamily: FONT,
+            fontSize: '11px',
+            color: '#ffcf79',
           })
           .setOrigin(1, 0),
       );
