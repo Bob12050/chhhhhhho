@@ -40,4 +40,15 @@ describe('owned equipment', () => {
     expect(gs.equipmentOwned).toContain('iron_sword');
     expect(gs.derived.physAtk).toBeGreaterThan(atk0);
   });
+
+  it('shows the iron torso in the first-job equipment band', () => {
+    const gs = new GameState();
+    gs.jobId = 'fighter';
+    gs.recompute(false);
+    gs.addEquipment('iron_plate');
+
+    expect(gs.canEquip('iron_plate')).toBe(true);
+    gs.equip('torso', 'iron_plate');
+    expect(gs.equipment.torso).toBe('iron_plate');
+  });
 });

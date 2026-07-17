@@ -5,7 +5,7 @@ describe('GameState equipment & stats', () => {
   let gs: GameState;
   beforeEach(() => {
     gs = new GameState();
-    // R3/R4 gear used below requires tier 2 (2次職); samurai is warrior/sword.
+    // Samurai can use the shared iron sword and armour exercised below.
     gs.jobId = 'samurai';
     gs.recompute(false);
     gs.fullHeal();
@@ -27,7 +27,7 @@ describe('GameState equipment & stats', () => {
   it('stacking armor adds defense and max hp', () => {
     const hp0 = gs.derived.maxHp;
     gs.equip('head', 'iron_helm'); // R3, def+5, maxHp+12
-    gs.equip('torso', 'iron_plate'); // R4, def+8, maxHp+18
+    gs.equip('torso', 'iron_plate'); // R3, def+8, maxHp+18
     expect(gs.derived.maxHp).toBe(hp0 + 30);
     expect(gs.derived.def).toBeGreaterThan(0);
   });

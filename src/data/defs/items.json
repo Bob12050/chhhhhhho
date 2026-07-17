@@ -1112,10 +1112,10 @@
       "id": "iron_plate",
       "name": "鉄の鎧",
       "slot": "torso",
-      "rarity": 4,
+      "rarity": 3,
       "visualId": "plate_iron",
       "element": "none",
-      "levelRequirement": 10,
+      "levelRequirement": 6,
       "derived": {
         "def": 8,
         "maxHp": 18,
