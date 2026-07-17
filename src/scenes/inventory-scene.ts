@@ -90,6 +90,9 @@ export class InventoryScene extends Phaser.Scene {
   private scrollY = 0;
   private maxScroll = 0;
   private dragged = false;
+  private contentMask: Phaser.Filters.Mask | null = null;
+  private canvasMaskShape: Phaser.GameObjects.Graphics | null = null;
+  private scrollSnapTimer: Phaser.Time.TimerEvent | null = null;
   private viewTop = 86;
   private viewBottom = 0;
   private gearDetail: Phaser.GameObjects.Container | null = null;
@@ -277,10 +280,16 @@ export class InventoryScene extends Phaser.Scene {
       if (Math.abs(d) > 12) this.dragged = true;
       if (this.dragged) this.scrollTo(startScroll + d);
     });
+    this.input.on('pointerup', () => {
+      if (inList && this.dragged) this.snapEquipmentScroll();
+      inList = false;
+    });
     this.input.on(
       'wheel',
       (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
         this.scrollTo(this.scrollY + dy * 0.5);
+        this.scrollSnapTimer?.remove(false);
+        this.scrollSnapTimer = this.time.delayedCall(90, () => this.snapEquipmentScroll());
       },
     );
   }
@@ -289,6 +298,53 @@ export class InventoryScene extends Phaser.Scene {
     this.scrollY = Phaser.Math.Clamp(y, 0, this.maxScroll);
     this.content.y = -this.scrollY;
     this.updateEquipWindow();
+  }
+
+  /** Keep the scrolling list inside its real viewport, not just behind cover panels. */
+  private updateContentClip(): void {
+    const region = new Phaser.Geom.Rectangle(
+      0,
+      this.viewTop,
+      this.scale.width,
+      Math.max(1, this.viewBottom - this.viewTop),
+    );
+
+    if (this.game.renderer.type === Phaser.WEBGL) {
+      if (this.contentMask) this.content.filters?.external.remove(this.contentMask);
+      const [mask] = Phaser.Actions.AddMaskShape(this.content, {
+        shape: 'rectangle',
+        region,
+      });
+      this.contentMask = mask;
+      // The viewport only changes when a tab is rebuilt.
+      mask.autoUpdate = false;
+      return;
+    }
+
+    this.content.clearMask(true);
+    this.canvasMaskShape?.destroy();
+    this.canvasMaskShape = this.make.graphics({ x: 0, y: 0 }, false);
+    this.canvasMaskShape.fillStyle(0xffffff, 1).fillRect(
+      region.x,
+      region.y,
+      region.width,
+      region.height,
+    );
+    this.content.setMask(this.canvasMaskShape.createGeometryMask());
+  }
+
+  /** Never leave only the bottom line of an equipment row visible below the header. */
+  private snapEquipmentScroll(): void {
+    if (this.tab !== 'equipment' || this.eqQueue.length === 0 || this.maxScroll <= 0) return;
+    const stops = [0, this.maxScroll];
+    for (const entry of this.eqQueue) {
+      stops.push(Phaser.Math.Clamp(entry.y - this.viewTop, 0, this.maxScroll));
+    }
+    let nearest = stops[0];
+    for (const stop of stops) {
+      if (Math.abs(stop - this.scrollY) < Math.abs(nearest - this.scrollY)) nearest = stop;
+    }
+    this.scrollTo(nearest);
   }
 
   /** Recompute scrollable range from the laid-out rows and re-clamp. */
@@ -342,6 +398,7 @@ export class InventoryScene extends Phaser.Scene {
       : this.tab === 'skill'
         ? (this.skillView === 'loadout' ? 274 : 150)
         : 86;
+    this.updateContentClip();
     this.content.removeAll(true);
     this.eqQueue = [];
     this.eqLive.clear();
