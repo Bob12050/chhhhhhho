@@ -40,6 +40,8 @@ export interface EnemyDef {
   bossStyle?: BossStyleDef;
   /** Optional named second phase with its own cadence and attack pattern. */
   phase?: BossPhaseDef;
+  /** Optional break gauge. Filling it creates a short damage opening. */
+  stagger?: BossStaggerDef;
   /** 亜種: id of the base species this enemy is a recolored variant of. */
   variantOf?: string;
   /** Bestiary flavor text (shown once discovered). */
@@ -59,6 +61,17 @@ export interface BossPhaseDef {
   speedMult?: number;
   cooldownMult?: number;
   attacks?: BossAttackDef[];
+}
+
+export interface BossStaggerDef {
+  max: number;
+  downMs: number;
+  damageRate?: number;
+  skillBonus?: number;
+  critBonus?: number;
+  weaknessBonus?: number;
+  decayDelayMs?: number;
+  decayPerSecond?: number;
 }
 
 /**
@@ -104,6 +117,17 @@ export type BossAttackDef =
       count: number;
       /** Cap on live minions from this boss (default 4). */
       maxMinions?: number;
+    }
+  | {
+      type: 'root_lanes';
+      /** Number of lanes in the fan. */
+      count: number;
+      length: number;
+      width: number;
+      damageMult: number;
+      telegraphMs: number;
+      /** Total fan width in degrees. Ignored when count is one. */
+      spreadDeg?: number;
     };
 
 interface EnemiesFile {

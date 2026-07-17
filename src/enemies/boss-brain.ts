@@ -36,6 +36,25 @@ export interface Arena {
     ms: number,
     onDone: () => void,
   ): void;
+  /** Preview a fan of root lanes before they erupt. */
+  telegraphRootLanes(
+    x: number,
+    y: number,
+    angles: readonly number[],
+    length: number,
+    width: number,
+    ms: number,
+    onDone: () => void,
+  ): void;
+  /** Resolve the root art and its player collision after the warning. */
+  strikeRootLanes(
+    x: number,
+    y: number,
+    angles: readonly number[],
+    length: number,
+    width: number,
+    damage: number,
+  ): void;
   /** Blast visual + player damage check is the scene's job. */
   explode(x: number, y: number, radius: number, damage: number): void;
   /** Hold the boss in place (cast pose) for ms. */
@@ -217,6 +236,35 @@ export class BossBrain {
           if (this.arena.minionCount() >= cap) break;
           if (!this.arena.summon(def.enemyId)) break;
         }
+        break;
+      }
+      case 'root_lanes': {
+        const base = Math.atan2(player.y - boss.y, player.x - boss.x);
+        const spread = ((def.spreadDeg ?? 52) * Math.PI) / 180;
+        const count = Math.max(1, def.count);
+        const angles: number[] = [];
+        for (let i = 0; i < count; i++) {
+          const t = count === 1 ? 0.5 : i / (count - 1);
+          angles.push(base - spread / 2 + spread * t);
+        }
+        this.arena.hold(def.telegraphMs);
+        this.busyMs = def.telegraphMs + 360;
+        this.arena.telegraphRootLanes(
+          boss.x,
+          boss.y,
+          angles,
+          def.length,
+          def.width,
+          def.telegraphMs,
+          () => this.arena.strikeRootLanes(
+            boss.x,
+            boss.y,
+            angles,
+            def.length,
+            def.width,
+            dmg(def.damageMult),
+          ),
+        );
         break;
       }
     }

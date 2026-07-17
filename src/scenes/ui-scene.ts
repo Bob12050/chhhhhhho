@@ -724,12 +724,6 @@ export class UIScene extends Phaser.Scene {
     this.busOff.push(bus.on('quest:changed', refreshTracker));
     this.busOff.push(bus.on('quest:accepted', ({ questId }) => this.showQuestStart(questId)));
     this.busOff.push(bus.on('quest:progress', (data) => this.showQuestProgress(data)));
-    this.busOff.push(
-      bus.on('boss:bar', ({ active }) => {
-        bossBarActive = active;
-        refreshTracker();
-      }),
-    );
     this.busOff.push(bus.on('boss:intro', (data) => this.showBossIntro(data)));
 
     this.busOff.push(
@@ -779,6 +773,14 @@ export class UIScene extends Phaser.Scene {
     bag.onChange = (down) => {
       if (down) bus.emit('ui:open-inventory', {});
     };
+    this.busOff.push(
+      bus.on('boss:bar', ({ active }) => {
+        bossBarActive = active;
+        mapButton.setVisible(!active);
+        bag.setVisible(!active);
+        refreshTracker();
+      }),
+    );
 
     // Debug entry is a separate, opt-in dev overlay; nothing debug-related is
     // mixed into the regular HUD here.

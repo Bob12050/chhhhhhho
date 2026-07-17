@@ -98,7 +98,7 @@
       "name": "もりの主",
       "textureKey": "gen.enemy.treant",
       "tint": "#6aa84f",
-      "scale": 1.8,
+      "scale": 2.2,
       "isBoss": true,
       "maxHp": 660,
       "moveSpeed": 30,
@@ -111,23 +111,71 @@
       "dropTableId": "boss_treant",
       "weakness": "fire",
       "resist": "poison",
+      "bossStyle": {
+        "warningColor": "#f0c34f",
+        "impactColor": "#df7f32",
+        "projectileColor": "#8fcf69"
+      },
       "attacks": [
         {
-          "type": "aoe",
-          "radius": 44,
-          "damageMult": 1.0,
-          "telegraphMs": 1000,
-          "count": 1
+          "type": "root_lanes",
+          "count": 1,
+          "length": 250,
+          "width": 30,
+          "damageMult": 1.1,
+          "telegraphMs": 1100
         },
         {
           "type": "shots",
           "count": 6,
           "speed": 110,
           "damageMult": 0.6,
+          "telegraphMs": 700,
           "spread": "radial"
         }
       ],
       "enrageAtHpPct": 0.5,
+      "phase": {
+        "name": "森の怒り",
+        "color": "#f1c64f",
+        "tint": "#95bd4d",
+        "speedMult": 1.1,
+        "cooldownMult": 0.76,
+        "attacks": [
+          {
+            "type": "root_lanes",
+            "count": 3,
+            "length": 275,
+            "width": 30,
+            "damageMult": 1.15,
+            "telegraphMs": 1050,
+            "spreadDeg": 72
+          },
+          {
+            "type": "aoe",
+            "radius": 54,
+            "damageMult": 1.0,
+            "telegraphMs": 900,
+            "count": 2
+          },
+          {
+            "type": "summon",
+            "enemyId": "cap_shroom",
+            "count": 2,
+            "maxMinions": 4
+          }
+        ]
+      },
+      "stagger": {
+        "max": 80,
+        "downMs": 2200,
+        "damageRate": 0.3,
+        "skillBonus": 6,
+        "critBonus": 4,
+        "weaknessBonus": 5,
+        "decayDelayMs": 1800,
+        "decayPerSecond": 6
+      },
       "description": "ささやきの森の主。森を荒らす者に根の裁きを下す。"
     },
     {

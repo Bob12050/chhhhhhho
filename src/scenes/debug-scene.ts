@@ -71,6 +71,14 @@ export class DebugScene extends Phaser.Scene {
     y += 40;
     this.btn(16, y, '★最強モード（Lv99・全解放）', () => this.grant(() => this.godMode()), 0x6a2a2a);
     y += 44;
+    this.btn(
+      16,
+      y,
+      'もりの主実演',
+      () => this.previewHunt('subj_treant', 'arena_grove', 180, 500),
+      0x365070,
+    );
+    y += 40;
     this.btn(16, y, 'ゼフィス実演', () => this.previewZephys(), 0x365070);
     this.btn(
       142,

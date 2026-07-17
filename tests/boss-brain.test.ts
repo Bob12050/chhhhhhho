@@ -10,6 +10,8 @@ interface Log {
   telegraphs: { x: number; y: number; radius: number; ms: number }[];
   chargeTelegraphs: { x: number; y: number; targetX: number; targetY: number; ms: number }[];
   shotTelegraphs: { angles: number[]; ms: number }[];
+  rootTelegraphs: { angles: number[]; length: number; width: number; ms: number }[];
+  rootStrikes: { angles: number[]; length: number; width: number; damage: number }[];
   explosions: { x: number; y: number; radius: number; damage: number }[];
   dashes: { speed: number; ms: number }[];
   shots: { angle: number; speed: number; damage: number }[];
@@ -21,7 +23,7 @@ interface Log {
 
 function makeArena(overrides?: Partial<Arena> & { hp?: () => number }): { arena: Arena; log: Log } {
   const log: Log = {
-    telegraphs: [], chargeTelegraphs: [], shotTelegraphs: [],
+    telegraphs: [], chargeTelegraphs: [], shotTelegraphs: [], rootTelegraphs: [], rootStrikes: [],
     explosions: [], dashes: [], shots: [], summons: [],
     holds: [], speedMult: 1, enraged: 0,
   };
@@ -41,6 +43,13 @@ function makeArena(overrides?: Partial<Arena> & { hp?: () => number }): { arena:
     telegraphShots: (_x, _y, angles, ms, onDone) => {
       log.shotTelegraphs.push({ angles: [...angles], ms });
       pending.push(onDone);
+    },
+    telegraphRootLanes: (_x, _y, angles, length, width, ms, onDone) => {
+      log.rootTelegraphs.push({ angles: [...angles], length, width, ms });
+      pending.push(onDone);
+    },
+    strikeRootLanes: (_x, _y, angles, length, width, damage) => {
+      log.rootStrikes.push({ angles: [...angles], length, width, damage });
     },
     explode: (x, y, radius, damage) => log.explosions.push({ x, y, radius, damage }),
     hold: (ms) => log.holds.push(ms),
@@ -139,6 +148,34 @@ describe('BossBrain', () => {
     expect(made.log.dashes).toHaveLength(0);
     made.flush();
     expect(made.log.dashes).toEqual([{ speed: 360, ms: 500 }]);
+  });
+
+  it('telegraphs a root fan before all lanes erupt', () => {
+    const made = makeArena() as ReturnType<typeof makeArena> & { flush: () => void };
+    const brain = new BossBrain(
+      made.arena,
+      [{
+        type: 'root_lanes',
+        count: 3,
+        length: 260,
+        width: 30,
+        damageMult: 1.2,
+        telegraphMs: 900,
+        spreadDeg: 60,
+      }],
+      20,
+    );
+    step(brain, 1300);
+    expect(made.log.rootTelegraphs).toHaveLength(1);
+    expect(made.log.rootTelegraphs[0].angles).toHaveLength(3);
+    expect(made.log.rootStrikes).toHaveLength(0);
+    made.flush();
+    expect(made.log.rootStrikes).toEqual([{
+      angles: made.log.rootTelegraphs[0].angles,
+      length: 260,
+      width: 30,
+      damage: 24,
+    }]);
   });
 
   it('does not attack while the player is out of engage range', () => {
@@ -272,5 +309,13 @@ describe('boss attack data', () => {
         }
       }
     }
+  });
+
+  it('gives the treant its authored root phase and break gauge', () => {
+    const treant = allEnemyDefs().find((boss) => boss.id === 'boss_treant');
+    expect(treant?.attacks?.some((attack) => attack.type === 'root_lanes')).toBe(true);
+    expect(treant?.phase?.name).toBe('森の怒り');
+    expect(treant?.phase?.attacks?.some((attack) => attack.type === 'root_lanes')).toBe(true);
+    expect(treant?.stagger?.downMs).toBeGreaterThanOrEqual(2_000);
   });
 });

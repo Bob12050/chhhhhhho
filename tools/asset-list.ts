@@ -145,6 +145,8 @@ export const ASSET_SPECS: AssetSpec[] = [
   { label: '雪原背景', src: 'assets/maps/snowfield-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
   { label: '砂漠背景', src: 'assets/maps/desert-storybook-wide-v2.png', type: 'image', w: 640, h: 960 },
   { label: '闘技場背景', src: 'assets/maps/arena-storybook.png', type: 'image', w: 360, h: 800 },
+  { label: '木立の闘技場背景', src: 'assets/maps/arena-grove-storybook-v2.png', type: 'image', w: 360, h: 800 },
+  { label: 'もりの主：根攻撃', src: 'assets/fx/treant-root-lane-v1.png', type: 'image', w: 96, h: 608 },
   { label: '障害物', src: 'assets/env/obstacle.png', type: 'image', w: 48, h: 64, anchor: [24, 59] },
   tile('壁', 'assets/env/wall.png'),
   {

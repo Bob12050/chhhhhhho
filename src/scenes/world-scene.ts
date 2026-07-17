@@ -31,6 +31,8 @@ import {
 } from '@/quests/hunt-logic';
 import { PET_EXP_SHARE, petAttackDamage } from '@/pets/pet-growth';
 import { mitigateDamage } from '@/combat/mitigation';
+import { BossStaggerMeter } from '@/combat/boss-stagger';
+import { circleIntersectsLane } from '@/combat/lane-hit';
 import { input } from '@/input/input-state';
 import { bus, type GameEvents } from '@/core/event-bus';
 import { saveManager } from '@/save/save-manager';
@@ -133,12 +135,16 @@ export class WorldScene extends Phaser.Scene {
   private pBoltPool: Phaser.GameObjects.Arc[] = [];
   private minions: Enemy[] = [];
   private bossMaxHp = 0;
+  private bossStagger: BossStaggerMeter | null = null;
   private baseCameraZoom = 1;
   private petAtkCd = 0;
   private bossBar: {
-    bg: Phaser.GameObjects.Container;
-    fill: Phaser.GameObjects.Rectangle;
-    label: Phaser.GameObjects.Text;
+    root: Phaser.GameObjects.Container;
+    hpFill: Phaser.GameObjects.Rectangle;
+    hpText: Phaser.GameObjects.Text;
+    phaseLabel: Phaser.GameObjects.Text;
+    staggerFill: Phaser.GameObjects.Rectangle | null;
+    staggerLabel: Phaser.GameObjects.Text | null;
   } | null = null;
   private combatTarget: Enemy | null = null;
   private combatTargetScanMs = 0;
@@ -182,6 +188,7 @@ export class WorldScene extends Phaser.Scene {
     this.pet = null;
     this.boss = null;
     this.bossMaxHp = 0;
+    this.bossStagger = null;
     this.bossBar = null;
     this.combatTarget = null;
     this.combatTargetScanMs = 0;
@@ -806,8 +813,11 @@ export class WorldScene extends Phaser.Scene {
     if (def.isBoss) {
       this.boss = enemy;
       this.bossMaxHp = maxHp;
-      this.buildBossBar(`${opts?.veteran ? '歴戦の' : ''}${def.name}`);
-      this.cameras.main.zoomTo(1.1, 220, 'Sine.easeOut');
+      this.bossStagger = def.stagger ? new BossStaggerMeter(def.stagger) : null;
+      this.buildBossBar(`${opts?.veteran ? '歴戦の' : ''}${def.name}`, def);
+      // Keep the portrait arena at 1:1. World-space HUD shares this camera, so
+      // a persistent boss zoom also enlarged and shifted the boss card.
+      this.cameras.main.setZoom(this.baseCameraZoom);
       if (def.attacks && def.attacks.length > 0) {
         this.bossBrain = new BossBrain(
           this.makeArena(enemy, def),
@@ -850,6 +860,11 @@ export class WorldScene extends Phaser.Scene {
         ),
       telegraphShots: (x, y, angles, ms, onDone) =>
         this.shotTelegraphFx(x, y, angles, ms, warningColor, onDone),
+      telegraphRootLanes: (x, y, angles, length, width, ms, onDone) =>
+        this.rootLaneTelegraphFx(x, y, angles, length, width, ms, onDone),
+      strikeRootLanes: (x, y, angles, length, width, damage) => {
+        if (!boss.isDead()) this.rootLaneStrikeFx(x, y, angles, length, width, damage);
+      },
       explode: (x, y, r, dmg) => this.explodeAt(x, y, r, dmg, impactColor),
       hold: (ms) => boss.castHold(ms),
       dash: (x, y, speed, ms) => boss.beginDash(x, y, speed, ms),
@@ -957,6 +972,92 @@ export class WorldScene extends Phaser.Scene {
       rays.destroy();
       core.destroy();
       onDone();
+    });
+  }
+
+  /** Grow faint roots along every danger lane, then hand off to the strike. */
+  private rootLaneTelegraphFx(
+    x: number,
+    y: number,
+    angles: readonly number[],
+    length: number,
+    width: number,
+    ms: number,
+    onDone: () => void,
+  ): void {
+    const roots = angles.map((angle) => {
+      const root = this.add
+        .image(Math.round(x), Math.round(y), TEX.treantRootLane)
+        .setOrigin(0.5, 0)
+        .setRotation(angle - Math.PI / 2)
+        .setDisplaySize(Math.round(width * 2.7), Math.round(length))
+        .setAlpha(0.28)
+        .setDepth(5);
+      const targetScaleY = root.scaleY;
+      root.setScale(root.scaleX, targetScaleY * 0.06);
+      this.tweens.add({
+        targets: root,
+        scaleY: targetScaleY,
+        alpha: 0.8,
+        duration: ms,
+        ease: 'Sine.easeIn',
+      });
+      return root;
+    });
+    this.time.delayedCall(ms, () => {
+      for (const root of roots) root.destroy();
+      onDone();
+    });
+  }
+
+  /** Erupt the generated root art and resolve one dodgeable lane hit. */
+  private rootLaneStrikeFx(
+    x: number,
+    y: number,
+    angles: readonly number[],
+    length: number,
+    width: number,
+    damage: number,
+  ): void {
+    let hit = false;
+    const roots = angles.map((angle) => {
+      const root = this.add
+        .image(Math.round(x), Math.round(y), TEX.treantRootLane)
+        .setOrigin(0.5, 0)
+        .setRotation(angle - Math.PI / 2)
+        .setDisplaySize(Math.round(width * 2.7), Math.round(length))
+        .setAlpha(0.95)
+        .setDepth(5);
+      const targetScaleY = root.scaleY;
+      root.setScale(root.scaleX * 0.72, targetScaleY * 0.08);
+      this.tweens.add({
+        targets: root,
+        scaleX: root.scaleX / 0.72,
+        scaleY: targetScaleY,
+        duration: 130,
+        ease: 'Back.easeOut',
+      });
+      const endX = x + Math.cos(angle) * length;
+      const endY = y + Math.sin(angle) * length;
+      if (
+        !hit
+        && !this.playerDead
+        && circleIntersectsLane(this.player.x, this.player.y - 6, 10, x, y, endX, endY, width)
+      ) {
+        hit = true;
+      }
+      return root;
+    });
+    if (hit) this.damagePlayer(damage, x, y);
+    this.cameras.main.shake(120, 0.006);
+    bus.emit('sfx:play', { id: 'boom' });
+    this.time.delayedCall(220, () => {
+      this.tweens.add({
+        targets: roots,
+        alpha: 0,
+        duration: 220,
+        onComplete: () => roots.forEach((root) => root.destroy()),
+      });
     });
   }
 
@@ -1073,15 +1174,42 @@ export class WorldScene extends Phaser.Scene {
       ease: 'Quad.easeOut',
       onComplete: () => pulse.destroy(),
     });
-    this.bossBar?.fill.setFillStyle(phaseColor);
+    if (this.bossBar && phase) {
+      this.bossBar.phaseLabel.setText(phase.name).setColor(phase.color ?? '#f1c64f');
+    }
     this.cameras.main.shake(240, 0.008);
     this.flashScreen(phaseColor, 0.18, 260);
     bus.emit('sfx:play', { id: 'roar' });
   }
 
+  private onBossStaggered(boss: Enemy): void {
+    if (!this.bossStagger) return;
+    const downMs = this.bossStagger.downMs;
+    boss.stagger(downMs);
+    this.bossBrain?.defer(downMs);
+    this.floatText(boss.x, boss.y - 76, 'DOWN!', '#ffe08a');
+    const pulse = this.add
+      .image(boss.x, boss.y - 14, TEX.hudActionButton)
+      .setDisplaySize(42, 42)
+      .setTint(0xffd76a)
+      .setAlpha(0.72)
+      .setDepth(9000);
+    this.tweens.add({
+      targets: pulse,
+      scale: 2,
+      alpha: 0,
+      duration: 420,
+      ease: 'Quad.easeOut',
+      onComplete: () => pulse.destroy(),
+    });
+    this.cameras.main.shake(180, 0.008);
+    this.flashScreen(0xffd76a, 0.16, 180);
+    bus.emit('sfx:play', { id: 'crit' });
+  }
+
   private showBossPhaseBanner(name: string, color: string): void {
     const banner = this.add
-      .text(this.scale.width / 2, 174, `PHASE 2\n${name}`, {
+      .text(this.scale.width / 2, 190, `PHASE 2\n${name}`, {
         fontFamily: FONT,
         fontSize: '16px',
         fontStyle: 'bold',
@@ -1095,7 +1223,7 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(9002);
     this.tweens.add({
       targets: banner,
-      y: 162,
+      y: 178,
       alpha: 0,
       delay: 720,
       duration: 520,
@@ -1108,47 +1236,98 @@ export class WorldScene extends Phaser.Scene {
    * Boss HP card. Uses the open band under the compact player panel; the quest
    * tracker yields this slot while a boss is alive.
    */
-  private buildBossBar(name: string): void {
+  private buildBossBar(name: string, def: EnemyDef): void {
     // Rebuilding (sequential hunts in one visit) must not orphan the old bar.
     if (this.bossBar) {
-      this.bossBar.bg.destroy();
-      this.bossBar.fill.destroy();
-      this.bossBar.label.destroy();
+      this.bossBar.root.destroy(true);
       this.bossBar = null;
     }
     const w = this.scale.width;
-    const x = 24;
-    const y = 102; // status strip and menu-shortcut row clearance
-    const cardW = w - 48;
-    const cardH = 46;
-    const bg = this.add.container(0, 0).setScrollFactor(0).setDepth(8000);
-    bg.add(
+    const x = 14;
+    const y = 96;
+    const cardW = w - 28;
+    const hasStagger = this.bossStagger !== null;
+    const cardH = hasStagger ? 70 : 58;
+    const root = this.add.container(0, 0).setScrollFactor(0).setDepth(8000);
+    root.add(
       this.add
         .image(x + cardW / 2, y + cardH / 2 + 3, TEX.hudQuestFrame)
         .setDisplaySize(cardW, cardH)
         .setTint(0x000000)
-        .setAlpha(0.48),
+        .setAlpha(0.52),
     );
-    bg.add(this.add.rectangle(x + cardW / 2 + 24, y + cardH / 2, cardW - 72, cardH - 18, 0x120d1b, 0.94));
-    bg.add(this.add.image(x + cardW / 2, y + cardH / 2, TEX.hudQuestFrame).setDisplaySize(cardW, cardH));
-    // Empty groove under the fill so lost HP reads clearly.
-    bg.add(this.add.rectangle(x + 58 + (cardW - 72) / 2, y + 32, cardW - 72, 9, 0x05050b, 0.72));
-    const label = this.add
-      .text(x + 58 + (cardW - 72) / 2, y + 7, name, {
+    root.add(this.add.rectangle(x + cardW / 2, y + cardH / 2, cardW - 10, cardH - 10, 0x071522, 0.94));
+    root.add(this.add.image(x + cardW / 2, y + cardH / 2, TEX.hudQuestFrame).setDisplaySize(cardW, cardH));
+
+    root.add(
+      this.add.image(x + 32, y + cardH / 2, TEX.hudActionButton).setDisplaySize(50, 50),
+    );
+    const portrait = this.add
+      .image(x + 32, y + cardH / 2 + 2, def.textureKey, 0)
+      .setDisplaySize(38, 38);
+    if (def.tint) portrait.setTint(Phaser.Display.Color.HexStringToColor(def.tint).color);
+    root.add(portrait);
+
+    root.add(this.add.text(x + 70, y + 7, name, {
+      fontFamily: FONT,
+      fontSize: '12px',
+      color: '#fff2c6',
+      fontStyle: 'bold',
+    }));
+    const phaseLabel = this.add
+      .text(x + cardW - 14, y + 8, def.phase ? '静穏' : 'BOSS', {
         fontFamily: FONT,
-        fontSize: '11px',
-        color: '#fff0bd',
+        fontSize: '9px',
+        color: '#b7c9d2',
         fontStyle: 'bold',
       })
-      .setOrigin(0.5, 0)
-      .setScrollFactor(0)
-      .setDepth(8002);
-    const fill = this.add
-      .rectangle(x + 59, y + 32, cardW - 74, 7, 0xd4464d)
+      .setOrigin(1, 0);
+    root.add(phaseLabel);
+
+    root.add(this.add.text(x + 70, y + 27, 'HP', {
+      fontFamily: FONT,
+      fontSize: '8px',
+      color: '#f3b8b8',
+      fontStyle: 'bold',
+    }));
+    const hpX = x + 92;
+    const hpW = cardW - 106;
+    root.add(this.add.rectangle(hpX + hpW / 2, y + 34, hpW, 9, 0x02060a, 0.9));
+    const hpFill = this.add
+      .rectangle(hpX, y + 34, hpW, 7, 0xd94f58)
       .setOrigin(0, 0.5)
-      .setScrollFactor(0)
-      .setDepth(8001);
-    this.bossBar = { bg, fill, label };
+      .setScale(1, 1);
+    root.add(hpFill);
+    const hpText = this.add
+      .text(x + cardW - 14, y + 25, '100%', {
+        fontFamily: FONT,
+        fontSize: '8px',
+        color: '#f7f9fc',
+        fontStyle: 'bold',
+      })
+      .setOrigin(1, 0);
+    root.add(hpText);
+
+    let staggerFill: Phaser.GameObjects.Rectangle | null = null;
+    let staggerLabel: Phaser.GameObjects.Text | null = null;
+    if (hasStagger) {
+      staggerLabel = this.add.text(x + 70, y + 48, 'ひるみ', {
+        fontFamily: FONT,
+        fontSize: '8px',
+        color: '#ffe39a',
+        fontStyle: 'bold',
+      });
+      const staggerX = x + 104;
+      const staggerW = cardW - 118;
+      root.add(staggerLabel);
+      root.add(this.add.rectangle(staggerX + staggerW / 2, y + 55, staggerW, 7, 0x02060a, 0.9));
+      staggerFill = this.add
+        .rectangle(staggerX, y + 55, staggerW, 5, 0xe5b83f)
+        .setOrigin(0, 0.5)
+        .setScale(0, 1);
+      root.add(staggerFill);
+    }
+    this.bossBar = { root, hpFill, hpText, phaseLabel, staggerFill, staggerLabel };
     bus.emit('boss:bar', { active: true });
   }
 
@@ -1343,6 +1522,13 @@ export class WorldScene extends Phaser.Scene {
         bus.emit('combat:damage-dealt', { x: e.x, y: e.y, amount: procDamage, crit: false });
         if (killed) break;
       }
+    }
+    if (
+      !killed
+      && e === this.boss
+      && this.bossStagger?.hit({ damage: totalDamage, skill: isSkill, crit, weak })
+    ) {
+      this.onBossStaggered(e);
     }
     this.updateCombatTargetUi();
     // 吸血 (lifesteal): boss-gear special — heal a fraction of dealt damage.
@@ -2414,6 +2600,7 @@ export class WorldScene extends Phaser.Scene {
       this.updateQuestGuide();
     }
     if (this.boss && !this.boss.isDead()) {
+      this.bossStagger?.update(delta);
       const cadence = this.investigationCondition?.mechanic === 'frenzy' && this.investigationFrenzy
         ? this.investigationCondition.cadenceMult
         : 1;
@@ -2507,12 +2694,21 @@ export class WorldScene extends Phaser.Scene {
   private updateBossBar(): void {
     if (!this.bossBar) return;
     if (this.boss && !this.boss.isDead() && this.bossMaxHp > 0) {
-      this.bossBar.fill.scaleX = Phaser.Math.Clamp(this.boss.hp / this.bossMaxHp, 0, 1);
+      const hpRatio = Phaser.Math.Clamp(this.boss.hp / this.bossMaxHp, 0, 1);
+      this.bossBar.hpFill.scaleX = hpRatio;
+      this.bossBar.hpText.setText(`${Math.ceil(hpRatio * 100)}%`);
+      if (this.bossBar.staggerFill && this.bossBar.staggerLabel && this.bossStagger) {
+        const down = this.bossStagger.isDown;
+        this.bossBar.staggerFill.scaleX = down ? 1 : this.bossStagger.ratio;
+        this.bossBar.staggerFill.setFillStyle(down ? 0x77d7aa : 0xe5b83f);
+        this.bossBar.staggerLabel
+          .setText(down ? 'DOWN' : 'ひるみ')
+          .setColor(down ? '#a8f0c8' : '#ffe39a');
+      }
     } else {
-      this.bossBar.bg.destroy();
-      this.bossBar.fill.destroy();
-      this.bossBar.label.destroy();
+      this.bossBar.root.destroy(true);
       this.bossBar = null;
+      this.bossStagger = null;
       bus.emit('boss:bar', { active: false });
     }
   }

@@ -245,6 +245,16 @@ function validateEnemies(itemIds: Set<string>, dropTableIds: Set<string>): Set<s
           else summonRefs.push([`${at}`, a.enemyId]);
           if (!(num('count') >= 1)) err(`${at}: count must be >= 1`);
           break;
+        case 'root_lanes':
+          if (!(num('count') >= 1)) err(`${at}: count must be >= 1`);
+          if (!(num('length') > 0)) err(`${at}: length must be > 0`);
+          if (!(num('width') > 0)) err(`${at}: width must be > 0`);
+          if (!(num('damageMult') > 0)) err(`${at}: damageMult must be > 0`);
+          if (!(num('telegraphMs') >= 300)) err(`${at}: telegraphMs must be >= 300 (must be dodgeable)`);
+          if (a.spreadDeg != null && !(num('spreadDeg') > 0 && num('spreadDeg') <= 180)) {
+            err(`${at}: spreadDeg must be in (0,180]`);
+          }
+          break;
         default:
           err(`${at}: unknown type "${String(a.type)}"`);
       }

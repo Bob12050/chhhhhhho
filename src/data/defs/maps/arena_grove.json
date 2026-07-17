@@ -39,14 +39,8 @@
   "enemies": [],
   "npcs": [],
   "ambient": {
-    "color": "#0f3a22",
-    "alpha": 0.1
+    "color": "#dff4a7",
+    "alpha": 0.025
   },
-  "landmarks": [
-    {
-      "x": 90,
-      "y": 170,
-      "kind": "stone_circle"
-    }
-  ]
+  "landmarks": []
 }

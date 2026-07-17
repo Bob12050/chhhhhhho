@@ -27,7 +27,7 @@ const ILLUSTRATED_MAP_TEX: Record<string, string> = {
   desert: TEX.desertMap,
   boss_room: TEX.arenaMap,
   arena_volcano: TEX.arenaMap,
-  arena_grove: TEX.arenaMap,
+  arena_grove: TEX.arenaGroveMap,
   arena_marsh: TEX.arenaMap,
   arena_cavern: TEX.arenaMap,
   arena_peak: TEX.arenaMap,

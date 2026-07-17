@@ -12,12 +12,12 @@ import { STATUS_CATEGORY, STATUS_COLOR, type Element, type StatusType } from '@/
 export type EnemyState = 'idle' | 'wander' | 'chase' | 'attack' | 'hurt' | 'return' | 'dead';
 
 /**
- * Use exact half-step scales so 96px enemy art never shimmers while moving.
- * The data scale still chooses the visual class; it no longer creates dozens
- * of subtly different fractional sizes.
+ * Use a tiny set of fixed scales so enemy art never changes size arbitrarily.
+ * 96px at 1.25x is an exact 120px output, which keeps the showcase boss crisp.
  */
 function crispEnemyScale(dataScale = 1): number {
   if (dataScale >= 2.7) return 1.5;
+  if (dataScale >= 2.2) return 1.25;
   if (dataScale >= 1.7) return 1;
   return 0.5;
 }
@@ -198,6 +198,15 @@ export class Enemy {
   castHold(ms: number): void {
     if (this.dead) return;
     this.holdMs = Math.max(this.holdMs, ms);
+    this.sprite.setVelocity(0, 0);
+  }
+
+  /** Cancel movement and attacks for a boss-break damage window. */
+  stagger(ms: number): void {
+    if (this.dead) return;
+    this.dashMs = 0;
+    this.holdMs = Math.max(this.holdMs, ms);
+    this.knockback = 0;
     this.sprite.setVelocity(0, 0);
   }
 
