@@ -387,7 +387,11 @@ function collectItemIds(): Set<string> {
     ...(file.consumables ?? []).map((c) => c.id),
     ...(file.petItems ?? []).map((p) => p.id),
     ...file.equipment.map((e) => e.id),
-    ...regalia.regalia.map((entry) => `job_regalia_${entry.jobId}`),
+    ...regalia.regalia.flatMap((entry) => [
+      `job_regalia_${entry.jobId}_head`,
+      `job_regalia_${entry.jobId}`,
+      `job_regalia_${entry.jobId}_weapon`,
+    ]),
   ]);
 }
 
@@ -882,11 +886,19 @@ function validateJobRegalia(enemyIds: Set<string>, mapIds: Set<string>): void {
       if (!DERIVED_KEYS.has(key)) err(`${at}: invalid derived stat "${key}"`);
     }
 
-    const itemId = `job_regalia_${entry.jobId}`;
+    const itemIds = [
+      `job_regalia_${entry.jobId}_head`,
+      `job_regalia_${entry.jobId}`,
+      `job_regalia_${entry.jobId}_weapon`,
+    ];
     const questId = `job_regalia_trial_${entry.jobId}`;
-    if (seenItems.has(itemId) || baseItemIds.has(itemId)) err(`${at}: duplicate item id "${itemId}"`);
+    for (const itemId of itemIds) {
+      if (seenItems.has(itemId) || baseItemIds.has(itemId)) {
+        err(`${at}: duplicate item id "${itemId}"`);
+      }
+      seenItems.add(itemId);
+    }
     if (seenQuests.has(questId) || baseQuestIds.has(questId)) err(`${at}: duplicate quest id "${questId}"`);
-    seenItems.add(itemId);
     seenQuests.add(questId);
   }
 

@@ -51,7 +51,11 @@ function jobCompatible(gs: GameState, def: EquipmentDef): boolean {
 }
 
 function chooseBase(gs: GameState, rank: number, rng: Rng): EquipmentDef {
-  const authored = allEquipment();
+  // Exact-job regalia belongs exclusively to its one-time class trial. It must
+  // never be cloned into a random investigation item for another job.
+  const authored = allEquipment().filter(
+    (def) => !def.jobRequirements?.length && !def.appearance,
+  );
   let pool = authored.filter(
     (def) => def.rarity === rank && def.levelRequirement <= gs.level && jobCompatible(gs, def),
   );

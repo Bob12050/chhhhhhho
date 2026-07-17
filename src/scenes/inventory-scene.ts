@@ -35,7 +35,10 @@ import {
   applyIronEquipmentAppearance,
   ironEquipmentTexturesAvailable,
 } from '@/paperdoll/iron-equipment-visual';
-import { equippedJobRegaliaAppearance } from '@/equipment/job-regalia-appearance';
+import {
+  equippedJobRegaliaAppearance,
+  equippedJobRegaliaProgress,
+} from '@/equipment/job-regalia-appearance';
 import { loadSettings } from '@/core/settings';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
@@ -660,6 +663,7 @@ export class InventoryScene extends Phaser.Scene {
   private renderEquippedSetSummary(startY: number): number {
     const w = this.scale.width;
     const states = activeBossSetStates(gameState.equipment).slice(0, 3);
+    const regalia = equippedJobRegaliaProgress(gameState.equipment);
     const headingY = startY + 10;
     this.content.add(
       this.add.text(16, headingY, 'セット効果', {
@@ -669,7 +673,41 @@ export class InventoryScene extends Phaser.Scene {
       }),
     );
     let y = startY + 28;
-    if (states.length === 0) {
+    if (regalia.count > 0) {
+      const equippedIds = [
+        gameState.equipment.head,
+        gameState.equipment.torso,
+        gameState.equipment.main_hand,
+      ];
+      const series = equippedIds
+        .map((id) => id ? getEquipment(id) : undefined)
+        .find((item) => item?.appearance === regalia.appearance)?.series ?? '職業専用装備';
+      this.content.add(rowBand(this, y, 42, 0));
+      this.content.add(
+        this.add.text(16, y + 12, series, {
+          fontFamily: FONT,
+          fontSize: '13px',
+          color: regalia.complete ? '#ffe5a3' : '#d4d9e8',
+          fontStyle: 'bold',
+        }).setOrigin(0, 0.5),
+      );
+      this.content.add(
+        this.add.text(w - 16, y + 12, `${regalia.count}/3`, {
+          fontFamily: FONT,
+          fontSize: '12px',
+          color: regalia.complete ? '#9fe3a0' : '#9fd0ff',
+        }).setOrigin(1, 0.5),
+      );
+      this.content.add(
+        this.add.text(16, y + 30, regalia.complete ? '● 固有外見 発動中' : '○ 3点装備で固有外見', {
+          fontFamily: FONT,
+          fontSize: '10px',
+          color: regalia.complete ? '#9fe3a0' : '#727b91',
+        }).setOrigin(0, 0.5),
+      );
+      y += 48;
+    }
+    if (states.length === 0 && regalia.count === 0) {
       this.content.add(rowBand(this, y, 32, 0));
       this.content.add(
         this.add.text(16, y + 16, '同じ大型モンスターの装備を2部位そろえると発動', {
@@ -680,6 +718,7 @@ export class InventoryScene extends Phaser.Scene {
       );
       return y + 42;
     }
+    if (states.length === 0) return y + 6;
     states.forEach((state, index) => {
       this.content.add(rowBand(this, y, 42, index));
       this.content.add(

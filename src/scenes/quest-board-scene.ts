@@ -136,8 +136,19 @@ export class QuestBoardScene extends Phaser.Scene {
   private static readonly RANK_COLORS = [
     '#c9d0e0', '#9fe3a0', '#7fb0ff', '#c89bff', '#ffcf5a', '#ff8a5a', '#ff5a7a',
   ];
+  private static readonly RANK_NAMES = [
+    '旅立ち', '駆け出し', '熟練', '上位', '達人', '英雄', '神域',
+  ];
   private rankColor(rank: number): string {
     return QuestBoardScene.RANK_COLORS[Phaser.Math.Clamp(rank, 1, 7) - 1];
+  }
+
+  private rankColorNumber(rank: number): number {
+    return Phaser.Display.Color.HexStringToColor(this.rankColor(rank)).color;
+  }
+
+  private rankName(rank: number): string {
+    return QuestBoardScene.RANK_NAMES[Phaser.Math.Clamp(rank, 1, 7) - 1];
   }
 
   private render(): void {
@@ -267,25 +278,56 @@ export class QuestBoardScene extends Phaser.Scene {
       const availCount = inRank.filter((q) => availSet.has(q.id)).length;
       const activeCount = inRank.filter((q) => activeSet.has(q.id)).length;
       const doneCount = inRank.filter((q) => doneSet.has(q.id)).length;
+      const color = this.rankColorNumber(r);
+      const rowH = 66;
       const row = this.add
-        .rectangle(w / 2, y, w - 24, 48, 0x20233a, 1)
+        .rectangle(w / 2, y, w - 24, rowH, 0x141b2b, 0.98)
         .setOrigin(0.5, 0)
-        .setStrokeStyle(1, 0x39406a);
+        .setStrokeStyle(1, color, 0.48);
       this.content.add(row);
+      const accent = this.add.graphics();
+      accent.fillStyle(color, activeCount > 0 ? 0.95 : 0.72);
+      accent.fillRect(12, y + 8, 3, rowH - 16);
+      this.content.add(accent);
+      this.renderRankCrest(43, y + rowH / 2, r, 19);
       this.content.add(
-        this.add.text(24, y + 12, '★'.repeat(r), { fontFamily: FONT, fontSize: '18px', color: this.rankColor(r) }),
-      );
-      this.content.add(
-        this.add.text(24, y + 32, activeCount > 0
-          ? `進行中 ${activeCount}  受注 ${availCount}`
-          : `受注 ${availCount}  達成 ${doneCount}/${inRank.length}`, {
+        this.add.text(74, y + 9, `${this.rankName(r)}クエスト`, {
           fontFamily: FONT,
-          fontSize: '11px',
-          color: activeCount > 0 ? '#ffd86b' : availCount > 0 ? '#9fe3a0' : '#9aa0b5',
+          fontSize: '14px',
+          color: '#f1f4fb',
+          fontStyle: 'bold',
         }),
       );
       this.content.add(
-        this.add.text(w - 28, y + 22, '[ 見る ]', { fontFamily: FONT, fontSize: '14px', color: '#9fd0ff' }).setOrigin(1, 0.5),
+        this.add.text(74, y + 29, `達成 ${doneCount}/${inRank.length}`, {
+          fontFamily: FONT,
+          fontSize: '10px',
+          color: '#aab5c8',
+        }),
+      );
+      const progressW = 132;
+      const progress = inRank.length > 0 ? Phaser.Math.Clamp(doneCount / inRank.length, 0, 1) : 0;
+      this.content.add(this.add.rectangle(74, y + 51, progressW, 4, 0x293247, 1).setOrigin(0, 0.5));
+      if (progress > 0) {
+        this.content.add(
+          this.add.rectangle(74, y + 51, progressW * progress, 4, color, 0.9).setOrigin(0, 0.5),
+        );
+      }
+      const statusLabel = activeCount > 0
+        ? '進行中'
+        : availCount > 0
+          ? `受注 ${availCount}`
+          : doneCount >= inRank.length && inRank.length > 0
+            ? '制覇'
+            : '未解放';
+      const statusColor = activeCount > 0 ? 0xffd86b : availCount > 0 ? 0x9fe3a0 : color;
+      this.renderRankStatus(w - 62, y + 25, statusLabel, statusColor);
+      this.content.add(
+        this.add.text(w - 20, y + 49, '›', {
+          fontFamily: FONT,
+          fontSize: '19px',
+          color: '#dbe7f8',
+        }).setOrigin(1, 0.5),
       );
       row.setInteractive({ useHandCursor: true });
       row.on('pointerup', () => {
@@ -294,9 +336,55 @@ export class QuestBoardScene extends Phaser.Scene {
         this.scrollY = 0;
         this.render();
       });
-      y += 56;
+      y += rowH + 7;
     }
     return y;
+  }
+
+  private renderRankCrest(x: number, y: number, rank: number, radius: number): void {
+    const color = this.rankColorNumber(rank);
+    const crest = this.add.graphics();
+    crest.fillStyle(0x0a1120, 0.98);
+    crest.fillCircle(x, y, radius);
+    crest.lineStyle(2, color, 0.92);
+    crest.strokeCircle(x, y, radius);
+    crest.lineStyle(1, 0xe9f1ff, 0.18);
+    crest.strokeCircle(x, y, radius - 4);
+    crest.fillStyle(color, 0.9);
+    crest.fillRect(x - 2, y - radius - 3, 4, 3);
+    crest.fillRect(x - 2, y + radius, 4, 3);
+    this.content.add(crest);
+    this.content.add(
+      this.add.text(x, y - 7, '★', {
+        fontFamily: FONT,
+        fontSize: '8px',
+        color: this.rankColor(rank),
+      }).setOrigin(0.5),
+    );
+    this.content.add(
+      this.add.text(x, y + 7, String(rank), {
+        fontFamily: FONT,
+        fontSize: '15px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      }).setOrigin(0.5),
+    );
+  }
+
+  private renderRankStatus(x: number, y: number, label: string, color: number): void {
+    const width = Math.max(54, label.length * 11 + 14);
+    this.content.add(
+      this.add.rectangle(x, y, width, 24, 0x0d1422, 0.96)
+        .setStrokeStyle(1, color, 0.58),
+    );
+    this.content.add(
+      this.add.text(x, y, label, {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: Phaser.Display.Color.IntegerToColor(color).rgba,
+        fontStyle: 'bold',
+      }).setOrigin(0.5),
+    );
   }
 
   private renderJobQuestList(y: number, w: number): number {
@@ -319,7 +407,7 @@ export class QuestBoardScene extends Phaser.Scene {
       }),
     );
     this.content.add(
-      this.add.text(22, y + 27, quest ? `職装試練  ★${quest.rank ?? 1}` : '専用試練なし', {
+      this.add.text(22, y + 27, quest ? `職装試練  ★${quest.rank ?? 1}  頭・胴・武器` : '専用試練なし', {
         fontFamily: FONT,
         fontSize: '11px',
         color: '#aab8c8',
@@ -370,22 +458,64 @@ export class QuestBoardScene extends Phaser.Scene {
         this.render();
       });
       this.content.add(back);
-      y += 28;
-      // Direct ★rank switcher so hopping between ranks doesn't need the
-      // drill-down round trip (10 quests per rank makes hopping common).
-      let cx = 14;
+      y += 25;
+      const selected = this.selectedRank;
+      const rankQuests = allQuests().filter(
+        (q) => this.inTab(q) && q.type !== 'main' && (q.rank ?? 1) === selected,
+      );
+      const done = rankQuests.filter((q) => gameState.completedQuests.includes(q.id)).length;
+      const banner = this.add.graphics();
+      const color = this.rankColorNumber(selected);
+      banner.fillStyle(0x111a2b, 0.98);
+      banner.fillRoundedRect(12, y, w - 24, 58, 5);
+      banner.lineStyle(1, color, 0.58);
+      banner.strokeRoundedRect(12, y, w - 24, 58, 5);
+      this.content.add(banner);
+      this.renderRankCrest(43, y + 29, selected, 19);
+      this.content.add(
+        this.add.text(74, y + 10, `${this.rankName(selected)}クエスト`, {
+          fontFamily: FONT,
+          fontSize: '15px',
+          color: '#ffffff',
+          fontStyle: 'bold',
+        }),
+      );
+      this.content.add(
+        this.add.text(74, y + 33, `達成 ${done}/${rankQuests.length}`, {
+          fontFamily: FONT,
+          fontSize: '10px',
+          color: '#aab5c8',
+        }),
+      );
+      y += 66;
+
+      const switchX = 12;
+      const switchW = w - 24;
+      const segmentW = switchW / 7;
       for (let r = 1; r <= 7; r++) {
-        const chip = tabChip(this, cx + 23, y + 17, 46, `★${r}`, () => {
+        const selectedSegment = r === selected;
+        const x = switchX + segmentW * r - segmentW / 2;
+        const segment = this.add
+          .rectangle(x, y + 15, segmentW - 3, 30, selectedSegment ? 0x293554 : 0x151c2d, 1)
+          .setStrokeStyle(1, selectedSegment ? this.rankColorNumber(r) : 0x3a455e, selectedSegment ? 0.9 : 0.55)
+          .setInteractive({ useHandCursor: true });
+        segment.on('pointerup', () => {
           if (this.dragged) return;
           this.selectedRank = r;
           this.scrollY = 0;
           this.render();
         });
-        chip.setActive(r === this.selectedRank);
-        this.content.add(chip.root);
-        cx += 49;
+        this.content.add(segment);
+        this.content.add(
+          this.add.text(x, y + 15, String(r), {
+            fontFamily: FONT,
+            fontSize: selectedSegment ? '13px' : '11px',
+            color: selectedSegment ? this.rankColor(r) : '#9ca8bc',
+            fontStyle: selectedSegment ? 'bold' : 'normal',
+          }).setOrigin(0.5),
+        );
       }
-      y += 44;
+      y += 42;
     }
 
     const inScope = (q: QuestDef): boolean => {
@@ -449,9 +579,13 @@ export class QuestBoardScene extends Phaser.Scene {
       return `報酬: R${q.investigation.rewardRank}ランダム装備×1 / 調査の証×${seals} / ${r.gold ?? 0}G`;
     }
     const parts: string[] = [];
+    const itemEntries = Object.entries(r.items ?? {});
+    if (q.require?.jobId && itemEntries.length === 3) parts.push('専用装備3点セット');
     if (r.gold) parts.push(`${r.gold}G`);
     if (r.exp) parts.push(`EXP ${r.exp}`);
-    for (const [id, qty] of Object.entries(r.items ?? {})) parts.push(`${itemDisplayName(id)}×${qty}`);
+    if (!(q.require?.jobId && itemEntries.length === 3)) {
+      for (const [id, qty] of itemEntries) parts.push(`${itemDisplayName(id)}×${qty}`);
+    }
     if (r.setFlags?.includes('main_story_complete')) parts.push('★エンディング');
     else if (r.setFlags?.length) parts.push('★職業解放');
     return parts.length ? `報酬: ${parts.join(' / ')}` : '';
@@ -483,9 +617,7 @@ export class QuestBoardScene extends Phaser.Scene {
       ? `◆${q.investigation.threat}`
       : q.type === 'main'
         ? '📖'
-        : q.require?.jobId
-          ? '◆'
-          : `★${rank}`;
+        : '◆';
     const starTxt = this.add.text(16, y, marker, {
       fontFamily: FONT,
       fontSize: '15px',

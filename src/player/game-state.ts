@@ -29,6 +29,11 @@ import { expToNext } from '@/stats/leveling';
 import type { SaveData } from '@/save/schema';
 import { syncInvestigationQuests } from '@/endgame/investigations';
 import { bossSetStatModifiers } from '@/equipment/boss-set-bonuses';
+import {
+  JOB_REGALIA,
+  jobRegaliaItemIds,
+  jobRegaliaQuestId,
+} from '@/jobs/job-regalia';
 
 /**
  * Central runtime player model. Holds base stats / level / equipment /
@@ -670,6 +675,14 @@ export class GameState {
     this.questProgress = {};
     for (const [qid, counts] of Object.entries(data.quests?.progress ?? {})) {
       if (getQuest(qid)) this.questProgress[qid] = { ...counts };
+    }
+    // Saves that cleared a one-piece class trial before the three-part update
+    // receive the missing head and weapon without needing to repeat the trial.
+    for (const entry of JOB_REGALIA) {
+      if (!this.completedQuests.includes(jobRegaliaQuestId(entry.jobId))) continue;
+      for (const id of Object.values(jobRegaliaItemIds(entry.jobId))) {
+        if (getEquipment(id) && !this.equipmentOwned.includes(id)) this.equipmentOwned.push(id);
+      }
     }
     // Equipment: drop unknown ids defensively.
     for (const slot of EQUIP_SLOTS) {

@@ -26,9 +26,9 @@ import { equippedJobRegaliaAppearance } from '@/equipment/job-regalia-appearance
  * physics body for movement/collision. The paper-doll container follows the
  * physics body each frame, snapped to integer pixels.
  *
- * A class-regalia torso uses the job's original fixed sprite as a full-body
- * outfit. Without regalia, supported iron pieces use the aligned paper doll;
- * otherwise the neutral adventurer body is shown.
+ * A complete head / torso / weapon class set uses the job's authored fixed
+ * sprite. Without a complete set, supported iron pieces use the aligned paper
+ * doll; otherwise the neutral adventurer body is shown.
  */
 
 export class Player {

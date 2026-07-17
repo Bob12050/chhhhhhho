@@ -60,7 +60,7 @@ export interface EquipmentDef {
   /** Rarity rank R1〜R10 (color/label derived). */
   rarity: number;
   visualId: string;
-  /** Full-body job appearance used by one-piece class regalia. */
+  /** Full-body job appearance completed by a matching three-piece class set. */
   appearance?: string;
   /** Weapon type tags (main_hand only); gated against the job's allowed tags. */
   weaponTags?: string[];
