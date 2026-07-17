@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0c1422" />
+    <title>探索画面デザイン候補</title>
+    <style>
+      * { box-sizing: border-box; }
+      html { background: #080c13; color: #f4f7fb; font-family: system-ui, -apple-system, "Noto Sans JP", sans-serif; }
+      body { margin: 0; min-height: 100vh; }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        padding: calc(14px + env(safe-area-inset-top)) 16px 14px;
+        background: rgba(8, 12, 19, 0.96);
+        border-bottom: 1px solid #2c3646;
+      }
+      h1 { margin: 0; font-size: 19px; line-height: 1.35; letter-spacing: 0; }
+      header p { margin: 5px 0 0; color: #aeb8c8; font-size: 13px; line-height: 1.5; }
+      main { width: min(100%, 460px); margin: 0 auto; padding: 18px 14px calc(28px + env(safe-area-inset-bottom)); }
+      section {
+        margin: 0 0 24px;
+        overflow: hidden;
+        background: #111927;
+        border: 1px solid #334056;
+        border-radius: 8px;
+      }
+      .label { display: flex; align-items: center; justify-content: space-between; min-height: 50px; padding: 10px 12px; }
+      h2 { margin: 0; font-size: 17px; letter-spacing: 0; }
+      .recommended { color: #f4cd69; font-size: 12px; font-weight: 700; }
+      a { display: block; color: inherit; text-decoration: none; }
+      img { display: block; width: 100%; height: auto; border-top: 1px solid #334056; }
+      .open { padding: 12px; color: #bcd8ff; font-size: 14px; text-align: center; border-top: 1px solid #283449; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>探索画面デザイン候補</h1>
+      <p>画像をタップすると原寸で開きます。気に入った番号を教えてください。</p>
+    </header>
+    <main>
+      <section>
+        <div class="label"><h2>候補 1</h2></div>
+        <a href="./design-previews/exploration-1.png">
+          <img src="./design-previews/exploration-1.png" alt="探索画面デザイン候補1" />
+          <div class="open">候補1を拡大</div>
+        </a>
+      </section>
+      <section>
+        <div class="label"><h2>候補 2</h2><span class="recommended">おすすめ</span></div>
+        <a href="./design-previews/exploration-2.png">
+          <img src="./design-previews/exploration-2.png" alt="探索画面デザイン候補2" />
+          <div class="open">候補2を拡大</div>
+        </a>
+      </section>
+      <section>
+        <div class="label"><h2>候補 3</h2></div>
+        <a href="./design-previews/exploration-3.png">
+          <img src="./design-previews/exploration-3.png" alt="探索画面デザイン候補3" loading="lazy" />
+          <div class="open">候補3を拡大</div>
+        </a>
+      </section>
+    </main>
+  </body>
+</html>
