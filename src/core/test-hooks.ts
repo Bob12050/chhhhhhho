@@ -142,6 +142,7 @@ export function installTestHooks(game: Phaser.Game): void {
           && child.text.includes(label)
           && interactive
         ) {
+          interactive.emit('pointerdown');
           interactive.emit('pointerup');
           return true;
         }
