@@ -50,8 +50,8 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   sheet(TEX.paperDollPilotWeapon, 'assets/paperdoll-pilot/weapon-iron-cardinal-v3.png'),
   sheet(TEX.paperDollPilotWeaponDiagonal, 'assets/paperdoll-pilot/weapon-iron-diagonal-v3.png'),
   // Job-fixed appearance bodies (drop these PNGs to give a job its own look).
-  sheet(TEX.jobFighter, 'assets/char/job_fighter-storybook-hd-v1.webp', 192, 192),
-  sheet(TEX.jobFighterDiagonal, 'assets/char/job_fighter-diagonal-hd-v1.webp', 192, 192),
+  sheet(TEX.jobFighter, 'assets/char/job_fighter-storybook-hd-v2.webp', 192, 192),
+  sheet(TEX.jobFighterDiagonal, 'assets/char/job_fighter-diagonal-hd-v2.webp', 192, 192),
   sheet(TEX.jobMage, 'assets/char/job_mage-storybook-v4.png'),
   sheet(TEX.jobMageDiagonal, 'assets/char/job_mage-diagonal-v2.png'),
   sheet(TEX.jobPriest, 'assets/char/job_priest-storybook-v4.png'),

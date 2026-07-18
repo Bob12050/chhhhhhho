@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { ensureGeneratedTextures } from '@/assets/gen/textures';
+import { ensureGeneratedTextures, TEX } from '@/assets/gen/textures';
 import { ASSET_MANIFEST } from '@/assets/manifest';
 import { shouldShowStartupNotice } from '@/core/startup-notice';
 
@@ -33,6 +33,11 @@ export class BootScene extends Phaser.Scene {
 
   create(): void {
     ensureGeneratedTextures(this); // fills only the keys no real asset provided
+    // The fighter HD sheets are smooth illustrated art, not enlarged pixel art.
+    // Bypass the block-preserving shader so their authored curves survive the
+    // 192px-to-96px render and remain clean on high-density phone displays.
+    this.textures.get(TEX.jobFighter).setSmoothPixelArt(false);
+    this.textures.get(TEX.jobFighterDiagonal).setSmoothPixelArt(false);
     this.scene.start(shouldShowStartupNotice() ? 'Notice' : 'Title');
   }
 }

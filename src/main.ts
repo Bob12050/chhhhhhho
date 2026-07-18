@@ -35,6 +35,7 @@ import { registerServiceWorker } from '@/core/pwa';
 import { soundEngine } from '@/audio/sound-engine';
 import { installTestHooks } from '@/core/test-hooks';
 import { installTypographyDefaults } from '@/ui/theme';
+import { installRenderDensity } from '@/core/render-density';
 
 // Logical size: width is fixed at 360; height follows the device aspect ratio
 // clamped to [640, 800]. Phaser's smooth-pixel shader keeps authored sprites
@@ -75,6 +76,9 @@ const config: Phaser.Types.Core.GameConfig = {
   render: {
     smoothPixelArt: true,
     roundPixels: true,
+  },
+  callbacks: {
+    postBoot: (game) => installRenderDensity(game, LOGICAL_WIDTH, logicalHeight),
   },
   scene: [
     BootScene,

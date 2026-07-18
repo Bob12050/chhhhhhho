@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { renderZoom } from '@/core/render-density';
 import { Player } from '@/player/player';
 import { Enemy } from '@/enemies/enemy';
 import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
@@ -224,7 +225,7 @@ export class WorldScene extends Phaser.Scene {
     // Fractional base zoom makes every source pixel alternate between widths.
     // Keep ordinary exploration at 1:1; short boss zooms remain deliberate FX.
     this.baseCameraZoom = 1;
-    this.cameras.main.setZoom(this.baseCameraZoom);
+    this.cameras.main.setZoom(renderZoom(this.baseCameraZoom));
     this.cameras.main.roundPixels = true;
 
     const built = buildMap(this, this.map);
@@ -819,7 +820,7 @@ export class WorldScene extends Phaser.Scene {
       this.buildBossBar(`${opts?.veteran ? '歴戦の' : ''}${def.name}`, def);
       // Keep the portrait arena at 1:1. World-space HUD shares this camera, so
       // a persistent boss zoom also enlarged and shifted the boss card.
-      this.cameras.main.setZoom(this.baseCameraZoom);
+      this.cameras.main.setZoom(renderZoom(this.baseCameraZoom));
       if (def.attacks && def.attacks.length > 0) {
         this.bossBrain = new BossBrain(
           this.makeArena(enemy, def),
@@ -2207,7 +2208,7 @@ export class WorldScene extends Phaser.Scene {
       // death must not tear down the live one's bar/brain).
       if (!this.boss || this.boss.isDead()) {
         this.boss = null;
-        this.cameras.main.zoomTo(this.baseCameraZoom, 240, 'Sine.easeOut');
+        this.cameras.main.zoomTo(renderZoom(this.baseCameraZoom), 240, 'Sine.easeOut');
       }
       this.floatText(x, y - 46, `${def.name} を倒した！`);
     }
