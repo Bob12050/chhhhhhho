@@ -3,7 +3,6 @@ import { PaperDollAnimator } from '@/paperdoll/paper-doll-animator';
 import type { Direction } from '@/config/layers';
 import type { AnimName } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
-import { CHAR_FRAME_W } from '@/config/resolution';
 import { getJob } from '@/jobs/job-defs';
 import {
   appearanceDiagonalTexKey,
@@ -54,14 +53,18 @@ export class Player {
     this.scene = scene;
 
     // Invisible collider; the visible character is the paper-doll container.
-    // The body texture is a CHAR_FRAME_W x CHAR_FRAME_H frame with origin
-    // (0.5, 0.5), so center the 20x16 collision box horizontally on the actor
-    // (offset = frameHalf - boxHalf). A previous (0,0) offset parked the box in
-    // the frame's top-left corner, which kept the player from reaching portals.
+    // Center the 20x16 collision box on the actor using the loaded frame size.
+    // HD appearance sheets use 192px cells while fallbacks use 96px cells, so
+    // a fixed offset would move the collider away from the visible character.
     this.body = scene.physics.add.image(x, y, TEX.playerBody);
     this.body.setVisible(false);
-    this.body.setSize(20, 16);
-    this.body.setOffset((CHAR_FRAME_W - 20) / 2, 40);
+    const colliderWidth = 20;
+    const colliderHeight = 16;
+    this.body.setSize(colliderWidth, colliderHeight);
+    this.body.setOffset(
+      (this.body.frame.width - colliderWidth) / 2,
+      (this.body.frame.height - colliderHeight) / 2,
+    );
     this.body.setCollideWorldBounds(true);
     this.lastX = x;
     this.lastY = y;
