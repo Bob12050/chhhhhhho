@@ -265,8 +265,8 @@ try {
       const forestTexture = await page.evaluate(() =>
         window.__test.textureSize('art.map.forest.storybook'));
       check(
-        '森背景が拡張版640×960で読み込まれる',
-        forestTexture?.width === 640 && forestTexture?.height === 960,
+        '森背景がHD版1280×1920で読み込まれる',
+        forestTexture?.width === 1280 && forestTexture?.height === 1920,
         JSON.stringify(forestTexture),
       );
       await page.evaluate(() => window.__test.warp('forest', 320, 884));
@@ -307,8 +307,8 @@ try {
       const dungeonTexture = await page.evaluate(() =>
         window.__test.textureSize('art.map.dungeon.storybook'));
       check(
-        '洞窟背景が拡張版640×960で読み込まれる',
-        dungeonTexture?.width === 640 && dungeonTexture?.height === 960,
+        '洞窟背景がHD版1280×1920で読み込まれる',
+        dungeonTexture?.width === 1280 && dungeonTexture?.height === 1920,
         JSON.stringify(dungeonTexture),
       );
       await page.evaluate(() => window.__test.warp('dungeon', 320, 884));

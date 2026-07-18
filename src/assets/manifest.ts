@@ -125,8 +125,8 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   // backgrounds when the painted map dimensions change.
   img(TEX.townMap, 'assets/maps/town-hd-storybook-v1.webp'),
   img(TEX.fieldMap, 'assets/maps/field-hd-storybook-v1.webp'),
-  img(TEX.forestMap, 'assets/maps/forest-cute-wide-v1.png'),
-  img(TEX.dungeonMap, 'assets/maps/dungeon-cute-wide-v1.png'),
+  img(TEX.forestMap, 'assets/maps/forest-hd-storybook-v1.webp'),
+  img(TEX.dungeonMap, 'assets/maps/dungeon-hd-storybook-v1.webp'),
   img(TEX.canyonMap, 'assets/maps/canyon-cute-compact-v1.png'),
   img(TEX.volcanoMap, 'assets/maps/volcano-storybook-wide-v2.png'),
   img(TEX.snowfieldMap, 'assets/maps/snowfield-storybook-wide-v2.png'),
