@@ -13,6 +13,7 @@ import { chromium } from 'playwright';
 
 const BASE = process.argv[2] ?? 'http://localhost:4173';
 const URL = `${BASE.replace(/\/$/, '')}/?debug=1`;
+const SCROLL_ONLY = process.argv.includes('--scroll-only');
 
 let browser;
 const failures = [];
@@ -246,10 +247,65 @@ try {
     'デバッグメニューを閉じると設定へ戻る',
     !(await page.evaluate(() => window.__test.activeScenes().includes('Debug'))),
   );
-  await activateTextWhenReady(page, 'Options', 'とじる');
-  await waitForScene(page, 'Inventory');
+  await activateTextWhenReady(page, 'Options', 'デバッグメニューを開く');
+  await waitForScene(page, 'Debug');
+  await activateTextWhenReady(page, 'Debug', '周回バランスラボ');
+  await waitForScene(page, 'BalanceLab');
+  const menuBefore = await page.evaluate(() => window.__test.sceneScroll('BalanceLab'));
+  await page.mouse.move(180, 620);
+  await page.mouse.down();
+  for (const y of [580, 530, 480, 430, 380, 330]) {
+    await page.mouse.move(180, y);
+    await page.waitForTimeout(18);
+  }
+  await page.mouse.up();
+  await page.waitForTimeout(100);
+  const menuAfter = await page.evaluate(() => window.__test.sceneScroll('BalanceLab'));
+  check(
+    '縦長メニューを指に追従してスクロールできる',
+    (menuAfter?.y ?? 0) > (menuBefore?.y ?? 0) + 80,
+    JSON.stringify({ before: menuBefore, after: menuAfter }),
+  );
   await page.keyboard.press('Escape');
+  await waitForScene(page, 'Debug');
+  await activateTextWhenReady(page, 'Debug', '職業ツリー');
+  await waitForScene(page, 'JobChange');
+  check('転職画面が4列職業ツリーで開く', true);
+  const canvasBounds = await page.evaluate(() => {
+    const rect = document.querySelector('canvas')?.getBoundingClientRect();
+    return rect ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height } : null;
+  });
+  const treeBefore = await page.evaluate(() => window.__test.sceneScroll('JobChange'));
+  await page.mouse.move(325, 500);
+  await page.mouse.down();
+  for (const x of [285, 240, 195, 150, 105, 65]) {
+    await page.mouse.move(x, 500);
+    await page.waitForTimeout(18);
+  }
+  const treeDuring = await page.evaluate(() => window.__test.sceneScroll('JobChange'));
+  await page.mouse.up();
+  await page.waitForTimeout(100);
+  const treeAfter = await page.evaluate(() => window.__test.sceneScroll('JobChange'));
+  check(
+    '職業ツリーを指に追従して横スクロールできる',
+    (treeAfter?.x ?? 0) > (treeBefore?.x ?? 0) + 80,
+    JSON.stringify({ canvasBounds, before: treeBefore, during: treeDuring, after: treeAfter }),
+  );
+  await activateTextWhenReady(page, 'JobChange', 'とじる');
   await waitForScene(page, 'World');
+
+  if (SCROLL_ONLY) {
+    check('スクロール確認中に未捕捉エラーなし', pageErrors.length === 0, pageErrors[0]);
+    await browser.close();
+    browser = undefined;
+    console.log('');
+    console.log(`E2E scroll: ${passed.length} passed, ${failures.length} failed`);
+    if (failures.length) {
+      for (const failure of failures) console.log(`  FAILED: ${failure}`);
+      process.exit(1);
+    }
+    process.exit(0);
+  }
 
   // The painted fountain and the storefronts must not join into a full-width
   // invisible wall. Reproduce the phone report: walk up its narrow left lane.
@@ -810,7 +866,12 @@ try {
 
   // ---- pets: egg → hatch → assist ----
   step = 'pets';
-  await page.evaluate(() => window.__test.addEgg('pet_egg_wolf'));
+  await page.evaluate(() => {
+    // Combat can randomly drop other eggs. Keep this UI scenario stable so
+    // the first visible hatch button always belongs to the wolf egg below.
+    window.__test.clearPetEggs();
+    window.__test.addEgg('pet_egg_wolf');
+  });
   await activateTextWhenReady(page, 'UI', 'もちもの');
   await waitForScene(page, 'Inventory');
   await activateTextWhenReady(page, 'Inventory', 'ペット');

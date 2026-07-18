@@ -12,6 +12,7 @@ import {
 import { bus } from '@/core/event-bus';
 import { FONT, addPanelChrome, type TabHandle } from '@/ui/theme';
 import { TEX } from '@/assets/gen/textures';
+import { KineticScroll } from '@/ui/kinetic-scroll';
 
 /**
  * Crafting overlay (opened by the craft NPC). Lists recipes with their
@@ -348,53 +349,40 @@ export class CraftingScene extends Phaser.Scene {
   }
 
   private setupScroll(): void {
-    let startPointerY = 0;
-    let startScroll = 0;
-    let inList = false;
-    let startPointerX = 0;
-    let inChips = false;
-    let chipStartX = 0;
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
-      startPointerY = p.y;
-      startPointerX = p.x;
-      startScroll = this.scrollY;
-      this.dragged = false;
-      this.chipDragging = false;
-      // Header taps (tabs / filter chips) must never turn into a drag — a tiny
-      // finger roll was eating chip taps. Only list-area gestures scroll.
-      inList = p.y >= this.viewTop && p.y <= this.viewBottom;
-      // Chip band: horizontal drag pans the chip bar instead.
-      inChips = p.y >= 90 && p.y <= 126 && !!this.chipBar;
-      // Freeze the discovery nudge the moment the user touches the screen so
-      // it never shifts a chip out from under their finger mid-tap.
-      this.chipNudge?.remove();
-      this.chipNudge = null;
-      chipStartX = this.chipBar?.x ?? 0;
-    });
-    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (!p.isDown) return;
-      if (inChips && this.chipBar) {
-        const dx = p.x - startPointerX;
-        if (Math.abs(dx) > 12) this.chipDragging = true;
-        if (this.chipDragging) {
-          const minX = Math.min(0, this.scale.width - this.chipBarWidth);
-          this.chipBar.x = Phaser.Math.Clamp(chipStartX + dx, minX, 0);
-          this.updateChipEdgeHints();
-        }
-        return;
-      }
-      if (!inList) return;
-      const d = startPointerY - p.y;
-      // 12px threshold: forgiving of natural tap wobble on device.
-      if (Math.abs(d) > 12) this.dragged = true;
-      if (this.dragged) this.scrollTo(startScroll + d);
-    });
-    this.input.on(
-      'wheel',
-      (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
-        this.scrollTo(this.scrollY + dy * 0.5);
+    new KineticScroll(this, {
+      viewport: () => new Phaser.Geom.Rectangle(
+        0,
+        this.viewTop,
+        this.scale.width,
+        this.viewBottom - this.viewTop,
+      ),
+      getValue: () => this.scrollY,
+      getMax: () => this.maxScroll,
+      setValue: (value) => this.scrollTo(value),
+      onDragState: (dragged) => {
+        this.dragged = dragged;
       },
-    );
+    });
+    new KineticScroll(this, {
+      axis: 'x',
+      viewport: () => new Phaser.Geom.Rectangle(0, 90, this.scale.width, 36),
+      getValue: () => -(this.chipBar?.x ?? 0),
+      getMax: () => Math.max(0, this.chipBarWidth - this.scale.width),
+      setValue: (value) => {
+        if (!this.chipBar) return;
+        this.chipBar.x = -value;
+        this.updateChipEdgeHints();
+      },
+      enabled: () => !!this.chipBar,
+      onTouchStart: () => {
+        this.chipNudge?.remove();
+        this.chipNudge = null;
+      },
+      onDragState: (dragged) => {
+        this.chipDragging = dragged;
+      },
+      indicator: false,
+    });
   }
 
   private scrollTo(y: number): void {

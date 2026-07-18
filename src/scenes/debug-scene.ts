@@ -99,6 +99,7 @@ export class DebugScene extends Phaser.Scene {
     this.btn(160, y, 'ペット入手', () => this.grant(() => gameState.obtainPetItem('pet_egg_slime')));
     y += 40;
     this.btn(16, y, '鉄装備試着', () => this.previewPaperDoll(), 0x365070);
+    this.btn(160, y, '職業ツリー', () => this.previewJobTree(), 0x365070);
     y += 40;
     this.btn(16, y, '全討伐証+12', () => this.grant(() => this.grantHuntProofs()), 0x275b55);
     this.btn(160, y, 'スコル4部位', () => this.previewSkollSet(), 0x275b55);
@@ -198,6 +199,12 @@ export class DebugScene extends Phaser.Scene {
     gs.fullHeal();
     bus.emit('job:changed', { jobId: 'fighter' });
     this.returnToGameplay();
+  }
+
+  private previewJobTree(): void {
+    this.stopSettingsStack();
+    this.scene.stop();
+    this.scene.launch('JobChange');
   }
 
   private grantHuntProofs(): void {

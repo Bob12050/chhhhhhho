@@ -21,6 +21,17 @@ import type { CharacterGender } from '@/player/character-gender';
 
 export interface TestHooks {
   activeScenes(): string[];
+  /** Read a scroll controller position for gesture regression tests. */
+  sceneScroll(sceneKey: string): {
+    x: number;
+    y: number;
+    max: number;
+    dragged: boolean;
+    viewTop: number;
+    viewBottom: number;
+    width: number;
+    height: number;
+  } | null;
   textureSize(key: string): { width: number; height: number } | null;
   /** Activate an interactive text control without relying on font-dependent coordinates. */
   activateText(sceneKey: string, label: string): boolean;
@@ -64,6 +75,8 @@ export interface TestHooks {
   forceGender(gender: CharacterGender): void;
   /** Warp to a map's default spawn (or x/y) via the real travel path. */
   warp(mapId: string, x?: number, y?: number): boolean;
+  /** Test setup: remove random combat egg drops before a deterministic hatch scenario. */
+  clearPetEggs(): void;
   addEgg(petItemId: string): boolean;
   addMaterial(id: string, qty: number): void;
   addGold(amount: number): void;
@@ -97,6 +110,27 @@ export function installTestHooks(game: Phaser.Game): void {
   });
   const hooks: TestHooks = {
     activeScenes: () => game.scene.getScenes(true).map((scene) => scene.scene.key),
+    sceneScroll: (sceneKey: string) => {
+      const scene = game.scene.getScene(sceneKey) as Phaser.Scene & {
+        scrollX?: number;
+        scrollY?: number;
+        maxScroll?: number;
+        dragged?: boolean;
+        viewTop?: number;
+        viewBottom?: number;
+      };
+      if (!scene?.scene.isActive()) return null;
+      return {
+        x: typeof scene.scrollX === 'number' ? scene.scrollX : 0,
+        y: typeof scene.scrollY === 'number' ? scene.scrollY : 0,
+        max: typeof scene.maxScroll === 'number' ? scene.maxScroll : 0,
+        dragged: scene.dragged === true,
+        viewTop: typeof scene.viewTop === 'number' ? scene.viewTop : 0,
+        viewBottom: typeof scene.viewBottom === 'number' ? scene.viewBottom : scene.scale.height,
+        width: scene.scale.width,
+        height: scene.scale.height,
+      };
+    },
     textureSize: (key: string) => {
       if (!game.textures.exists(key)) return null;
       const source = game.textures.get(key).source[0];
@@ -225,6 +259,9 @@ export function installTestHooks(game: Phaser.Game): void {
       gameState.y = y ?? sp.y;
       bus.emit('map:travel', {});
       return true;
+    },
+    clearPetEggs: () => {
+      gameState.petEggs = {};
     },
     addEgg: (petItemId: string) => gameState.addEgg(petItemId),
     addMaterial: (id: string, qty: number) => gameState.addMaterial(id, qty),

@@ -5,6 +5,7 @@ import { bus } from '@/core/event-bus';
 import { illustratedMapTextureKey } from '@/maps/map-builder';
 import { TEX } from '@/assets/gen/textures';
 import { FONT, addPanelChrome, pillButton, ninePanel } from '@/ui/theme';
+import { KineticScroll } from '@/ui/kinetic-scroll';
 
 /**
  * Fast-travel map list. Opened from the HUD map button anywhere. Picking a
@@ -139,28 +140,20 @@ export class MapSelectScene extends Phaser.Scene {
   }
 
   private setupScroll(): void {
-    let startY = 0;
-    let startScroll = 0;
-    let inList = false;
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
-      startY = p.y;
-      startScroll = this.scrollY;
-      this.dragged = false;
-      // Header/footer taps must never turn into a drag (they ate button taps).
-      inList = p.y >= this.viewTop && p.y <= this.viewBottom;
-    });
-    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (!p.isDown || !inList) return;
-      const d = startY - p.y;
-      if (Math.abs(d) > 12) this.dragged = true;
-      if (this.dragged) this.scrollTo(startScroll + d);
-    });
-    this.input.on(
-      'wheel',
-      (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
-        this.scrollTo(this.scrollY + dy * 0.5);
+    new KineticScroll(this, {
+      viewport: () => new Phaser.Geom.Rectangle(
+        0,
+        this.viewTop,
+        this.scale.width,
+        this.viewBottom - this.viewTop,
+      ),
+      getValue: () => this.scrollY,
+      getMax: () => this.maxScroll,
+      setValue: (value) => this.scrollTo(value),
+      onDragState: (dragged) => {
+        this.dragged = dragged;
       },
-    );
+    });
   }
 
   private scrollTo(y: number): void {

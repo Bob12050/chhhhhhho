@@ -12,6 +12,7 @@ import {
 } from '@/pets/pet-growth';
 import { bus } from '@/core/event-bus';
 import { FONT, addPanelChrome, rowBand, pillButton, ninePanel } from '@/ui/theme';
+import { KineticScroll } from '@/ui/kinetic-scroll';
 
 /** Short labels for the passive summary line. */
 const STAT_LABEL: Record<string, string> = {
@@ -271,33 +272,19 @@ export class PetScene extends Phaser.Scene {
   }
 
   private setupScroll(): void {
-    let startY = 0;
-    let startScroll = 0;
-    let inList = false;
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
-      startY = p.y;
-      startScroll = this.scrollY;
-      this.dragged = false;
-      inList = p.y >= this.viewTop && p.y <= this.viewBottom;
-    });
-    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (!p.isDown || !inList) return;
-      const d = startY - p.y;
-      if (Math.abs(d) > 12) this.dragged = true;
-      if (this.dragged) this.scrollTo(startScroll + d);
-    });
-    const finishPointer = (): void => {
-      inList = false;
-      // Keep `dragged` true through this pointer-up dispatch so row buttons do
-      // not fire after a swipe, then clear it before the next interaction.
-      this.time.delayedCall(0, () => {
-        this.dragged = false;
-      });
-    };
-    this.input.on('pointerup', finishPointer);
-    this.input.on('pointerupoutside', finishPointer);
-    this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
-      this.scrollTo(this.scrollY + dy * 0.5);
+    new KineticScroll(this, {
+      viewport: () => new Phaser.Geom.Rectangle(
+        0,
+        this.viewTop,
+        this.scale.width,
+        this.viewBottom - this.viewTop,
+      ),
+      getValue: () => this.scrollY,
+      getMax: () => this.maxScroll,
+      setValue: (value) => this.scrollTo(value),
+      onDragState: (dragged) => {
+        this.dragged = dragged;
+      },
     });
   }
 

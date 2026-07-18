@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { allJobs, getJob, type JobDef } from '@/jobs/job-defs';
 import { FONT, UI, ninePanel, pillButton } from '@/ui/theme';
+import { KineticScroll } from '@/ui/kinetic-scroll';
 
 type JobStatus = 'current' | 'unlocked' | 'reachable' | 'locked';
 
@@ -145,18 +146,16 @@ export class JobTreeScene extends Phaser.Scene {
   }
 
   private setupScroll(): void {
-    let startPointerY = 0;
-    let startScroll = 0;
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
-      startPointerY = p.y;
-      startScroll = this.scrollY;
-    });
-    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (!p.isDown) return;
-      this.scrollTo(startScroll + (startPointerY - p.y));
-    });
-    this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
-      this.scrollTo(this.scrollY + dy * 0.5);
+    new KineticScroll(this, {
+      viewport: () => new Phaser.Geom.Rectangle(
+        0,
+        this.viewTop,
+        this.scale.width,
+        this.viewBottom - this.viewTop,
+      ),
+      getValue: () => this.scrollY,
+      getMax: () => this.maxScroll,
+      setValue: (value) => this.scrollTo(value),
     });
   }
 

@@ -9,6 +9,7 @@ import {
 } from '@/balance/hunt-simulator';
 import type { QuestDef } from '@/quests/quest-defs';
 import { FONT, addPanelChrome, rowBand } from '@/ui/theme';
+import { KineticScroll } from '@/ui/kinetic-scroll';
 
 interface ToggleHandle {
   root: Phaser.GameObjects.Container;
@@ -608,23 +609,20 @@ export class BalanceLabScene extends Phaser.Scene {
   }
 
   private setupScroll(): void {
-    let startY = 0;
-    let startScroll = 0;
-    let inList = false;
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      startY = pointer.y;
-      startScroll = this.scrollY;
-      this.dragged = false;
-      inList = pointer.y >= this.viewTop;
-    });
-    this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
-      if (!pointer.isDown || !inList) return;
-      const distance = startY - pointer.y;
-      if (Math.abs(distance) > 10) this.dragged = true;
-      if (this.dragged) this.scrollTo(startScroll + distance);
-    });
-    this.input.on('wheel', (_pointer: Phaser.Input.Pointer, _objects: unknown, _dx: number, dy: number) => {
-      this.scrollTo(this.scrollY + dy * 0.5);
+    new KineticScroll(this, {
+      viewport: () => new Phaser.Geom.Rectangle(
+        0,
+        this.viewTop,
+        this.scale.width,
+        this.scale.height - this.viewTop,
+      ),
+      getValue: () => this.scrollY,
+      getMax: () => this.maxScroll,
+      setValue: (value) => this.scrollTo(value),
+      enabled: () => !this.running,
+      onDragState: (dragged) => {
+        this.dragged = dragged;
+      },
     });
   }
 

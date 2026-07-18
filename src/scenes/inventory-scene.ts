@@ -31,6 +31,7 @@ import {
 import { INVESTIGATION_SEAL_ID } from '@/endgame/investigations';
 import { activeBossSetStates } from '@/equipment/boss-set-bonuses';
 import { equippedJobRegaliaProgress } from '@/equipment/job-regalia-appearance';
+import { KineticScroll } from '@/ui/kinetic-scroll';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
 
@@ -96,7 +97,6 @@ export class InventoryScene extends Phaser.Scene {
   private dragged = false;
   private contentMask: Phaser.Filters.Mask | null = null;
   private canvasMaskShape: Phaser.GameObjects.Graphics | null = null;
-  private scrollSnapTimer: Phaser.Time.TimerEvent | null = null;
   private viewTop = 86;
   private viewBottom = 0;
   private gearDetail: Phaser.GameObjects.Container | null = null;
@@ -268,34 +268,21 @@ export class InventoryScene extends Phaser.Scene {
   }
 
   private setupScroll(): void {
-    let startPointerY = 0;
-    let startScroll = 0;
-    let inList = false;
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
-      startPointerY = p.y;
-      startScroll = this.scrollY;
-      this.dragged = false;
-      // Header/footer taps must never turn into a drag (they ate button taps).
-      inList = p.y >= this.viewTop && p.y <= this.viewBottom && !this.gearDetail;
-    });
-    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (!p.isDown || !inList) return;
-      const d = startPointerY - p.y;
-      if (Math.abs(d) > 12) this.dragged = true;
-      if (this.dragged) this.scrollTo(startScroll + d);
-    });
-    this.input.on('pointerup', () => {
-      if (inList && this.dragged) this.snapEquipmentScroll();
-      inList = false;
-    });
-    this.input.on(
-      'wheel',
-      (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
-        this.scrollTo(this.scrollY + dy * 0.5);
-        this.scrollSnapTimer?.remove(false);
-        this.scrollSnapTimer = this.time.delayedCall(90, () => this.snapEquipmentScroll());
+    new KineticScroll(this, {
+      viewport: () => new Phaser.Geom.Rectangle(
+        0,
+        this.viewTop,
+        this.scale.width,
+        this.viewBottom - this.viewTop,
+      ),
+      getValue: () => this.scrollY,
+      getMax: () => this.maxScroll,
+      setValue: (value) => this.scrollTo(value),
+      enabled: () => !this.gearDetail,
+      onDragState: (dragged) => {
+        this.dragged = dragged;
       },
-    );
+    });
   }
 
   private scrollTo(y: number): void {
@@ -335,20 +322,6 @@ export class InventoryScene extends Phaser.Scene {
       region.height,
     );
     this.content.setMask(this.canvasMaskShape.createGeometryMask());
-  }
-
-  /** Never leave only the bottom line of an equipment row visible below the header. */
-  private snapEquipmentScroll(): void {
-    if (this.tab !== 'equipment' || this.eqQueue.length === 0 || this.maxScroll <= 0) return;
-    const stops = [0, this.maxScroll];
-    for (const entry of this.eqQueue) {
-      stops.push(Phaser.Math.Clamp(entry.y - this.viewTop, 0, this.maxScroll));
-    }
-    let nearest = stops[0];
-    for (const stop of stops) {
-      if (Math.abs(stop - this.scrollY) < Math.abs(nearest - this.scrollY)) nearest = stop;
-    }
-    this.scrollTo(nearest);
   }
 
   /** Recompute scrollable range from the laid-out rows and re-clamp. */
