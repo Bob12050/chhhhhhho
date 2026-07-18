@@ -20,6 +20,7 @@ interface LayerVisual {
   readonly sprite: Phaser.GameObjects.Sprite;
   cardinalTextureKey: string;
   diagonalTextureKey: string | null;
+  displayScale: number;
 }
 
 /**
@@ -59,7 +60,7 @@ export class PaperDollAnimator {
   setLayer(
     group: DrawGroup,
     textureKey: string | null,
-    opts?: { diagonalTextureKey?: string | null },
+    opts?: { diagonalTextureKey?: string | null; displayScale?: number },
   ): void {
     const existing = this.layers.get(group);
     if (!textureKey) {
@@ -72,15 +73,18 @@ export class PaperDollAnimator {
     if (existing) {
       existing.cardinalTextureKey = textureKey;
       existing.diagonalTextureKey = opts?.diagonalTextureKey ?? null;
-      existing.sprite.setTexture(textureKey);
+      existing.displayScale = opts?.displayScale ?? 1;
+      existing.sprite.setTexture(textureKey).setScale(existing.displayScale);
     } else {
       const sprite = this.scene.add.sprite(0, 0, textureKey);
       sprite.setOrigin(PaperDollAnimator.ORIGIN_X, PaperDollAnimator.ORIGIN_Y);
+      sprite.setScale(opts?.displayScale ?? 1);
       this.container.add(sprite);
       this.layers.set(group, {
         sprite,
         cardinalTextureKey: textureKey,
         diagonalTextureKey: opts?.diagonalTextureKey ?? null,
+        displayScale: opts?.displayScale ?? 1,
       });
     }
     this.applyOrder();

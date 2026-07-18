@@ -7,6 +7,7 @@ import { TEX } from '@/assets/gen/textures';
 import { frameIndex } from '@/paperdoll/pose-atlas';
 import { saveManager } from '@/save/save-manager';
 import { beginGame } from '@/core/game-flow';
+import { appearanceTextureScale } from '@/jobs/job-appearance';
 
 /** Displayed game title (single source; swap here when the real name lands). */
 const GAME_TITLE = 'Pixel Action RPG';
@@ -126,6 +127,7 @@ export class TitleScene extends Phaser.Scene {
       const s = this.add
         .sprite(x, roadY, tex, animated ? frameIndex('left', 'walk', 0) : 0)
         .setOrigin(0.5, 0.875)
+        .setScale(appearanceTextureScale(tex))
         .setFlipX(true) // right = mirrored left (pose-atlas rule)
         .setDepth(10);
       if (isSlime) s.setTint(0x9fe36a);

@@ -64,8 +64,8 @@ try {
   const townTexture = await page.evaluate(() =>
     window.__test.textureSize('art.map.town.storybook'));
   check(
-    '町背景が拡張版640×960で読み込まれる',
-    townTexture?.width === 640 && townTexture?.height === 960,
+    '町背景がHD版1280×1920で読み込まれる',
+    townTexture?.width === 1280 && townTexture?.height === 1920,
     JSON.stringify(townTexture),
   );
   const slimeTextures = await page.evaluate(() => ({
@@ -81,24 +81,24 @@ try {
     JSON.stringify(slimeTextures),
   );
   const firstTierLooks = [
-    ['fighter', 'gen.char.fighter', 'art.char.fighter.diagonal'],
-    ['mage', 'gen.char.mage', 'art.char.mage.diagonal'],
-    ['priest', 'gen.char.priest', 'art.char.priest.diagonal'],
-    ['thief', 'gen.char.thief', 'art.char.thief.diagonal'],
-    ['pet_raiser', 'gen.char.pet_raiser', 'art.char.pet_raiser.diagonal'],
+    ['fighter', 'gen.char.fighter', 'art.char.fighter.diagonal', 768, 3456, 768, 1152],
+    ['mage', 'gen.char.mage', 'art.char.mage.diagonal', 384, 1728, 384, 576],
+    ['priest', 'gen.char.priest', 'art.char.priest.diagonal', 384, 1728, 384, 576],
+    ['thief', 'gen.char.thief', 'art.char.thief.diagonal', 384, 1728, 384, 576],
+    ['pet_raiser', 'gen.char.pet_raiser', 'art.char.pet_raiser.diagonal', 384, 1728, 384, 576],
   ];
   let allFirstTierLooks = true;
-  for (const [id, cardinalKey, diagonalKey] of firstTierLooks) {
+  for (const [id, cardinalKey, diagonalKey, cardinalW, cardinalH, diagonalW, diagonalH] of firstTierLooks) {
     const result = await page.evaluate(([jobId, cardinal, diagonal]) => ({
       changed: window.__test.forceJob(jobId),
       cardinal: window.__test.textureSize(cardinal),
       diagonal: window.__test.textureSize(diagonal),
     }), [id, cardinalKey, diagonalKey]);
     allFirstTierLooks &&= result.changed
-      && result.cardinal?.width === 384
-      && result.cardinal?.height === 1728
-      && result.diagonal?.width === 384
-      && result.diagonal?.height === 576;
+      && result.cardinal?.width === cardinalW
+      && result.cardinal?.height === cardinalH
+      && result.diagonal?.width === diagonalW
+      && result.diagonal?.height === diagonalH;
   }
   check('一次職5種の通常・斜め外見を読み込める', allFirstTierLooks);
   await page.evaluate(() => window.__test.forceJob('adventurer'));

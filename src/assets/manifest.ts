@@ -8,8 +8,9 @@ import { CHAR_FRAME_W, CHAR_FRAME_H } from '@/config/resolution';
  * load and the generated placeholder is used instead (see boot-scene +
  * ensureGeneratedTextures, which only fills missing keys).
  *
- * Character/equipment/enemy sheets MUST follow the pose-atlas layout
- * (96x96 frames, rows = direction x animation; see docs/ART_SPEC.md).
+ * Character/equipment/enemy sheets MUST follow the pose-atlas layout. Most
+ * use 96x96 cells; HD variants may use larger cells while preserving the same
+ * rows/columns (see docs/ART_SPEC.md).
  */
 export interface AssetEntry {
   key: string;
@@ -19,12 +20,17 @@ export interface AssetEntry {
   frameHeight?: number;
 }
 
-const sheet = (key: string, src: string): AssetEntry => ({
+const sheet = (
+  key: string,
+  src: string,
+  frameWidth = CHAR_FRAME_W,
+  frameHeight = CHAR_FRAME_H,
+): AssetEntry => ({
   key,
   type: 'spritesheet',
   src,
-  frameWidth: CHAR_FRAME_W,
-  frameHeight: CHAR_FRAME_H,
+  frameWidth,
+  frameHeight,
 });
 const img = (key: string, src: string): AssetEntry => ({ key, type: 'image', src });
 
@@ -44,8 +50,8 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   sheet(TEX.paperDollPilotWeapon, 'assets/paperdoll-pilot/weapon-iron-cardinal-v3.png'),
   sheet(TEX.paperDollPilotWeaponDiagonal, 'assets/paperdoll-pilot/weapon-iron-diagonal-v3.png'),
   // Job-fixed appearance bodies (drop these PNGs to give a job its own look).
-  sheet(TEX.jobFighter, 'assets/char/job_fighter-storybook-v3.png'),
-  sheet(TEX.jobFighterDiagonal, 'assets/char/job_fighter-diagonal-v1.png'),
+  sheet(TEX.jobFighter, 'assets/char/job_fighter-storybook-hd-v1.webp', 192, 192),
+  sheet(TEX.jobFighterDiagonal, 'assets/char/job_fighter-diagonal-hd-v1.webp', 192, 192),
   sheet(TEX.jobMage, 'assets/char/job_mage-storybook-v4.png'),
   sheet(TEX.jobMageDiagonal, 'assets/char/job_mage-diagonal-v2.png'),
   sheet(TEX.jobPriest, 'assets/char/job_priest-storybook-v4.png'),
@@ -117,7 +123,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.tileFloor, 'assets/tiles/floor.png'),
   // Versioned filenames force mobile Safari to discard the previous narrow
   // backgrounds when the painted map dimensions change.
-  img(TEX.townMap, 'assets/maps/town-cute-wide-v1.png'),
+  img(TEX.townMap, 'assets/maps/town-hd-storybook-v1.webp'),
   img(TEX.fieldMap, 'assets/maps/field-cute-wide-v1.png'),
   img(TEX.forestMap, 'assets/maps/forest-cute-wide-v1.png'),
   img(TEX.dungeonMap, 'assets/maps/dungeon-cute-wide-v1.png'),

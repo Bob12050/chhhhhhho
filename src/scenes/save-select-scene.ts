@@ -3,7 +3,7 @@ import { saveManager, SLOT_COUNT, type SlotSummary } from '@/save/save-manager';
 import { beginGame } from '@/core/game-flow';
 import { getMap } from '@/maps/map-def';
 import { getJob } from '@/jobs/job-defs';
-import { appearanceTexKey } from '@/jobs/job-appearance';
+import { appearanceTexKey, appearanceTextureScale } from '@/jobs/job-appearance';
 import { frameIndex } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
 import { FONT, addSceneBackdrop, pillButton, ninePanel, titlePlate } from '@/ui/theme';
@@ -82,7 +82,7 @@ export class SaveSelectScene extends Phaser.Scene {
       this.add
         .sprite(54, y + 82, texture, frameIndex('down', 'idle', 0))
         .setOrigin(0.5, 0.875)
-        .setScale(0.64)
+        .setScale(0.64 * appearanceTextureScale(texture))
         .setDepth(3);
       const mapName = summary.mapId ? getMap(summary.mapId)?.name ?? summary.mapId : '';
       this.add

@@ -5,7 +5,11 @@ import type { AnimName } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
 import { CHAR_FRAME_W } from '@/config/resolution';
 import { getJob } from '@/jobs/job-defs';
-import { appearanceDiagonalTexKey, appearanceTexKey } from '@/jobs/job-appearance';
+import {
+  appearanceDiagonalTexKey,
+  appearanceTexKey,
+  appearanceTextureScale,
+} from '@/jobs/job-appearance';
 import { gameState } from '@/player/game-state';
 import { directionFromVector, directionVector } from '@/config/directions';
 import { FONT } from '@/ui/theme';
@@ -96,6 +100,7 @@ export class Player {
       diagonalTextureKey: texture === TEX.playerBody
         ? TEX.playerBodyDiagonal
         : appearanceDiagonalTexKey(appearance),
+      displayScale: appearanceTextureScale(texture),
     });
     this.jobPlateText.setText(job?.name ?? jobId);
     const plateW = Math.ceil(this.jobPlateText.width) + 12;

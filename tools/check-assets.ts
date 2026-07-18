@@ -10,6 +10,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readPngSize } from './png';
+import { readWebpSize } from './webp';
 import { ASSET_SPECS } from './asset-list';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -26,10 +27,11 @@ for (const spec of ASSET_SPECS) {
     console.log(`  ▫ 未配置  ${tag} → プレースホルダー使用`);
     continue;
   }
-  const size = readPngSize(readFileSync(file));
+  const bytes = readFileSync(file);
+  const size = readPngSize(bytes) ?? readWebpSize(bytes);
   if (!size) {
     problems++;
-    console.log(`  ✗ PNGではない/壊れている  ${tag}`);
+    console.log(`  ✗ PNG/WebPではない・壊れている  ${tag}`);
     continue;
   }
   const issues: string[] = [];

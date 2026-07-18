@@ -51,6 +51,26 @@ const diagonalSheet = (label: string, src: string): AssetSpec => ({
   frameH: CHAR_FRAME_H,
   anchor: [CHAR_ANCHOR_X, CHAR_ANCHOR_Y],
 });
+const hdSheet = (label: string, src: string): AssetSpec => ({
+  label,
+  src,
+  type: 'sheet',
+  w: SHEET_WIDTH * 2,
+  h: SHEET_HEIGHT * 2,
+  frameW: CHAR_FRAME_W * 2,
+  frameH: CHAR_FRAME_H * 2,
+  anchor: [CHAR_ANCHOR_X * 2, CHAR_ANCHOR_Y * 2],
+});
+const hdDiagonalSheet = (label: string, src: string): AssetSpec => ({
+  label,
+  src,
+  type: 'sheet',
+  w: DIAGONAL_SHEET_WIDTH * 2,
+  h: DIAGONAL_SHEET_HEIGHT * 2,
+  frameW: CHAR_FRAME_W * 2,
+  frameH: CHAR_FRAME_H * 2,
+  anchor: [CHAR_ANCHOR_X * 2, CHAR_ANCHOR_Y * 2],
+});
 const enemySprite = (label: string, src: string): AssetSpec => ({
   label,
   src,
@@ -71,8 +91,8 @@ export const ASSET_SPECS: AssetSpec[] = [
   diagonalSheet('鉄3枠:衣装斜め', 'assets/paperdoll-pilot/outfit-iron-diagonal-v3.png'),
   sheet('鉄3枠:武器', 'assets/paperdoll-pilot/weapon-iron-cardinal-v3.png'),
   diagonalSheet('鉄3枠:武器斜め', 'assets/paperdoll-pilot/weapon-iron-diagonal-v3.png'),
-  sheet('職業:戦士', 'assets/char/job_fighter-storybook-v3.png'),
-  diagonalSheet('職業:戦士斜め', 'assets/char/job_fighter-diagonal-v1.png'),
+  hdSheet('職業:戦士HD', 'assets/char/job_fighter-storybook-hd-v1.webp'),
+  hdDiagonalSheet('職業:戦士斜めHD', 'assets/char/job_fighter-diagonal-hd-v1.webp'),
   sheet('職業:魔法使い', 'assets/char/job_mage-storybook-v4.png'),
   diagonalSheet('職業:魔法使い斜め', 'assets/char/job_mage-diagonal-v2.png'),
   sheet('職業:僧侶', 'assets/char/job_priest-storybook-v4.png'),
@@ -136,7 +156,7 @@ export const ASSET_SPECS: AssetSpec[] = [
   { label: 'タイル:道', src: 'assets/tiles/path.png', type: 'image', w: 128, h: 128 },
   { label: 'タイル:石', src: 'assets/tiles/stone.png', type: 'image', w: 128, h: 128 },
   tile('タイル:床', 'assets/tiles/floor.png'),
-  { label: '街背景', src: 'assets/maps/town-cute-wide-v1.png', type: 'image', w: 640, h: 960 },
+  { label: '街背景HD', src: 'assets/maps/town-hd-storybook-v1.webp', type: 'image', w: 1280, h: 1920 },
   { label: '草原背景', src: 'assets/maps/field-cute-wide-v1.png', type: 'image', w: 640, h: 960 },
   { label: '森背景', src: 'assets/maps/forest-cute-wide-v1.png', type: 'image', w: 640, h: 960 },
   { label: '洞窟背景', src: 'assets/maps/dungeon-cute-wide-v1.png', type: 'image', w: 640, h: 960 },

@@ -27,8 +27,9 @@ const READABLE_TEXT_COLORS: Record<string, string> = {
 /**
  * Phaser Text defaults to a thin 400-weight, 1x canvas. At this game's compact
  * logical resolution that made Japanese counters and menu copy look brittle.
- * Normalize all M PLUS text to medium/bold weights and a sharper 1.5x source
- * texture without bringing back the heavy menu cost of full 2x text atlases.
+ * Normalize all M PLUS text to medium/bold weights and a 2x source texture.
+ * The game stays at the same logical size, but glyph edges retain phone-DPI
+ * detail instead of being enlarged from a brittle 1x canvas.
  */
 export function installTypographyDefaults(): void {
   if (typographyInstalled) return;
@@ -44,7 +45,7 @@ export function installTypographyDefaults(): void {
     const family = next.fontFamily ?? (!setDefaults ? this.fontFamily : undefined);
     if (typeof family === 'string' && family.includes('M PLUS 2 Game')) {
       next.fontStyle = next.fontStyle === 'bold' ? '700' : next.fontStyle || '500';
-      next.resolution ??= 1.5;
+      next.resolution ??= 2;
       next.letterSpacing ??= 0;
       if (typeof next.color === 'string') {
         next.color = READABLE_TEXT_COLORS[next.color.toLowerCase()] ?? next.color;

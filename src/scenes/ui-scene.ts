@@ -492,19 +492,38 @@ export class UIScene extends Phaser.Scene {
     const py = insets.top + 6;
     const PW = w - insets.left - insets.right - 12;
     const PH = 42;
-    const levelDivider = 48;
-    const expDivider = 130;
+    const levelDivider = 62;
+    const expDivider = 146;
     const hpDivider = Math.floor((PW + expDivider) / 2);
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
+    const hasHdStatusFrame = this.textures.exists(TEX.uiRibbonFrame);
+    if (hasHdStatusFrame) {
+      panel.add(
+        this.add.nineslice(
+          PW / 2,
+          PH / 2,
+          TEX.uiRibbonFrame,
+          undefined,
+          PW,
+          PH,
+          24,
+          24,
+          12,
+          12,
+        ),
+      );
+    }
     const panelBack = this.add.graphics();
-    panelBack.fillStyle(0x000000, 0.28);
-    panelBack.fillRoundedRect(1, 2, PW, PH, 3);
-    panelBack.fillStyle(0x071523, 0.98);
-    panelBack.fillRoundedRect(0, 0, PW, PH, 3);
-    panelBack.lineStyle(1.5, 0xd9bd6a, 0.86);
-    panelBack.strokeRoundedRect(0, 0, PW, PH, 3);
-    panelBack.lineStyle(1, 0xffedab, 0.72);
-    panelBack.lineBetween(3, 2, PW - 3, 2);
+    if (!hasHdStatusFrame) {
+      panelBack.fillStyle(0x000000, 0.28);
+      panelBack.fillRoundedRect(1, 2, PW, PH, 3);
+      panelBack.fillStyle(0x071523, 0.98);
+      panelBack.fillRoundedRect(0, 0, PW, PH, 3);
+      panelBack.lineStyle(1.5, 0xd9bd6a, 0.86);
+      panelBack.strokeRoundedRect(0, 0, PW, PH, 3);
+      panelBack.lineStyle(1, 0xffedab, 0.72);
+      panelBack.lineBetween(3, 2, PW - 3, 2);
+    }
     panelBack.lineStyle(1, 0x71839b, 0.48);
     panelBack.lineBetween(levelDivider, 4, levelDivider, PH - 4);
     panelBack.lineBetween(expDivider, 4, expDivider, PH - 4);
@@ -519,19 +538,14 @@ export class UIScene extends Phaser.Scene {
     }
 
     const barY = PH / 2;
-    const levelLabel = this.add
-      .text(6, barY, 'LV', { fontFamily: FONT, fontSize: '11px', color: '#f5f7fb', fontStyle: 'bold' })
-      .setOrigin(0, 0.5);
-    levelLabel.setShadow(0, 1, '#000000', 2);
-    panel.add(levelLabel);
     const levelText = this.add
-      .text(34, barY, '', { fontFamily: FONT, fontSize: '14px', color: '#ffe485', fontStyle: 'bold' })
+      .text(42, barY, '', { fontFamily: FONT, fontSize: '12px', color: '#ffe485', fontStyle: 'bold' })
       .setOrigin(0.5);
     levelText.setShadow(0, 1, '#000000', 2);
     panel.add(levelText);
 
     const refreshLevel = (): void => {
-      levelText.setText(`${gameState.level}`);
+      levelText.setText(`Lv ${gameState.level}`);
     };
 
     const makeBar = (

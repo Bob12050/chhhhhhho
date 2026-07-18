@@ -8,7 +8,7 @@ import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
 import { allSkills, getSkill, type SkillDef } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
-import { appearanceTexKey } from '@/jobs/job-appearance';
+import { appearanceTexKey, appearanceTextureScale } from '@/jobs/job-appearance';
 import { frameIndex } from '@/paperdoll/pose-atlas';
 import { bus } from '@/core/event-bus';
 import { FONT, addPanelChrome, rowBand, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
@@ -459,7 +459,7 @@ export class InventoryScene extends Phaser.Scene {
     const portrait = this.add
       .sprite(60, y + height - 7, texture, frameIndex('down', 'idle', 0))
       .setOrigin(0.5, 0.875)
-      .setScale(0.72)
+      .setScale(0.72 * appearanceTextureScale(texture))
       .setDepth(3);
     const name = this.add.text(108, y + 12, job?.name ?? gs.jobId, {
         fontFamily: FONT,
