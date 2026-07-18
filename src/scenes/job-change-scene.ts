@@ -5,6 +5,7 @@ import { bus } from '@/core/event-bus';
 import { expToNext } from '@/stats/leveling';
 import { FONT, pillButton } from '@/ui/theme';
 import { KineticScroll } from '@/ui/kinetic-scroll';
+import { buildJobTreeVerticalLayout } from '@/jobs/job-tree-layout';
 
 type JobStatus = 'current' | 'unlocked' | 'available' | 'locked';
 
@@ -192,11 +193,13 @@ export class JobChangeScene extends Phaser.Scene {
 
   private renderTree(): void {
     this.treeContent.removeAll(true);
-    const rowGap = Phaser.Math.Clamp((this.viewBottom - 252) / 4, 66, 92);
-    const cardH = Math.min(74, rowGap - 7);
-    const firstRowY = 248;
-    const headerY = 198;
-    const boardBottom = firstRowY + rowGap * 4 + cardH / 2 + 12;
+    const {
+      firstRowY,
+      headerY,
+      cardHeight: cardH,
+      rowGap,
+      boardBottom,
+    } = buildJobTreeVerticalLayout(this.viewBottom);
     const boardHeight = boardBottom - this.viewTop;
     const totalWidth = BOARD_PAD * 2 + COL_W * 4 + COL_GAP * 3;
     this.maxScroll = Math.max(0, totalWidth - this.scale.width);

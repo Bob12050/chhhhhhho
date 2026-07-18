@@ -14,6 +14,8 @@ import { chromium } from 'playwright';
 const BASE = process.argv[2] ?? 'http://localhost:4173';
 const URL = `${BASE.replace(/\/$/, '')}/?debug=1`;
 const SCROLL_ONLY = process.argv.includes('--scroll-only');
+const VIEWPORT_HEIGHT = Number.parseInt(process.env.E2E_VIEWPORT_HEIGHT ?? '720', 10);
+const JOB_TREE_SCREENSHOT = process.env.E2E_JOB_TREE_SCREENSHOT;
 
 let browser;
 const failures = [];
@@ -75,7 +77,7 @@ try {
     args: ['--use-gl=swiftshader', '--no-sandbox'],
     executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || undefined,
   });
-  const page = await browser.newPage({ viewport: { width: 360, height: 720 } });
+  const page = await browser.newPage({ viewport: { width: 360, height: VIEWPORT_HEIGHT } });
   const pageErrors = [];
   page.on('pageerror', (e) => pageErrors.push(String(e)));
 
@@ -271,6 +273,9 @@ try {
   await activateTextWhenReady(page, 'Debug', '職業ツリー');
   await waitForScene(page, 'JobChange');
   check('転職画面が4列職業ツリーで開く', true);
+  if (JOB_TREE_SCREENSHOT) {
+    await page.locator('canvas').screenshot({ path: JOB_TREE_SCREENSHOT });
+  }
   const canvasBounds = await page.evaluate(() => {
     const rect = document.querySelector('canvas')?.getBoundingClientRect();
     return rect ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height } : null;
