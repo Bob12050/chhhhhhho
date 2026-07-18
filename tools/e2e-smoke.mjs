@@ -119,6 +119,19 @@ try {
     townTexture?.width === 1280 && townTexture?.height === 1920,
     JSON.stringify(townTexture),
   );
+  const npcTextures = await page.evaluate(() => [
+    'gen.npc.merchant',
+    'gen.npc.smith',
+    'gen.npc.guild',
+    'gen.npc.elder',
+    'gen.npc.villager',
+    'gen.npc.quest',
+  ].map((key) => ({ key, size: window.__test.textureSize(key) })));
+  check(
+    '町NPC6役がHD版192×192で読み込まれる',
+    npcTextures.every(({ size }) => size?.width === 192 && size?.height === 192),
+    JSON.stringify(npcTextures),
+  );
   const slimeTextures = await page.evaluate(() => ({
     normal: window.__test.textureSize('gen.enemy.slime'),
     royal: window.__test.textureSize('gen.enemy.slime_royal'),

@@ -1384,19 +1384,18 @@ export class WorldScene extends Phaser.Scene {
       item: TEX.npcMerchant,
       craft: TEX.npcSmith,
       job: TEX.npcGuild,
-      quest: TEX.npcElder,
+      quest: TEX.npcQuest,
     };
-    const tex = byAction[action ?? ''] ?? TEX.npcVillager;
-    const sprite = this.physics.add.staticImage(x, y, tex).setOrigin(0.5, 0.875);
+    const tex = byAction[action ?? '']
+      ?? (dialogueId?.startsWith('elder_') ? TEX.npcElder : TEX.npcVillager);
+    const sprite = this.physics.add
+      .staticImage(x, y, tex)
+      .setOrigin(0.5, 0.875)
+      .setDisplaySize(96, 96);
+    sprite.refreshBody();
     sprite.setDepth(Math.round(y));
     this.add.image(x, y + 2, TEX.groundShadow).setDisplaySize(24, 9).setDepth(Math.round(y) - 1);
     this.npcSprites.push(sprite);
-    // Subtle per-villager tint variety (generic townsfolk only).
-    if (tex === TEX.npcVillager) {
-      let h = 0;
-      for (const ch of label + (dialogueId ?? '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-      sprite.setTint([0xffffff, 0xffe0c8, 0xd8e4ff, 0xd8ffe0, 0xffe0f0][h % 5]);
-    }
     // The illustrated town already carries facility pictograms in the scenery;
     // keeping old wooden labels over that art would cover roofs and entrances.
     if (this.map.id === 'town') {

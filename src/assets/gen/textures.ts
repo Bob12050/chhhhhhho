@@ -181,6 +181,7 @@ export const TEX = {
   npcGuild: 'gen.npc.guild',
   npcElder: 'gen.npc.elder',
   npcVillager: 'gen.npc.villager',
+  npcQuest: 'gen.npc.quest',
   // Hanging wooden signboard behind an NPC's name (kills the floating text).
   sign: 'gen.sign',
   // Soft ground contact shadow (one texture, scaled per object via displaySize).
@@ -1073,6 +1074,11 @@ function generateEnvTextures(scene: Phaser.Scene): void {
       skin: '#e8b088', skinSh: '#cf9468', hair: '#8a5a34', hairSh: '#66401f',
       hairStyle: 'short', outfit: '#b0683a', outfitSh: '#8a4e2a', outfitHi: '#c8824c',
       trim: '#e0b070', prop: 'basket',
+    },
+    [TEX.npcQuest]: {
+      skin: '#ecbf96', skinSh: '#cf9e6c', hair: '#7a4a2d', hairSh: '#55301d',
+      hairStyle: 'neat', outfit: '#345a94', outfitSh: '#243f6d', outfitHi: '#4b72ad',
+      trim: '#e3c46f', apron: '#eee0b8', prop: 'book',
     },
   };
   // Frame is 96×96 (matches CHAR_FRAME so real art drops in). The chibi is centred

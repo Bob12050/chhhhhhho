@@ -23,6 +23,7 @@ assets/
   env/obstacle.png          # 32x32
   env/wall.png              # 32x32
   env/npc.png               # 96x96（単一画像）
+  env/npc_*-storybook-hd-v1.webp # 192x192（NPC高解像度版、ゲーム内では半分表示）
 ```
 
 ## ポーズアトラス規格（char/equip/enemy）

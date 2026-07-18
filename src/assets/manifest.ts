@@ -138,13 +138,12 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.wall, 'assets/env/wall.png'),
   img(TEX.npc, 'assets/env/npc-storybook-v2.png'),
   // Role-specific town NPCs (drop real art to replace the placeholders).
-  img(TEX.npcMerchant, 'assets/env/npc_merchant-storybook-v2.png'),
-  // 鍛冶屋(craft) NPC: AI生成PNG差し替えテスト対象。
-  // があればそれを優先、無ければコード生成のチビにフォールバック（96×96・透明）。
-  img(TEX.npcSmith, 'assets/env/npc_craft-storybook-v2.png'),
-  img(TEX.npcGuild, 'assets/env/npc_guild-storybook-v2.png'),
-  img(TEX.npcElder, 'assets/env/npc_elder-storybook-v2.png'),
-  img(TEX.npcVillager, 'assets/env/npc_villager-storybook-v2.png'),
+  img(TEX.npcMerchant, 'assets/env/npc_merchant-storybook-hd-v1.webp'),
+  img(TEX.npcSmith, 'assets/env/npc_craft-storybook-hd-v1.webp'),
+  img(TEX.npcGuild, 'assets/env/npc_guild-storybook-hd-v1.webp'),
+  img(TEX.npcElder, 'assets/env/npc_elder-storybook-hd-v1.webp'),
+  img(TEX.npcVillager, 'assets/env/npc_villager-storybook-hd-v1.webp'),
+  img(TEX.npcQuest, 'assets/env/npc_quest-storybook-hd-v1.webp'),
   img(TEX.sign, 'assets/env/sign.png'),
   img(TEX.groundShadow, 'assets/env/shadow.png'),
   // Generated menu skin. The frame is a 48x48 nine-slice; the ribbon is a
