@@ -101,6 +101,14 @@ export function installTestHooks(game: Phaser.Game): void {
     activateText: (sceneKey: string, label: string) => {
       const scene = game.scene.getScene(sceneKey);
       if (!scene?.scene.isActive()) return false;
+      const allObjects: Phaser.GameObjects.GameObject[] = [];
+      const collect = [...scene.children.list];
+      while (collect.length) {
+        const object = collect.shift();
+        if (!object) continue;
+        allObjects.push(object);
+        if ('list' in object && Array.isArray(object.list)) collect.push(...object.list);
+      }
       const pending = scene.children.list.map((child) => ({
         child,
         interactiveAncestor: undefined as Phaser.GameObjects.GameObject | undefined,
@@ -114,19 +122,17 @@ export function installTestHooks(game: Phaser.Game): void {
         // same-position siblings (for example the title menu). Resolve that
         // frame too, so automation follows the labelled control instead of a
         // density-dependent screen coordinate.
-        if (!interactive && 'x' in child && 'y' in child) {
-          const x = child.x;
-          const y = child.y;
-          if (typeof x === 'number' && typeof y === 'number') {
-            interactive = scene.children.list.find((candidate) => (
-              candidate.input?.enabled
-              && 'x' in candidate
-              && 'y' in candidate
-              && typeof candidate.x === 'number'
-              && typeof candidate.y === 'number'
-              && Math.abs(candidate.x - x) < 1
-              && Math.abs(candidate.y - y) < 1
-            ));
+        if (!interactive && 'getWorldTransformMatrix' in child) {
+          const getMatrix = child.getWorldTransformMatrix;
+          if (typeof getMatrix === 'function') {
+            const point = getMatrix.call(child).transformPoint(0, 0);
+            interactive = allObjects
+              .filter((candidate) => candidate.input?.enabled)
+              .sort((a, b) => ('depth' in b ? Number(b.depth) : 0) - ('depth' in a ? Number(a.depth) : 0))
+              .find((candidate) => {
+                if (!('getBounds' in candidate) || typeof candidate.getBounds !== 'function') return false;
+                return candidate.getBounds().contains(point.x, point.y);
+              });
           }
         }
         if (

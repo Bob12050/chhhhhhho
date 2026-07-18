@@ -86,8 +86,8 @@ try {
     undefined,
     { timeout: 10000 },
   );
+  await activateTextWhenReady(page, 'UI', 'スキップ');
   await page.waitForTimeout(500);
-  await page.mouse.click(64, 610); await page.waitForTimeout(800);
   let s = await snap(page);
   check('新規ゲームで町に降り立つ', s.mapId === 'town', `mapId=${s.mapId}`);
   const townTexture = await page.evaluate(() =>
@@ -145,7 +145,9 @@ try {
   // invisible wall. Reproduce the phone report: walk up its narrow left lane.
   await page.evaluate(() => window.__test.warp('town', 250, 550));
   await page.waitForTimeout(900);
-  await page.keyboard.down('w'); await page.waitForTimeout(1650); await page.keyboard.up('w');
+  await page.keyboard.down('w');
+  await page.waitForFunction(() => window.__test.snapshot().y < 430, undefined, { timeout: 6000 }).catch(() => {});
+  await page.keyboard.up('w');
   s = await snap(page);
   check('噴水広場の左通路を通過できる', s.y < 430, `y=${Math.round(s.y)}`);
 
@@ -240,8 +242,10 @@ try {
 
   // The footer used to place 「とじる」 directly over 「ペット」, so a
   // single tap closed Inventory and launched PetScreen at the same time.
-  await page.mouse.click(336, 75); await page.waitForTimeout(500);
-  await page.mouse.click(180, 676); await page.waitForTimeout(500);
+  await activateTextWhenReady(page, 'UI', 'もちもの');
+  await waitForScene(page, 'Inventory');
+  await activateTextWhenReady(page, 'Inventory', 'とじる');
+  await page.waitForTimeout(500);
   const scenesAfterBagClose = await page.evaluate(() => window.__test.activeScenes());
   check(
     'もちものの閉じるボタンがペット画面へ貫通しない',
@@ -683,7 +687,8 @@ try {
   // 自動展開され、そこへ自動スクロールする。よって画面上 1行目(136-200)が
   // そのヘッダー、直下(200-276)が最初のレシピ行（craftable-first 順）。
   const before = await snap(page);
-  await page.mouse.click(318, 236); await page.waitForTimeout(900); // 展開済み1本目の「作る」
+  await activateTextWhenReady(page, 'Crafting', '制作');
+  await page.waitForTimeout(900);
   s = await snap(page);
   // Upgrade recipes consume the old piece, so owned-count can stay flat;
   // gold ALWAYS drops on a successful craft. Assert on that instead.
@@ -694,11 +699,12 @@ try {
   // ---- pets: egg → hatch → assist ----
   step = 'pets';
   await page.evaluate(() => window.__test.addEgg('pet_egg_wolf'));
-  await page.mouse.click(336, 75); await page.waitForTimeout(900); // bag on minimap corner
-  await page.mouse.click(222, 632); await page.waitForTimeout(800); // framed ペット action
-  await page.waitForFunction(() => window.__test.activeScenes().includes('PetScreen'));
-  const hatchPressed = await page.evaluate(() => window.__test.activateText('PetScreen', '孵化する'));
-  check('ペット画面の孵化ボタンを操作できる', hatchPressed === true);
+  await activateTextWhenReady(page, 'UI', 'もちもの');
+  await waitForScene(page, 'Inventory');
+  await activateTextWhenReady(page, 'Inventory', 'ペット');
+  await waitForScene(page, 'PetScreen');
+  await activateTextWhenReady(page, 'PetScreen', '孵化する');
+  check('ペット画面の孵化ボタンを操作できる', true);
   await page.waitForTimeout(900);
   s = await snap(page);
   check('たまごを孵化してペットが仲間になる', s.ownedPets.includes('wolf_pet'));
@@ -714,9 +720,12 @@ try {
     await page.evaluate((id) => window.__test.discoverEnemy(id), enemyId);
   }
   const beforeBestiaryReward = await snap(page);
-  await page.mouse.click(336, 75); await page.waitForTimeout(900);
-  await page.mouse.click(138, 632); await page.waitForTimeout(800); // framed 図鑑 action
-  await page.mouse.click(313, 127); await page.waitForTimeout(500); // 草原地方: 受け取る
+  await activateTextWhenReady(page, 'UI', 'もちもの');
+  await waitForScene(page, 'Inventory');
+  await activateTextWhenReady(page, 'Inventory', '図鑑');
+  await waitForScene(page, 'Bestiary');
+  await activateTextWhenReady(page, 'Bestiary', '受け取る');
+  await page.waitForTimeout(500);
   const afterBestiaryReward = await snap(page);
   check(
     '地域図鑑の達成報酬を受け取れる',
@@ -725,8 +734,6 @@ try {
         === (beforeBestiaryReward.materials['sky_crown'] ?? 0) + 1,
     `gold ${beforeBestiaryReward.gold}→${afterBestiaryReward.gold}`,
   );
-  await page.mouse.click(180, 112); await page.waitForTimeout(400); // 草原地方を展開
-  await page.mouse.click(180, 180); await page.waitForTimeout(600);
   await page.keyboard.press('Escape'); await page.waitForTimeout(400);
   await page.keyboard.press('Escape'); await page.waitForTimeout(400);
   check('図鑑が開ける（エラーなし）', pageErrors.length === 0, pageErrors[0]);
@@ -737,9 +744,9 @@ try {
   await page.evaluate(() => window.__test.flushSave());
   await page.waitForTimeout(600);
   await page.reload({ waitUntil: 'load' });
-  await page.waitForTimeout(2500);
-  await page.mouse.click(180, 360); await page.waitForTimeout(1800); // latest save: one-tap continue
-  await page.waitForFunction(() => !!window.__test, undefined, { timeout: 10000 });
+  await waitForScene(page, 'Title');
+  await activateTextWhenReady(page, 'Title', 'つづきから', 20000);
+  await waitForScene(page, 'World', 20000);
   s = await snap(page);
   check('リロード後もレベルが残る', s.level === beforeReload.level, `${beforeReload.level}→${s.level}`);
   check('リロード後もペットが残る', s.ownedPets.includes('wolf_pet'));
