@@ -609,7 +609,9 @@ try {
         oasisMarket.mapId === 'desert' && oasisMarket.y < 490,
         `mapId=${oasisMarket.mapId} x=${Math.round(oasisMarket.x)} y=${Math.round(oasisMarket.y)}`,
       );
-      await page.evaluate(() => window.__test.warp('desert', 440, 650));
+      // Start on the right half of the narrow stone lane so nearby enemy
+      // movement cannot nudge the test collider into the west wall.
+      await page.evaluate(() => window.__test.warp('desert', 455, 650));
       await page.waitForTimeout(400);
       await moveUntil(page, 'w', { mapId: 'desert', axis: 'y', lt: 490 });
       const quicksandBank = await snap(page);
