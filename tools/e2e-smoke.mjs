@@ -47,6 +47,28 @@ async function activateTextWhenReady(page, sceneKey, label, timeout = 10000) {
   );
 }
 
+/** Hold one movement key until the intended map/coordinate milestone is reached. */
+async function moveUntil(page, key, goal, timeout = 8000) {
+  await page.keyboard.down(key);
+  try {
+    await page.waitForFunction(
+      ({ mapId, axis, lt, gt }) => {
+        const state = window.__test?.snapshot();
+        if (!state || state.mapId !== mapId) return false;
+        if (!axis) return true;
+        const value = state[axis];
+        return (lt === undefined || value < lt) && (gt === undefined || value > gt);
+      },
+      goal,
+      { polling: 50, timeout },
+    );
+  } catch {
+    // The assertion below records the final coordinate with a useful message.
+  } finally {
+    await page.keyboard.up(key);
+  }
+}
+
 try {
   browser = await chromium.launch({
     args: ['--use-gl=swiftshader', '--no-sandbox'],
@@ -297,14 +319,13 @@ try {
           && fieldGuide.combatTarget.current === fieldGuide.combatTarget.max,
         JSON.stringify(fieldGuide.combatTarget),
       );
-      await page.keyboard.down('d'); await page.waitForTimeout(1600); await page.keyboard.up('d');
+      await moveUntil(page, 'd', { mapId: 'field', axis: 'x', gt: 430 });
       const wideField = await snap(page);
       check('草原を旧マップ幅より右まで探索できる', wideField.x > 430, `x=${Math.round(wideField.x)}`);
 
       await page.evaluate(() => window.__test.warp('field', 72, 444));
       await page.waitForTimeout(600);
-      await page.keyboard.down('a'); await page.waitForTimeout(900); await page.keyboard.up('a');
-      await page.waitForTimeout(900);
+      await moveUntil(page, 'a', { mapId: 'forest' });
       const sideExit = await snap(page);
       check('広い草原の横道から森へ移動できる', sideExit.mapId === 'forest', `mapId=${sideExit.mapId}`);
       const forestTexture = await page.evaluate(() =>
@@ -316,7 +337,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('forest', 320, 884));
       await page.waitForTimeout(500);
-      await page.keyboard.down('w'); await page.waitForTimeout(1300); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'forest', axis: 'y', lt: 790 });
       const forestEntry = await snap(page);
       check(
         '森の入口から中央の戦闘路へ進める',
@@ -325,7 +346,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('forest', 180, 560));
       await page.waitForTimeout(500);
-      await page.keyboard.down('w'); await page.waitForTimeout(1700); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'forest', axis: 'y', lt: 440 });
       const forestLeftLoop = await snap(page);
       check(
         '森の大樹左側を回り込んで探索できる',
@@ -334,7 +355,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('forest', 455, 520));
       await page.waitForTimeout(700);
-      await page.keyboard.down('w'); await page.waitForTimeout(1700); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'forest', axis: 'y', lt: 390 });
       const forestLoop = await snap(page);
       check(
         '森の大樹右側を回り込んで探索できる',
@@ -343,8 +364,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('forest', 320, 884));
       await page.waitForTimeout(500);
-      await page.keyboard.down('s'); await page.waitForTimeout(900); await page.keyboard.up('s');
-      await page.waitForTimeout(500);
+      await moveUntil(page, 's', { mapId: 'field' });
       const forestExit = await snap(page);
       check('森の南口から草原へ戻れる', forestExit.mapId === 'field', `mapId=${forestExit.mapId}`);
       await page.evaluate(() => window.__test.warp('dungeon'));
@@ -358,7 +378,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('dungeon', 320, 884));
       await page.waitForTimeout(500);
-      await page.keyboard.down('w'); await page.waitForTimeout(1300); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'dungeon', axis: 'y', lt: 790 });
       const dungeonEntry = await snap(page);
       check(
         '洞窟の南入口から中央路へ進める',
@@ -367,7 +387,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('dungeon', 320, 340));
       await page.waitForTimeout(500);
-      await page.keyboard.down('w'); await page.waitForTimeout(1500); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'dungeon', axis: 'y', lt: 230 });
       const dungeonNorth = await snap(page);
       check(
         '洞窟の中央路を北の封印門前まで進める',
@@ -376,7 +396,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('dungeon', 320, 340));
       await page.waitForTimeout(500);
-      await page.keyboard.down('d'); await page.waitForTimeout(1500); await page.keyboard.up('d');
+      await moveUntil(page, 'd', { mapId: 'dungeon', axis: 'x', gt: 430 });
       const crystalBranch = await snap(page);
       check(
         '洞窟の水晶泉側へ分岐して探索できる',
@@ -385,7 +405,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('dungeon', 200, 520));
       await page.waitForTimeout(500);
-      await page.keyboard.down('w'); await page.waitForTimeout(1500); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'dungeon', axis: 'y', lt: 400 });
       const mineBranch = await snap(page);
       check(
         '洞窟の採掘坑道を北へ通り抜けられる',
@@ -394,7 +414,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('dungeon', 78, 328));
       await page.waitForTimeout(500);
-      await page.keyboard.down('d'); await page.waitForTimeout(1500); await page.keyboard.up('d');
+      await moveUntil(page, 'd', { mapId: 'dungeon', axis: 'x', gt: 190 });
       const canyonEntrance = await snap(page);
       check(
         '渓谷側の横穴から洞窟中央へ入れる',
@@ -412,13 +432,13 @@ try {
       );
       await page.evaluate(() => window.__test.warp('canyon', 320, 785));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'dungeon' });
       const caveMouth = await snap(page);
       check('渓谷の洞穴から洞窟へ戻れる', caveMouth.mapId === 'dungeon', `mapId=${caveMouth.mapId}`);
       await page.evaluate(() => window.__test.warp('canyon', 320, 820));
       await page.waitForTimeout(400);
-      await page.keyboard.down('a'); await page.waitForTimeout(2050); await page.keyboard.up('a');
-      await page.keyboard.down('w'); await page.waitForTimeout(1750); await page.keyboard.up('w');
+      await moveUntil(page, 'a', { mapId: 'canyon', axis: 'x', lt: 210 });
+      await moveUntil(page, 'w', { mapId: 'canyon', axis: 'y', lt: 760 });
       const mesaTrail = await snap(page);
       check(
         '洞窟前広場から左の高台道へ上がれる',
@@ -427,7 +447,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('canyon', 555, 575));
       await page.waitForTimeout(400);
-      await page.keyboard.down('a'); await page.waitForTimeout(1550); await page.keyboard.up('a');
+      await moveUntil(page, 'a', { mapId: 'canyon', axis: 'x', lt: 440 });
       const lowerBridge = await snap(page);
       check(
         '渓谷の下側吊り橋を渡れる',
@@ -436,7 +456,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('canyon', 550, 335));
       await page.waitForTimeout(400);
-      await page.keyboard.down('a'); await page.waitForTimeout(1550); await page.keyboard.up('a');
+      await moveUntil(page, 'a', { mapId: 'canyon', axis: 'x', lt: 435 });
       const upperBridge = await snap(page);
       check(
         '渓谷の上側吊り橋を渡れる',
@@ -445,7 +465,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('canyon', 320, 174));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'volcano' });
       const volcanoPass = await snap(page);
       check('渓谷上部から火山へ進める', volcanoPass.mapId === 'volcano', `mapId=${volcanoPass.mapId}`);
       const volcanoTexture = await page.evaluate(() =>
@@ -457,12 +477,12 @@ try {
       );
       await page.evaluate(() => window.__test.warp('volcano', 320, 900));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'canyon' });
       const canyonGate = await snap(page);
       check('火山南門から渓谷へ戻れる', canyonGate.mapId === 'canyon', `mapId=${canyonGate.mapId}`);
       await page.evaluate(() => window.__test.warp('volcano', 230, 420));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(1700); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'volcano', axis: 'y', lt: 310 });
       const obsidianTrail = await snap(page);
       check(
         '火山の黒曜石遺跡を北へ抜けられる',
@@ -471,7 +491,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('volcano', 450, 700));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(1800); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'volcano', axis: 'y', lt: 570 });
       const lowerLavaBridge = await snap(page);
       check(
         '火山右側の下段溶岩橋を北へ渡れる',
@@ -480,16 +500,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('volcano', 450, 440));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w');
-      await page.waitForFunction(
-        () => {
-          const state = window.__test.snapshot();
-          return state.mapId === 'volcano' && state.y < 330;
-        },
-        undefined,
-        { timeout: 5000 },
-      ).catch(() => {});
-      await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'volcano', axis: 'y', lt: 330 });
       const upperLavaBridge = await snap(page);
       check(
         '火山右側の上段溶岩橋を北へ渡れる',
@@ -498,7 +509,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('volcano', 320, 145));
       await page.waitForTimeout(400);
-      await page.keyboard.down('s'); await page.waitForTimeout(1000); await page.keyboard.up('s');
+      await moveUntil(page, 's', { mapId: 'volcano', axis: 'y', gt: 220 });
       const snowGateLanding = await snap(page);
       check(
         '雪原側の火山入口から南へ進める',
@@ -516,12 +527,12 @@ try {
       );
       await page.evaluate(() => window.__test.warp('snowfield', 320, 795));
       await page.waitForTimeout(400);
-      await page.keyboard.down('s'); await page.waitForTimeout(700); await page.keyboard.up('s');
+      await moveUntil(page, 's', { mapId: 'volcano' });
       const volcanoGate = await snap(page);
       check('雪原南門から火山へ戻れる', volcanoGate.mapId === 'volcano', `mapId=${volcanoGate.mapId}`);
       await page.evaluate(() => window.__test.warp('snowfield', 320, 790));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(1800); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'snowfield', axis: 'y', lt: 660 });
       const snowRoad = await snap(page);
       check(
         '雪原の中央街道を北へ進める',
@@ -530,7 +541,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('snowfield', 270, 450));
       await page.waitForTimeout(400);
-      await page.keyboard.down('a'); await page.waitForTimeout(1500); await page.keyboard.up('a');
+      await moveUntil(page, 'a', { mapId: 'snowfield', axis: 'x', lt: 170 });
       const frozenLake = await snap(page);
       check(
         '凍った湖を横断できる',
@@ -539,7 +550,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('snowfield', 565, 550));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(1700); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'snowfield', axis: 'y', lt: 430 });
       const shrineTrail = await snap(page);
       check(
         '氷晶神殿の右側を北へ抜けられる',
@@ -548,7 +559,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('snowfield', 470, 545));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(700); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'snowfield', axis: 'y', lt: 500 });
       const shrineSteps = await snap(page);
       check(
         '氷晶神殿の正面階段へ上がれる',
@@ -557,7 +568,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('snowfield', 320, 145));
       await page.waitForTimeout(400);
-      await page.keyboard.down('s'); await page.waitForTimeout(1000); await page.keyboard.up('s');
+      await moveUntil(page, 's', { mapId: 'snowfield', axis: 'y', gt: 220 });
       const desertGateLanding = await snap(page);
       check(
         '砂漠側の雪原入口から南へ進める',
@@ -575,12 +586,12 @@ try {
       );
       await page.evaluate(() => window.__test.warp('desert', 320, 790));
       await page.waitForTimeout(400);
-      await page.keyboard.down('s'); await page.waitForTimeout(700); await page.keyboard.up('s');
+      await moveUntil(page, 's', { mapId: 'snowfield' });
       const snowfieldGate = await snap(page);
       check('砂漠南門から雪原へ戻れる', snowfieldGate.mapId === 'snowfield', `mapId=${snowfieldGate.mapId}`);
       await page.evaluate(() => window.__test.warp('desert', 320, 790));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(1800); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'desert', axis: 'y', lt: 660 });
       const caravanRoad = await snap(page);
       check(
         '砂漠の隊商街道を北へ進める',
@@ -589,7 +600,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('desert', 250, 650));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(2200); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'desert', axis: 'y', lt: 490 });
       const oasisMarket = await snap(page);
       check(
         'オアシス市場の東岸を北へ抜けられる',
@@ -598,7 +609,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('desert', 440, 650));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(2200); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'desert', axis: 'y', lt: 490 });
       const quicksandBank = await snap(page);
       check(
         '流砂西岸の石道を北へ抜けられる',
@@ -607,7 +618,7 @@ try {
       );
       await page.evaluate(() => window.__test.warp('desert', 320, 300));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(1400); await page.keyboard.up('w');
+      await moveUntil(page, 'w', { mapId: 'desert', axis: 'y', lt: 210 });
       const palacePlaza = await snap(page);
       check(
         '星見宮殿前の広場まで進める',
