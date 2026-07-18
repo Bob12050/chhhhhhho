@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
-import { ensureGeneratedTextures, TEX } from '@/assets/gen/textures';
+import { ensureGeneratedTextures } from '@/assets/gen/textures';
 import { ASSET_MANIFEST } from '@/assets/manifest';
 import { shouldShowStartupNotice } from '@/core/startup-notice';
+import { HD_APPEARANCE_TEXTURE_KEYS } from '@/jobs/job-appearance';
 
 /**
  * Boot: preload any real-art PNGs that exist (manifest), then generate
@@ -33,11 +34,14 @@ export class BootScene extends Phaser.Scene {
 
   create(): void {
     ensureGeneratedTextures(this); // fills only the keys no real asset provided
-    // The fighter HD sheets are smooth illustrated art, not enlarged pixel art.
+    // HD character sheets are smooth illustrated art, not enlarged pixel art.
     // Bypass the block-preserving shader so their authored curves survive the
     // 192px-to-96px render and remain clean on high-density phone displays.
-    this.textures.get(TEX.jobFighter).setSmoothPixelArt(false);
-    this.textures.get(TEX.jobFighterDiagonal).setSmoothPixelArt(false);
+    for (const textureKey of HD_APPEARANCE_TEXTURE_KEYS) {
+      if (this.textures.exists(textureKey)) {
+        this.textures.get(textureKey).setSmoothPixelArt(false);
+      }
+    }
     this.scene.start(shouldShowStartupNotice() ? 'Notice' : 'Title');
   }
 }

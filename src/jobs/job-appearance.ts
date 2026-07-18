@@ -57,10 +57,14 @@ export const APPEARANCE_DIAGONAL_TEX: Partial<Record<JobAppearanceId, string>> =
  * so feet anchors, collision, labels, and authored world proportions stay
  * identical to the 96px production sheets.
  */
-const TEXTURE_DISPLAY_SCALE: Readonly<Record<string, number>> = {
-  [TEX.jobFighter]: 0.5,
-  [TEX.jobFighterDiagonal]: 0.5,
-};
+export const HD_APPEARANCE_TEXTURE_KEYS: readonly string[] = Object.freeze([
+  TEX.playerBody,
+  TEX.playerBodyDiagonal,
+  ...Object.values(APPEARANCE_TEX),
+  ...Object.values(APPEARANCE_DIAGONAL_TEX).filter((key): key is string => Boolean(key)),
+]);
+
+const HD_APPEARANCE_TEXTURE_SET = new Set(HD_APPEARANCE_TEXTURE_KEYS);
 
 /** Texture key for an appearance id, or null if unknown/unset. */
 export function appearanceTexKey(id: string | undefined): string | null {
@@ -76,5 +80,5 @@ export function appearanceDiagonalTexKey(id: string | undefined): string | null 
 /** Logical display scale for an appearance texture (1 for regular sheets). */
 export function appearanceTextureScale(textureKey: string | null | undefined): number {
   if (!textureKey) return 1;
-  return TEXTURE_DISPLAY_SCALE[textureKey] ?? 1;
+  return HD_APPEARANCE_TEXTURE_SET.has(textureKey) ? 0.5 : 1;
 }

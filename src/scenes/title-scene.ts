@@ -20,7 +20,7 @@ const PARADE_TEX = [
   TEX.jobPriest,
   TEX.jobThief,
   TEX.jobPetRaiser,
-  TEX.playerBodyBald,
+  TEX.playerBody,
 ];
 
 interface Walker {

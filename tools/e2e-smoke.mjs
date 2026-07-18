@@ -111,10 +111,10 @@ try {
   );
   const firstTierLooks = [
     ['fighter', 'gen.char.fighter', 'art.char.fighter.diagonal', 768, 3456, 768, 1152],
-    ['mage', 'gen.char.mage', 'art.char.mage.diagonal', 384, 1728, 384, 576],
-    ['priest', 'gen.char.priest', 'art.char.priest.diagonal', 384, 1728, 384, 576],
-    ['thief', 'gen.char.thief', 'art.char.thief.diagonal', 384, 1728, 384, 576],
-    ['pet_raiser', 'gen.char.pet_raiser', 'art.char.pet_raiser.diagonal', 384, 1728, 384, 576],
+    ['mage', 'gen.char.mage', 'art.char.mage.diagonal', 768, 3456, 768, 1152],
+    ['priest', 'gen.char.priest', 'art.char.priest.diagonal', 768, 3456, 768, 1152],
+    ['thief', 'gen.char.thief', 'art.char.thief.diagonal', 768, 3456, 768, 1152],
+    ['pet_raiser', 'gen.char.pet_raiser', 'art.char.pet_raiser.diagonal', 768, 3456, 768, 1152],
   ];
   let allFirstTierLooks = true;
   for (const [id, cardinalKey, diagonalKey, cardinalW, cardinalH, diagonalW, diagonalH] of firstTierLooks) {
@@ -130,6 +130,18 @@ try {
       && result.diagonal?.height === diagonalH;
   }
   check('一次職5種の通常・斜め外見を読み込める', allFirstTierLooks);
+  const adventurerLooks = await page.evaluate(() => ({
+    cardinal: window.__test.textureSize('gen.player.body'),
+    diagonal: window.__test.textureSize('art.player.body.diagonal'),
+  }));
+  check(
+    '初期冒険者の通常・斜め外見もHDで読み込める',
+    adventurerLooks.cardinal?.width === 768
+      && adventurerLooks.cardinal?.height === 3456
+      && adventurerLooks.diagonal?.width === 768
+      && adventurerLooks.diagonal?.height === 1152,
+    JSON.stringify(adventurerLooks),
+  );
   await page.evaluate(() => window.__test.forceJob('adventurer'));
   check('初期クエストが受注済み', s.activeQuests.includes('q_apprentice'));
   check(
@@ -174,10 +186,10 @@ try {
       diagonal: window.__test.textureSize(diagonal),
     }), [id, cardinalKey, diagonalKey]);
     allSecondTierLooks &&= result.changed
-      && result.cardinal?.width === 384
-      && result.cardinal?.height === 1728
-      && result.diagonal?.width === 384
-      && result.diagonal?.height === 576;
+      && result.cardinal?.width === 768
+      && result.cardinal?.height === 3456
+      && result.diagonal?.width === 768
+      && result.diagonal?.height === 1152;
   }
   check('2次職5種の通常・斜め外見を読み込める', allSecondTierLooks);
 
@@ -196,10 +208,10 @@ try {
       diagonal: window.__test.textureSize(diagonal),
     }), [id, cardinalKey, diagonalKey]);
     allThirdTierLooks &&= result.changed
-      && result.cardinal?.width === 384
-      && result.cardinal?.height === 1728
-      && result.diagonal?.width === 384
-      && result.diagonal?.height === 576;
+      && result.cardinal?.width === 768
+      && result.cardinal?.height === 3456
+      && result.diagonal?.width === 768
+      && result.diagonal?.height === 1152;
   }
   check('3次職5種の通常・斜め外見を読み込める', allThirdTierLooks);
 
@@ -218,10 +230,10 @@ try {
       diagonal: window.__test.textureSize(diagonal),
     }), [id, cardinalKey, diagonalKey]);
     allFourthTierLooks &&= result.changed
-      && result.cardinal?.width === 384
-      && result.cardinal?.height === 1728
-      && result.diagonal?.width === 384
-      && result.diagonal?.height === 576;
+      && result.cardinal?.width === 768
+      && result.cardinal?.height === 3456
+      && result.diagonal?.width === 768
+      && result.diagonal?.height === 1152;
   }
   check('4次職5種の通常・斜め外見を読み込める', allFourthTierLooks);
 
