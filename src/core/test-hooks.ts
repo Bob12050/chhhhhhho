@@ -109,6 +109,12 @@ export function installTestHooks(game: Phaser.Game): void {
         allObjects.push(object);
         if ('list' in object && Array.isArray(object.list)) collect.push(...object.list);
       }
+      const hasExactLabel = allObjects.some((object) => (
+        object.type === 'Text'
+        && 'text' in object
+        && typeof object.text === 'string'
+        && object.text.trim() === label
+      ));
       const pending = scene.children.list.map((child) => ({
         child,
         interactiveAncestor: undefined as Phaser.GameObjects.GameObject | undefined,
@@ -139,7 +145,7 @@ export function installTestHooks(game: Phaser.Game): void {
           child.type === 'Text'
           && 'text' in child
           && typeof child.text === 'string'
-          && child.text.includes(label)
+          && (hasExactLabel ? child.text.trim() === label : child.text.includes(label))
           && interactive
         ) {
           interactive.emit('pointerdown');
