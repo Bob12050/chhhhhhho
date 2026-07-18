@@ -79,43 +79,26 @@ export class TitleScene extends Phaser.Scene {
     this.input.keyboard?.once('keydown-ENTER', () => this.scene.start('SaveSelect'));
   }
 
-  /** Grass world + road + trees/flowers + readability shading. */
+  /** HD world vignette with a road aligned to the walking parade. */
   private buildBackdrop(w: number, h: number): void {
-    this.add.tileSprite(0, 0, w, h, TEX.tileGrass).setOrigin(0).setDepth(0);
-    // The parade road, low on the screen.
     const roadY = Math.round(h * 0.72);
-    this.add.tileSprite(0, roadY - 28, w, 56, TEX.tilePath).setOrigin(0).setDepth(1);
-
-    // Scattered scenery (deterministic layout; the title should look designed).
-    const trees: [number, number, string][] = [
-      [26, roadY - 90, TEX.obstaclePine],
-      [70, roadY - 64, TEX.obstacle],
-      [w - 30, roadY - 96, TEX.obstacle],
-      [w - 74, roadY - 60, TEX.obstacleBush],
-      [40, roadY + 74, TEX.obstacleBush],
-      [w - 44, roadY + 82, TEX.obstaclePine],
-      [w - 110, roadY + 64, TEX.obstacle],
-    ];
-    for (const [x, y, tex] of trees) this.add.image(x, y, tex).setDepth(2);
-    const decor: [number, number, string][] = [
-      [58, roadY - 110, TEX.decorFlowerA],
-      [w - 60, roadY - 44, TEX.decorFlowerB],
-      [110, roadY + 60, TEX.decorTuft],
-      [w - 130, roadY + 90, TEX.decorFlowerA],
-      [24, roadY + 110, TEX.decorTuft],
-      [w / 2, roadY - 52, TEX.decorPebble],
-    ];
-    for (const [x, y, tex] of decor) this.add.image(x, y, tex).setDepth(1);
-
-    // Shade the top half so the logo reads; deepen the very bottom for menu.
-    const shade = this.add.graphics().setDepth(5);
-    const bands = 40; // fine steps: reads as a gradient, not stripes
-    for (let i = 0; i < bands; i++) {
-      shade.fillStyle(0x0e0f1a, 0.58 * (1 - i / bands));
-      shade.fillRect(0, Math.floor((i * h * 0.5) / bands), w, Math.ceil((h * 0.5) / bands) + 1);
+    if (this.textures.exists(TEX.titleBackdrop)) {
+      const backdrop = this.add.image(w / 2, h / 2, TEX.titleBackdrop).setDepth(0);
+      const source = backdrop.texture.getSourceImage() as { width: number; height: number };
+      const coverScale = Math.max(w / source.width, h / source.height);
+      backdrop.setDisplaySize(
+        Math.ceil(source.width * coverScale),
+        Math.ceil(source.height * coverScale),
+      );
+    } else {
+      this.add.tileSprite(0, 0, w, h, TEX.tileGrass).setOrigin(0).setDepth(0);
+      this.add.tileSprite(0, roadY - 28, w, 56, TEX.tilePath).setOrigin(0).setDepth(1);
     }
-    shade.fillStyle(0x0e0f1a, 0.35);
-    shade.fillRect(0, h - 70, w, 70);
+
+    // Keep the painted world bright while giving the logo and commands stable
+    // contrast on every supported portrait height.
+    this.add.rectangle(w / 2, h * 0.18, w, h * 0.36, 0x071426, 0.32).setDepth(5);
+    this.add.rectangle(w / 2, h * 0.5, w, h * 0.28, 0x071426, 0.16).setDepth(5);
   }
 
   /** Job characters (and a slime) stroll across the road in a loop. */
@@ -182,36 +165,19 @@ export class TitleScene extends Phaser.Scene {
     }
   }
 
-  /** Emblem + framed title text with an entrance drop. */
+  /** Generated emblem + title text with an entrance drop. */
   private buildLogo(w: number, h: number): void {
     const cx = w / 2;
     const cy = Math.round(h * 0.26);
-
-    // Pixel crown emblem (procedural, gold with darker outline).
-    const g = this.add.graphics().setDepth(20);
-    const px = (x: number, y: number, pw: number, ph: number, c: number): void => {
-      g.fillStyle(c, 1);
-      g.fillRect(cx + x * 3, cy - 74 + y * 3, pw * 3, ph * 3);
-    };
-    // outline
-    px(-8, 2, 16, 6, 0x6a4a14);
-    px(-8, 0, 2, 4, 0x6a4a14);
-    px(6, 0, 2, 4, 0x6a4a14);
-    px(-1, -1, 2, 4, 0x6a4a14);
-    // body
-    px(-7, 3, 14, 4, 0xf5c542);
-    px(-7, 1, 1, 3, 0xf5c542);
-    px(6, 1, 1, 3, 0xf5c542);
-    px(0, 0, 1, 4, 0xf5c542);
-    px(-4, 2, 1, 3, 0xffe9a0);
-    // gems
-    px(-2, 4, 1, 1, 0xd05a6e);
-    px(2, 4, 1, 1, 0x5a9ad0);
+    const emblem = this.add
+      .image(cx, cy - 72, TEX.titleEmblem)
+      .setDisplaySize(88, 88)
+      .setDepth(20);
 
     const title = this.add
       .text(cx, cy, GAME_TITLE, {
         fontFamily: FONT,
-        fontSize: '30px',
+        fontSize: '28px',
         color: '#f8fbff',
         fontStyle: 'bold',
         stroke: '#10182a',
@@ -232,17 +198,10 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(21)
       .setShadow(0, 1, '#000000', 2);
-    // Gold rule lines flanking the subtitle.
-    const rule = this.add.graphics().setDepth(21);
-    rule.fillStyle(0xf5c542, 0.8);
-    rule.fillRect(cx - 120, cy + 27, 34, 2);
-    rule.fillRect(cx + 86, cy + 27, 34, 2);
 
-    // Entrance: drop + fade (integer-friendly, no scaling).
-    for (const t of [g, title, sub, rule] as const) {
-      const targetY = (t as Phaser.GameObjects.Components.Transform).y;
-      (t as Phaser.GameObjects.Components.Transform).setY(targetY - 14);
-      (t as unknown as Phaser.GameObjects.Components.AlphaSingle).setAlpha(0);
+    for (const t of [emblem, title, sub] as const) {
+      const targetY = t.y;
+      t.setY(targetY - 14).setAlpha(0);
       this.tweens.add({ targets: t, y: targetY, alpha: 1, duration: 420, ease: 'Quad.easeOut' });
     }
   }
@@ -250,7 +209,7 @@ export class TitleScene extends Phaser.Scene {
   /** Fast continue + save management + settings, fading in after the logo. */
   private buildMenu(w: number, h: number): void {
     const menuY = h * 0.5;
-    const startBtn = this.makeButton(w / 2, menuY, '▶ ゲームをはじめる', true, () =>
+    const startBtn = this.makeButton(w / 2, menuY, 'ゲームをはじめる', true, () =>
       this.scene.start('SaveSelect'),
     );
     const continueDetail = this.add
@@ -260,7 +219,7 @@ export class TitleScene extends Phaser.Scene {
     const savesBtn = this.makeButton(w / 2, menuY + 60, 'セーブを選ぶ', false, () =>
       this.scene.start('SaveSelect'),
     );
-    const soundBtn = this.makeButton(w / 2, menuY + 104, '⚙ 設定', false, () => {
+    const soundBtn = this.makeButton(w / 2, menuY + 104, '設定', false, () => {
       this.scene.pause();
       this.scene.launch('Options', { from: 'Title' });
     });
@@ -303,7 +262,7 @@ export class TitleScene extends Phaser.Scene {
         .filter((s) => s.exists)
         .sort((a, b) => (b.savedAt ?? 0) - (a.savedAt ?? 0))[0];
       if (!latest || !startBtn.frame.active || !this.scene.isActive()) return;
-      startBtn.label.setText('▶ つづきから');
+      startBtn.label.setText('つづきから');
       startBtn.setAction(() => void beginGame(this, latest.slot, 'load'));
       continueDetail.setText(`スロット${latest.slot + 1}  Lv ${latest.level ?? '?'}`);
     });
@@ -316,27 +275,34 @@ export class TitleScene extends Phaser.Scene {
     primary: boolean,
     onTap: () => void,
   ): {
-    frame: Phaser.GameObjects.Rectangle;
+    frame: Phaser.GameObjects.NineSlice;
     label: Phaser.GameObjects.Text;
     setAction: (next: () => void) => void;
   } {
-    const bw = primary ? 216 : 172;
-    const bh = primary ? 44 : 36;
+    const bw = primary ? 232 : 190;
+    const bh = primary ? 50 : 42;
     const frame = this.add
-      .rectangle(x, y, bw, bh, primary ? 0x2a2d44 : 0x1c1e30, 0.92)
-      .setStrokeStyle(2, primary ? 0xf5c542 : 0x555a78, primary ? 0.9 : 0.8)
+      .nineslice(x, y, TEX.uiRibbonFrame, undefined, bw, bh, 48, 48, 20, 20)
+      .setTint(primary ? 0xffffff : 0xc8d3df)
+      .setAlpha(primary ? 1 : 0.94)
       .setDepth(25)
       .setInteractive({ useHandCursor: true });
     const text = this.add
       .text(x, y, label, {
         fontFamily: FONT,
-        fontSize: primary ? '17px' : '13px',
-        color: primary ? '#ffffff' : '#cfd3e6',
+        fontSize: primary ? '17px' : '14px',
+        color: primary ? '#ffffff' : '#e8eef7',
+        fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setDepth(26);
     let action = onTap;
-    frame.on('pointerup', () => action());
+    frame.on('pointerdown', () => frame.setScale(0.98));
+    frame.on('pointerout', () => frame.setScale(1));
+    frame.on('pointerup', () => {
+      frame.setScale(1);
+      action();
+    });
     return { frame, label: text, setAction: (next) => (action = next) };
   }
 

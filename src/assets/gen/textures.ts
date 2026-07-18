@@ -164,6 +164,8 @@ export const TEX = {
   uiMapBackdrop: 'art.ui.map.backdrop',
   uiCraftingBackdrop: 'art.ui.crafting.backdrop',
   uiRibbonFrame: 'art.ui.ribbon.frame',
+  titleBackdrop: 'art.ui.title.backdrop.hd',
+  titleEmblem: 'art.ui.title.emblem',
   // Illustrated HUD skin. These are real transparent PNGs rather than canvas
   // primitives so the always-visible game screen shares one art direction.
   hudStatusFrame: 'art.ui.hud.status_frame',

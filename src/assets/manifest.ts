@@ -124,7 +124,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   // Versioned filenames force mobile Safari to discard the previous narrow
   // backgrounds when the painted map dimensions change.
   img(TEX.townMap, 'assets/maps/town-hd-storybook-v1.webp'),
-  img(TEX.fieldMap, 'assets/maps/field-cute-wide-v1.png'),
+  img(TEX.fieldMap, 'assets/maps/field-hd-storybook-v1.webp'),
   img(TEX.forestMap, 'assets/maps/forest-cute-wide-v1.png'),
   img(TEX.dungeonMap, 'assets/maps/dungeon-cute-wide-v1.png'),
   img(TEX.canyonMap, 'assets/maps/canyon-cute-compact-v1.png'),
@@ -154,6 +154,8 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.uiMapBackdrop, 'assets/ui/map-backdrop-storybook-v1.webp'),
   img(TEX.uiCraftingBackdrop, 'assets/ui/crafting-workshop-storybook-v1.webp'),
   img(TEX.uiRibbonFrame, 'assets/ui/ribbon-frame-storybook-v1.png'),
+  img(TEX.titleBackdrop, 'assets/ui/title-backdrop-storybook-hd-v1.webp'),
+  img(TEX.titleEmblem, 'assets/ui/title-emblem-storybook-v1.png'),
   // Cohesive illustrated battle HUD. Dynamic values/icons remain code-driven;
   // these transparent bezels supply the production-quality material finish.
   img(TEX.hudStatusFrame, 'assets/ui/hud-status-frame.png'),
