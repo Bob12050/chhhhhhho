@@ -468,7 +468,16 @@ try {
       );
       await page.evaluate(() => window.__test.warp('volcano', 450, 440));
       await page.waitForTimeout(400);
-      await page.keyboard.down('w'); await page.waitForTimeout(1500); await page.keyboard.up('w');
+      await page.keyboard.down('w');
+      await page.waitForFunction(
+        () => {
+          const state = window.__test.snapshot();
+          return state.mapId === 'volcano' && state.y < 330;
+        },
+        undefined,
+        { timeout: 5000 },
+      ).catch(() => {});
+      await page.keyboard.up('w');
       const upperLavaBridge = await snap(page);
       check(
         '火山右側の上段溶岩橋を北へ渡れる',
