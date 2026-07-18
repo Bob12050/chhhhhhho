@@ -437,7 +437,9 @@ try {
       check('渓谷の洞穴から洞窟へ戻れる', caveMouth.mapId === 'dungeon', `mapId=${caveMouth.mapId}`);
       await page.evaluate(() => window.__test.warp('canyon', 320, 820));
       await page.waitForTimeout(400);
-      await moveUntil(page, 'a', { mapId: 'canyon', axis: 'x', lt: 210 });
+      // The trail runs through the narrow gap between the west wall and mesa.
+      // Move into the middle of that gap before turning north.
+      await moveUntil(page, 'a', { mapId: 'canyon', axis: 'x', lt: 150 });
       await moveUntil(page, 'w', { mapId: 'canyon', axis: 'y', lt: 760 });
       const mesaTrail = await snap(page);
       check(
