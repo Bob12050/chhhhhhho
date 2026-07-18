@@ -101,21 +101,31 @@ export function installTestHooks(game: Phaser.Game): void {
     activateText: (sceneKey: string, label: string) => {
       const scene = game.scene.getScene(sceneKey);
       if (!scene?.scene.isActive()) return false;
-      const pending = [...scene.children.list];
+      const pending = scene.children.list.map((child) => ({
+        child,
+        interactiveAncestor: undefined as Phaser.GameObjects.GameObject | undefined,
+      }));
       while (pending.length) {
-        const child = pending.shift();
-        if (!child) continue;
+        const entry = pending.shift();
+        if (!entry) continue;
+        const { child, interactiveAncestor } = entry;
+        const interactive = child.input?.enabled ? child : interactiveAncestor;
         if (
           child.type === 'Text'
           && 'text' in child
           && typeof child.text === 'string'
           && child.text.includes(label)
-          && child.input?.enabled
+          && interactive
         ) {
-          child.emit('pointerup');
+          interactive.emit('pointerup');
           return true;
         }
-        if ('list' in child && Array.isArray(child.list)) pending.push(...child.list);
+        if ('list' in child && Array.isArray(child.list)) {
+          pending.push(...child.list.map((nested) => ({
+            child: nested,
+            interactiveAncestor: interactive,
+          })));
+        }
       }
       return false;
     },

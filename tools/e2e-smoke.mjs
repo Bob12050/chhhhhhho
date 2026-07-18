@@ -31,6 +31,22 @@ function check(name, cond, detail = '') {
 
 const snap = (p) => p.evaluate(() => window.__test.snapshot());
 
+async function waitForScene(page, sceneKey, timeout = 30000) {
+  await page.waitForFunction(
+    (key) => window.__test?.activeScenes().includes(key),
+    sceneKey,
+    { timeout },
+  );
+}
+
+async function activateTextWhenReady(page, sceneKey, label, timeout = 10000) {
+  await page.waitForFunction(
+    ([key, text]) => window.__test?.activateText(key, text) === true,
+    [sceneKey, label],
+    { polling: 100, timeout },
+  );
+}
+
 try {
   browser = await chromium.launch({
     args: ['--use-gl=swiftshader', '--no-sandbox'],
@@ -43,22 +59,35 @@ try {
   // ---- boot: first-run notice → title → slot 1 → elder quest → skip tutorial ----
   step = 'boot';
   await page.goto(URL, { waitUntil: 'load' });
-  await page.waitForTimeout(2500);
-  await page.mouse.click(180, 400); await page.waitForTimeout(1200);
-  await page.mouse.click(180, 360); await page.waitForTimeout(900);
-  await page.mouse.click(294, 156); await page.waitForTimeout(1800);
+  await page.waitForFunction(
+    () => window.__test?.activeScenes().some((key) => key === 'Notice' || key === 'Title'),
+    undefined,
+    { timeout: 30000 },
+  );
+  const openingScenes = await page.evaluate(() => window.__test.activeScenes());
+  if (openingScenes.includes('Notice')) {
+    await page.mouse.click(180, 400);
+  }
+  await waitForScene(page, 'Title');
+  await page.mouse.click(180, 360);
+  await waitForScene(page, 'SaveSelect');
+  await activateTextWhenReady(page, 'SaveSelect', 'はじめる');
+  await waitForScene(page, 'Dialogue', 20000);
   // Advance the three elder lines via the scene's keyboard contract, then
   // activate the choice by label. Coordinate taps here were brittle whenever
   // the logical height or device letterbox changed.
   for (let i = 0; i < 3; i++) {
-    await page.keyboard.press('e'); await page.waitForTimeout(220);
+    await page.keyboard.press('e'); await page.waitForTimeout(120);
   }
-  const introAccepted = await page.evaluate(() => window.__test.activateText('Dialogue', '依頼を受ける'));
-  if (!introAccepted) throw new Error('intro quest choice was not available');
-  await page.waitForTimeout(300);
+  await activateTextWhenReady(page, 'Dialogue', '依頼を受ける');
+  await page.waitForFunction(
+    () => !window.__test.activeScenes().includes('Dialogue')
+      && window.__test.activeScenes().includes('World'),
+    undefined,
+    { timeout: 10000 },
+  );
   await page.waitForTimeout(500);
   await page.mouse.click(64, 610); await page.waitForTimeout(800);
-  await page.waitForFunction(() => !!window.__test, undefined, { timeout: 10000 });
   let s = await snap(page);
   check('新規ゲームで町に降り立つ', s.mapId === 'town', `mapId=${s.mapId}`);
   const townTexture = await page.evaluate(() =>
