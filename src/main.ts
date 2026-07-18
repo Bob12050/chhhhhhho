@@ -7,6 +7,7 @@ import { BootScene } from '@/scenes/boot-scene';
 import { NoticeScene } from '@/scenes/notice-scene';
 import { TitleScene } from '@/scenes/title-scene';
 import { SaveSelectScene } from '@/scenes/save-select-scene';
+import { CharacterSelectScene } from '@/scenes/character-select-scene';
 import { WorldScene } from '@/scenes/world-scene';
 import { UIScene } from '@/scenes/ui-scene';
 import { InventoryScene } from '@/scenes/inventory-scene';
@@ -85,6 +86,7 @@ const config: Phaser.Types.Core.GameConfig = {
     NoticeScene,
     TitleScene,
     SaveSelectScene,
+    CharacterSelectScene,
     WorldScene,
     UIScene,
     InventoryScene,

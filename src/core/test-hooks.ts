@@ -17,6 +17,7 @@ import { syncInvestigationQuests } from '@/endgame/investigations';
 import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
 import { getEquipment } from '@/data/items';
 import { getEnemyDef } from '@/enemies/enemy-defs';
+import type { CharacterGender } from '@/player/character-gender';
 
 export interface TestHooks {
   activeScenes(): string[];
@@ -30,6 +31,7 @@ export interface TestHooks {
     gold: number;
     mapId: string;
     jobId: string;
+    gender: CharacterGender;
     x: number;
     y: number;
     activeQuests: string[];
@@ -58,6 +60,8 @@ export interface TestHooks {
   discoverEnemy(enemyId: string): boolean;
   /** Visual QA only: bypass unlock requirements and swap the active job look. */
   forceJob(id: string): boolean;
+  /** Visual QA only: switch the selected character variant. */
+  forceGender(gender: CharacterGender): void;
   /** Warp to a map's default spawn (or x/y) via the real travel path. */
   warp(mapId: string, x?: number, y?: number): boolean;
   addEgg(petItemId: string): boolean;
@@ -168,6 +172,7 @@ export function installTestHooks(game: Phaser.Game): void {
       gold: gameState.gold,
       mapId: gameState.mapId,
       jobId: gameState.jobId,
+      gender: gameState.gender,
       x: worldPosition.x,
       y: worldPosition.y,
       activeQuests: [...gameState.activeQuests],
@@ -206,6 +211,10 @@ export function installTestHooks(game: Phaser.Game): void {
       gameState.jobId = id;
       bus.emit('job:changed', { jobId: id });
       return true;
+    },
+    forceGender: (gender: CharacterGender) => {
+      gameState.gender = gender;
+      bus.emit('job:changed', { jobId: gameState.jobId });
     },
     warp: (mapId: string, x?: number, y?: number) => {
       const m = getMap(mapId);

@@ -94,6 +94,9 @@ try {
   await activateTextWhenReady(page, 'Title', 'ゲームをはじめる');
   await waitForScene(page, 'SaveSelect');
   await activateTextWhenReady(page, 'SaveSelect', 'はじめる');
+  await waitForScene(page, 'CharacterSelect');
+  await activateTextWhenReady(page, 'CharacterSelect', '男性');
+  await activateTextWhenReady(page, 'CharacterSelect', 'この姿で始める');
   await waitForScene(page, 'Dialogue', 20000);
   // Advance the three elder lines via the scene's keyboard contract, then
   // activate the choice by label. Coordinate taps here were brittle whenever
@@ -177,6 +180,47 @@ try {
       && adventurerLooks.diagonal?.height === 1152,
     JSON.stringify(adventurerLooks),
   );
+  const maleLooks = [
+    ['adventurer', 'art.player.body.male', 'art.player.body.male.diagonal'],
+    ['fighter', 'art.char.fighter.male', 'art.char.fighter.male.diagonal'],
+    ['mage', 'art.char.mage.male', 'art.char.mage.male.diagonal'],
+    ['priest', 'art.char.priest.male', 'art.char.priest.male.diagonal'],
+    ['thief', 'art.char.thief.male', 'art.char.thief.male.diagonal'],
+    ['pet_raiser', 'art.char.pet_raiser.male', 'art.char.pet_raiser.male.diagonal'],
+    ['samurai', 'art.char.samurai.male', 'art.char.samurai.male.diagonal'],
+    ['sorcerer', 'art.char.sorcerer.male', 'art.char.sorcerer.male.diagonal'],
+    ['holy_knight', 'art.char.holy_knight.male', 'art.char.holy_knight.male.diagonal'],
+    ['ninja', 'art.char.ninja.male', 'art.char.ninja.male.diagonal'],
+    ['ranger', 'art.char.ranger.male', 'art.char.ranger.male.diagonal'],
+    ['sword_kaiser', 'art.char.sword_kaiser.male', 'art.char.sword_kaiser.male.diagonal'],
+    ['grand_magia', 'art.char.grand_magia.male', 'art.char.grand_magia.male.diagonal'],
+    ['shield_saber', 'art.char.shield_saber.male', 'art.char.shield_saber.male.diagonal'],
+    ['avengista', 'art.char.avengista.male', 'art.char.avengista.male.diagonal'],
+    ['dual_star', 'art.char.dual_star.male', 'art.char.dual_star.male.diagonal'],
+    ['aramikagura', 'art.char.aramikagura.male', 'art.char.aramikagura.male.diagonal'],
+    ['alvride', 'art.char.alvride.male', 'art.char.alvride.male.diagonal'],
+    ['nirvadio', 'art.char.nirvadio.male', 'art.char.nirvadio.male.diagonal'],
+    ['noxtia', 'art.char.noxtia.male', 'art.char.noxtia.male.diagonal'],
+    ['oltarie', 'art.char.oltarie.male', 'art.char.oltarie.male.diagonal'],
+  ];
+  let allMaleLooks = true;
+  for (const [, cardinalKey, diagonalKey] of maleLooks) {
+    const result = await page.evaluate(([cardinal, diagonal]) => ({
+      cardinal: window.__test.textureSize(cardinal),
+      diagonal: window.__test.textureSize(diagonal),
+    }), [cardinalKey, diagonalKey]);
+    allMaleLooks &&= result.cardinal?.width === 768
+      && result.cardinal?.height === 3456
+      && result.diagonal?.width === 768
+      && result.diagonal?.height === 1152;
+  }
+  check('男性21職の通常・斜め外見をHDで読み込める', allMaleLooks);
+  await page.evaluate(() => {
+    window.__test.forceGender('male');
+    window.__test.forceJob('fighter');
+  });
+  s = await snap(page);
+  check('男性を選んだまま転職できる', s.gender === 'male' && s.jobId === 'fighter');
   await page.evaluate(() => window.__test.forceJob('adventurer'));
   check('初期クエストが受注済み', s.activeQuests.includes('q_apprentice'));
   check(
@@ -797,6 +841,11 @@ try {
   await activateTextWhenReady(page, 'Title', 'つづきから', 20000);
   await waitForScene(page, 'World', 20000);
   s = await snap(page);
+  check(
+    'リロード後も男性キャラクターが残る',
+    s.gender === beforeReload.gender && s.gender === 'male',
+    `${beforeReload.gender}→${s.gender}`,
+  );
   check('リロード後もレベルが残る', s.level === beforeReload.level, `${beforeReload.level}→${s.level}`);
   check('リロード後もペットが残る', s.ownedPets.includes('wolf_pet'));
   check('リロード後も図鑑討伐数が残る', (s.killCounts['slime'] ?? 0) > 0);
@@ -816,3 +865,4 @@ if (failures.length) {
   for (const f of failures) console.log(`  FAILED: ${f}`);
   process.exit(1);
 }
+process.exit(0);

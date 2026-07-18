@@ -1,12 +1,16 @@
 import { INTRO_PENDING_FLAG } from '@/tutorial/onboarding';
 import type { EquipmentDef } from '@/data/items';
+import {
+  normalizeCharacterGender,
+  type CharacterGender,
+} from '@/player/character-gender';
 
 /**
  * Save data schema. Versioned with a migration path. Phase 0 stores a subset;
  * Phase 1 fields (jobs, skills, pets, quest flags...) extend this same shape.
  * IDs are stable strings; deleted/unknown ids are dropped on load (defensive).
  */
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 export interface SaveDataV1 {
   version: number;
@@ -26,6 +30,7 @@ export interface SaveDataV1 {
     skills: Record<string, number>; // skillId -> level (1 = learned)
     skillSlots: (string | null)[]; // active skill assigned to each slot
     skillPoints: number;
+    gender: CharacterGender;
     jobId: string;
     unlockedJobs: string[];
     jobLevels: Record<string, number>; // jobId -> level (multi-job system)
@@ -60,7 +65,10 @@ export interface SaveDataV1 {
 
 export type SaveData = SaveDataV1;
 
-export function createDefaultSave(slot: number): SaveData {
+export function createDefaultSave(
+  slot: number,
+  gender: CharacterGender = 'female',
+): SaveData {
   return {
     version: SAVE_VERSION,
     slot,
@@ -79,6 +87,7 @@ export function createDefaultSave(slot: number): SaveData {
       skills: { slash: 1 },
       skillSlots: ['slash', null],
       skillPoints: 0,
+      gender,
       jobId: 'adventurer',
       unlockedJobs: ['adventurer'],
       jobLevels: { adventurer: 1 },
@@ -151,6 +160,9 @@ export function migrate(raw: unknown, slot: number): SaveData {
     },
     settings: { ...def.settings, ...(data.settings ?? {}) },
   };
+
+  // Saves created before gender selection keep their current artwork.
+  merged.player.gender = normalizeCharacterGender(data.player?.gender);
 
   // Remap legacy placeholder job ids (pre-canonical tree) to canonical ones.
   const LEGACY_JOBS: Record<string, string> = { novice: 'adventurer', warrior: 'fighter' };

@@ -3,7 +3,11 @@ import { saveManager, SLOT_COUNT, type SlotSummary } from '@/save/save-manager';
 import { beginGame } from '@/core/game-flow';
 import { getMap } from '@/maps/map-def';
 import { getJob } from '@/jobs/job-defs';
-import { appearanceTexKey, appearanceTextureScale } from '@/jobs/job-appearance';
+import {
+  appearanceTexKey,
+  appearanceTextureScale,
+  baseAppearanceTexKey,
+} from '@/jobs/job-appearance';
 import { frameIndex } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
 import { FONT, addSceneBackdrop, pillButton, ninePanel, titlePlate } from '@/ui/theme';
@@ -74,8 +78,11 @@ export class SaveSelectScene extends Phaser.Scene {
 
     if (summary.exists) {
       const job = summary.jobId ? getJob(summary.jobId) : undefined;
-      const art = appearanceTexKey(job?.appearance);
-      const texture = art && this.textures.exists(art) ? art : TEX.playerBody;
+      const gender = summary.gender ?? 'female';
+      const art = appearanceTexKey(job?.appearance, gender);
+      const texture = art && this.textures.exists(art)
+        ? art
+        : baseAppearanceTexKey(gender);
       this.add
         .ellipse(54, y + 76, 44, 12, 0x050814, 0.52)
         .setDepth(2);
@@ -111,7 +118,9 @@ export class SaveSelectScene extends Phaser.Scene {
         .text(90, y + 31, '新しい冒険', { fontFamily: FONT, fontSize: '15px', color: '#e8eefc' })
         .setDepth(2);
       this.add.text(90, y + 55, '最初から始める', { fontFamily: FONT, fontSize: '10px', color: '#8fa0b8' }).setDepth(2);
-      pillButton(this, w - 66, cy, '＋ はじめる', () => void beginGame(this, slot, 'new'), {
+      pillButton(this, w - 66, cy, '＋ はじめる', () => {
+        this.scene.start('CharacterSelect', { slot });
+      }, {
         color: '#ffe9a8',
         bg: '#3a3050',
         size: 14,

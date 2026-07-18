@@ -8,6 +8,8 @@ import {
   appearanceDiagonalTexKey,
   appearanceTexKey,
   appearanceTextureScale,
+  baseAppearanceDiagonalTexKey,
+  baseAppearanceTexKey,
 } from '@/jobs/job-appearance';
 import { gameState } from '@/player/game-state';
 import { directionFromVector, directionVector } from '@/config/directions';
@@ -96,13 +98,15 @@ export class Player {
   setJobAppearance(jobId: string): void {
     const job = getJob(jobId);
     const appearance = job?.appearance;
-    const key = appearanceTexKey(appearance);
-    const texture = key && this.scene.textures.exists(key) ? key : TEX.playerBody;
+    const baseTexture = baseAppearanceTexKey(gameState.gender);
+    const baseDiagonalTexture = baseAppearanceDiagonalTexKey(gameState.gender);
+    const key = appearanceTexKey(appearance, gameState.gender);
+    const texture = key && this.scene.textures.exists(key) ? key : baseTexture;
     clearIronEquipmentAppearance(this.doll);
     this.doll.setLayer('base_body', texture, {
-      diagonalTextureKey: texture === TEX.playerBody
-        ? TEX.playerBodyDiagonal
-        : appearanceDiagonalTexKey(appearance),
+      diagonalTextureKey: texture === baseTexture
+        ? baseDiagonalTexture
+        : appearanceDiagonalTexKey(appearance, gameState.gender),
       displayScale: appearanceTextureScale(texture),
     });
     this.jobPlateText.setText(job?.name ?? jobId);

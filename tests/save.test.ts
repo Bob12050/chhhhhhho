@@ -19,6 +19,7 @@ describe('save round trip', () => {
     gs.skillPoints = 1;
     gs.learnSkill('toughness');
     gs.flags['boss_first_kill'] = true;
+    gs.gender = 'male';
     gs.x = 123;
     gs.y = 456;
 
@@ -37,6 +38,7 @@ describe('save round trip', () => {
     expect(loaded.gold).toBe(150);
     expect(loaded.skills.toughness).toBe(1);
     expect(loaded.flags.boss_first_kill).toBe(true);
+    expect(loaded.gender).toBe('male');
     expect(loaded.x).toBe(123);
     expect(loaded.derived.physAtk).toBe(gs.derived.physAtk);
   });
@@ -48,6 +50,11 @@ describe('save migration / defensive load', () => {
     expect(m.version).toBe(SAVE_VERSION);
     expect(m.player.level).toBe(9);
     expect(m.player.base.STR).toBe(createDefaultSave(0).player.base.STR);
+    expect(m.player.gender).toBe('female');
+  });
+
+  it('uses the selected gender for a new save', () => {
+    expect(createDefaultSave(0, 'male').player.gender).toBe('male');
   });
 
   it('drops unknown equipment ids on load', () => {

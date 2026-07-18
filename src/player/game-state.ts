@@ -26,7 +26,11 @@ import { petLevelFromExp, scaledPassive, DUPLICATE_EGG_EXP } from '@/pets/pet-gr
 import { EQUIP_SLOTS, type EquipSlot } from '@/equipment/slots';
 import { bus } from '@/core/event-bus';
 import { expToNext } from '@/stats/leveling';
-import type { SaveData } from '@/save/schema';
+import { SAVE_VERSION, type SaveData } from '@/save/schema';
+import {
+  normalizeCharacterGender,
+  type CharacterGender,
+} from '@/player/character-gender';
 import { syncInvestigationQuests } from '@/endgame/investigations';
 import { bossSetStatModifiers } from '@/equipment/boss-set-bonuses';
 import {
@@ -90,6 +94,7 @@ export class GameState {
   skills: Record<string, number> = {};
   skillSlots: (string | null)[] = [null, null];
   skillPoints = 0;
+  gender: CharacterGender = 'female';
   jobId = 'adventurer';
   unlockedJobs: string[] = ['adventurer'];
   /**
@@ -554,7 +559,7 @@ export class GameState {
   // --- Save bridge ---
   toSave(slot: number): SaveData {
     return {
-      version: 1,
+      version: SAVE_VERSION,
       slot,
       savedAt: Date.now(),
       mapId: this.mapId,
@@ -571,6 +576,7 @@ export class GameState {
         skills: { ...this.skills },
         skillSlots: [...this.skillSlots],
         skillPoints: this.skillPoints,
+        gender: this.gender,
         jobId: this.jobId,
         unlockedJobs: [...this.unlockedJobs],
         jobLevels: { ...this.jobLevels, [this.jobId]: this.level },
@@ -614,6 +620,7 @@ export class GameState {
     this.skills = { ...(data.player.skills ?? {}) };
     this.skillSlots = [...(data.player.skillSlots ?? [null, null])];
     this.skillPoints = data.player.skillPoints ?? 0;
+    this.gender = normalizeCharacterGender(data.player.gender);
     this.jobId = data.player.jobId ?? 'adventurer';
     this.unlockedJobs = [...(data.player.unlockedJobs ?? ['adventurer'])];
     this.jobLevels = { ...(data.player.jobLevels ?? { [this.jobId]: this.level }) };

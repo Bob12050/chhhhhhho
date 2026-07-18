@@ -8,7 +8,11 @@ import type { BaseStats } from '@/stats/stats';
 import { expToNext } from '@/stats/leveling';
 import { allSkills, getSkill, type SkillDef } from '@/skills/skill-defs';
 import { getJob } from '@/jobs/job-defs';
-import { appearanceTexKey, appearanceTextureScale } from '@/jobs/job-appearance';
+import {
+  appearanceTexKey,
+  appearanceTextureScale,
+  baseAppearanceTexKey,
+} from '@/jobs/job-appearance';
 import { frameIndex } from '@/paperdoll/pose-atlas';
 import { bus } from '@/core/event-bus';
 import { FONT, addPanelChrome, rowBand, tabChip, pillButton, ninePanel, type TabHandle } from '@/ui/theme';
@@ -451,8 +455,10 @@ export class InventoryScene extends Phaser.Scene {
     const gs = gameState;
     const job = getJob(gs.jobId);
     const tierLabel = job ? (job.tier === 0 ? '初期職' : `${job.tier}次職`) : '';
-    const art = appearanceTexKey(job?.appearance);
-    const texture = art && this.textures.exists(art) ? art : TEX.playerBody;
+    const art = appearanceTexKey(job?.appearance, gameState.gender);
+    const texture = art && this.textures.exists(art)
+      ? art
+      : baseAppearanceTexKey(gameState.gender);
     const panel = ninePanel(this, w / 2, y + height / 2, w - 16, height).setDepth(2);
     this.profileObjs.push(panel);
 
