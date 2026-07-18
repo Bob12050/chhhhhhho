@@ -109,7 +109,26 @@ export function installTestHooks(game: Phaser.Game): void {
         const entry = pending.shift();
         if (!entry) continue;
         const { child, interactiveAncestor } = entry;
-        const interactive = child.input?.enabled ? child : interactiveAncestor;
+        let interactive = child.input?.enabled ? child : interactiveAncestor;
+        // Some controls keep their interactive frame and visible label as
+        // same-position siblings (for example the title menu). Resolve that
+        // frame too, so automation follows the labelled control instead of a
+        // density-dependent screen coordinate.
+        if (!interactive && 'x' in child && 'y' in child) {
+          const x = child.x;
+          const y = child.y;
+          if (typeof x === 'number' && typeof y === 'number') {
+            interactive = scene.children.list.find((candidate) => (
+              candidate.input?.enabled
+              && 'x' in candidate
+              && 'y' in candidate
+              && typeof candidate.x === 'number'
+              && typeof candidate.y === 'number'
+              && Math.abs(candidate.x - x) < 1
+              && Math.abs(candidate.y - y) < 1
+            ));
+          }
+        }
         if (
           child.type === 'Text'
           && 'text' in child

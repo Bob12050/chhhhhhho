@@ -69,7 +69,7 @@ try {
     await page.mouse.click(180, 400);
   }
   await waitForScene(page, 'Title');
-  await page.mouse.click(180, 360);
+  await activateTextWhenReady(page, 'Title', 'ゲームをはじめる');
   await waitForScene(page, 'SaveSelect');
   await activateTextWhenReady(page, 'SaveSelect', 'はじめる');
   await waitForScene(page, 'Dialogue', 20000);
