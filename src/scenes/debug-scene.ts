@@ -12,6 +12,12 @@ import { INVESTIGATION_SEAL_ID, syncInvestigationQuests } from '@/endgame/invest
 import { generateInvestigationEquipment } from '@/endgame/investigation-loot';
 import { INVESTIGATION_CRYSTAL_ID } from '@/endgame/investigation-forge';
 import { allBossRareExchanges } from '@/crafting/boss-rare-exchange';
+import { isDebugEnabled } from '@/core/debug';
+
+interface DebugSceneData {
+  returnTo?: string;
+  settingsFrom?: string;
+}
 
 /**
  * Debug menu (gated by core/debug.isDebugEnabled). Warp between maps and grant
@@ -20,13 +26,26 @@ import { allBossRareExchanges } from '@/crafting/boss-rare-exchange';
  */
 export class DebugScene extends Phaser.Scene {
   private status!: Phaser.GameObjects.Text;
+  private returnTo = 'World';
+  private settingsFrom = '';
 
   constructor() {
     super('Debug');
   }
 
+  init(data?: DebugSceneData): void {
+    this.returnTo = data?.returnTo ?? 'World';
+    this.settingsFrom = data?.settingsFrom ?? '';
+  }
+
   create(): void {
     const w = this.scale.width;
+    const h = this.scale.height;
+    if (!isDebugEnabled()) {
+      this.scene.stop();
+      this.scene.resume(this.returnTo);
+      return;
+    }
     addBackdrop(this);
     this.add
       .text(16, 20, 'DEBUG', { fontFamily: FONT, fontSize: '18px', color: '#ff8888' })
@@ -36,6 +55,23 @@ export class DebugScene extends Phaser.Scene {
       .text(16, 46, '', { fontFamily: 'system-ui, monospace', fontSize: '11px', color: '#cfd3e6' })
       .setDepth(1);
     this.refreshStatus();
+
+    const hasWorld = this.scene.isActive('World') || this.scene.isPaused('World');
+    if (!hasWorld) {
+      this.add
+        .text(w / 2, 132, 'ゲーム開始後の設定から\nデバッグ機能を利用できます', {
+          fontFamily: FONT,
+          fontSize: '15px',
+          color: '#d9dfec',
+          align: 'center',
+          lineSpacing: 8,
+        })
+        .setOrigin(0.5)
+        .setDepth(1);
+      this.btn(w / 2 - 44, Math.min(220, h - 80), 'とじる', () => this.close(), 0xffd86b);
+      this.input.keyboard?.on('keydown-ESC', () => this.close());
+      return;
+    }
 
     let y = 88;
     this.label('ワープ', y);
@@ -91,6 +127,7 @@ export class DebugScene extends Phaser.Scene {
     this.btn(16, y, '第二形態を即確認', () => this.triggerBossPhase(), 0x6a2a52);
     y += 40;
     this.btn(16, y, '通し確認チェックリスト', () => {
+      this.stopSettingsStack();
       this.scene.stop();
       this.scene.launch('Checklist');
     });
@@ -112,8 +149,7 @@ export class DebugScene extends Phaser.Scene {
     gameState.mapId = mapId;
     gameState.x = x ?? sp.x;
     gameState.y = y ?? sp.y;
-    this.scene.stop();
-    this.scene.resume('World');
+    this.returnToGameplay();
     bus.emit('debug:warp', {});
   }
 
@@ -161,7 +197,7 @@ export class DebugScene extends Phaser.Scene {
     gs.recompute();
     gs.fullHeal();
     bus.emit('job:changed', { jobId: 'fighter' });
-    this.close();
+    this.returnToGameplay();
   }
 
   private grantHuntProofs(): void {
@@ -180,6 +216,7 @@ export class DebugScene extends Phaser.Scene {
     for (const itemId of Object.values(pieces)) gameState.addEquipment(itemId);
     Object.assign(gameState.equipment, pieces);
     gameState.recompute();
+    this.stopSettingsStack();
     this.scene.stop();
     this.scene.launch('Inventory', { tab: 'equipment' });
   }
@@ -200,6 +237,7 @@ export class DebugScene extends Phaser.Scene {
     gs.addMaterial(INVESTIGATION_CRYSTAL_ID, 99);
     gs.addMaterial(INVESTIGATION_SEAL_ID, 99);
     gs.recompute();
+    this.stopSettingsStack();
     this.scene.stop();
     this.scene.launch('Inventory', { tab: 'equipment' });
   }
@@ -220,7 +258,7 @@ export class DebugScene extends Phaser.Scene {
 
   private triggerBossPhase(): void {
     bus.emit('debug:boss-phase', {});
-    this.close();
+    this.returnToGameplay();
   }
 
   /**
@@ -295,6 +333,18 @@ export class DebugScene extends Phaser.Scene {
   }
 
   private close(): void {
+    this.scene.stop();
+    this.scene.resume(this.returnTo);
+  }
+
+  private stopSettingsStack(): void {
+    if (this.returnTo !== 'Options') return;
+    this.scene.stop('Options');
+    if (this.settingsFrom === 'Inventory') this.scene.stop('Inventory');
+  }
+
+  private returnToGameplay(): void {
+    this.stopSettingsStack();
     this.scene.stop();
     this.scene.resume('World');
   }

@@ -85,9 +85,29 @@ export class OptionsScene extends Phaser.Scene {
         this.apply();
         bus.emit('sfx:play', { id: 'ui_tap' });
       });
+      const debugMenuButton = pillButton(
+        this,
+        this.scale.width / 2,
+        424,
+        'デバッグメニューを開く',
+        () => this.openDebugMenu(),
+        {
+          color: '#ffe9a8',
+          bg: '#4a3040',
+          size: 14,
+        },
+      );
+      const setDebugMenuVisible = (enabled: boolean): void => {
+        debugMenuButton.setVisible(enabled);
+        if (debugMenuButton.input) debugMenuButton.input.enabled = enabled;
+      };
+      setDebugMenuVisible(isDebugEnabled());
+      this.content.add(debugMenuButton);
+
       this.toggleRow(340, 'デバッグモード', isDebugEnabled(), (enabled) => {
         setDebugEnabled(enabled);
         this.syncDebugScenes(enabled);
+        setDebugMenuVisible(enabled);
       });
     } else {
       this.choiceRow(
@@ -126,7 +146,7 @@ export class OptionsScene extends Phaser.Scene {
 
     this.content.add(
       this.add
-        .text(this.scale.width / 2, 398, '設定は自動で保存されます', {
+        .text(this.scale.width / 2, section === 'sound' ? 478 : 398, '設定は自動で保存されます', {
           fontFamily: FONT,
           fontSize: '11px',
           color: '#9aa0b5',
@@ -307,6 +327,15 @@ export class OptionsScene extends Phaser.Scene {
     if (this.from === 'Inventory' && !this.scene.isActive('DebugOverlay')) {
       this.scene.launch('DebugOverlay');
     }
+  }
+
+  private openDebugMenu(): void {
+    if (!isDebugEnabled() || this.scene.isActive('Debug')) return;
+    this.scene.pause();
+    this.scene.launch('Debug', {
+      returnTo: 'Options',
+      settingsFrom: this.from,
+    });
   }
 
   private close(): void {

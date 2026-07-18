@@ -232,6 +232,25 @@ try {
     JSON.stringify(s.questGuide),
   );
 
+  // Debug mode must be reachable from the same settings screen that enables it.
+  await activateTextWhenReady(page, 'UI', 'もちもの');
+  await waitForScene(page, 'Inventory');
+  await activateTextWhenReady(page, 'Inventory', '設定');
+  await waitForScene(page, 'Options');
+  await activateTextWhenReady(page, 'Options', 'デバッグメニューを開く');
+  await waitForScene(page, 'Debug');
+  check('設定からデバッグメニューを開ける', true);
+  await activateTextWhenReady(page, 'Debug', 'とじる');
+  await waitForScene(page, 'Options');
+  check(
+    'デバッグメニューを閉じると設定へ戻る',
+    !(await page.evaluate(() => window.__test.activeScenes().includes('Debug'))),
+  );
+  await activateTextWhenReady(page, 'Options', 'とじる');
+  await waitForScene(page, 'Inventory');
+  await page.keyboard.press('Escape');
+  await waitForScene(page, 'World');
+
   // The painted fountain and the storefronts must not join into a full-width
   // invisible wall. Reproduce the phone report: walk up its narrow left lane.
   await page.evaluate(() => window.__test.warp('town', 250, 550));
