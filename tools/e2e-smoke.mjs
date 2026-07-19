@@ -268,6 +268,20 @@ try {
     (menuAfter?.y ?? 0) > (menuBefore?.y ?? 0) + 80,
     JSON.stringify({ before: menuBefore, after: menuAfter }),
   );
+  await page.mouse.move(180, 330);
+  await page.mouse.down();
+  for (const y of [370, 420, 470, 520, 570]) {
+    await page.mouse.move(180, y);
+    await page.waitForTimeout(18);
+  }
+  await page.mouse.up();
+  await page.waitForTimeout(100);
+  const menuAfterReverse = await page.evaluate(() => window.__test.sceneScroll('BalanceLab'));
+  check(
+    '縦長メニューが2回目の逆方向スワイプにも反応する',
+    (menuAfterReverse?.y ?? 0) < (menuAfter?.y ?? 0) - 50,
+    JSON.stringify({ first: menuAfter, second: menuAfterReverse }),
+  );
   await page.keyboard.press('Escape');
   await waitForScene(page, 'Debug');
   await activateTextWhenReady(page, 'Debug', '職業ツリー');
@@ -295,6 +309,20 @@ try {
     '職業ツリーを指に追従して横スクロールできる',
     (treeAfter?.x ?? 0) > (treeBefore?.x ?? 0) + 80,
     JSON.stringify({ canvasBounds, before: treeBefore, during: treeDuring, after: treeAfter }),
+  );
+  await page.mouse.move(65, 500);
+  await page.mouse.down();
+  for (const x of [105, 150, 195, 240, 285]) {
+    await page.mouse.move(x, 500);
+    await page.waitForTimeout(18);
+  }
+  await page.mouse.up();
+  await page.waitForTimeout(100);
+  const treeAfterReverse = await page.evaluate(() => window.__test.sceneScroll('JobChange'));
+  check(
+    '職業ツリーが2回目の逆方向スワイプにも反応する',
+    (treeAfterReverse?.x ?? 0) < (treeAfter?.x ?? 0) - 50,
+    JSON.stringify({ first: treeAfter, second: treeAfterReverse }),
   );
   await activateTextWhenReady(page, 'JobChange', 'とじる');
   await waitForScene(page, 'World');

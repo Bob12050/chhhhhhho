@@ -25,6 +25,7 @@ export interface KineticScrollOptions {
 export class KineticScroll {
   private readonly axis: ScrollAxis;
   private readonly indicator: Phaser.GameObjects.Graphics | null;
+  private activePointer: Phaser.Input.Pointer | null = null;
   private pointerId: number | null = null;
   private tracking = false;
   private dragging = false;
@@ -49,9 +50,12 @@ export class KineticScroll {
     scene.input.on('pointermove', this.handlePointerMove);
     scene.input.on('pointerup', this.handlePointerUp);
     scene.input.on('pointerupoutside', this.handlePointerUp);
+    scene.input.on('gameout', this.handleInputLost);
     scene.input.on('wheel', this.handleWheel);
+    scene.game.events.on(Phaser.Core.Events.BLUR, this.handleInputLost);
     scene.events.on(Phaser.Scenes.Events.UPDATE, this.update);
     scene.events.once(Phaser.Scenes.Events.SHUTDOWN, this.destroy);
+    options.onDragState?.(false);
     this.drawIndicator();
   }
 
@@ -59,7 +63,9 @@ export class KineticScroll {
     if (this.options.enabled?.() === false || !this.contains(pointer)) return;
 
     const moving = Math.abs(this.velocity) >= 35;
+    this.releaseTracking(false);
     this.velocity = 0;
+    this.activePointer = pointer;
     this.pointerId = pointer.id;
     this.tracking = true;
     this.dragging = moving;
@@ -86,7 +92,7 @@ export class KineticScroll {
       if (Math.abs(axisDistance) < threshold) return;
       // Do not steal a deliberate gesture in the opposite axis.
       if (Math.abs(crossDistance) > Math.abs(axisDistance) * 1.35) {
-        this.tracking = false;
+        this.releaseTracking(false);
         return;
       }
       this.dragging = true;
@@ -111,16 +117,12 @@ export class KineticScroll {
 
   private handlePointerUp = (pointer: Phaser.Input.Pointer): void => {
     if (!this.tracking || pointer.id !== this.pointerId) return;
-    this.tracking = false;
-    this.pointerId = null;
-    if (!this.dragging) this.velocity = 0;
+    this.releaseTracking(this.dragging);
+    this.drawIndicator();
+  };
 
-    // Phaser dispatches row pointerup handlers in the same tick. Keep the
-    // dragged flag alive through that dispatch so a swipe never becomes a tap.
-    this.scene.time.delayedCall(0, () => {
-      this.dragging = false;
-      this.options.onDragState?.(false);
-    });
+  private handleInputLost = (): void => {
+    this.releaseTracking(false);
     this.drawIndicator();
   };
 
@@ -145,8 +147,18 @@ export class KineticScroll {
   private update = (_time: number, delta: number): void => {
     if (this.options.enabled?.() === false) {
       this.velocity = 0;
+      this.releaseTracking(false);
       this.drawIndicator();
       return;
+    }
+    // Mobile browsers can cancel a touch without delivering the scene-level
+    // pointerup event. Recover on the next frame instead of leaving every menu
+    // in a permanent dragging state.
+    if (
+      this.tracking
+      && (!this.activePointer?.isDown || this.activePointer.wasCanceled)
+    ) {
+      this.releaseTracking(false);
     }
     if (!this.tracking && Math.abs(this.velocity) >= 12) {
       const before = this.options.getValue();
@@ -188,6 +200,16 @@ export class KineticScroll {
     return typeof eventTime === 'number' ? eventTime : this.scene.time.now;
   }
 
+  private releaseTracking(keepVelocity: boolean): void {
+    const hadGesture = this.tracking || this.dragging || this.pointerId !== null;
+    this.activePointer = null;
+    this.pointerId = null;
+    this.tracking = false;
+    this.dragging = false;
+    if (!keepVelocity) this.velocity = 0;
+    if (hadGesture) this.options.onDragState?.(false);
+  }
+
   private drawIndicator(): void {
     if (!this.indicator) return;
     const max = Math.max(0, this.options.getMax());
@@ -215,8 +237,11 @@ export class KineticScroll {
     this.scene.input.off('pointermove', this.handlePointerMove);
     this.scene.input.off('pointerup', this.handlePointerUp);
     this.scene.input.off('pointerupoutside', this.handlePointerUp);
+    this.scene.input.off('gameout', this.handleInputLost);
     this.scene.input.off('wheel', this.handleWheel);
+    this.scene.game.events.off(Phaser.Core.Events.BLUR, this.handleInputLost);
     this.scene.events.off(Phaser.Scenes.Events.UPDATE, this.update);
+    this.releaseTracking(false);
     this.indicator?.destroy();
   };
 }
