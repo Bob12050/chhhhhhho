@@ -33,8 +33,19 @@ import { INVESTIGATION_SEAL_ID } from '@/endgame/investigations';
 import { activeBossSetStates } from '@/equipment/boss-set-bonuses';
 import { equippedJobRegaliaProgress } from '@/equipment/job-regalia-appearance';
 import { KineticScroll } from '@/ui/kinetic-scroll';
+import {
+  EQUIPMENT_SORT_OPTIONS,
+  RARITY_FILTER_OPTIONS,
+  WEAPON_FILTER_OPTIONS,
+  filterAndSortEquipment,
+  matchesEquipmentRarity,
+  type EquipmentRarityFilter,
+  type EquipmentSort,
+  type WeaponFilter,
+} from '@/equipment/equipment-list';
 
 type Tab = 'items' | 'consumables' | 'equipment' | 'status' | 'skill';
+type EquipmentFilterSheet = 'weapon' | 'rarity' | 'sort';
 
 /** Equipment-tab virtual list rows: slot section headers + item rows. */
 type EquipEntry =
@@ -86,6 +97,10 @@ export class InventoryScene extends Phaser.Scene {
   private eqLive = new Map<number, Phaser.GameObjects.GameObject[]>();
   /** Slot filter for the equipment tab (null = 全部, 'accessory' = both). */
   private slotFilter: string | null = null;
+  private weaponFilter: WeaponFilter = 'all';
+  private rarityFilter: EquipmentRarityFilter = 'all';
+  private equipmentSort: EquipmentSort = 'recommended';
+  private equipmentFilterSheet: Phaser.GameObjects.Container | null = null;
   /** Chip row (equipment tab only), rebuilt on tab switch. */
   private slotChipObjs: Phaser.GameObjects.GameObject[] = [];
   /** Fixed job profile card (equipment/status); never moves with list scroll. */
@@ -108,6 +123,11 @@ export class InventoryScene extends Phaser.Scene {
 
   init(data: { tab?: Tab }): void {
     this.tab = data.tab ?? 'items';
+    this.slotFilter = null;
+    this.weaponFilter = 'all';
+    this.rarityFilter = 'all';
+    this.equipmentSort = 'recommended';
+    this.equipmentFilterSheet = null;
     this.skillView = 'loadout';
     this.selectedSkillSlot = 0;
     this.skillRefreshPending = false;
@@ -225,7 +245,8 @@ export class InventoryScene extends Phaser.Scene {
       size: 15,
     }).setDepth(3);
     this.input.keyboard?.on('keydown-ESC', () => {
-      if (this.gearDetail) this.closeGearDetail();
+      if (this.equipmentFilterSheet) this.closeEquipmentFilterSheet();
+      else if (this.gearDetail) this.closeGearDetail();
       else this.close();
     });
 
@@ -283,7 +304,7 @@ export class InventoryScene extends Phaser.Scene {
       getValue: () => this.scrollY,
       getMax: () => this.maxScroll,
       setValue: (value) => this.scrollTo(value),
-      enabled: () => !this.gearDetail,
+      enabled: () => !this.gearDetail && !this.equipmentFilterSheet,
       onDragState: (dragged) => {
         this.dragged = dragged;
       },
@@ -375,8 +396,9 @@ export class InventoryScene extends Phaser.Scene {
   }
 
   private renderTab(): void {
+    this.closeEquipmentFilterSheet();
     this.viewTop = this.tab === 'equipment'
-      ? 258
+      ? 294
       : this.tab === 'skill'
         ? (this.skillView === 'loadout' ? 274 : 150)
         : 86;
@@ -404,7 +426,7 @@ export class InventoryScene extends Phaser.Scene {
   /** Two fixed rows keep every equipment slot visible on a 360px screen. */
   private buildSlotChips(): void {
     const w = this.scale.width;
-    const strip = this.add.rectangle(0, 180, w, 72, 0x11182b, 0.98).setOrigin(0).setDepth(2);
+    const strip = this.add.rectangle(0, 180, w, 112, 0x11182b, 0.98).setOrigin(0).setDepth(2);
     this.slotChipObjs.push(strip);
     const defs: [string | null, string][] = [
       [null, '全部'], ['main_hand', '武器'], ['head', '頭'], ['torso', '胴'], ['hands', '手'],
@@ -419,6 +441,7 @@ export class InventoryScene extends Phaser.Scene {
         const tab = tabChip(this, x, 198 + rowIndex * 36, chipW, label, () => {
           if (this.dragged) return;
           this.slotFilter = value;
+          if (value !== 'main_hand') this.weaponFilter = 'all';
           this.renderTab();
         });
         tab.setActive(value === this.slotFilter);
@@ -426,6 +449,149 @@ export class InventoryScene extends Phaser.Scene {
         this.slotChipObjs.push(tab.root);
       });
     });
+    this.buildEquipmentFilterBar();
+  }
+
+  private buildEquipmentFilterBar(): void {
+    const w = this.scale.width;
+    const gap = 4;
+    const left = 6;
+    const usable = w - left * 2 - gap * 2;
+    const widths = [Math.floor(usable * 0.36), Math.floor(usable * 0.29)];
+    widths.push(usable - widths[0] - widths[1]);
+
+    const weapon = WEAPON_FILTER_OPTIONS.find((option) => option.id === this.weaponFilter)!;
+    const rarity = RARITY_FILTER_OPTIONS.find((option) => option.id === this.rarityFilter)!;
+    const sort = EQUIPMENT_SORT_OPTIONS.find((option) => option.id === this.equipmentSort)!;
+    const controls: {
+      label: string;
+      active: boolean;
+      onTap: () => void;
+    }[] = [
+      {
+        label: `武器種 ${weapon.label}`,
+        active: this.slotFilter === 'main_hand' && this.weaponFilter !== 'all',
+        onTap: () => {
+          if (this.slotFilter !== 'main_hand') {
+            this.slotFilter = 'main_hand';
+            this.weaponFilter = 'all';
+            this.renderTab();
+          }
+          this.showEquipmentFilterSheet('weapon');
+        },
+      },
+      {
+        label: `レア ${rarity.shortLabel}`,
+        active: this.rarityFilter !== 'all',
+        onTap: () => this.showEquipmentFilterSheet('rarity'),
+      },
+      {
+        label: `並び ${sort.shortLabel}`,
+        active: this.equipmentSort !== 'recommended',
+        onTap: () => this.showEquipmentFilterSheet('sort'),
+      },
+    ];
+
+    let x = left;
+    controls.forEach((control, index) => {
+      const width = widths[index];
+      const tab = tabChip(this, x + width / 2, 272, width, control.label, () => {
+        if (this.dragged) return;
+        control.onTap();
+      });
+      tab.setActive(control.active);
+      tab.root.setDepth(3);
+      this.slotChipObjs.push(tab.root);
+      x += width + gap;
+    });
+  }
+
+  private closeEquipmentFilterSheet(): void {
+    this.equipmentFilterSheet?.destroy(true);
+    this.equipmentFilterSheet = null;
+  }
+
+  private showEquipmentFilterSheet(kind: EquipmentFilterSheet): void {
+    this.closeEquipmentFilterSheet();
+    const ownedWeaponTags = new Set<string>();
+    for (const id of gameState.equipmentOwned) {
+      const def = getEquipment(id);
+      if (def?.slot === 'main_hand') {
+        for (const tag of def.weaponTags ?? []) ownedWeaponTags.add(tag);
+      }
+    }
+    const ownedRarities = gameState.equipmentOwned
+      .map((id) => getEquipment(id)?.rarity)
+      .filter((rarity): rarity is number => rarity != null);
+
+    let title = '武器種を選ぶ';
+    let current: string = this.weaponFilter;
+    let options: readonly { id: string; label: string }[] = WEAPON_FILTER_OPTIONS.filter(
+      (option) => option.id === 'all' || option.id === this.weaponFilter || ownedWeaponTags.has(option.id),
+    );
+    if (kind === 'rarity') {
+      title = 'レア度で絞り込む';
+      current = this.rarityFilter;
+      options = RARITY_FILTER_OPTIONS.filter(
+        (option) =>
+          option.id === 'all' ||
+          option.id === this.rarityFilter ||
+          ownedRarities.some((rarity) => matchesEquipmentRarity(rarity, option.id)),
+      );
+    } else if (kind === 'sort') {
+      title = '並び順を選ぶ';
+      current = this.equipmentSort;
+      options = EQUIPMENT_SORT_OPTIONS;
+    }
+
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const panelW = Math.min(348, w - 18);
+    const cols = 2;
+    const rows = Math.ceil(options.length / cols);
+    const panelH = 70 + rows * 42;
+    const cx = w / 2;
+    const cy = h / 2;
+    const top = cy - panelH / 2;
+    const sheet = this.add.container(0, 0).setDepth(80);
+    const dim = this.add.rectangle(0, 0, w, h, 0x02050c, 0.72).setOrigin(0).setInteractive();
+    dim.on('pointerup', () => this.closeEquipmentFilterSheet());
+    const panel = ninePanel(this, cx, cy, panelW, panelH, { active: true });
+    const blocker = this.add.zone(cx, cy, panelW, panelH).setInteractive();
+    const heading = this.add.text(cx, top + 27, title, {
+      fontFamily: FONT,
+      fontSize: '16px',
+      color: '#ffe3a1',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+    const close = this.add.text(cx + panelW / 2 - 24, top + 27, '×', {
+      fontFamily: FONT,
+      fontSize: '25px',
+      color: '#cbd5e8',
+      fontStyle: 'bold',
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    close.on('pointerup', () => this.closeEquipmentFilterSheet());
+    sheet.add([dim, panel, blocker, heading, close]);
+
+    const gap = 6;
+    const optionW = (panelW - 28 - gap) / cols;
+    options.forEach((option, index) => {
+      const column = index % cols;
+      const row = Math.floor(index / cols);
+      const x = cx - panelW / 2 + 14 + optionW / 2 + column * (optionW + gap);
+      const y = top + 61 + row * 42;
+      const tab = tabChip(this, x, y, optionW, option.label, () => {
+        if (this.dragged) return;
+        if (kind === 'weapon') this.weaponFilter = option.id as WeaponFilter;
+        else if (kind === 'rarity') this.rarityFilter = option.id as EquipmentRarityFilter;
+        else this.equipmentSort = option.id as EquipmentSort;
+        this.closeEquipmentFilterSheet();
+        this.renderTab();
+      });
+      tab.setActive(option.id === current);
+      sheet.add(tab.root);
+    });
+    this.equipmentFilterSheet = sheet;
   }
 
   private renderProfileCard(y: number, height: number): void {
@@ -495,6 +661,36 @@ export class InventoryScene extends Phaser.Scene {
         wordWrap: { width: this.scale.width - 72 },
       }).setOrigin(0.5, 0),
     );
+  }
+
+  private emptyEquipmentResult(y: number): void {
+    const w = this.scale.width;
+    const card = ninePanel(this, w / 2, y + 70, w - 32, 140);
+    this.content.add(card);
+    this.content.add(this.add.image(w / 2, y + 32, TEX.iconArmor).setDisplaySize(28, 28).setTint(0x94a3bd));
+    this.content.add(
+      this.add.text(w / 2, y + 54, '条件に合う装備がありません', {
+        fontFamily: FONT,
+        fontSize: '14px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      }).setOrigin(0.5, 0),
+    );
+    const reset = this.add.text(w / 2, y + 98, '絞り込みを解除', {
+      fontFamily: FONT,
+      fontSize: '13px',
+      color: '#ffe3a1',
+      backgroundColor: '#303b64',
+      padding: { x: 14, y: 7 },
+      fontStyle: 'bold',
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    reset.on('pointerup', () => {
+      if (this.dragged) return;
+      this.weaponFilter = 'all';
+      this.rarityFilter = 'all';
+      this.renderTab();
+    });
+    this.content.add(reset);
   }
 
   /** Framed icon cell (rarity-coloured border) at the left of a row. */
@@ -611,7 +807,7 @@ export class InventoryScene extends Phaser.Scene {
 
   private renderEquipment(): void {
     const fixedHeader = this.add
-      .rectangle(0, 86, this.scale.width, 172, 0x0b1426, 1)
+      .rectangle(0, 86, this.scale.width, this.viewTop - 86, 0x0b1426, 1)
       .setOrigin(0)
       .setDepth(1.9);
     this.profileObjs.push(fixedHeader);
@@ -623,7 +819,7 @@ export class InventoryScene extends Phaser.Scene {
     for (const id of gameState.equipmentOwned) {
       if (getEquipment(id)) counts.set(id, (counts.get(id) ?? 0) + 1);
     }
-    let y = this.renderEquippedSetSummary(258);
+    let y = this.renderEquippedSetSummary(this.viewTop);
     // 部位ごとのセクションに分け、各セクション内は「装備中 → 今そうび
     // できる強い順（レア度→Lv）→ 職業/段階で装備不可」。取得順のごちゃ
     // 混ぜをやめて、常に同じ場所に同じ部位が並ぶ。
@@ -643,27 +839,29 @@ export class InventoryScene extends Phaser.Scene {
     let band = 0;
     let total = 0;
     for (const slot of slots) {
-      const ids = [...counts.entries()].filter(([id]) => getEquipment(id)!.slot === slot);
+      const entries = [...counts.entries()]
+        .filter(([id]) => getEquipment(id)!.slot === slot)
+        .map(([id, count]) => {
+          const def = getEquipment(id)!;
+          const equipped = gameState.equipment[slot as EquipSlot] === id;
+          return {
+            id,
+            count,
+            def,
+            equipped,
+            canEquip: equipped || gameState.canEquip(id),
+          };
+        });
+      const ids = filterAndSortEquipment(entries, {
+        weapon: slot === 'main_hand' ? this.weaponFilter : 'all',
+        rarity: this.rarityFilter,
+        sort: this.equipmentSort,
+      });
       if (ids.length === 0) continue;
       total += ids.length;
-      ids.sort(([a], [b]) => {
-        const da = getEquipment(a)!;
-        const db = getEquipment(b)!;
-        const eqA = gameState.equipment[slot as EquipSlot] === a ? 1 : 0;
-        const eqB = gameState.equipment[slot as EquipSlot] === b ? 1 : 0;
-        const canA = eqA || gameState.canEquip(a) ? 1 : 0;
-        const canB = eqB || gameState.canEquip(b) ? 1 : 0;
-        return (
-          eqB - eqA ||
-          canB - canA ||
-          (db.rarity ?? 1) - (da.rarity ?? 1) ||
-          (db.levelRequirement ?? 1) - (da.levelRequirement ?? 1) ||
-          a.localeCompare(b)
-        );
-      });
       this.eqQueue.push({ kind: 'header', slot, count: ids.length, y, h: 32 });
       y += 32;
-      for (const [id, count] of ids) {
+      for (const { id, count } of ids) {
         const rowHeight = getEquipment(id)?.generated ? 88 : 72;
         this.eqQueue.push({ kind: 'row', id, count, y, h: rowHeight, band: band++ });
         y += rowHeight;
@@ -671,8 +869,9 @@ export class InventoryScene extends Phaser.Scene {
       y += 6;
     }
     if (total === 0) {
-      this.emptyNote('equipment', 264);
-      y = 430;
+      if (counts.size === 0) this.emptyNote('equipment', this.viewTop + 6);
+      else this.emptyEquipmentResult(this.viewTop + 6);
+      y = this.viewTop + 174;
     }
 
     const d = gameState.derived;
