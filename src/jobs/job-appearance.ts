@@ -100,6 +100,26 @@ export const MALE_APPEARANCE_DIAGONAL_TEX: Record<JobAppearanceId, string> = {
 };
 
 /**
+ * These authored male diagonal sheets contain attack/cast poses in one or
+ * more walk cells. Until their art is rebuilt, keep their diagonal facing but
+ * animate the clean idle pair with a small runtime step instead.
+ */
+const MALE_SAFE_DIAGONAL_WALK_APPEARANCES = new Set<JobAppearanceId>([
+  'mage',
+  'priest',
+  'pet_raiser',
+  'holy_knight',
+  'grand_magia',
+  'shield_saber',
+  'avengista',
+  'dual_star',
+  'nirvadio',
+  'ranger',
+  'sorcerer',
+  'thief',
+]);
+
+/**
  * HD sheets keep the pose grid but use 192px cells. Render them at half scale
  * so feet anchors, collision, labels, and authored world proportions stay
  * identical to the 96px production sheets.
@@ -144,6 +164,15 @@ export function baseAppearanceTexKey(gender: CharacterGender): string {
 
 export function baseAppearanceDiagonalTexKey(gender: CharacterGender): string {
   return gender === 'male' ? TEX.playerBodyMaleDiagonal : TEX.playerBodyDiagonal;
+}
+
+export function appearanceUsesSafeDiagonalWalk(
+  id: string | undefined,
+  gender: CharacterGender,
+): boolean {
+  return gender === 'male'
+    && !!id
+    && MALE_SAFE_DIAGONAL_WALK_APPEARANCES.has(id as JobAppearanceId);
 }
 
 /** Logical display scale for an appearance texture (1 for regular sheets). */

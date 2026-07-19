@@ -97,10 +97,15 @@ export function diagonalFrameIndex(
   dir: Direction,
   anim: DiagonalAnimName,
   frame: number,
+  opts?: { walkUsesIdle?: boolean },
 ): number {
   const dirIdx = DIAGONAL_SHEET_DIRECTIONS.indexOf(diagonalSheetDirection(dir));
-  const animIdx = DIAGONAL_ANIM_NAMES.indexOf(anim);
-  return (dirIdx * DIAGONAL_ANIM_NAMES.length + animIdx) * MAX_FRAMES + frame;
+  const resolvedAnim = anim === 'walk' && opts?.walkUsesIdle ? 'idle' : anim;
+  const resolvedFrame = resolvedAnim === 'idle'
+    ? frame % ANIMATIONS.idle.frames
+    : frame;
+  const animIdx = DIAGONAL_ANIM_NAMES.indexOf(resolvedAnim);
+  return (dirIdx * DIAGONAL_ANIM_NAMES.length + animIdx) * MAX_FRAMES + resolvedFrame;
 }
 
 /**

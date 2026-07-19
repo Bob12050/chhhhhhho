@@ -49,6 +49,12 @@ describe('diagonal pose atlas', () => {
     expect(diagonalFrameIndex('down-right', 'attack', 3)).toBe(11);
   });
 
+  it('can replace a contaminated diagonal walk row with the idle pair', () => {
+    expect(diagonalFrameIndex('down-left', 'walk', 0, { walkUsesIdle: true })).toBe(0);
+    expect(diagonalFrameIndex('down-left', 'walk', 3, { walkUsesIdle: true })).toBe(1);
+    expect(diagonalFrameIndex('up-left', 'walk', 2, { walkUsesIdle: true })).toBe(12);
+  });
+
   it('falls back to the side pose when no diagonal sheet is assigned', () => {
     expect(frameIndex('down-left', 'walk', 2)).toBe(frameIndex('left', 'walk', 2));
   });

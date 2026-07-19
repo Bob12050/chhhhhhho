@@ -20,6 +20,7 @@ interface LayerVisual {
   readonly sprite: Phaser.GameObjects.Sprite;
   cardinalTextureKey: string;
   diagonalTextureKey: string | null;
+  diagonalWalkUsesIdle: boolean;
   displayScale: number;
 }
 
@@ -60,7 +61,11 @@ export class PaperDollAnimator {
   setLayer(
     group: DrawGroup,
     textureKey: string | null,
-    opts?: { diagonalTextureKey?: string | null; displayScale?: number },
+    opts?: {
+      diagonalTextureKey?: string | null;
+      diagonalWalkUsesIdle?: boolean;
+      displayScale?: number;
+    },
   ): void {
     const existing = this.layers.get(group);
     if (!textureKey) {
@@ -73,6 +78,7 @@ export class PaperDollAnimator {
     if (existing) {
       existing.cardinalTextureKey = textureKey;
       existing.diagonalTextureKey = opts?.diagonalTextureKey ?? null;
+      existing.diagonalWalkUsesIdle = opts?.diagonalWalkUsesIdle ?? false;
       existing.displayScale = opts?.displayScale ?? 1;
       existing.sprite.setTexture(textureKey).setScale(existing.displayScale);
     } else {
@@ -84,6 +90,7 @@ export class PaperDollAnimator {
         sprite,
         cardinalTextureKey: textureKey,
         diagonalTextureKey: opts?.diagonalTextureKey ?? null,
+        diagonalWalkUsesIdle: opts?.diagonalWalkUsesIdle ?? false,
         displayScale: opts?.displayScale ?? 1,
       });
     }
@@ -197,11 +204,17 @@ export class PaperDollAnimator {
         && this.scene.textures.exists(layer.diagonalTextureKey);
       const textureKey = useDiagonal ? layer.diagonalTextureKey! : layer.cardinalTextureKey;
       if (layer.sprite.texture.key !== textureKey) layer.sprite.setTexture(textureKey);
+      const safeDiagonalWalk = useDiagonal
+        && diagonalAnim === 'walk'
+        && layer.diagonalWalkUsesIdle;
       const idx = useDiagonal
-        ? diagonalFrameIndex(this.dir, diagonalAnim!, this.frame)
+        ? diagonalFrameIndex(this.dir, diagonalAnim!, this.frame, {
+            walkUsesIdle: layer.diagonalWalkUsesIdle,
+          })
         : frameIndex(this.dir, this.anim, this.frame);
       layer.sprite.setFrame(idx);
       layer.sprite.setFlipX(flip);
+      layer.sprite.setY(safeDiagonalWalk && this.frame % 2 === 1 ? -1 : 0);
     }
   }
 

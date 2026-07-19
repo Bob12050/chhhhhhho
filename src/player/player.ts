@@ -8,6 +8,7 @@ import {
   appearanceDiagonalTexKey,
   appearanceTexKey,
   appearanceTextureScale,
+  appearanceUsesSafeDiagonalWalk,
   baseAppearanceDiagonalTexKey,
   baseAppearanceTexKey,
 } from '@/jobs/job-appearance';
@@ -107,6 +108,8 @@ export class Player {
       diagonalTextureKey: texture === baseTexture
         ? baseDiagonalTexture
         : appearanceDiagonalTexKey(appearance, gameState.gender),
+      diagonalWalkUsesIdle: texture !== baseTexture
+        && appearanceUsesSafeDiagonalWalk(appearance, gameState.gender),
       displayScale: appearanceTextureScale(texture),
     });
     this.jobPlateText.setText(job?.name ?? jobId);
