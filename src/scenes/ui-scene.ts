@@ -493,9 +493,14 @@ export class UIScene extends Phaser.Scene {
     const py = insets.top + 6;
     const PW = w - insets.left - insets.right - 12;
     const PH = 42;
-    const levelDivider = 62;
-    const expDivider = 146;
-    const hpDivider = Math.floor((PW + expDivider) / 2);
+    // The ribbon's end ornaments occupy more space than its visible border.
+    // Keep every value inside that safe inner span so the level and MP blocks
+    // never sit on top of the gold caps at narrow mobile widths.
+    const frameContentInset = 28;
+    const contentRight = PW - frameContentInset;
+    const levelDivider = frameContentInset + 36;
+    const expDivider = levelDivider + 76;
+    const hpDivider = Math.floor((contentRight + expDivider) / 2);
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
     const hasHdStatusFrame = this.textures.exists(TEX.uiRibbonFrame);
     if (hasHdStatusFrame) {
@@ -540,7 +545,12 @@ export class UIScene extends Phaser.Scene {
 
     const barY = PH / 2;
     const levelText = this.add
-      .text(42, barY, '', { fontFamily: FONT, fontSize: '12px', color: '#ffe485', fontStyle: 'bold' })
+      .text((frameContentInset + levelDivider) / 2, barY, '', {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#ffe485',
+        fontStyle: 'bold',
+      })
       .setOrigin(0.5);
     levelText.setShadow(0, 1, '#000000', 2);
     panel.add(levelText);
@@ -579,6 +589,10 @@ export class UIScene extends Phaser.Scene {
       panel.add(val);
       return val;
     };
+    const setBarText = (text: Phaser.GameObjects.Text, value: string, width: number): void => {
+      text.setFontSize(10).setText(value);
+      if (text.width > width - 6) text.setFontSize(9);
+    };
 
     const expX = levelDivider + 7;
     const expW = expDivider - expX - 5;
@@ -601,10 +615,12 @@ export class UIScene extends Phaser.Scene {
     }
     panel.add(expSegments);
 
-    const hpX = expDivider + 27;
-    const hpW = hpDivider - hpX - 5;
-    const mpX = hpDivider + 27;
-    const mpW = PW - mpX - 5;
+    const statBarOffset = 25;
+    const statRightGap = 4;
+    const hpX = expDivider + statBarOffset;
+    const hpW = hpDivider - hpX - statRightGap;
+    const mpX = hpDivider + statBarOffset;
+    const mpW = contentRight - mpX - statRightGap;
     statLabel(expDivider + 5, 'HP');
     this.hpBar = makeBar(hpX, hpW, 0xf17c78);
     this.hpText = barText(hpX, hpW);
@@ -614,9 +630,9 @@ export class UIScene extends Phaser.Scene {
 
     // Initial values (bars need a fill before the first bus event).
     const d0 = gameState.derived;
-    this.hpText.setText(`${gameState.hp}/${d0.maxHp}`);
+    setBarText(this.hpText, `${gameState.hp}/${d0.maxHp}`, hpW);
     this.hpBar.scaleX = d0.maxHp > 0 ? Phaser.Math.Clamp(gameState.hp / d0.maxHp, 0, 1) : 0;
-    this.mpText.setText(`${gameState.mp}/${d0.maxMp}`);
+    setBarText(this.mpText, `${gameState.mp}/${d0.maxMp}`, mpW);
     this.mpBar.scaleX = d0.maxMp > 0 ? Phaser.Math.Clamp(gameState.mp / d0.maxMp, 0, 1) : 0;
     refreshLevel();
 
@@ -625,14 +641,14 @@ export class UIScene extends Phaser.Scene {
     this.busOff.push(bus.on('player:level-up', refreshLevel));
     this.busOff.push(
       bus.on('player:hp-changed', ({ current, max }) => {
-        this.hpText.setText(`${current}/${max}`);
+        setBarText(this.hpText, `${current}/${max}`, hpW);
         this.hpBar.scaleX = max > 0 ? Phaser.Math.Clamp(current / max, 0, 1) : 0;
         this.updateLowHpVignette(max > 0 ? current / max : 0);
       }),
     );
     this.busOff.push(
       bus.on('player:mp-changed', ({ current, max }) => {
-        this.mpText.setText(`${current}/${max}`);
+        setBarText(this.mpText, `${current}/${max}`, mpW);
         this.mpBar.scaleX = max > 0 ? Phaser.Math.Clamp(current / max, 0, 1) : 0;
       }),
     );
