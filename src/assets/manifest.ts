@@ -180,13 +180,13 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.obstacle, 'assets/env/obstacle.png'),
   img(TEX.wall, 'assets/env/wall.png'),
   img(TEX.npc, 'assets/env/npc-storybook-v2.png'),
-  // Role-specific town NPCs (drop real art to replace the placeholders).
-  img(TEX.npcMerchant, 'assets/env/npc_merchant-storybook-hd-v1.webp'),
-  img(TEX.npcSmith, 'assets/env/npc_craft-storybook-hd-v1.webp'),
-  img(TEX.npcGuild, 'assets/env/npc_guild-storybook-hd-v1.webp'),
-  img(TEX.npcElder, 'assets/env/npc_elder-storybook-hd-v1.webp'),
-  img(TEX.npcVillager, 'assets/env/npc_villager-storybook-hd-v1.webp'),
-  img(TEX.npcQuest, 'assets/env/npc_quest-storybook-hd-v1.webp'),
+  // Compact role-specific town NPCs matched to the low-density plaza art.
+  img(TEX.npcMerchant, 'assets/env/npc_merchant-pixel-plaza-v1.png'),
+  img(TEX.npcSmith, 'assets/env/npc_craft-pixel-plaza-v1.png'),
+  img(TEX.npcGuild, 'assets/env/npc_guild-pixel-plaza-v1.png'),
+  img(TEX.npcElder, 'assets/env/npc_elder-pixel-plaza-v1.png'),
+  img(TEX.npcVillager, 'assets/env/npc_villager-pixel-plaza-v1.png'),
+  img(TEX.npcQuest, 'assets/env/npc_quest-pixel-plaza-v1.png'),
   img(TEX.sign, 'assets/env/sign.png'),
   img(TEX.groundShadow, 'assets/env/shadow.png'),
   // Generated menu skin. The frame is a 48x48 nine-slice; the ribbon is a
@@ -196,6 +196,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   img(TEX.uiMapBackdrop, 'assets/ui/map-backdrop-storybook-v1.webp'),
   img(TEX.uiCraftingBackdrop, 'assets/ui/crafting-workshop-storybook-v1.webp'),
   img(TEX.uiRibbonFrame, 'assets/ui/ribbon-frame-storybook-v1.png'),
+  img(TEX.hudStatusPlazaFrame, 'assets/ui/hud-status-pixel-plaza-v1.png'),
   img(TEX.titleBackdrop, 'assets/ui/title-backdrop-storybook-hd-v1.webp'),
   img(TEX.titleEmblem, 'assets/ui/title-emblem-storybook-v1.png'),
   // Cohesive illustrated battle HUD. Dynamic values/icons remain code-driven;

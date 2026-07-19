@@ -1400,7 +1400,7 @@ export class WorldScene extends Phaser.Scene {
     const sprite = this.physics.add
       .staticImage(x, y, tex)
       .setOrigin(0.5, 0.875)
-      .setDisplaySize(this.map.id === 'town' ? 76 : 96, this.map.id === 'town' ? 76 : 96);
+      .setDisplaySize(this.map.id === 'town' ? 64 : 96, this.map.id === 'town' ? 64 : 96);
     sprite.refreshBody();
     sprite.setDepth(Math.round(y));
     this.add.image(x, y + 2, TEX.groundShadow).setDisplaySize(24, 9).setDepth(Math.round(y) - 1);
@@ -1410,12 +1410,12 @@ export class WorldScene extends Phaser.Scene {
     if (this.map.id === 'town') {
       if (action) {
         const marker = this.add
-          .image(x, y - 59, TEX.npcInteractMarker)
-          .setDisplaySize(34, 34)
+          .image(x, y - 47, TEX.npcInteractMarker)
+          .setDisplaySize(28, 28)
           .setDepth(Math.round(y) + 3);
         this.tweens.add({
           targets: marker,
-          y: y - 62,
+          y: y - 50,
           duration: 620,
           yoyo: true,
           repeat: -1,

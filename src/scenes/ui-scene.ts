@@ -490,23 +490,24 @@ export class UIScene extends Phaser.Scene {
     this.interactBtn.setOpacityMultiplier(controlOpacity);
     this.interactBtn.setVisible(false);
 
-    // Full-width battle strip: the retired minimap gives HP/MP enough room to
-    // stay readable at a glance, including late-game four-digit values.
+    // Slim full-width status strip matched to the plaza's compact pixel HUD.
     const px = insets.left + 6;
     const py = insets.top + 6;
     const PW = w - insets.left - insets.right - 12;
-    const PH = 50;
-    // The ribbon's end ornaments occupy more space than its visible border.
-    // Keep every value inside that safe inner span so the level and MP blocks
-    // never sit on top of the gold caps at narrow mobile widths.
-    const frameContentInset = 28;
+    const PH = 40;
+    const frameContentInset = 8;
     const contentRight = PW - frameContentInset;
     const levelDivider = frameContentInset + 60;
-    const expDivider = levelDivider + 62;
+    const expDivider = levelDivider + 66;
     const hpDivider = Math.floor((contentRight + expDivider) / 2);
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
-    const hasHdStatusFrame = this.textures.exists(TEX.uiRibbonFrame);
-    if (hasHdStatusFrame) {
+    const hasPlazaStatusFrame = this.textures.exists(TEX.hudStatusPlazaFrame);
+    const hasHdStatusFrame = hasPlazaStatusFrame || this.textures.exists(TEX.uiRibbonFrame);
+    if (hasPlazaStatusFrame) {
+      panel.add(
+        this.add.image(PW / 2, PH / 2, TEX.hudStatusPlazaFrame).setDisplaySize(PW, PH),
+      );
+    } else if (hasHdStatusFrame) {
       panel.add(
         this.add.nineslice(
           PW / 2,
@@ -533,10 +534,10 @@ export class UIScene extends Phaser.Scene {
       panelBack.lineStyle(1, 0xffedab, 0.72);
       panelBack.lineBetween(3, 2, PW - 3, 2);
     }
-    panelBack.lineStyle(1, 0x71839b, 0.48);
-    panelBack.lineBetween(levelDivider, 7, levelDivider, PH - 7);
-    panelBack.lineBetween(expDivider, 7, expDivider, PH - 7);
-    panelBack.lineBetween(hpDivider, 7, hpDivider, PH - 7);
+    panelBack.lineStyle(1, 0x7765c4, 0.58);
+    panelBack.lineBetween(levelDivider, 5, levelDivider, PH - 5);
+    panelBack.lineBetween(expDivider, 5, expDivider, PH - 5);
+    panelBack.lineBetween(hpDivider, 5, hpDivider, PH - 5);
     panel.add(panelBack);
 
     // Low-HP danger vignette (full screen, just under the HUD).
@@ -551,7 +552,7 @@ export class UIScene extends Phaser.Scene {
       .text((frameContentInset + levelDivider) / 2, barY, '', {
         fontFamily: FONT,
         fontSize: '12px',
-        color: '#ffe485',
+        color: '#f7f1df',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
@@ -599,10 +600,10 @@ export class UIScene extends Phaser.Scene {
 
     const expX = levelDivider + 7;
     const expW = expDivider - expX - 5;
-    const expBarY = 34;
+    const expBarY = 29;
     this.expBar = makeBar(expX, expW, 0xf2d45c, 7, expBarY);
     this.expText = this.add
-      .text(expX + expW / 2, 11, '', {
+      .text(expX + expW / 2, 4, '', {
         fontFamily: FONT,
         fontSize: '10px',
         color: '#f5f7fb',

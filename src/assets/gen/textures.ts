@@ -207,6 +207,7 @@ export const TEX = {
   uiMapBackdrop: 'art.ui.map.backdrop',
   uiCraftingBackdrop: 'art.ui.crafting.backdrop',
   uiRibbonFrame: 'art.ui.ribbon.frame',
+  hudStatusPlazaFrame: 'art.ui.hud.status_plaza_frame',
   titleBackdrop: 'art.ui.title.backdrop.hd',
   titleEmblem: 'art.ui.title.emblem',
   // Illustrated HUD skin. These are real transparent PNGs rather than canvas
