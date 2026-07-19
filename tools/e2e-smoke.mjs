@@ -238,6 +238,24 @@ try {
   // Debug mode must be reachable from the same settings screen that enables it.
   await activateTextWhenReady(page, 'UI', 'もちもの');
   await waitForScene(page, 'Inventory');
+  const inventoryView = await page.evaluate(() => window.__test.sceneScroll('Inventory'));
+  const footerY = (inventoryView?.height ?? 720) - 88;
+  const dragStartY = Math.min((inventoryView?.viewBottom ?? 604) - 80, footerY - 120);
+  await page.mouse.move(222, dragStartY);
+  await page.mouse.down();
+  for (const y of [dragStartY + 45, dragStartY + 90, footerY]) {
+    await page.mouse.move(222, y);
+    await page.waitForTimeout(18);
+  }
+  await page.mouse.up();
+  await page.waitForTimeout(100);
+  const scenesAfterInventorySwipe = await page.evaluate(() => window.__test.activeScenes());
+  check(
+    'もちものをスクロールしてペット上で離しても誤作動しない',
+    scenesAfterInventorySwipe.includes('Inventory')
+      && !scenesAfterInventorySwipe.includes('PetScreen'),
+    `active=${scenesAfterInventorySwipe.join(',')}`,
+  );
   await activateTextWhenReady(page, 'Inventory', '設定');
   await waitForScene(page, 'Options');
   await activateTextWhenReady(page, 'Options', 'デバッグメニューを開く');

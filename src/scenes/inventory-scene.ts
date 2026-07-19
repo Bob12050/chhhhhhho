@@ -144,6 +144,7 @@ export class InventoryScene extends Phaser.Scene {
     const tabW = Math.floor((w - 16) / tabs.length);
     tabs.forEach((t, i) => {
       const tab = tabChip(this, 8 + i * tabW + tabW / 2, 66, tabW, t.label, () => {
+        if (this.dragged) return;
         this.tab = t.id;
         this.renderTab();
       }, { icon: t.icon });
@@ -215,7 +216,9 @@ export class InventoryScene extends Phaser.Scene {
       );
     });
 
-    pillButton(this, w / 2, h - 44, 'とじる', () => this.close(), {
+    pillButton(this, w / 2, h - 44, 'とじる', () => {
+      if (!this.dragged) this.close();
+    }, {
       color: '#ffe9a8',
       bg: '#39406a',
       size: 15,
@@ -263,6 +266,7 @@ export class InventoryScene extends Phaser.Scene {
     hit.on('pointerout', () => text.setColor('#ffffff'));
     hit.on('pointerup', () => {
       text.setColor('#ffffff');
+      if (this.dragged) return;
       onTap();
     });
   }
