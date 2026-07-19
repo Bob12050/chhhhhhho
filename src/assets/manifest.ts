@@ -167,9 +167,9 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   // Versioned filenames force mobile Safari to discard the previous narrow
   // backgrounds when the painted map dimensions change.
   img(TEX.townMap, 'assets/maps/town-pixel-plaza-hd-v1.webp'),
-  img(TEX.fieldMap, 'assets/maps/field-hd-storybook-v1.webp'),
-  img(TEX.forestMap, 'assets/maps/forest-hd-storybook-v1.webp'),
-  img(TEX.dungeonMap, 'assets/maps/dungeon-hd-storybook-v1.webp'),
+  img(TEX.fieldMap, 'assets/maps/field-pixel-plaza-hd-v1.webp'),
+  img(TEX.forestMap, 'assets/maps/forest-pixel-plaza-hd-v1.webp'),
+  img(TEX.dungeonMap, 'assets/maps/dungeon-pixel-plaza-hd-v1.webp'),
   img(TEX.canyonMap, 'assets/maps/canyon-cute-compact-v1.png'),
   img(TEX.volcanoMap, 'assets/maps/volcano-storybook-wide-v2.png'),
   img(TEX.snowfieldMap, 'assets/maps/snowfield-storybook-wide-v2.png'),
