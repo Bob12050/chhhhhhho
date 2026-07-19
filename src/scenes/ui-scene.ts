@@ -172,6 +172,7 @@ export class UIScene extends Phaser.Scene {
       { x: controls.skill2.x, y: controls.skill2.y, r: 32 * controlScale },
     ];
     const skillCooling = [false, false];
+    let combatHidden = false;
     const skillCostBacks = skillButtonGeom.map(({ x, y, r }) =>
       this.add
         .circle(x + r - 8, y - r + 8, 7, 0x06111f, 0.92)
@@ -200,8 +201,8 @@ export class UIScene extends Phaser.Scene {
           btn.setContent(`S${slot + 1}`);
           btn.setAccent(0x637188);
           btn.setUnavailable(true);
-          costBack.setVisible(true).setStrokeStyle(1, 0xd7bd6a, 0.7);
-          costLabel.setVisible(true).setText('+').setColor('#ffe69a');
+          costBack.setVisible(!combatHidden).setStrokeStyle(1, 0xd7bd6a, 0.7);
+          costLabel.setVisible(!combatHidden).setText('+').setColor('#ffe69a');
           continue;
         }
         const visual = getSkillVisual(def);
@@ -211,10 +212,10 @@ export class UIScene extends Phaser.Scene {
         btn.setAccent(visual.accent);
         btn.setUnavailable(lowMp || skillCooling[slot]);
         costBack
-          .setVisible(!skillCooling[slot])
+          .setVisible(!combatHidden && !skillCooling[slot])
           .setStrokeStyle(1, lowMp ? 0xe17474 : 0x68bde6, 0.7);
         costLabel
-          .setVisible(!skillCooling[slot])
+          .setVisible(!combatHidden && !skillCooling[slot])
           .setText(`${cost}`)
           .setColor(lowMp ? '#ff9999' : '#a8e4ff');
       }
@@ -282,14 +283,16 @@ export class UIScene extends Phaser.Scene {
     this.busOff.push(bus.on('game:load', refreshPotions));
     this.usePotionByKey = usePotion;
 
-    // Safe zone (town): dim the combat buttons so the screen isn't "戦闘UI全開".
+    // Safe zones are navigation spaces. Remove the battle cluster entirely so
+    // the plaza keeps the quiet, open composition of the selected town mock.
     const combatButtons = [attackBtn, skillBtn, skill2Btn, dodgeBtn, potBtn];
     combatButtons.forEach((button) => button.setOpacityMultiplier(controlOpacity));
     const setCombatDim = (dim: boolean): void => {
+      combatHidden = dim;
       combatButtons.forEach((b) => b.setDimmed(dim));
-      dodgeBtn.setVisible(!dim);
-      potBtn.setVisible(!dim);
+      combatButtons.forEach((b) => b.setVisible(!dim));
       potCount.setVisible(!dim);
+      refreshSkillButtons();
     };
     setCombatDim(!!getMap(gameState.mapId)?.safe);
     this.busOff.push(bus.on('world:map-ready', ({ safe }) => setCombatDim(safe)));

@@ -66,6 +66,53 @@ describe('map definitions', () => {
     }
   });
 
+  it('keeps the plaza route open from the player spawn to every town service and the north gate', () => {
+    const town = getMap('town')!;
+    const solids = [
+      ...(town.buildings ?? []).map((b) => [b.x, b.y, b.w, b.h] as const),
+      ...(town.collisionRects ?? []),
+    ];
+    const padding = 11;
+    const blocked = (px: number, py: number): boolean =>
+      px < 24 || px > town.size.w - 24 || py < 32 || py > town.size.h - 32
+      || solids.some(([x, y, w, h]) =>
+        px >= x - padding && px <= x + w + padding && py >= y - padding && py <= y + h + padding,
+      );
+    const step = 8;
+    const start = spawnPoint(town, 'default');
+    const key = (x: number, y: number): string => `${x},${y}`;
+    const queue = [{ x: Math.round(start.x / step) * step, y: Math.round(start.y / step) * step }];
+    const visited = new Set([key(queue[0].x, queue[0].y)]);
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      for (const [dx, dy] of [[step, 0], [-step, 0], [0, step], [0, -step]]) {
+        const x = current.x + dx;
+        const y = current.y + dy;
+        const nextKey = key(x, y);
+        if (visited.has(nextKey) || blocked(x, y)) continue;
+        visited.add(nextKey);
+        queue.push({ x, y });
+      }
+    }
+
+    const reachable = (x: number, y: number, radius = 40): boolean => {
+      const centerX = Math.round(x / step) * step;
+      const centerY = Math.round(y / step) * step;
+      for (let py = centerY - radius; py <= centerY + radius; py += step) {
+        for (let px = centerX - radius; px <= centerX + radius; px += step) {
+          if (Math.hypot(px - x, py - y) <= radius && visited.has(key(px, py))) return true;
+        }
+      }
+      return false;
+    };
+
+    expect(blocked(start.x, start.y), 'default spawn is blocked').toBe(false);
+    for (const npc of town.npcs ?? []) {
+      expect(reachable(npc.x, npc.y), `cannot approach town NPC ${npc.label}`).toBe(true);
+    }
+    expect(reachable(320, 48, 24), 'cannot reach the north gate').toBe(true);
+  });
+
   it('keeps illustrated-map entrances and enemy posts clear of painted scenery', () => {
     for (const mapId of ['forest', 'dungeon']) {
       const map = getMap(mapId)!;

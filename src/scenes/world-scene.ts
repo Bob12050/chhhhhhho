@@ -280,6 +280,15 @@ export class WorldScene extends Phaser.Scene {
       }
       gameState.flags['town_safe_respawn_v1'] = true;
     }
+    // The plaza redesign moves every facility to the perimeter. Start old town
+    // saves once from the new open center so nobody inherits a position beside
+    // a shop facade, canal edge, or planter collider.
+    if (this.map.id === 'town' && !gameState.flags['town_pixel_plaza_v1']) {
+      const plazaSpawn = spawnPoint(this.map, 'default');
+      gameState.x = plazaSpawn.x;
+      gameState.y = plazaSpawn.y;
+      gameState.flags['town_pixel_plaza_v1'] = true;
+    }
     // The original field was 360x1280. Saves parked near its lower gate would
     // otherwise clamp into the wide map's lower-left scenery after the resize.
     if (this.map.id === 'field' && gameState.y >= this.map.size.h - 32) {
@@ -1391,7 +1400,7 @@ export class WorldScene extends Phaser.Scene {
     const sprite = this.physics.add
       .staticImage(x, y, tex)
       .setOrigin(0.5, 0.875)
-      .setDisplaySize(96, 96);
+      .setDisplaySize(this.map.id === 'town' ? 76 : 96, this.map.id === 'town' ? 76 : 96);
     sprite.refreshBody();
     sprite.setDepth(Math.round(y));
     this.add.image(x, y + 2, TEX.groundShadow).setDisplaySize(24, 9).setDepth(Math.round(y) - 1);
@@ -1399,6 +1408,21 @@ export class WorldScene extends Phaser.Scene {
     // The illustrated town already carries facility pictograms in the scenery;
     // keeping old wooden labels over that art would cover roofs and entrances.
     if (this.map.id === 'town') {
+      if (action) {
+        const marker = this.add
+          .image(x, y - 59, TEX.npcInteractMarker)
+          .setDisplaySize(34, 34)
+          .setDepth(Math.round(y) + 3);
+        this.tweens.add({
+          targets: marker,
+          y: y - 62,
+          duration: 620,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Stepped',
+          easeParams: [3],
+        });
+      }
       this.npcs.push({ x, y, action, dialogueId });
       return;
     }

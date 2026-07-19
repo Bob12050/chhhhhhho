@@ -217,6 +217,7 @@ export const TEX = {
   hudStickBase: 'art.ui.hud.stick_base',
   hudActionButton: 'art.ui.hud.action_button',
   hudUtilityButton: 'art.ui.hud.utility_button',
+  npcInteractMarker: 'art.ui.npc.interact_marker',
   // Distinct town NPC looks by role (so the shopkeeper / smith / guild clerk /
   // elder stop being identical tinted clones). Real art drops in via manifest.
   npcMerchant: 'gen.npc.merchant',
