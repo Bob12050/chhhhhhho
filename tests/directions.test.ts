@@ -4,6 +4,7 @@ import {
   diagonalFrameIndex,
   frameIndex,
   shouldFlipX,
+  usesDiagonalIdleWalk,
 } from '@/paperdoll/pose-atlas';
 
 describe('eight-way facing', () => {
@@ -53,6 +54,13 @@ describe('diagonal pose atlas', () => {
     expect(diagonalFrameIndex('down-left', 'walk', 0, { walkUsesIdle: true })).toBe(0);
     expect(diagonalFrameIndex('down-left', 'walk', 3, { walkUsesIdle: true })).toBe(1);
     expect(diagonalFrameIndex('up-left', 'walk', 2, { walkUsesIdle: true })).toBe(12);
+  });
+
+  it('can limit the replacement to lower diagonals', () => {
+    expect(usesDiagonalIdleWalk('down-left', 'down')).toBe(true);
+    expect(usesDiagonalIdleWalk('down-right', 'down')).toBe(true);
+    expect(usesDiagonalIdleWalk('up-left', 'down')).toBe(false);
+    expect(usesDiagonalIdleWalk('up-right', 'down')).toBe(false);
   });
 
   it('falls back to the side pose when no diagonal sheet is assigned', () => {

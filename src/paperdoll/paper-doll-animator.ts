@@ -11,7 +11,9 @@ import {
   frameIndex,
   shouldFlipX,
   supportsDiagonalAnim,
+  usesDiagonalIdleWalk,
   type AnimName,
+  type DiagonalIdleWalkMode,
 } from '@/paperdoll/pose-atlas';
 import { CHAR_ANCHOR_X, CHAR_ANCHOR_Y, CHAR_FRAME_W, CHAR_FRAME_H } from '@/config/resolution';
 import { isDiagonalDirection } from '@/config/directions';
@@ -20,7 +22,7 @@ interface LayerVisual {
   readonly sprite: Phaser.GameObjects.Sprite;
   cardinalTextureKey: string;
   diagonalTextureKey: string | null;
-  diagonalWalkUsesIdle: boolean;
+  diagonalWalkUsesIdle: DiagonalIdleWalkMode;
   displayScale: number;
 }
 
@@ -63,7 +65,7 @@ export class PaperDollAnimator {
     textureKey: string | null,
     opts?: {
       diagonalTextureKey?: string | null;
-      diagonalWalkUsesIdle?: boolean;
+      diagonalWalkUsesIdle?: DiagonalIdleWalkMode;
       displayScale?: number;
     },
   ): void {
@@ -78,7 +80,7 @@ export class PaperDollAnimator {
     if (existing) {
       existing.cardinalTextureKey = textureKey;
       existing.diagonalTextureKey = opts?.diagonalTextureKey ?? null;
-      existing.diagonalWalkUsesIdle = opts?.diagonalWalkUsesIdle ?? false;
+      existing.diagonalWalkUsesIdle = opts?.diagonalWalkUsesIdle ?? null;
       existing.displayScale = opts?.displayScale ?? 1;
       existing.sprite.setTexture(textureKey).setScale(existing.displayScale);
     } else {
@@ -90,7 +92,7 @@ export class PaperDollAnimator {
         sprite,
         cardinalTextureKey: textureKey,
         diagonalTextureKey: opts?.diagonalTextureKey ?? null,
-        diagonalWalkUsesIdle: opts?.diagonalWalkUsesIdle ?? false,
+        diagonalWalkUsesIdle: opts?.diagonalWalkUsesIdle ?? null,
         displayScale: opts?.displayScale ?? 1,
       });
     }
@@ -206,10 +208,10 @@ export class PaperDollAnimator {
       if (layer.sprite.texture.key !== textureKey) layer.sprite.setTexture(textureKey);
       const safeDiagonalWalk = useDiagonal
         && diagonalAnim === 'walk'
-        && layer.diagonalWalkUsesIdle;
+        && usesDiagonalIdleWalk(this.dir, layer.diagonalWalkUsesIdle);
       const idx = useDiagonal
         ? diagonalFrameIndex(this.dir, diagonalAnim!, this.frame, {
-            walkUsesIdle: layer.diagonalWalkUsesIdle,
+            walkUsesIdle: safeDiagonalWalk,
           })
         : frameIndex(this.dir, this.anim, this.frame);
       layer.sprite.setFrame(idx);

@@ -166,13 +166,15 @@ export function baseAppearanceDiagonalTexKey(gender: CharacterGender): string {
   return gender === 'male' ? TEX.playerBodyMaleDiagonal : TEX.playerBodyDiagonal;
 }
 
-export function appearanceUsesSafeDiagonalWalk(
+export function appearanceSafeDiagonalWalkMode(
   id: string | undefined,
   gender: CharacterGender,
-): boolean {
+): 'down' | null {
   return gender === 'male'
     && !!id
-    && MALE_SAFE_DIAGONAL_WALK_APPEARANCES.has(id as JobAppearanceId);
+    && MALE_SAFE_DIAGONAL_WALK_APPEARANCES.has(id as JobAppearanceId)
+    ? 'down'
+    : null;
 }
 
 /** Logical display scale for an appearance texture (1 for regular sheets). */

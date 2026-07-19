@@ -55,6 +55,7 @@ export const SHEET_DIRECTIONS: readonly SheetDirection[] = ['down', 'up', 'left'
 /** Optional diagonal sheets currently carry the movement-critical poses. */
 export const DIAGONAL_ANIM_NAMES = ['idle', 'walk', 'attack'] as const;
 export type DiagonalAnimName = (typeof DIAGONAL_ANIM_NAMES)[number];
+export type DiagonalIdleWalkMode = 'down' | 'up' | 'all' | null;
 export type DiagonalSheetDirection = 'down-left' | 'up-left';
 export const DIAGONAL_SHEET_DIRECTIONS: readonly DiagonalSheetDirection[] = [
   'down-left',
@@ -90,6 +91,16 @@ export function supportsDiagonalAnim(anim: AnimName): anim is DiagonalAnimName {
 
 export function diagonalSheetDirection(dir: Direction): DiagonalSheetDirection {
   return dir === 'up-left' || dir === 'up-right' ? 'up-left' : 'down-left';
+}
+
+export function usesDiagonalIdleWalk(
+  dir: Direction,
+  mode: DiagonalIdleWalkMode,
+): boolean {
+  if (mode === 'all') return true;
+  const sheetDir = diagonalSheetDirection(dir);
+  return (mode === 'down' && sheetDir === 'down-left')
+    || (mode === 'up' && sheetDir === 'up-left');
 }
 
 /** Frame index into the optional 4-column diagonal pose sheet. */
