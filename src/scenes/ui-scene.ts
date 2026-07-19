@@ -498,8 +498,8 @@ export class UIScene extends Phaser.Scene {
     // never sit on top of the gold caps at narrow mobile widths.
     const frameContentInset = 28;
     const contentRight = PW - frameContentInset;
-    const levelDivider = frameContentInset + 36;
-    const expDivider = levelDivider + 76;
+    const levelDivider = frameContentInset + 50;
+    const expDivider = levelDivider + 62;
     const hpDivider = Math.floor((contentRight + expDivider) / 2);
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
     const hasHdStatusFrame = this.textures.exists(TEX.uiRibbonFrame);
@@ -596,9 +596,10 @@ export class UIScene extends Phaser.Scene {
 
     const expX = levelDivider + 7;
     const expW = expDivider - expX - 5;
-    this.expBar = makeBar(expX, expW, 0xf2d45c, 8, 31);
+    const expBarY = 29;
+    this.expBar = makeBar(expX, expW, 0xf2d45c, 8, expBarY);
     this.expText = this.add
-      .text(expX + expW / 2, 5, '', {
+      .text(expX + expW / 2, 8, '', {
         fontFamily: FONT,
         fontSize: '10px',
         color: '#f5f7fb',
@@ -611,7 +612,7 @@ export class UIScene extends Phaser.Scene {
     expSegments.lineStyle(1, 0x172034, 0.58);
     for (let i = 1; i < 8; i++) {
       const sx = Math.round(expX + (expW * i) / 8);
-      expSegments.lineBetween(sx, 28, sx, 34);
+      expSegments.lineBetween(sx, expBarY - 3, sx, expBarY + 3);
     }
     panel.add(expSegments);
 
