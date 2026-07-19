@@ -150,6 +150,18 @@ try {
       && slimeTextures.royal?.height === 96,
     JSON.stringify(slimeTextures),
   );
+  const materialIconKeys = [
+    'jelly', 'pelt', 'ore', 'metal', 'herb', 'wood_sap', 'fang', 'claw',
+    'horn', 'wing', 'feather', 'scale', 'carapace', 'core', 'orb', 'crystal',
+    'spore', 'machine', 'sand', 'proof',
+  ].map((kind) => `gen.icon.material.${kind}`);
+  const materialIconSizes = await page.evaluate((keys) =>
+    keys.map((key) => ({ key, size: window.__test.textureSize(key) })), materialIconKeys);
+  check(
+    '素材分類20種の単色ドットアイコンを読み込める',
+    materialIconSizes.every(({ size }) => size?.width === 16 && size?.height === 16),
+    JSON.stringify(materialIconSizes),
+  );
   const firstTierLooks = [
     ['fighter', 'gen.char.fighter', 'art.char.fighter.diagonal', 768, 3456, 768, 1152],
     ['mage', 'gen.char.mage', 'art.char.mage.diagonal', 768, 3456, 768, 1152],

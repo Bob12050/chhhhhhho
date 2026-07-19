@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { getEquipment, getConsumable, getMaterial, itemDisplayName } from '@/data/items';
+import { materialIconTexture } from '@/data/material-icons';
 import { rarityColorHex, rarityColor, rarityLabel } from '@/data/rarity';
 import { TEX } from '@/assets/gen/textures';
 import type { EquipSlot } from '@/equipment/slots';
@@ -536,7 +537,7 @@ export class InventoryScene extends Phaser.Scene {
     for (const [id, qty] of entries) {
       this.content.add(rowBand(this, y, rowH, band++));
       const rarity = getMaterial(id)?.rarity;
-      this.iconCell(y, rowH, TEX.iconGem, rarityColor(rarity), rarityColor(rarity));
+      this.iconCell(y, rowH, materialIconTexture(id), rarityColor(rarity), rarityColor(rarity));
       this.content.add(
         this.add.text(48, y + rowH / 2, itemDisplayName(id), {
           fontFamily: FONT,

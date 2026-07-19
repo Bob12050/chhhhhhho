@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { renderSheet, type LayerSpec } from './placeholder';
 import { PALETTES, EQUIP_RAMPS } from './palette';
 import { CHAR_FRAME_W, CHAR_FRAME_H } from '@/config/resolution';
+import { MATERIAL_ICON_TEXTURES } from '@/data/material-icons';
 
 /** Generated 16x16 combat-skill icons, keyed by the data definition id. */
 export const SKILL_TEX = {
@@ -828,6 +829,89 @@ function generateEnvTextures(scene: Phaser.Scene): void {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(9, 4, 1, 3); // highlight
   }, 16, 16);
+
+  const materialIcon = (
+    key: string,
+    rects: ReadonlyArray<readonly [x: number, y: number, width: number, height: number]>,
+  ): void => {
+    make(key, (ctx) => {
+      ctx.fillStyle = '#ffffff';
+      for (const [x, y, width, height] of rects) ctx.fillRect(x, y, width, height);
+    }, 16, 16);
+  };
+
+  // Plain category silhouettes. The UI applies rarity as a single tint.
+  materialIcon(MATERIAL_ICON_TEXTURES.jelly, [
+    [6, 3, 4, 1], [4, 4, 8, 2], [3, 6, 10, 6], [4, 12, 8, 1],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.pelt, [
+    [5, 2, 7, 2], [3, 4, 10, 3], [4, 7, 8, 2], [3, 9, 10, 3], [5, 12, 7, 2],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.ore, [
+    [7, 2, 3, 3], [4, 5, 5, 4], [9, 5, 4, 5], [2, 9, 5, 4], [7, 10, 6, 4],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.metal, [
+    [6, 3, 6, 2], [4, 5, 9, 2], [3, 7, 10, 4], [4, 11, 8, 2],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.herb, [
+    [7, 2, 2, 12], [3, 4, 4, 3], [9, 3, 4, 3], [4, 8, 3, 3], [9, 7, 4, 3],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.wood_sap, [
+    [2, 5, 9, 7], [10, 6, 3, 5], [12, 2, 2, 3], [11, 4, 4, 2],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.fang, [
+    [9, 2, 3, 2], [8, 4, 4, 3], [7, 7, 4, 3], [6, 10, 3, 2], [5, 12, 2, 2],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.claw, [
+    [3, 3, 2, 7], [2, 9, 2, 3], [7, 2, 2, 8], [6, 9, 2, 4], [11, 3, 2, 7], [10, 9, 2, 3],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.horn, [
+    [7, 2, 5, 2], [10, 4, 3, 5], [9, 8, 3, 3], [6, 10, 5, 3],
+    [4, 8, 3, 4], [3, 5, 3, 4], [5, 3, 3, 2],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.wing, [
+    [3, 3, 2, 11], [5, 4, 7, 2], [5, 6, 6, 2], [5, 8, 5, 2],
+    [5, 10, 4, 2], [10, 7, 3, 2], [8, 11, 3, 2],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.feather, [
+    [10, 2, 3, 2], [7, 4, 5, 2], [6, 6, 5, 2], [5, 8, 4, 2],
+    [4, 10, 3, 2], [3, 12, 2, 2], [7, 8, 2, 4], [9, 5, 2, 4],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.scale, [
+    [7, 2, 2, 1], [6, 3, 4, 3], [7, 6, 2, 1],
+    [3, 7, 2, 1], [2, 8, 4, 3], [3, 11, 2, 1],
+    [11, 7, 2, 1], [10, 8, 4, 3], [11, 11, 2, 1],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.carapace, [
+    [6, 2, 4, 2], [4, 4, 8, 2], [3, 6, 10, 2], [4, 8, 8, 2],
+    [3, 10, 10, 2], [5, 12, 6, 2],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.core, [
+    [6, 2, 4, 2], [4, 4, 3, 3], [9, 4, 3, 3], [3, 7, 3, 3],
+    [10, 7, 3, 3], [4, 10, 3, 3], [9, 10, 3, 3], [6, 12, 4, 2],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.orb, [
+    [6, 2, 4, 1], [4, 3, 8, 2], [3, 5, 10, 6], [4, 11, 8, 2], [6, 13, 4, 1],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.crystal, [
+    [7, 1, 3, 8], [5, 4, 2, 9], [10, 6, 3, 7], [3, 9, 3, 5], [5, 13, 8, 1],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.spore, [
+    [5, 5, 6, 1], [4, 6, 8, 6], [5, 12, 6, 2], [3, 2, 2, 2],
+    [8, 1, 2, 2], [12, 3, 2, 2],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.machine, [
+    [7, 2, 2, 3], [7, 11, 2, 3], [2, 7, 3, 2], [11, 7, 3, 2],
+    [4, 4, 3, 3], [9, 4, 3, 3], [4, 9, 3, 3], [9, 9, 3, 3],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.sand, [
+    [7, 2, 2, 2], [5, 4, 6, 2], [4, 6, 8, 7], [5, 13, 6, 1],
+    [12, 11, 2, 2], [14, 13, 1, 1],
+  ]);
+  materialIcon(MATERIAL_ICON_TEXTURES.proof, [
+    [6, 2, 4, 1], [4, 3, 8, 2], [3, 5, 3, 6], [10, 5, 3, 6],
+    [4, 11, 8, 2], [6, 13, 4, 1], [6, 6, 2, 4], [8, 8, 3, 2],
+  ]);
   make(TEX.iconStaff, (ctx) => {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(8, 4, 2, 10); // shaft

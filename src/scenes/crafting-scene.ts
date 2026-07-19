@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { getEquipment, getMaterial, getConsumable, itemDisplayName } from '@/data/items';
+import { materialIconTexture } from '@/data/material-icons';
 import { rarityColor } from '@/data/rarity';
 import { allRecipes, type Recipe } from '@/crafting/recipes';
 import { craft, craftBlock, visibleRecipes } from '@/crafting/crafting';
@@ -632,6 +633,7 @@ export class CraftingScene extends Phaser.Scene {
       return TEX.iconArmor;
     }
     if (getConsumable(id)) return TEX.iconFlask;
+    if (getMaterial(id)) return materialIconTexture(id);
     return TEX.iconGem;
   }
 
@@ -652,6 +654,7 @@ export class CraftingScene extends Phaser.Scene {
     const exchangeReady = !!missingRare && proofHave >= BOSS_RARE_EXCHANGE_COST;
     const resultRarity =
       getEquipment(r.resultItemId)?.rarity ?? getMaterial(r.resultItemId)?.rarity;
+    const resultTint = getMaterial(r.resultItemId) ? rarityColor(resultRarity) : 0xffe0a0;
     const surface = this.add.graphics();
     surface.fillStyle(craftable ? 0x17252a : band % 2 ? 0x10181e : 0x111a20, 0.97);
     surface.fillRoundedRect(14, y - 2, w - 22, rowH, 5);
@@ -670,7 +673,7 @@ export class CraftingScene extends Phaser.Scene {
       this.add
         .image(38, cy, this.resultIcon(r.resultItemId))
         .setDisplaySize(24, 24)
-        .setTint(craftable ? 0xffe0a0 : 0x6f7b82),
+        .setTint(craftable ? resultTint : 0x6f7b82),
     );
     this.content.add(
       this.add.text(64, y + 7, `${itemDisplayName(r.resultItemId)} ×${r.resultQty}`, {

@@ -28,6 +28,7 @@ import {
   itemDisplayName,
 } from '@/data/items';
 import { rarityColorHex } from '@/data/rarity';
+import { materialIconTexture } from '@/data/material-icons';
 
 interface RewardNotice {
   key: string;
@@ -916,7 +917,9 @@ export class UIScene extends Phaser.Scene {
         ? TEX.iconFlask
         : petItem
           ? TEX.iconBag
-          : TEX.iconGem;
+          : material
+            ? materialIconTexture(itemId)
+            : TEX.iconGem;
     this.enqueueReward({
       key: `item:${itemId}`,
       kind: 'item',

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
 import { getConsumable, getMaterial, itemDisplayName } from '@/data/items';
+import { materialIconTexture } from '@/data/material-icons';
 import { rarityColor } from '@/data/rarity';
 import { getShop, type ShopStockEntry } from '@/shops/shop-defs';
 import { bus } from '@/core/event-bus';
@@ -172,7 +173,7 @@ export class ShopScene extends Phaser.Scene {
     const cy = y + rowH / 2;
     this.content.add(rowBand(this, y, rowH, band));
     const tint = r.kind === 'mat' ? rarityColor(getMaterial(r.id)?.rarity) : this.itemTint(r.id);
-    const icon = r.kind === 'mat' ? TEX.iconGem : TEX.iconFlask;
+    const icon = r.kind === 'mat' ? materialIconTexture(r.id) : TEX.iconFlask;
     this.content.add(this.add.rectangle(26, cy, 32, 32, 0x1c2036, 1).setStrokeStyle(2, 0x46508a, 0.95));
     this.content.add(this.add.image(26, cy, icon).setTint(tint));
     this.content.add(
