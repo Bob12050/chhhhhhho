@@ -492,13 +492,13 @@ export class UIScene extends Phaser.Scene {
     const px = insets.left + 6;
     const py = insets.top + 6;
     const PW = w - insets.left - insets.right - 12;
-    const PH = 42;
+    const PH = 50;
     // The ribbon's end ornaments occupy more space than its visible border.
     // Keep every value inside that safe inner span so the level and MP blocks
     // never sit on top of the gold caps at narrow mobile widths.
     const frameContentInset = 28;
     const contentRight = PW - frameContentInset;
-    const levelDivider = frameContentInset + 50;
+    const levelDivider = frameContentInset + 60;
     const expDivider = levelDivider + 62;
     const hpDivider = Math.floor((contentRight + expDivider) / 2);
     const panel = this.add.container(px, py).setDepth(depth); // statusPanel
@@ -531,9 +531,9 @@ export class UIScene extends Phaser.Scene {
       panelBack.lineBetween(3, 2, PW - 3, 2);
     }
     panelBack.lineStyle(1, 0x71839b, 0.48);
-    panelBack.lineBetween(levelDivider, 4, levelDivider, PH - 4);
-    panelBack.lineBetween(expDivider, 4, expDivider, PH - 4);
-    panelBack.lineBetween(hpDivider, 4, hpDivider, PH - 4);
+    panelBack.lineBetween(levelDivider, 7, levelDivider, PH - 7);
+    panelBack.lineBetween(expDivider, 7, expDivider, PH - 7);
+    panelBack.lineBetween(hpDivider, 7, hpDivider, PH - 7);
     panel.add(panelBack);
 
     // Low-HP danger vignette (full screen, just under the HUD).
@@ -596,10 +596,10 @@ export class UIScene extends Phaser.Scene {
 
     const expX = levelDivider + 7;
     const expW = expDivider - expX - 5;
-    const expBarY = 29;
-    this.expBar = makeBar(expX, expW, 0xf2d45c, 8, expBarY);
+    const expBarY = 34;
+    this.expBar = makeBar(expX, expW, 0xf2d45c, 7, expBarY);
     this.expText = this.add
-      .text(expX + expW / 2, 8, '', {
+      .text(expX + expW / 2, 11, '', {
         fontFamily: FONT,
         fontSize: '10px',
         color: '#f5f7fb',
