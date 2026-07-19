@@ -908,8 +908,8 @@ try {
     window.__test.addMaterial('lord_hardwood', 5);
     window.__test.addMaterial('iron_ore', 10);
     window.__test.addGold(1000);
-    // Approach from the road above the fountain; the painted fountain is solid.
-    window.__test.warp('town', 145, 335);
+    // Approach the smith from the open plaza, just above the new west-side post.
+    window.__test.warp('town', 180, 395);
   });
   await page.waitForTimeout(1600);
   await page.keyboard.down('e'); await page.waitForTimeout(140); await page.keyboard.up('e'); await page.waitForTimeout(1200);
