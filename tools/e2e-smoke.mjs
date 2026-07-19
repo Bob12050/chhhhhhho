@@ -621,8 +621,8 @@ try {
       const canyonTexture = await page.evaluate(() =>
         window.__test.textureSize('art.map.canyon.storybook'));
       check(
-        '渓谷背景が拡張版640×960で読み込まれる',
-        canyonTexture?.width === 640 && canyonTexture?.height === 960,
+        '渓谷背景がHD版1280×1920で読み込まれる',
+        canyonTexture?.width === 1280 && canyonTexture?.height === 1920,
         JSON.stringify(canyonTexture),
       );
       await page.evaluate(() => window.__test.warp('canyon', 320, 785));
@@ -668,8 +668,8 @@ try {
       const volcanoTexture = await page.evaluate(() =>
         window.__test.textureSize('art.map.volcano.storybook'));
       check(
-        '火山背景が拡張版640×960で読み込まれる',
-        volcanoTexture?.width === 640 && volcanoTexture?.height === 960,
+        '火山背景がHD版1280×1920で読み込まれる',
+        volcanoTexture?.width === 1280 && volcanoTexture?.height === 1920,
         JSON.stringify(volcanoTexture),
       );
       await page.evaluate(() => window.__test.warp('volcano', 320, 900));
@@ -718,8 +718,8 @@ try {
       const snowfieldTexture = await page.evaluate(() =>
         window.__test.textureSize('art.map.snowfield.storybook'));
       check(
-        '雪原背景が拡張版640×960で読み込まれる',
-        snowfieldTexture?.width === 640 && snowfieldTexture?.height === 960,
+        '雪原背景がHD版1280×1920で読み込まれる',
+        snowfieldTexture?.width === 1280 && snowfieldTexture?.height === 1920,
         JSON.stringify(snowfieldTexture),
       );
       await page.evaluate(() => window.__test.warp('snowfield', 320, 795));
@@ -777,8 +777,8 @@ try {
       const desertTexture = await page.evaluate(() =>
         window.__test.textureSize('art.map.desert.storybook'));
       check(
-        '砂漠背景が拡張版640×960で読み込まれる',
-        desertTexture?.width === 640 && desertTexture?.height === 960,
+        '砂漠背景がHD版1280×1920で読み込まれる',
+        desertTexture?.width === 1280 && desertTexture?.height === 1920,
         JSON.stringify(desertTexture),
       );
       await page.evaluate(() => window.__test.warp('desert', 320, 790));

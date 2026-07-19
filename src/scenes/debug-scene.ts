@@ -302,6 +302,7 @@ export class DebugScene extends Phaser.Scene {
     // 全マップ解放: ポータルの解錠フラグ＋訪問済みフラグ.
     for (const m of allMaps()) {
       gs.flags[`visited_${m.id}`] = true;
+      if (m.travel?.unlockFlag) gs.flags[m.travel.unlockFlag] = true;
       for (const p of m.portals ?? []) {
         if (p.requiresFlag) gs.flags[p.requiresFlag] = true;
       }
