@@ -156,7 +156,7 @@ export const ASSET_SPECS: AssetSpec[] = [
   hdSheet('男性職業:ソードカイザーHD', 'assets/char/job_sword_kaiser-male-storybook-hd-v1.webp'),
   hdDiagonalSheet('男性職業:ソードカイザー斜めHD', 'assets/char/job_sword_kaiser-male-diagonal-hd-v1.webp'),
   hdSheet('男性職業:グランマギアーHD', 'assets/char/job_grand_magia-male-storybook-hd-v1.webp'),
-  hdDiagonalSheet('男性職業:グランマギアー斜めHD', 'assets/char/job_grand_magia-male-diagonal-hd-v1.webp'),
+  hdDiagonalSheet('男性職業:グランマギアー斜めHD', 'assets/char/job_grand_magia-male-diagonal-hd-v2.webp'),
   hdSheet('男性職業:シルドセイバーHD', 'assets/char/job_shield_saber-male-storybook-hd-v1.webp'),
   hdDiagonalSheet('男性職業:シルドセイバー斜めHD', 'assets/char/job_shield_saber-male-diagonal-hd-v1.webp'),
   hdSheet('男性職業:アベンジスタHD', 'assets/char/job_avengista-male-storybook-hd-v1.webp'),

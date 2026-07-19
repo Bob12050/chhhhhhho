@@ -116,7 +116,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   sheet(TEX.jobSwordKaiserMale, 'assets/char/job_sword_kaiser-male-storybook-hd-v1.webp', 192, 192),
   sheet(TEX.jobSwordKaiserMaleDiagonal, 'assets/char/job_sword_kaiser-male-diagonal-hd-v1.webp', 192, 192),
   sheet(TEX.jobGrandMagiaMale, 'assets/char/job_grand_magia-male-storybook-hd-v1.webp', 192, 192),
-  sheet(TEX.jobGrandMagiaMaleDiagonal, 'assets/char/job_grand_magia-male-diagonal-hd-v1.webp', 192, 192),
+  sheet(TEX.jobGrandMagiaMaleDiagonal, 'assets/char/job_grand_magia-male-diagonal-hd-v2.webp', 192, 192),
   sheet(TEX.jobShieldSaberMale, 'assets/char/job_shield_saber-male-storybook-hd-v1.webp', 192, 192),
   sheet(TEX.jobShieldSaberMaleDiagonal, 'assets/char/job_shield_saber-male-diagonal-hd-v1.webp', 192, 192),
   sheet(TEX.jobAvengistaMale, 'assets/char/job_avengista-male-storybook-hd-v1.webp', 192, 192),

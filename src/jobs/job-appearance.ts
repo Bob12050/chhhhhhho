@@ -109,7 +109,6 @@ const MALE_SAFE_DIAGONAL_WALK_APPEARANCES = new Set<JobAppearanceId>([
   'priest',
   'pet_raiser',
   'holy_knight',
-  'grand_magia',
   'shield_saber',
   'avengista',
   'dual_star',
