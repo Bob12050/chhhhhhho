@@ -1,4 +1,5 @@
 import jobsJson from '@/data/defs/jobs.json';
+import { scaleFlatCombatStats } from '@/balance/progression-scale';
 import type { BaseStats, DerivedStats } from '@/stats/stats';
 
 /**
@@ -56,7 +57,15 @@ interface JobsFile {
 }
 
 const jobs = new Map<string, JobDef>();
-for (const j of (jobsJson as unknown as JobsFile).jobs) jobs.set(j.id, j);
+for (const raw of (jobsJson as unknown as JobsFile).jobs) {
+  const job: JobDef = {
+    ...raw,
+    derivedModifiers: raw.derivedModifiers
+      ? scaleFlatCombatStats(raw.derivedModifiers)
+      : undefined,
+  };
+  jobs.set(job.id, job);
+}
 
 export function getJob(id: string): JobDef | undefined {
   return jobs.get(id);

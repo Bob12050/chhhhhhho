@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { getConsumable } from '@/data/items';
 import { GameState } from '@/player/game-state';
 
 describe('consumables', () => {
@@ -9,7 +10,9 @@ describe('consumables', () => {
     gs.addConsumable('potion_hp', 2);
     const ok = gs.useConsumable('potion_hp');
     expect(ok).toBe(true);
-    expect(gs.hp).toBe(Math.min(gs.derived.maxHp, 1 + 30));
+    expect(gs.hp).toBe(
+      Math.min(gs.derived.maxHp, 1 + (getConsumable('potion_hp')?.effect.hp ?? 0)),
+    );
     expect(gs.consumables.potion_hp).toBe(1);
   });
 

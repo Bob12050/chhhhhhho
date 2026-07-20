@@ -33,6 +33,7 @@ import {
 } from '@/player/character-gender';
 import { syncInvestigationQuests } from '@/endgame/investigations';
 import { rebaseInvestigationEquipment } from '@/endgame/investigation-forge';
+import { POWER_SCALE_SAVE_FLAG } from '@/balance/progression-scale';
 import { bossSetStatModifiers } from '@/equipment/boss-set-bonuses';
 import {
   JOB_REGALIA,
@@ -76,7 +77,7 @@ export class GameState {
   /** Most recent investigation reward (runtime-only, for the result ceremony). */
   lastInvestigationLootId: string | null = null;
 
-  flags: Record<string, boolean> = {};
+  flags: Record<string, boolean> = { [POWER_SCALE_SAVE_FLAG]: true };
 
   /** Quest state: accepted ids, turned-in ids, and per-quest kill progress. */
   activeQuests: string[] = [];
@@ -610,6 +611,7 @@ export class GameState {
   }
 
   loadFrom(data: SaveData): void {
+    const refillForPowerScale = !data.flags?.[POWER_SCALE_SAVE_FLAG];
     this.slot = data.slot;
     this.tempBuffs = []; // runtime-only; never carried across loads
     this.lastInvestigationLootId = null;
@@ -654,7 +656,7 @@ export class GameState {
     replaceRuntimeEquipment(Object.values(this.generatedEquipment));
     // Owned equipment: keep only known ids.
     this.equipmentOwned = (data.inventory.equipmentOwned ?? []).filter((id) => !!getEquipment(id));
-    this.flags = { ...data.flags };
+    this.flags = { ...data.flags, [POWER_SCALE_SAVE_FLAG]: true };
     this.investigationSeed = (data.investigations?.seed ?? 1) >>> 0;
     this.investigationsCompleted = Math.max(0, Math.floor(data.investigations?.completed ?? 0));
     // Runtime quest definitions must exist before active/completed ids are
@@ -705,9 +707,9 @@ export class GameState {
       if (eq && this.equipBlock(eq) === 'job') this.equipment[slot] = null;
     }
     this.recompute(false);
-    if (data.player.hp < 0) this.hp = this.derived.maxHp;
+    if (refillForPowerScale || data.player.hp < 0) this.hp = this.derived.maxHp;
     else this.hp = Math.min(this.derived.maxHp, data.player.hp);
-    if (data.player.mp < 0) this.mp = this.derived.maxMp;
+    if (refillForPowerScale || data.player.mp < 0) this.mp = this.derived.maxMp;
     else this.mp = Math.min(this.derived.maxMp, data.player.mp);
     bus.emit('player:hp-changed', { current: this.hp, max: this.derived.maxHp });
     bus.emit('player:mp-changed', { current: this.mp, max: this.derived.maxMp });

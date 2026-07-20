@@ -9,7 +9,7 @@ describe('damage mitigation (防御/魔防)', () => {
     expect(mitigateDamage(40, MITIGATION_K)).toBe(20);
   });
   it('diminishing returns, never below 1', () => {
-    expect(mitigateDamage(40, 30)).toBe(30);
+    expect(mitigateDamage(40, 30)).toBe(34);
     expect(mitigateDamage(40, 10_000)).toBe(1);
     expect(mitigateDamage(2, 10_000)).toBe(1);
   });

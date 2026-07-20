@@ -1,4 +1,5 @@
 import skillsJson from '@/data/defs/skills.json';
+import { scaleFlatCombatStats } from '@/balance/progression-scale';
 import type { DerivedStats } from '@/stats/stats';
 import type { ClassFamily } from '@/jobs/job-defs';
 
@@ -74,7 +75,14 @@ interface SkillsFile {
 }
 
 const skills = new Map<string, SkillDef>();
-for (const s of (skillsJson as unknown as SkillsFile).skills) skills.set(s.id, s);
+for (const raw of (skillsJson as unknown as SkillsFile).skills) {
+  const skill: SkillDef = {
+    ...raw,
+    derived: raw.derived ? scaleFlatCombatStats(raw.derived) : undefined,
+    buffStats: raw.buffStats ? scaleFlatCombatStats(raw.buffStats) : undefined,
+  };
+  skills.set(skill.id, skill);
+}
 
 export function getSkill(id: string): SkillDef | undefined {
   return skills.get(id);

@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import { POWER_SCALE_SAVE_FLAG } from '@/balance/progression-scale';
 import { GameState } from '@/player/game-state';
 
 describe('GameState equipment & stats', () => {
@@ -13,8 +14,8 @@ describe('GameState equipment & stats', () => {
 
   it('equipping increases derived stats immediately', () => {
     const before = gs.derived.physAtk;
-    gs.equip('main_hand', 'iron_sword'); // R3, +15 physAtk after rank scaling
-    expect(gs.derived.physAtk).toBe(before + 15);
+    gs.equip('main_hand', 'iron_sword'); // R3, +42 physAtk after rank scaling
+    expect(gs.derived.physAtk).toBe(before + 42);
   });
 
   it('makes an R10 weapon a substantial share of endgame attack', () => {
@@ -27,8 +28,8 @@ describe('GameState equipment & stats', () => {
     gs.equip('main_hand', 'skyvault_sword');
     const weaponGain = gs.derived.physAtk - withoutWeapon;
 
-    expect(weaponGain).toBe(144);
-    expect(weaponGain / withoutWeapon).toBeGreaterThan(0.4);
+    expect(weaponGain).toBe(480);
+    expect(weaponGain / withoutWeapon).toBeGreaterThan(0.65);
   });
 
   it('unequipping reverts derived stats', () => {
@@ -40,9 +41,9 @@ describe('GameState equipment & stats', () => {
 
   it('stacking armor adds defense and max hp', () => {
     const hp0 = gs.derived.maxHp;
-    gs.equip('head', 'iron_helm'); // R3, def+5, maxHp+12
-    gs.equip('torso', 'iron_plate'); // R3, def+8, maxHp+18
-    expect(gs.derived.maxHp).toBe(hp0 + 30);
+    gs.equip('head', 'iron_helm'); // R3, def+15, maxHp+26
+    gs.equip('torso', 'iron_plate'); // R3, def+24, maxHp+40
+    expect(gs.derived.maxHp).toBe(hp0 + 66);
     expect(gs.derived.def).toBeGreaterThan(0);
   });
 
@@ -51,7 +52,7 @@ describe('GameState equipment & stats', () => {
     gs.statPoints = 2;
     const atk = gs.derived.physAtk;
     expect(gs.allocateStat('STR')).toBe(true);
-    expect(gs.derived.physAtk).toBe(atk + 2);
+    expect(gs.derived.physAtk).toBe(atk + 4);
     expect(gs.statPoints).toBe(1);
   });
 });
@@ -63,6 +64,21 @@ describe('GameState leveling', () => {
     gs.gainExp(1000);
     expect(gs.level).toBeGreaterThan(1);
     expect(gs.statPoints).toBeGreaterThan(0);
+  });
+
+  it('fully restores a legacy save when it enters the larger stat scale', () => {
+    const source = new GameState();
+    const save = source.toSave(0);
+    delete save.flags[POWER_SCALE_SAVE_FLAG];
+    save.player.hp = 1;
+    save.player.mp = 0;
+
+    const loaded = new GameState();
+    loaded.loadFrom(save);
+
+    expect(loaded.flags[POWER_SCALE_SAVE_FLAG]).toBe(true);
+    expect(loaded.hp).toBe(loaded.derived.maxHp);
+    expect(loaded.mp).toBe(loaded.derived.maxMp);
   });
 });
 

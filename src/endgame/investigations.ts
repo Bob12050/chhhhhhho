@@ -1,4 +1,8 @@
 import { Rng } from '@/core/rng';
+import {
+  ENEMY_DAMAGE_SCALE,
+  ENEMY_HP_SCALE,
+} from '@/balance/progression-scale';
 import { getEnemyDef, type EnemyDef } from '@/enemies/enemy-defs';
 import { INVESTIGATION_CONDITIONS } from '@/endgame/investigation-conditions';
 import type { GameState } from '@/player/game-state';
@@ -24,10 +28,10 @@ interface Candidate {
 // stat by the same value makes late bosses walls and early bosses trivial. Aim
 // each contract at one shared threat curve instead, then let the condition add
 // a small, readable variation around it.
-const BASE_TARGET_HP = 24_500;
-const HP_PER_THREAT = 850;
-const BASE_TARGET_DAMAGE = 315;
-const DAMAGE_PER_THREAT = 3.5;
+const BASE_TARGET_HP = 24_500 * ENEMY_HP_SCALE;
+const HP_PER_THREAT = 850 * ENEMY_HP_SCALE;
+const BASE_TARGET_DAMAGE = 315 * ENEMY_DAMAGE_SCALE;
+const DAMAGE_PER_THREAT = 3.5 * ENEMY_DAMAGE_SCALE;
 
 function candidates(): Candidate[] {
   const byEnemy = new Map<string, Candidate>();

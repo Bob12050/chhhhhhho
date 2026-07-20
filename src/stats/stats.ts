@@ -1,3 +1,5 @@
+import { scaleCoreStat } from '@/balance/progression-scale';
+
 /**
  * Stat model and the SINGLE derived-stat calculator. UI and combat both read
  * from compute() so displayed and effective values can never diverge. Pure and
@@ -65,12 +67,12 @@ export function computeDerived(
 
   // 2) Formula from base stats.
   const derived: DerivedStats = {
-    maxHp: 30 + base.VIT * 8 + base.STR * 1,
+    maxHp: scaleCoreStat(30 + base.VIT * 8 + base.STR * 1),
     maxMp: 10 + base.INT * 6,
-    physAtk: 2 + base.STR * 2 + Math.floor(base.DEX * 0.5),
-    magAtk: 2 + base.INT * 2,
-    def: Math.floor(base.VIT * 1.0),
-    magDef: Math.floor(base.INT * 0.7 + base.VIT * 0.3),
+    physAtk: scaleCoreStat(2 + base.STR * 2 + Math.floor(base.DEX * 0.5)),
+    magAtk: scaleCoreStat(2 + base.INT * 2),
+    def: scaleCoreStat(Math.floor(base.VIT * 1.0)),
+    magDef: scaleCoreStat(Math.floor(base.INT * 0.7 + base.VIT * 0.3)),
     accuracy: 75 + base.DEX * 2,
     evasion: Math.floor(base.DEX * 1.0 + base.LUK * 0.5),
     critRate: Math.min(0.5, 0.02 + base.LUK * 0.005),

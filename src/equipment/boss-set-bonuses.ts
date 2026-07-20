@@ -1,4 +1,5 @@
 import setBonusesJson from '@/data/defs/boss-set-bonuses.json';
+import { scaleFlatCombatStats } from '@/balance/progression-scale';
 import type { Element } from '@/combat/elements';
 import type { EquipSlot } from '@/equipment/slots';
 import type { DerivedStats, StatModifiers } from '@/stats/stats';
@@ -59,7 +60,13 @@ interface BossSetBonusesFile {
   sets: BossSetBonusDef[];
 }
 
-const sets = (setBonusesJson as BossSetBonusesFile).sets;
+const sets = (setBonusesJson as BossSetBonusesFile).sets.map((set) => ({
+  ...set,
+  bonuses: set.bonuses.map((bonus) => ({
+    ...bonus,
+    derived: bonus.derived ? scaleFlatCombatStats(bonus.derived) : undefined,
+  })),
+}));
 
 export function allBossSetBonuses(): BossSetBonusDef[] {
   return [...sets];

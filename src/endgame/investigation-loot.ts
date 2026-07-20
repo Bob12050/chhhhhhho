@@ -26,14 +26,14 @@ const rateRoll = (base: number, step: number, spread: number) =>
     Number(((base + step * power + rng.intRange(0, spread)) / 100).toFixed(2));
 
 const AFFIXES: readonly AffixTemplate[] = [
-  { id: 'force', label: '物攻', stat: 'physAtk', applies: (d) => (d.derived.physAtk ?? 0) > 0, roll: intRoll(2, 2, 3) },
-  { id: 'arcana', label: '魔攻', stat: 'magAtk', applies: (d) => (d.derived.magAtk ?? 0) > 0, roll: intRoll(2, 2, 3) },
-  { id: 'vitality', label: 'HP', stat: 'maxHp', applies: () => true, roll: intRoll(14, 12, 16) },
-  { id: 'spirit', label: 'MP', stat: 'maxMp', applies: (d) => d.slot !== 'main_hand' || (d.derived.magAtk ?? 0) > 0, roll: intRoll(5, 5, 7) },
-  { id: 'guard', label: '防御', stat: 'def', applies: (d) => d.slot !== 'main_hand' || (d.derived.def ?? 0) > 0, roll: intRoll(1, 2, 3) },
-  { id: 'ward', label: '魔防', stat: 'magDef', applies: (d) => d.slot !== 'main_hand' || (d.derived.magDef ?? 0) > 0, roll: intRoll(1, 2, 3) },
-  { id: 'focus', label: '命中', stat: 'accuracy', applies: (d) => d.slot === 'main_hand' || d.slot === 'hands', roll: intRoll(1, 2, 3) },
-  { id: 'agility', label: '回避', stat: 'evasion', applies: (d) => d.slot !== 'waist', roll: intRoll(1, 2, 3) },
+  { id: 'force', label: '物攻', stat: 'physAtk', applies: (d) => (d.derived.physAtk ?? 0) > 0, roll: intRoll(6, 6, 9) },
+  { id: 'arcana', label: '魔攻', stat: 'magAtk', applies: (d) => (d.derived.magAtk ?? 0) > 0, roll: intRoll(6, 6, 9) },
+  { id: 'vitality', label: 'HP', stat: 'maxHp', applies: () => true, roll: intRoll(28, 24, 32) },
+  { id: 'spirit', label: 'MP', stat: 'maxMp', applies: (d) => d.slot !== 'main_hand' || (d.derived.magAtk ?? 0) > 0, roll: intRoll(8, 8, 10) },
+  { id: 'guard', label: '防御', stat: 'def', applies: (d) => d.slot !== 'main_hand' || (d.derived.def ?? 0) > 0, roll: intRoll(3, 5, 7) },
+  { id: 'ward', label: '魔防', stat: 'magDef', applies: (d) => d.slot !== 'main_hand' || (d.derived.magDef ?? 0) > 0, roll: intRoll(3, 5, 7) },
+  { id: 'focus', label: '命中', stat: 'accuracy', applies: (d) => d.slot === 'main_hand' || d.slot === 'hands', roll: intRoll(2, 3, 4) },
+  { id: 'agility', label: '回避', stat: 'evasion', applies: (d) => d.slot !== 'waist', roll: intRoll(2, 3, 4) },
   { id: 'critical', label: '会心', stat: 'critRate', applies: (d) => d.slot === 'main_hand' || d.slot.startsWith('accessory'), roll: rateRoll(0, 1, 1) },
   { id: 'haste', label: '攻速', stat: 'atkSpeed', applies: (d) => d.slot === 'main_hand' || d.slot === 'hands', roll: rateRoll(3, 2, 2) },
   { id: 'stride', label: '移動', stat: 'moveSpeed', applies: (d) => d.slot === 'feet' || d.slot === 'back', roll: intRoll(0, 1, 2) },
@@ -148,6 +148,7 @@ export function generateInvestigationEquipment(gs: GameState, quest: QuestDef): 
       threat: quest.investigation.threat,
       affixes,
       upgradeLevel: 0,
+      powerVersion: 2,
     } })}`,
     series: '深層調査',
     generated: {
@@ -156,6 +157,7 @@ export function generateInvestigationEquipment(gs: GameState, quest: QuestDef): 
       threat: quest.investigation.threat,
       affixes,
       upgradeLevel: 0,
+      powerVersion: 2,
     },
   };
   return def;

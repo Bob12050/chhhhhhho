@@ -25,7 +25,7 @@ import { allQuests, type QuestDef } from '../src/quests/quest-defs';
 import { allRecipes } from '../src/crafting/recipes';
 import { getDropTable, rollDrops } from '../src/loot/drop-table';
 import { totalExpForLevel } from '../src/stats/leveling';
-import { VETERAN_MODS } from '../src/quests/hunt-logic';
+import { huntStatModifiers, VETERAN_MODS } from '../src/quests/hunt-logic';
 import { Rng } from '../src/core/rng';
 
 const RUNS = Number(process.argv[2] ?? 300);
@@ -118,8 +118,7 @@ for (const q of huntQuests.sort((a, b) => (a.rank ?? 1) - (b.rank ?? 1) || (a.re
   if (!boss) continue;
   const lv = q.require?.minLevel ?? 1;
   const { derived } = buildPlayer(lv);
-  const hpMult = q.veteran ? VETERAN_MODS.hpMult : 1;
-  const dmgMult = q.veteran ? VETERAN_MODS.dmgMult : 1;
+  const { hpMult, dmgMult } = huntStatModifiers(q);
   const swingsPerSec = 1000 / (BASE_ATTACK_MS / derived.atkSpeed);
   const dps = derived.physAtk * (1 + derived.critRate * 0.6) * swingsPerSec * UPTIME;
   const ttk = (boss.maxHp * hpMult) / dps;

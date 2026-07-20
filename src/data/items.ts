@@ -1,4 +1,5 @@
 import itemsJson from './defs/items.json';
+import { scaleCoreStat } from '@/balance/progression-scale';
 import type { DerivedStats } from '@/stats/stats';
 import type { EquipSlot } from '@/equipment/slots';
 import { applyAuthoredEquipmentPower } from '@/equipment/power-curve';
@@ -52,6 +53,8 @@ export interface GeneratedEquipmentMeta {
   affixes: EquipmentAffix[];
   /** Reserved for the dismantle/upgrade phase. */
   upgradeLevel: number;
+  /** Flat-affix scale used when this instance was generated. */
+  powerVersion?: number;
 }
 
 export interface EquipmentDef {
@@ -98,7 +101,15 @@ const equipment = new Map<string, EquipmentDef>();
 const runtimeEquipment = new Map<string, EquipmentDef>();
 
 for (const m of file.materials) materials.set(m.id, m);
-for (const c of file.consumables) consumables.set(c.id, c);
+for (const c of file.consumables) {
+  consumables.set(c.id, {
+    ...c,
+    effect: {
+      ...c.effect,
+      hp: c.effect.hp == null ? undefined : scaleCoreStat(c.effect.hp),
+    },
+  });
+}
 for (const p of file.petItems ?? []) petItems.set(p.id, p);
 for (const e of file.equipment) equipment.set(e.id, applyAuthoredEquipmentPower(e));
 for (const e of buildJobRegaliaEquipment()) equipment.set(e.id, e);

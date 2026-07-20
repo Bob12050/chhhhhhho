@@ -1,4 +1,8 @@
 import enemiesJson from '@/data/defs/enemies.json';
+import {
+  ENEMY_DAMAGE_SCALE,
+  ENEMY_HP_SCALE,
+} from '@/balance/progression-scale';
 
 /**
  * Enemy definitions (immutable, data-driven). The scene/FSM (`Enemy`) consumes
@@ -135,7 +139,17 @@ interface EnemiesFile {
 }
 
 const defs = new Map<string, EnemyDef>();
-for (const e of (enemiesJson as unknown as EnemiesFile).enemies) defs.set(e.id, e);
+for (const raw of (enemiesJson as unknown as EnemiesFile).enemies) {
+  const enemy: EnemyDef = {
+    ...raw,
+    maxHp: Math.round(raw.maxHp * ENEMY_HP_SCALE),
+    contactDamage: Math.round(raw.contactDamage * ENEMY_DAMAGE_SCALE),
+    stagger: raw.stagger
+      ? { ...raw.stagger, max: Math.round(raw.stagger.max * ENEMY_HP_SCALE) }
+      : undefined,
+  };
+  defs.set(enemy.id, enemy);
+}
 
 export function getEnemyDef(id: string): EnemyDef | undefined {
   return defs.get(id);

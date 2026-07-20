@@ -99,6 +99,26 @@ describe('investigation equipment forge', () => {
     expect(loaded.generatedEquipment[id].derived).toEqual(expected);
   });
 
+  it('upgrades legacy investigation affixes to the larger stat scale once', () => {
+    const { gs, id } = stateWithLoot();
+    const save = gs.toSave(1);
+    const snapshot = save.inventory.generatedEquipment?.find((def) => def.id === id)!;
+    const baseAttack = getEquipment(snapshot.generated!.baseId)?.derived.physAtk ?? 0;
+    snapshot.generated!.powerVersion = undefined;
+    snapshot.generated!.affixes = [
+      { id: 'force', label: '物攻', stat: 'physAtk', value: 10 },
+    ];
+    snapshot.derived = {};
+
+    const loaded = new GameState();
+    loaded.loadFrom(save);
+    const migrated = loaded.generatedEquipment[id];
+
+    expect(migrated.generated?.powerVersion).toBe(2);
+    expect(migrated.generated?.affixes[0].value).toBe(30);
+    expect(migrated.derived.physAtk).toBe(baseAttack + 30);
+  });
+
   it('enforces material requirements and the +5 cap', () => {
     const { gs, id } = stateWithLoot();
     expect(upgradeInvestigationEquipment(gs, id)).toBe('materials');

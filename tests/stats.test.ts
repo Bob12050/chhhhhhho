@@ -6,14 +6,14 @@ const base: BaseStats = { STR: 5, VIT: 5, INT: 5, DEX: 5, LUK: 5 };
 describe('computeDerived', () => {
   it('computes derived stats from base stats deterministically', () => {
     const d = computeDerived(base);
-    expect(d.maxHp).toBe(30 + 5 * 8 + 5); // 75
-    expect(d.physAtk).toBe(2 + 5 * 2 + Math.floor(5 * 0.5)); // 14
+    expect(d.maxHp).toBe((30 + 5 * 8 + 5) * 2); // 150
+    expect(d.physAtk).toBe((2 + 5 * 2 + Math.floor(5 * 0.5)) * 2); // 28
     expect(d.moveSpeed).toBe(90);
   });
 
   it('applies base-stat modifiers before the formula', () => {
     const d = computeDerived(base, [{ base: { STR: 5 } }]);
-    expect(d.physAtk).toBe(2 + 10 * 2 + Math.floor(5 * 0.5)); // 24
+    expect(d.physAtk).toBe((2 + 10 * 2 + Math.floor(5 * 0.5)) * 2); // 48
   });
 
   it('applies additive derived modifiers (equipment)', () => {
