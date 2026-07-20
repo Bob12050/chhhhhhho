@@ -131,6 +131,8 @@ export class WorldScene extends Phaser.Scene {
   /** Pooled enemy projectiles (mobile-perf rule: projectiles use a pool). */
   private bullets: { obj: Phaser.GameObjects.Arc; vx: number; vy: number; ttl: number; damage: number }[] = [];
   private bulletPool: Phaser.GameObjects.Arc[] = [];
+  /** Live boss warning art. Cleared immediately when combat ends or the player falls. */
+  private bossWarnings = new Set<Phaser.GameObjects.GameObject>();
   /** Player skill projectiles (pooled). */
   private pBolts: { obj: Phaser.GameObjects.Arc; vx: number; vy: number; ttl: number; atk: number; mult: number; element: Element; skill: boolean }[] = [];
   private pBoltPool: Phaser.GameObjects.Arc[] = [];
@@ -205,6 +207,7 @@ export class WorldScene extends Phaser.Scene {
     this.investigationFrenzy = false;
     this.bullets = [];
     this.bulletPool = [];
+    this.bossWarnings.clear();
     this.pBolts = [];
     this.pBoltPool = [];
     this.minions = [];
@@ -218,6 +221,7 @@ export class WorldScene extends Phaser.Scene {
     bgm.play(bgmForMap(this.map.id));
     this.ui = this.scene.get('UI') as UIScene;
     this.ui.resetControls();
+    this.ui.clearDefeated();
     this.ui.showInteract(false);
 
     this.physics.world.setBounds(0, 0, this.map.size.w, this.map.size.h);
@@ -501,6 +505,7 @@ export class WorldScene extends Phaser.Scene {
       }),
     );
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.clearBossWarnings();
       for (const off of this.busOff) off();
       this.busOff = [];
     });
@@ -901,18 +906,18 @@ export class WorldScene extends Phaser.Scene {
     color: number,
     onDone: () => void,
   ): void {
-    const ring = this.add
+    const ring = this.trackBossWarning(this.add
       .circle(Math.round(x), Math.round(y), radius, color, 0.12)
       .setStrokeStyle(2, color, 0.95)
-      .setDepth(6);
-    const fill = this.add
+      .setDepth(6));
+    const fill = this.trackBossWarning(this.add
       .circle(Math.round(x), Math.round(y), radius, color, 0.28)
       .setScale(0.06)
-      .setDepth(6);
+      .setDepth(6));
     this.tweens.add({ targets: fill, scale: 1, duration: ms, ease: 'Linear' });
     this.time.delayedCall(ms, () => {
-      ring.destroy();
-      fill.destroy();
+      this.releaseBossWarnings(ring, fill);
+      if (this.playerDead || this.transitioning || !this.scene.isActive()) return;
       onDone();
     });
   }
@@ -933,27 +938,26 @@ export class WorldScene extends Phaser.Scene {
     const length = Math.max(64, (speed * durationMs) / 1000);
     const endX = x + Math.cos(angle) * length;
     const endY = y + Math.sin(angle) * length;
-    const lane = this.add
+    const lane = this.trackBossWarning(this.add
       .rectangle(x, y, length, 30, color, 0.12)
       .setOrigin(0, 0.5)
       .setRotation(angle)
       .setStrokeStyle(2, color, 0.9)
-      .setDepth(6);
-    const fill = this.add
+      .setDepth(6));
+    const fill = this.trackBossWarning(this.add
       .rectangle(x, y, length, 24, color, 0.3)
       .setOrigin(0, 0.5)
       .setRotation(angle)
       .setScale(0.04, 1)
-      .setDepth(6);
-    const end = this.add
+      .setDepth(6));
+    const end = this.trackBossWarning(this.add
       .circle(endX, endY, 16, color, 0.12)
       .setStrokeStyle(2, color, 0.9)
-      .setDepth(6);
+      .setDepth(6));
     this.tweens.add({ targets: fill, scaleX: 1, duration: telegraphMs, ease: 'Linear' });
     this.time.delayedCall(telegraphMs, () => {
-      lane.destroy();
-      fill.destroy();
-      end.destroy();
+      this.releaseBossWarnings(lane, fill, end);
+      if (this.playerDead || this.transitioning || !this.scene.isActive()) return;
       onDone();
     });
   }
@@ -967,7 +971,7 @@ export class WorldScene extends Phaser.Scene {
     color: number,
     onDone: () => void,
   ): void {
-    const rays = this.add.graphics().setDepth(6).setAlpha(0.35);
+    const rays = this.trackBossWarning(this.add.graphics().setDepth(6).setAlpha(0.35));
     rays.lineStyle(2, color, 0.82);
     for (const angle of angles) {
       rays.beginPath();
@@ -975,14 +979,14 @@ export class WorldScene extends Phaser.Scene {
       rays.lineTo(x + Math.cos(angle) * 180, y + Math.sin(angle) * 180);
       rays.strokePath();
     }
-    const core = this.add
+    const core = this.trackBossWarning(this.add
       .circle(x, y, 20, color, 0.14)
       .setStrokeStyle(2, color, 0.95)
-      .setDepth(6);
+      .setDepth(6));
     this.tweens.add({ targets: [rays, core], alpha: 0.95, duration: ms, ease: 'Linear' });
     this.time.delayedCall(ms, () => {
-      rays.destroy();
-      core.destroy();
+      this.releaseBossWarnings(rays, core);
+      if (this.playerDead || this.transitioning || !this.scene.isActive()) return;
       onDone();
     });
   }
@@ -998,13 +1002,13 @@ export class WorldScene extends Phaser.Scene {
     onDone: () => void,
   ): void {
     const roots = angles.map((angle) => {
-      const root = this.add
+      const root = this.trackBossWarning(this.add
         .image(Math.round(x), Math.round(y), TEX.treantRootLane)
         .setOrigin(0.5, 0)
         .setRotation(angle - Math.PI / 2)
         .setDisplaySize(Math.round(width * 2.7), Math.round(length))
         .setAlpha(0.28)
-        .setDepth(5);
+        .setDepth(5));
       const targetScaleY = root.scaleY;
       root.setScale(root.scaleX, targetScaleY * 0.06);
       this.tweens.add({
@@ -1017,9 +1021,28 @@ export class WorldScene extends Phaser.Scene {
       return root;
     });
     this.time.delayedCall(ms, () => {
-      for (const root of roots) root.destroy();
+      this.releaseBossWarnings(...roots);
+      if (this.playerDead || this.transitioning || !this.scene.isActive()) return;
       onDone();
     });
+  }
+
+  private trackBossWarning<T extends Phaser.GameObjects.GameObject>(object: T): T {
+    this.bossWarnings.add(object);
+    return object;
+  }
+
+  private releaseBossWarnings(...objects: Phaser.GameObjects.GameObject[]): void {
+    for (const object of objects) {
+      this.bossWarnings.delete(object);
+      this.tweens.killTweensOf(object);
+      if (object.active) object.destroy();
+    }
+  }
+
+  private clearBossWarnings(): void {
+    this.releaseBossWarnings(...this.bossWarnings);
+    this.bossWarnings.clear();
   }
 
   /** Erupt the generated root art and resolve one dodgeable lane hit. */
@@ -1192,6 +1215,14 @@ export class WorldScene extends Phaser.Scene {
     this.cameras.main.shake(240, 0.008);
     this.flashScreen(phaseColor, 0.18, 260);
     bus.emit('sfx:play', { id: 'roar' });
+  }
+
+  private clearEnemyProjectiles(): void {
+    for (const bullet of this.bullets) {
+      bullet.obj.setVisible(false);
+      this.bulletPool.push(bullet.obj);
+    }
+    this.bullets = [];
   }
 
   private onBossStaggered(boss: Enemy): void {
@@ -1483,7 +1514,12 @@ export class WorldScene extends Phaser.Scene {
     }
     this.playerDead = true;
     this.playerInvuln = 999999;
+    this.bossBrain = null;
+    this.clearBossWarnings();
+    this.clearEnemyProjectiles();
+    bus.emit('boss:bar', { active: false });
     this.ui.resetControls();
+    this.ui.showDefeated();
     this.player.die();
     this.cameras.main.shake(200, 0.008);
     // Let the death flash/fade read before respawning in town.
@@ -1496,6 +1532,15 @@ export class WorldScene extends Phaser.Scene {
       gameState.y = sp.y;
       this.transitionRestart(true);
     });
+  }
+
+  /** Debug-gated E2E entry point for the complete defeat and respawn flow. */
+  forceDefeatForTest(): boolean {
+    if (!this.scene.isActive() || this.scene.isPaused() || this.playerDead || this.transitioning) return false;
+    gameState.hp = 0;
+    bus.emit('player:hp-changed', { current: 0, max: gameState.derived.maxHp });
+    this.onPlayerDown();
+    return true;
   }
 
   /**
@@ -2573,8 +2618,18 @@ export class WorldScene extends Phaser.Scene {
     if (this.transitioning) return;
     this.transitioning = true;
     if (saveFirst) void this.persist();
+    let restarted = false;
+    const restart = (): void => {
+      if (restarted || !this.scene.isActive()) return;
+      restarted = true;
+      this.scene.restart();
+    };
     this.cameras.main.fadeOut(150);
-    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.restart());
+    this.cameras.main.once('camerafadeoutcomplete', restart);
+    // Mobile browsers can occasionally lose the camera completion event while
+    // several hit/flash effects end together. Never leave input locked behind
+    // `transitioning` if that happens.
+    this.time.delayedCall(420, restart);
   }
 
   update(_time: number, delta: number): void {

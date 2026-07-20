@@ -80,6 +80,8 @@ export interface TestHooks {
   forceGender(gender: CharacterGender): void;
   /** Warp to a map's default spawn (or x/y) via the real travel path. */
   warp(mapId: string, x?: number, y?: number): boolean;
+  /** Run the real defeat flow so respawn/input recovery can be regression-tested. */
+  forceDefeat(): boolean;
   /** Test setup: remove random combat egg drops before a deterministic hatch scenario. */
   clearPetEggs(): void;
   addEgg(petItemId: string): boolean;
@@ -287,6 +289,14 @@ export function installTestHooks(game: Phaser.Game): void {
       gameState.y = y ?? sp.y;
       bus.emit('map:travel', {});
       return true;
+    },
+    forceDefeat: () => {
+      const world = game.scene.getScene('World') as Phaser.Scene & {
+        forceDefeatForTest?: () => boolean;
+      };
+      return world?.scene.isActive() && typeof world.forceDefeatForTest === 'function'
+        ? world.forceDefeatForTest()
+        : false;
     },
     clearPetEggs: () => {
       gameState.petEggs = {};

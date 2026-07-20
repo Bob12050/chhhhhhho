@@ -72,6 +72,7 @@ export class UIScene extends Phaser.Scene {
   private rewardRoot: Phaser.GameObjects.Container | null = null;
   private rewardAmountText: Phaser.GameObjects.Text | null = null;
   private rewardTimer: Phaser.Time.TimerEvent | null = null;
+  private defeatRoot: Phaser.GameObjects.Container | null = null;
 
   constructor() {
     super('UI');
@@ -1359,6 +1360,46 @@ export class UIScene extends Phaser.Scene {
   resetControls(): void {
     this.stick?.reset();
     input.reset();
+  }
+
+  /** Make the short defeat lock explicit and block stale touches until respawn. */
+  showDefeated(): void {
+    this.clearDefeated();
+    this.resetControls();
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const shade = this.add
+      .rectangle(w / 2, h / 2, w, h, 0x030813, 0.42)
+      .setInteractive();
+    const band = this.add.rectangle(w / 2, h * 0.42, w, 70, 0x07172a, 0.94);
+    const title = this.add
+      .text(w / 2, h * 0.42 - 10, '戦闘不能', {
+        fontFamily: FONT,
+        fontSize: '22px',
+        color: '#ffb1a6',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setShadow(0, 2, '#000000', 4);
+    const status = this.add
+      .text(w / 2, h * 0.42 + 16, '町へ帰還中...', {
+        fontFamily: FONT,
+        fontSize: '11px',
+        color: '#d9e8f7',
+      })
+      .setOrigin(0.5);
+    this.defeatRoot = this.add
+      .container(0, 0, [shade, band, title, status])
+      .setDepth(HUD_DEPTH + 2000)
+      .setAlpha(0);
+    this.tweens.add({ targets: this.defeatRoot, alpha: 1, duration: 120, ease: 'Linear' });
+  }
+
+  clearDefeated(): void {
+    if (!this.defeatRoot) return;
+    this.tweens.killTweensOf(this.defeatRoot);
+    this.defeatRoot.destroy(true);
+    this.defeatRoot = null;
   }
 
   getStickVector(): { x: number; y: number } {
