@@ -1,3 +1,9 @@
+// Signal the index.html boot watchdog that the app bundle downloaded and began
+// executing. If a stale service worker ever serves an app shell pointing at a
+// purged JS bundle (black screen), this line never runs and the watchdog
+// self-heals by clearing caches and reloading. Must stay at the very top.
+(window as unknown as { __booted?: boolean }).__booted = true;
+
 import Phaser from 'phaser';
 import {
   LOGICAL_WIDTH,

@@ -14,6 +14,46 @@
     <!-- iOS home-screen icon (Android uses the web manifest icons). -->
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <title>Pixel Action RPG</title>
+    <script>
+      // Boot watchdog (inline so it runs even when the app bundle fails to
+      // load). A stale service worker can serve an app shell that points at a
+      // hashed JS bundle GitHub Pages already deleted on the next deploy —
+      // that 404s and leaves a black screen with no in-app code to recover.
+      // If the bundle hasn't signalled `window.__booted` in time, self-heal
+      // once: unregister service workers, clear caches, and reload fresh.
+      // Guarded by sessionStorage so it can never loop.
+      (function () {
+        var HEAL_KEY = '__bootHealAt';
+        setTimeout(function () {
+          if (window.__booted) return;
+          var last = 0;
+          try { last = +sessionStorage.getItem(HEAL_KEY) || 0; } catch (e) {}
+          if (Date.now() - last < 60000) return; // just healed — don't loop
+          try { sessionStorage.setItem(HEAL_KEY, String(Date.now())); } catch (e) {}
+          var reload = function () {
+            var u = new URL(location.href);
+            u.searchParams.set('_healed', Date.now().toString(36));
+            location.replace(u.toString());
+          };
+          var jobs = [];
+          if (navigator.serviceWorker) {
+            jobs.push(
+              navigator.serviceWorker.getRegistrations()
+                .then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); })
+                .catch(function () {}),
+            );
+          }
+          if (window.caches) {
+            jobs.push(
+              caches.keys()
+                .then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); })
+                .catch(function () {}),
+            );
+          }
+          Promise.all(jobs).then(reload, reload);
+        }, 20000);
+      })();
+    </script>
     <style>
       :root {
         color-scheme: dark;
