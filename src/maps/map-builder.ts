@@ -29,15 +29,15 @@ const ILLUSTRATED_MAP_TEX: Record<string, string> = {
   arena_volcano: TEX.arenaVolcanoMap,
   arena_grove: TEX.arenaGroveMap,
   arena_marsh: TEX.arenaMap,
-  arena_cavern: TEX.arenaMap,
+  arena_cavern: TEX.arenaCavernMap,
   arena_peak: TEX.arenaMap,
   arena_night: TEX.arenaMap,
   arena_plain: TEX.arenaMap,
-  arena_swamp: TEX.arenaMap,
+  arena_swamp: TEX.arenaSwampMap,
   arena_canyon: TEX.arenaMap,
   arena_frost: TEX.arenaFrostMap,
-  arena_ruins: TEX.arenaMap,
-  arena_abyss: TEX.arenaMap,
+  arena_ruins: TEX.arenaRuinsMap,
+  arena_abyss: TEX.arenaAbyssMap,
 };
 
 /** Illustrated texture key used by both the world and fast-travel thumbnails. */

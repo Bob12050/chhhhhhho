@@ -869,6 +869,10 @@ try {
     grove: window.__test.textureSize('art.map.arena.grove.storybook.v2'),
     volcano: window.__test.textureSize('art.map.arena.volcano.pixel.v1'),
     frost: window.__test.textureSize('art.map.arena.frost.pixel.v1'),
+    cavern: window.__test.textureSize('art.map.arena.cavern.pixel.v1'),
+    swamp: window.__test.textureSize('art.map.arena.swamp.pixel.v1'),
+    ruins: window.__test.textureSize('art.map.arena.ruins.pixel.v1'),
+    abyss: window.__test.textureSize('art.map.arena.abyss.pixel.v1'),
   }));
   for (const [label, texture] of Object.entries(arenaTextures)) {
     check(

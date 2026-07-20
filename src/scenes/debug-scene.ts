@@ -108,20 +108,12 @@ export class DebugScene extends Phaser.Scene {
     y += 40;
     this.btn(16, y, '★最強モード（Lv99・全解放）', () => this.grant(() => this.godMode()), 0x6a2a2a);
     y += 44;
-    this.btn(
-      16,
-      y,
-      'もりの主実演',
-      () => this.previewHunt('subj_treant', 'arena_grove', 180, 500),
-      0x365070,
-    );
-    y += 40;
-    this.btn(16, y, 'ゼフィス実演', () => this.previewZephys(), 0x365070);
+    this.btn(16, y, '草原実演', () => this.previewZephys(), 0x365070);
     this.btn(
       142,
       y,
-      'アルマギア実演',
-      () => this.previewHunt('hunt_r7_04_almagia', 'arena_abyss', 180, 500),
+      '木立実演',
+      () => this.previewHunt('subj_treant', 'arena_grove', 180, 500),
       0x365070,
     );
     y += 40;
@@ -137,6 +129,36 @@ export class DebugScene extends Phaser.Scene {
       y,
       '氷霜実演',
       () => this.previewHunt('hunt_wisp_queen', 'arena_frost', 180, 500),
+      0x365070,
+    );
+    y += 40;
+    this.btn(
+      16,
+      y,
+      '洞窟実演',
+      () => this.previewHunt('hunt_stone_again', 'arena_cavern', 180, 500),
+      0x365070,
+    );
+    this.btn(
+      142,
+      y,
+      '沼地実演',
+      () => this.previewHunt('hunt_mushroom', 'arena_swamp', 180, 500),
+      0x365070,
+    );
+    y += 40;
+    this.btn(
+      16,
+      y,
+      '遺跡実演',
+      () => this.previewHunt('hunt_knight_dread', 'arena_ruins', 180, 500),
+      0x365070,
+    );
+    this.btn(
+      142,
+      y,
+      '深淵実演',
+      () => this.previewHunt('hunt_r7_04_almagia', 'arena_abyss', 180, 500),
       0x365070,
     );
     y += 40;
