@@ -23,13 +23,24 @@ export interface HuntStatModifiers {
   veteran: boolean;
 }
 
+const RANK_HP_MULTIPLIER = [0, 1, 1.08, 1.42, 1.42, 1.42, 1.42, 1.42] as const;
+
+/** Extra hunt vitality that accompanies the stronger R3-R10 weapon curve. */
+export function huntRankHpMultiplier(rank = 1): number {
+  const normalized = Math.max(1, Math.min(7, Math.round(rank)));
+  return RANK_HP_MULTIPLIER[normalized];
+}
+
 /** Resolve the exact combat multipliers used by both gameplay and diagnostics. */
 export function huntStatModifiers(
-  q: Pick<QuestDef, 'veteran' | 'huntModifiers'>,
+  q: Pick<QuestDef, 'rank' | 'veteran' | 'huntModifiers'>,
 ): HuntStatModifiers {
   const veteran = !!q.veteran;
   return {
-    hpMult: (q.huntModifiers?.hpMult ?? 1) * (veteran ? VETERAN_MODS.hpMult : 1),
+    hpMult:
+      (q.huntModifiers?.hpMult ?? 1)
+      * huntRankHpMultiplier(q.rank)
+      * (veteran ? VETERAN_MODS.hpMult : 1),
     dmgMult: (q.huntModifiers?.dmgMult ?? 1) * (veteran ? VETERAN_MODS.dmgMult : 1),
     veteran,
   };

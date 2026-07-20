@@ -1,6 +1,7 @@
 import itemsJson from './defs/items.json';
 import type { DerivedStats } from '@/stats/stats';
 import type { EquipSlot } from '@/equipment/slots';
+import { applyAuthoredEquipmentPower } from '@/equipment/power-curve';
 import { buildJobRegaliaEquipment } from '@/jobs/job-regalia';
 
 /**
@@ -99,7 +100,7 @@ const runtimeEquipment = new Map<string, EquipmentDef>();
 for (const m of file.materials) materials.set(m.id, m);
 for (const c of file.consumables) consumables.set(c.id, c);
 for (const p of file.petItems ?? []) petItems.set(p.id, p);
-for (const e of file.equipment) equipment.set(e.id, e);
+for (const e of file.equipment) equipment.set(e.id, applyAuthoredEquipmentPower(e));
 for (const e of buildJobRegaliaEquipment()) equipment.set(e.id, e);
 
 export function getMaterial(id: string): MaterialDef | undefined {

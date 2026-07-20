@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   currentWave,
   concurrentSpawnCount,
+  huntRankHpMultiplier,
   huntStatModifiers,
   VETERAN_MODS,
 } from '@/quests/hunt-logic';
@@ -87,6 +88,14 @@ describe('VETERAN_MODS (歴戦倍率)', () => {
       dmgMult: 1.1 * VETERAN_MODS.dmgMult,
       veteran: true,
     });
+  });
+
+  it('adds hunt vitality as stronger weapon ranks enter progression', () => {
+    expect(huntRankHpMultiplier(1)).toBe(1);
+    expect(huntRankHpMultiplier(2)).toBe(1.08);
+    expect(huntRankHpMultiplier(3)).toBe(1.42);
+    expect(huntRankHpMultiplier(7)).toBe(1.42);
+    expect(huntStatModifiers({ rank: 5 }).hpMult).toBe(1.42);
   });
 });
 

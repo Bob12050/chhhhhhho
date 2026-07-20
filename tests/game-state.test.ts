@@ -13,8 +13,22 @@ describe('GameState equipment & stats', () => {
 
   it('equipping increases derived stats immediately', () => {
     const before = gs.derived.physAtk;
-    gs.equip('main_hand', 'iron_sword'); // R3, +10 physAtk
-    expect(gs.derived.physAtk).toBe(before + 10);
+    gs.equip('main_hand', 'iron_sword'); // R3, +15 physAtk after rank scaling
+    expect(gs.derived.physAtk).toBe(before + 15);
+  });
+
+  it('makes an R10 weapon a substantial share of endgame attack', () => {
+    gs.jobId = 'aramikagura';
+    gs.level = 99;
+    gs.base = { STR: 152, VIT: 152, INT: 5, DEX: 5, LUK: 5 };
+    gs.recompute(false);
+    const withoutWeapon = gs.derived.physAtk;
+
+    gs.equip('main_hand', 'skyvault_sword');
+    const weaponGain = gs.derived.physAtk - withoutWeapon;
+
+    expect(weaponGain).toBe(144);
+    expect(weaponGain / withoutWeapon).toBeGreaterThan(0.4);
   });
 
   it('unequipping reverts derived stats', () => {

@@ -70,7 +70,7 @@ describe('investigation equipment forge', () => {
     expect(upgradeInvestigationEquipment(gs, id)).toBe('ok');
     const upgraded = getEquipment(id)!;
     expect(upgraded.generated?.upgradeLevel).toBe(1);
-    expect(investigationUpgradeBonus(upgraded)).toBe(4);
+    expect(investigationUpgradeBonus(upgraded)).toBe(6);
     expect(gs.materials[INVESTIGATION_CRYSTAL_ID] ?? 0).toBe(0);
     expect(gs.materials[INVESTIGATION_SEAL_ID] ?? 0).toBe(0);
     const beforePower = Object.values(before.derived).reduce((sum, n) => sum + Math.max(0, n ?? 0), 0);
@@ -85,6 +85,20 @@ describe('investigation equipment forge', () => {
     expect(loaded.derived).toEqual(gs.derived);
   });
 
+  it('rebases saved investigation gear onto the current equipment curve', () => {
+    const { gs, id } = stateWithLoot();
+    const expected = structuredClone(gs.generatedEquipment[id].derived);
+    const save = gs.toSave(1);
+    const snapshot = save.inventory.generatedEquipment?.find((def) => def.id === id);
+    expect(snapshot).toBeDefined();
+    snapshot!.derived = {};
+
+    const loaded = new GameState();
+    loaded.loadFrom(save);
+
+    expect(loaded.generatedEquipment[id].derived).toEqual(expected);
+  });
+
   it('enforces material requirements and the +5 cap', () => {
     const { gs, id } = stateWithLoot();
     expect(upgradeInvestigationEquipment(gs, id)).toBe('materials');
@@ -96,7 +110,7 @@ describe('investigation equipment forge', () => {
       expect(upgradeInvestigationEquipment(gs, id)).toBe('ok');
       expect(getEquipment(id)?.generated?.upgradeLevel).toBe(level);
     }
-    expect(investigationUpgradeBonus(getEquipment(id)!)).toBe(20);
+    expect(investigationUpgradeBonus(getEquipment(id)!)).toBe(30);
     expect(investigationUpgradeCost(getEquipment(id)!)).toBeNull();
     expect(upgradeInvestigationEquipment(gs, id)).toBe('max');
   });

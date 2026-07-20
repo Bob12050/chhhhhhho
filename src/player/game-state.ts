@@ -32,6 +32,7 @@ import {
   type CharacterGender,
 } from '@/player/character-gender';
 import { syncInvestigationQuests } from '@/endgame/investigations';
+import { rebaseInvestigationEquipment } from '@/endgame/investigation-forge';
 import { bossSetStatModifiers } from '@/equipment/boss-set-bonuses';
 import {
   JOB_REGALIA,
@@ -648,7 +649,7 @@ export class GameState {
         || raw.generated.source !== 'investigation'
         || !EQUIP_SLOTS.includes(raw.slot)
       ) continue;
-      this.generatedEquipment[raw.id] = structuredClone(raw);
+      this.generatedEquipment[raw.id] = rebaseInvestigationEquipment(structuredClone(raw));
     }
     replaceRuntimeEquipment(Object.values(this.generatedEquipment));
     // Owned equipment: keep only known ids.

@@ -3,6 +3,7 @@ import type { EquipmentDef } from '@/data/items';
 import type { QuestDef } from '@/quests/quest-defs';
 import type { DerivedStats } from '@/stats/stats';
 import { getJob } from '@/jobs/job-defs';
+import { applyJobRegaliaPower } from '@/equipment/power-curve';
 
 export interface JobRegaliaRecord {
   jobId: string;
@@ -107,8 +108,12 @@ export function splitJobRegaliaDerived(
 /** Three exact-job pieces form the job's dedicated equipment set. */
 export function buildJobRegaliaEquipment(): EquipmentDef[] {
   return JOB_REGALIA.flatMap((entry) => {
-    const split = splitJobRegaliaDerived(entry.derived);
-    const weaponTag = getJob(entry.jobId)?.equippableWeaponTags[0];
+    const job = getJob(entry.jobId);
+    const magical = job?.family === 'mage' || job?.family === 'cleric';
+    const split = splitJobRegaliaDerived(
+      applyJobRegaliaPower(entry.derived, entry.rarity, magical),
+    );
+    const weaponTag = job?.equippableWeaponTags[0];
     return JOB_REGALIA_PARTS.map((part): EquipmentDef => {
       const meta = PART_META[part];
       return {

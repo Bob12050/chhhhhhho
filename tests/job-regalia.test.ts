@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { allEquipment, getEquipment } from '@/data/items';
 import { huntSimulationQuests } from '@/balance/hunt-simulator';
 import { equippedJobRegaliaProgress } from '@/equipment/job-regalia-appearance';
+import { applyJobRegaliaPower } from '@/equipment/power-curve';
 import { allJobs } from '@/jobs/job-defs';
 import {
   JOB_REGALIA,
@@ -38,7 +39,12 @@ describe('job regalia', () => {
         expect(item?.sellPrice, `${job.id}:${part}`).toBe(0);
       }
       expect(job.equippableWeaponTags).toContain(pieces.weapon?.weaponTags?.[0]);
-      for (const [key, total] of Object.entries(record.derived)) {
+      const expectedStats = applyJobRegaliaPower(
+        record.derived,
+        record.rarity,
+        job.family === 'mage' || job.family === 'cleric',
+      );
+      for (const [key, total] of Object.entries(expectedStats)) {
         const sum = Object.values(pieces).reduce(
           (value, item) => value + ((item?.derived as Record<string, number> | undefined)?.[key] ?? 0),
           0,

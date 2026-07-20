@@ -8,7 +8,7 @@ import type { DerivedStats } from '@/stats/stats';
 
 export const INVESTIGATION_CRYSTAL_ID = 'investigation_crystal';
 export const MAX_INVESTIGATION_UPGRADE = 5;
-export const UPGRADE_BONUS_PER_LEVEL = 4;
+export const UPGRADE_BONUS_PER_LEVEL = 6;
 
 export interface InvestigationUpgradeCost {
   crystals: number;
@@ -53,7 +53,7 @@ function withAffixes(base: EquipmentDef, affixes: readonly EquipmentAffix[]): Pa
   return derived;
 }
 
-function enhance(
+export function deriveInvestigationEquipmentStats(
   base: EquipmentDef,
   affixes: readonly EquipmentAffix[],
   level: number,
@@ -69,6 +69,20 @@ function enhance(
       : Math.max(Math.round(value * scale), Math.round(value) + level);
   }
   return derived;
+}
+
+/** Refresh saved investigation gear against the current authored base curve. */
+export function rebaseInvestigationEquipment(def: EquipmentDef): EquipmentDef {
+  if (!def.generated) return def;
+  const base = getEquipment(def.generated.baseId);
+  if (!base || base.generated) return def;
+  const next = structuredClone(def);
+  next.derived = deriveInvestigationEquipmentStats(
+    base,
+    next.generated!.affixes,
+    next.generated!.upgradeLevel,
+  );
+  return next;
 }
 
 export function upgradeInvestigationEquipment(
@@ -88,7 +102,11 @@ export function upgradeInvestigationEquipment(
   if (!base || base.generated) return 'unknown';
   const next = structuredClone(current);
   next.generated!.upgradeLevel += 1;
-  next.derived = enhance(base, next.generated!.affixes, next.generated!.upgradeLevel);
+  next.derived = deriveInvestigationEquipmentStats(
+    base,
+    next.generated!.affixes,
+    next.generated!.upgradeLevel,
+  );
   const affixes = next.generated!.affixes.map(formatAffix).join(' / ');
   next.description = `調査危険度${next.generated!.threat}で発見。強化+${next.generated!.upgradeLevel}。${affixes}`;
 
