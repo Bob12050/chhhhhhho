@@ -175,6 +175,8 @@ export const TEX = {
   desertMap: 'art.map.desert.storybook',
   arenaMap: 'art.map.arena.storybook',
   arenaGroveMap: 'art.map.arena.grove.storybook.v2',
+  arenaVolcanoMap: 'art.map.arena.volcano.pixel.v1',
+  arenaFrostMap: 'art.map.arena.frost.pixel.v1',
   treantRootLane: 'art.fx.treant.root_lane.v1',
   obstacle: 'gen.obstacle',
   obstacleBush: 'gen.obstacle.bush',

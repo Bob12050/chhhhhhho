@@ -864,6 +864,19 @@ try {
 
   // ---- hunt quest: sequential waves via the real arena flow ----
   step = 'hunt';
+  const arenaTextures = await page.evaluate(() => ({
+    plain: window.__test.textureSize('art.map.arena.storybook'),
+    grove: window.__test.textureSize('art.map.arena.grove.storybook.v2'),
+    volcano: window.__test.textureSize('art.map.arena.volcano.pixel.v1'),
+    frost: window.__test.textureSize('art.map.arena.frost.pixel.v1'),
+  }));
+  for (const [label, texture] of Object.entries(arenaTextures)) {
+    check(
+      `闘技場背景${label}がHD版1080×2400で読み込まれる`,
+      texture?.width === 1080 && texture?.height === 2400,
+      JSON.stringify(texture),
+    );
+  }
   // This step verifies the arena/quest/reward flow, not rank-2 balance.
   // Remove combat RNG from the deploy gate so a slow runner cannot time out.
   await page.evaluate(() => window.__test.powerUp(99));

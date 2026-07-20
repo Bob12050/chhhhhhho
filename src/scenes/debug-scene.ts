@@ -125,6 +125,21 @@ export class DebugScene extends Phaser.Scene {
       0x365070,
     );
     y += 40;
+    this.btn(
+      16,
+      y,
+      '火口実演',
+      () => this.previewHunt('hunt_flame_lord', 'arena_volcano', 180, 500),
+      0x365070,
+    );
+    this.btn(
+      142,
+      y,
+      '氷霜実演',
+      () => this.previewHunt('hunt_wisp_queen', 'arena_frost', 180, 500),
+      0x365070,
+    );
+    y += 40;
     this.btn(16, y, '第二形態を即確認', () => this.triggerBossPhase(), 0x6a2a52);
     y += 40;
     this.btn(16, y, '通し確認チェックリスト', () => {

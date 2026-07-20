@@ -26,7 +26,7 @@ const ILLUSTRATED_MAP_TEX: Record<string, string> = {
   snowfield: TEX.snowfieldMap,
   desert: TEX.desertMap,
   boss_room: TEX.arenaMap,
-  arena_volcano: TEX.arenaMap,
+  arena_volcano: TEX.arenaVolcanoMap,
   arena_grove: TEX.arenaGroveMap,
   arena_marsh: TEX.arenaMap,
   arena_cavern: TEX.arenaMap,
@@ -35,7 +35,7 @@ const ILLUSTRATED_MAP_TEX: Record<string, string> = {
   arena_plain: TEX.arenaMap,
   arena_swamp: TEX.arenaMap,
   arena_canyon: TEX.arenaMap,
-  arena_frost: TEX.arenaMap,
+  arena_frost: TEX.arenaFrostMap,
   arena_ruins: TEX.arenaMap,
   arena_abyss: TEX.arenaMap,
 };
