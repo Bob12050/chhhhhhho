@@ -159,12 +159,16 @@ export class WorldScene extends Phaser.Scene {
     hpFill: Phaser.GameObjects.Rectangle;
     name: Phaser.GameObjects.Text;
   } | null = null;
+  private hitStopTimer: Phaser.Time.TimerEvent | null = null;
 
   constructor() {
     super('World');
   }
 
   create(): void {
+    // Arcade physics is shared across scene restarts. A transition during a
+    // hit-stop must never leave the rebuilt map paused.
+    this.releaseHitStop();
     // Reset per-session state (Phaser reuses the scene instance on restart).
     this.enemies = [];
     this.enemyTypes.clear();
@@ -498,6 +502,7 @@ export class WorldScene extends Phaser.Scene {
       }),
     );
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.releaseHitStop();
       this.clearBossWarnings();
       for (const off of this.busOff) off();
       this.busOff = [];
@@ -900,14 +905,15 @@ export class WorldScene extends Phaser.Scene {
     onDone: () => void,
   ): void {
     const ring = this.trackBossWarning(this.add
-      .circle(Math.round(x), Math.round(y), radius, color, 0.12)
+      .circle(Math.round(x), Math.round(y), radius, color, 0.025)
       .setStrokeStyle(2, color, 0.95)
       .setDepth(6));
     const fill = this.trackBossWarning(this.add
-      .circle(Math.round(x), Math.round(y), radius, color, 0.28)
+      .circle(Math.round(x), Math.round(y), radius, color, 0)
+      .setStrokeStyle(4, color, 0.58)
       .setScale(0.06)
       .setDepth(6));
-    this.tweens.add({ targets: fill, scale: 1, duration: ms, ease: 'Linear' });
+    this.tweens.add({ targets: fill, scale: 1, alpha: 0.9, duration: ms, ease: 'Linear' });
     this.time.delayedCall(ms, () => {
       this.releaseBossWarnings(ring, fill);
       if (this.playerDead || this.transitioning || !this.scene.isActive()) return;
@@ -931,20 +937,25 @@ export class WorldScene extends Phaser.Scene {
     const length = Math.max(64, (speed * durationMs) / 1000);
     const endX = x + Math.cos(angle) * length;
     const endY = y + Math.sin(angle) * length;
-    const lane = this.trackBossWarning(this.add
-      .rectangle(x, y, length, 30, color, 0.12)
-      .setOrigin(0, 0.5)
-      .setRotation(angle)
-      .setStrokeStyle(2, color, 0.9)
-      .setDepth(6));
-    const fill = this.trackBossWarning(this.add
-      .rectangle(x, y, length, 24, color, 0.3)
-      .setOrigin(0, 0.5)
-      .setRotation(angle)
-      .setScale(0.04, 1)
-      .setDepth(6));
+    const lane = this.trackBossWarning(
+      this.add.graphics().setPosition(x, y).setRotation(angle).setDepth(6),
+    );
+    lane.lineStyle(2, color, 0.88);
+    lane.beginPath();
+    lane.moveTo(0, -15);
+    lane.lineTo(length, -15);
+    lane.moveTo(0, 15);
+    lane.lineTo(length, 15);
+    lane.strokePath();
+    lane.fillStyle(color, 0.72);
+    lane.fillTriangle(length, 0, length - 14, -8, length - 14, 8);
+    const fill = this.trackBossWarning(
+      this.add.graphics().setPosition(x, y).setRotation(angle).setScale(0.04, 1).setDepth(6),
+    );
+    fill.lineStyle(4, color, 0.55);
+    fill.lineBetween(0, 0, length, 0);
     const end = this.trackBossWarning(this.add
-      .circle(endX, endY, 16, color, 0.12)
+      .circle(endX, endY, 16, color, 0.025)
       .setStrokeStyle(2, color, 0.9)
       .setDepth(6));
     this.tweens.add({ targets: fill, scaleX: 1, duration: telegraphMs, ease: 'Linear' });
@@ -1536,6 +1547,17 @@ export class WorldScene extends Phaser.Scene {
     return true;
   }
 
+  /** Debug-gated regression probe for the attack/skill interruption lock. */
+  forceCombatRecoveryForTest(): boolean {
+    if (!this.scene.isActive() || this.scene.isPaused() || this.playerDead || this.transitioning) return false;
+    this.player.attack();
+    if (!this.player.isAttacking()) return false;
+    this.player.play('cast');
+    this.hitStop(120);
+    this.releaseHitStop();
+    return !this.player.isAttacking() && !this.physics.world.isPaused;
+  }
+
   /**
    * Apply one player hit to an enemy: crit roll, element multiplier, damage
    * number, spark, status proc. Shared by melee strikes and projectiles.
@@ -1859,10 +1881,21 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private hitStop(ms: number): void {
+    this.hitStopTimer?.remove(false);
     this.physics.world.isPaused = true;
-    this.time.delayedCall(ms, () => {
+    this.hitStopTimer = this.time.delayedCall(ms, () => {
+      this.hitStopTimer = null;
       this.physics.world.isPaused = false;
     });
+  }
+
+  private releaseHitStop(): void {
+    this.hitStopTimer?.remove(false);
+    this.hitStopTimer = null;
+    // Phaser tears the Arcade world down before Scene SHUTDOWN listeners run.
+    // Guard it so cleanup cannot abort a map restart on mobile or in tests.
+    const world = this.physics?.world;
+    if (world) world.isPaused = false;
   }
 
   /** Use the active skill assigned to a slot (data-driven). */

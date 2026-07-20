@@ -25,6 +25,9 @@ export class TouchButton {
   private accent: number;
   private readonly style: TouchButtonStyle;
   private opacityMultiplier = 1;
+  private readonly handleInputLost = (): void => {
+    if (this.pointerId !== -1) this.forceRelease();
+  };
 
   onChange: ((down: boolean) => void) | null = null;
 
@@ -95,12 +98,19 @@ export class TouchButton {
     scene.input.on('pointerup', (p: Phaser.Input.Pointer) => this.release(p));
     scene.input.on('pointerupoutside', (p: Phaser.Input.Pointer) => this.release(p));
     scene.input.on('pointercancel', (p: Phaser.Input.Pointer) => this.release(p));
+    scene.input.on('gameout', this.handleInputLost);
+    scene.game.events.on(Phaser.Core.Events.BLUR, this.handleInputLost);
     // Self-heal: release if the tracked finger's up event was ever missed, so a
     // button can't get stuck "held".
     scene.events.on(Phaser.Scenes.Events.UPDATE, () => {
       if (this.pointerId === -1) return;
       const p = scene.input.manager.pointers.find((pt) => pt.id === this.pointerId);
       if (!p || !p.isDown) this.forceRelease();
+    });
+    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      scene.input.off('gameout', this.handleInputLost);
+      scene.game.events.off(Phaser.Core.Events.BLUR, this.handleInputLost);
+      this.handleInputLost();
     });
   }
 

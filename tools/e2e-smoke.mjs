@@ -544,6 +544,8 @@ try {
           && fieldGuide.combatTarget.current === fieldGuide.combatTarget.max,
         JSON.stringify(fieldGuide.combatTarget),
       );
+      const combatRecovered = await page.evaluate(() => window.__test.forceCombatRecovery());
+      check('攻撃とスキルが重なっても移動ロックが残らない', combatRecovered);
       await moveUntil(page, 'd', { mapId: 'field', axis: 'x', gt: 430 });
       const wideField = await snap(page);
       check('草原を旧マップ幅より右まで探索できる', wideField.x > 430, `x=${Math.round(wideField.x)}`);

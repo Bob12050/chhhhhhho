@@ -19,6 +19,7 @@ export class VirtualStick {
   private readonly standbyX: number;
   private readonly standbyY: number;
   private readonly idleOpacity: number;
+  private readonly handleInputLost = (): void => this.reset();
 
   vector = new Phaser.Math.Vector2(0, 0);
 
@@ -55,11 +56,18 @@ export class VirtualStick {
     scene.input.on('pointerup', (p: Phaser.Input.Pointer) => this.onUp(p));
     scene.input.on('pointerupoutside', (p: Phaser.Input.Pointer) => this.onUp(p));
     scene.input.on('pointercancel', (p: Phaser.Input.Pointer) => this.onUp(p));
+    scene.input.on('gameout', this.handleInputLost);
+    scene.game.events.on(Phaser.Core.Events.BLUR, this.handleInputLost);
     // Self-heal: if the tracked finger's pointerup was ever missed (multi-touch,
     // a menu opening mid-drag, OS interruptions), the stick would stay "held"
     // and ignore new touches — making the player unable to move. Each frame,
     // verify the tracked pointer is still down; otherwise release.
     scene.events.on(Phaser.Scenes.Events.UPDATE, () => this.poll(scene));
+    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      scene.input.off('gameout', this.handleInputLost);
+      scene.game.events.off(Phaser.Core.Events.BLUR, this.handleInputLost);
+      this.reset();
+    });
   }
 
   private poll(scene: Phaser.Scene): void {

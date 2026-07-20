@@ -82,6 +82,8 @@ export interface TestHooks {
   warp(mapId: string, x?: number, y?: number): boolean;
   /** Run the real defeat flow so respawn/input recovery can be regression-tested. */
   forceDefeat(): boolean;
+  /** Reproduce an attack→skill interruption and verify movement locks release. */
+  forceCombatRecovery(): boolean;
   /** Test setup: remove random combat egg drops before a deterministic hatch scenario. */
   clearPetEggs(): void;
   addEgg(petItemId: string): boolean;
@@ -296,6 +298,14 @@ export function installTestHooks(game: Phaser.Game): void {
       };
       return world?.scene.isActive() && typeof world.forceDefeatForTest === 'function'
         ? world.forceDefeatForTest()
+        : false;
+    },
+    forceCombatRecovery: () => {
+      const world = game.scene.getScene('World') as Phaser.Scene & {
+        forceCombatRecoveryForTest?: () => boolean;
+      };
+      return world?.scene.isActive() && typeof world.forceCombatRecoveryForTest === 'function'
+        ? world.forceCombatRecoveryForTest()
         : false;
     },
     clearPetEggs: () => {

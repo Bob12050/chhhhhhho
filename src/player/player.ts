@@ -30,6 +30,8 @@ import { clearIronEquipmentAppearance } from '@/paperdoll/iron-equipment-visual'
 export class Player {
   /** ms between attacks at atkSpeed 1.0 (anim is ~286ms; a hair above it). */
   private static readonly BASE_ATTACK_MS = 360;
+  /** Last-resort release if an animation is interrupted before its callback. */
+  private static readonly ATTACK_LOCK_MAX_MS = 480;
   readonly body: Phaser.Physics.Arcade.Image;
   readonly doll: PaperDollAnimator;
   private readonly scene: Phaser.Scene;
@@ -50,6 +52,8 @@ export class Player {
   private statusMaxHp = -1;
   private statusMaxMp = -1;
   private attacking = false;
+  private attackLockMs = 0;
+  private attackSequence = 0;
   private moveMagnitude = 0;
   private stridePhase = 0;
   private distanceSinceStep = 0;
@@ -267,6 +271,8 @@ export class Player {
     if (this.attacking || this.rollMs > 0 || this.attackCdMs > 0) return;
     this.attackCdMs = Player.BASE_ATTACK_MS / this.atkSpeedMult;
     this.attacking = true;
+    this.attackLockMs = Player.ATTACK_LOCK_MAX_MS;
+    const sequence = ++this.attackSequence;
     this.moveMagnitude = 0;
     this.doll.setPlaybackRate(1);
     if (dir) {
@@ -278,13 +284,12 @@ export class Player {
     this.doll.play('attack', {
       force: true,
       onComplete: () => {
-        this.attacking = false;
-        this.doll.play('idle');
+        this.finishAttack(sequence);
       },
     });
     // Resolve the hit at the mid-point of the swing.
     this.scene.time.delayedCall(120, () => {
-      if (!hit) {
+      if (!hit && this.attacking && sequence === this.attackSequence) {
         hit = true;
         this.onAttackHit?.(this.dir);
       }
@@ -296,17 +301,27 @@ export class Player {
   }
 
   play(anim: AnimName): void {
-    this.doll.play(anim);
+    // A skill may replace a normal swing before its completion callback. End
+    // that swing explicitly so its movement lock cannot survive the swap.
+    this.cancelAttack();
+    this.doll.setPlaybackRate(1);
+    this.doll.play(anim, {
+      force: true,
+      onComplete: () => {
+        if (this.doll.getAnim() === anim) this.doll.play('idle');
+      },
+    });
   }
 
   /** Took a hit: white flash (the invuln blink is driven by the scene). */
   hurt(): void {
+    this.cancelAttack();
     this.doll.flashWhite(140);
   }
 
   /** Defeated: stop, play the death pose, flash, and fade the doll out. */
   die(): void {
-    this.attacking = false;
+    this.cancelAttack();
     this.moveMagnitude = 0;
     this.body.setVelocity(0, 0);
     this.doll.setPlaybackRate(1);
@@ -322,6 +337,10 @@ export class Player {
 
   update(dtMs: number): void {
     if (this.attackCdMs > 0) this.attackCdMs -= dtMs;
+    if (this.attacking) {
+      this.attackLockMs -= dtMs;
+      if (this.attackLockMs <= 0) this.finishAttack(this.attackSequence);
+    }
     if (this.rollMs > 0) {
       this.rollMs -= dtMs;
       if (this.rollMs <= 0) {
@@ -366,6 +385,21 @@ export class Player {
     this.doll.update(dtMs);
     this.lastX = this.body.x;
     this.lastY = this.body.y;
+  }
+
+  private cancelAttack(): void {
+    if (!this.attacking) return;
+    this.attackSequence++;
+    this.attacking = false;
+    this.attackLockMs = 0;
+    if (this.doll.getAnim() === 'attack') this.doll.play('idle');
+  }
+
+  private finishAttack(sequence: number): void {
+    if (sequence !== this.attackSequence) return;
+    this.attacking = false;
+    this.attackLockMs = 0;
+    if (this.doll.getAnim() === 'attack') this.doll.play('idle');
   }
 
   private spawnFootstep(): void {
