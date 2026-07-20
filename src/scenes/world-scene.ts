@@ -1832,21 +1832,26 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
-  /** Full-screen colour flash (camera-locked). Used for player hurt feedback. */
+  /** Full-screen colour flash. Camera FX stays viewport-sized at every render density. */
   private flashScreen(color: number, alpha: number, duration: number): void {
     const cam = this.cameras.main;
-    const f = this.add
-      .rectangle(0, 0, cam.width, cam.height, color, alpha)
-      .setOrigin(0, 0)
-      .setScrollFactor(0)
-      .setDepth(9500);
-    this.tweens.add({
-      targets: f,
-      alpha: 0,
-      duration,
-      ease: 'Quad.easeOut',
-      onComplete: () => f.destroy(),
-    });
+    const tint = Phaser.Display.Color.IntegerToColor(color);
+    cam.flashEffect.alpha = Phaser.Math.Clamp(alpha, 0, 1);
+    cam.flash(duration, tint.red, tint.green, tint.blue, true);
+  }
+
+  /** Debug-gated probe for the HD-render hurt-flash regression. */
+  forceScreenFlashForTest(): { active: boolean; alpha: number; createdObjects: number } {
+    if (!this.scene.isActive() || this.scene.isPaused() || this.transitioning) {
+      return { active: false, alpha: 0, createdObjects: 0 };
+    }
+    const before = this.children.list.length;
+    this.flashScreen(0xff2a2a, 0.18, 900);
+    return {
+      active: this.cameras.main.flashEffect.isRunning,
+      alpha: this.cameras.main.flashEffect.alpha,
+      createdObjects: this.children.list.length - before,
+    };
   }
 
   /** Burst of small shards when an enemy dies (撃破の手応え). */

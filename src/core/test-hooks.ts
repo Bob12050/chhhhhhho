@@ -84,6 +84,8 @@ export interface TestHooks {
   forceDefeat(): boolean;
   /** Reproduce an attack→skill interruption and verify movement locks release. */
   forceCombatRecovery(): boolean;
+  /** Trigger hurt feedback and report whether it uses camera FX without an overlay object. */
+  forceScreenFlash(): { active: boolean; alpha: number; createdObjects: number };
   /** Test setup: remove random combat egg drops before a deterministic hatch scenario. */
   clearPetEggs(): void;
   addEgg(petItemId: string): boolean;
@@ -307,6 +309,14 @@ export function installTestHooks(game: Phaser.Game): void {
       return world?.scene.isActive() && typeof world.forceCombatRecoveryForTest === 'function'
         ? world.forceCombatRecoveryForTest()
         : false;
+    },
+    forceScreenFlash: () => {
+      const world = game.scene.getScene('World') as Phaser.Scene & {
+        forceScreenFlashForTest?: () => { active: boolean; alpha: number; createdObjects: number };
+      };
+      return world?.scene.isActive() && typeof world.forceScreenFlashForTest === 'function'
+        ? world.forceScreenFlashForTest()
+        : { active: false, alpha: 0, createdObjects: 0 };
     },
     clearPetEggs: () => {
       gameState.petEggs = {};

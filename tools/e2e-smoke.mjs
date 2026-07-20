@@ -16,6 +16,7 @@ const URL = `${BASE.replace(/\/$/, '')}/?debug=1`;
 const SCROLL_ONLY = process.argv.includes('--scroll-only');
 const VIEWPORT_HEIGHT = Number.parseInt(process.env.E2E_VIEWPORT_HEIGHT ?? '720', 10);
 const JOB_TREE_SCREENSHOT = process.env.E2E_JOB_TREE_SCREENSHOT;
+const SCREEN_FLASH_SCREENSHOT = process.env.E2E_SCREEN_FLASH_SCREENSHOT;
 
 let browser;
 const failures = [];
@@ -546,6 +547,15 @@ try {
       );
       const combatRecovered = await page.evaluate(() => window.__test.forceCombatRecovery());
       check('攻撃とスキルが重なっても移動ロックが残らない', combatRecovered);
+      const screenFlash = await page.evaluate(() => window.__test.forceScreenFlash());
+      check(
+        '被弾フラッシュが4分の1サイズの四角を生成しない',
+        screenFlash.active && screenFlash.alpha <= 0.181 && screenFlash.createdObjects === 0,
+        JSON.stringify(screenFlash),
+      );
+      if (SCREEN_FLASH_SCREENSHOT) {
+        await page.locator('canvas').screenshot({ path: SCREEN_FLASH_SCREENSHOT });
+      }
       await moveUntil(page, 'd', { mapId: 'field', axis: 'x', gt: 430 });
       const wideField = await snap(page);
       check('草原を旧マップ幅より右まで探索できる', wideField.x > 430, `x=${Math.round(wideField.x)}`);
