@@ -15,6 +15,7 @@ import { JOB_APPEARANCE_IDS } from '../src/jobs/job-appearance-ids';
 import { ELEMENTS } from '../src/combat/elements';
 import { SHEET_ROWS, MAX_FRAMES, SHEET_WIDTH, SHEET_HEIGHT } from '../src/paperdoll/pose-atlas';
 import { CHAR_FRAME_W, CHAR_FRAME_H } from '../src/config/resolution';
+import { JOB_SIGNATURE_SKILLS, SIGNATURE_SKILLS_PER_JOB } from '../src/skills/job-signature-skills';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const errors: string[] = [];
@@ -700,7 +701,9 @@ function validateSkills(): Set<string> {
       requires?: string[];
       derived?: Record<string, number>;
       fx?: string;
+      icon?: string;
       family?: string;
+      jobId?: string;
       scaling?: string;
       minTier?: number;
       element?: string;
@@ -711,10 +714,15 @@ function validateSkills(): Set<string> {
       buffMs?: number;
     }[];
   }>('src/data/defs/skills.json');
+  const jobsFile = readJson<{
+    jobs: { id: string; family?: string; tier: number }[];
+  }>('src/data/defs/jobs.json');
+  const jobsById = new Map(jobsFile.jobs.map((job) => [job.id, job]));
+  const skillRows = [...file.skills, ...JOB_SIGNATURE_SKILLS];
   const FX_STYLES = new Set(['slash', 'impact', 'magic']);
   const SCALINGS = new Set(['phys', 'mag']);
   const ids = new Set<string>();
-  for (const s of file.skills) {
+  for (const s of skillRows) {
     if (ids.has(s.id)) err(`Duplicate skill id: ${s.id}`);
     ids.add(s.id);
     if (s.type !== 'active' && s.type !== 'passive') err(`Skill ${s.id}: bad type "${s.type}"`);
@@ -723,6 +731,14 @@ function validateSkills(): Set<string> {
       err(`Skill ${s.id}: unknown scaling "${s.scaling}"`);
     if (s.family !== undefined && !CLASS_FAMILY_SET.has(s.family))
       err(`Skill ${s.id}: unknown class family "${s.family}"`);
+    if (s.jobId !== undefined) {
+      const job = jobsById.get(s.jobId);
+      if (!job) err(`Skill ${s.id}: unknown exact job "${s.jobId}"`);
+      else {
+        if (s.family !== job.family) err(`Skill ${s.id}: family does not match job ${s.jobId}`);
+        if (s.minTier !== job.tier) err(`Skill ${s.id}: tier does not match job ${s.jobId}`);
+      }
+    }
     if (s.minTier !== undefined && (!Number.isInteger(s.minTier) || s.minTier < 1 || s.minTier > 4))
       err(`Skill ${s.id}: minTier must be an integer 1〜4 (got ${s.minTier})`);
     if (s.minTier !== undefined && s.family === undefined)
@@ -758,8 +774,14 @@ function validateSkills(): Set<string> {
     }
   }
   // Prereq existence + acyclic.
-  const byId = new Map(file.skills.map((s) => [s.id, s]));
-  for (const s of file.skills) {
+  for (const job of jobsFile.jobs.filter((entry) => entry.id !== 'adventurer')) {
+    const count = skillRows.filter((skill) => skill.jobId === job.id).length;
+    if (count !== SIGNATURE_SKILLS_PER_JOB) {
+      err(`Job ${job.id}: expected ${SIGNATURE_SKILLS_PER_JOB} signature skills, got ${count}`);
+    }
+  }
+  const byId = new Map(skillRows.map((s) => [s.id, s]));
+  for (const s of skillRows) {
     for (const r of s.requires ?? []) {
       if (!byId.has(r)) err(`Skill ${s.id}: unknown prerequisite "${r}"`);
     }
@@ -776,7 +798,7 @@ function validateSkills(): Set<string> {
     stack.delete(id);
     state.set(id, 1);
   };
-  for (const s of file.skills) visit(s.id, new Set());
+  for (const s of skillRows) visit(s.id, new Set());
   return ids;
 }
 

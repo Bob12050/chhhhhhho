@@ -1848,6 +1848,10 @@ export class WorldScene extends Phaser.Scene {
       bus.emit('skill:failed', { slot, reason: 'empty', skillId: id });
       return;
     }
+    if (!gameState.canUseSkill(id)) {
+      bus.emit('skill:failed', { slot, reason: 'job', skillId: id });
+      return;
+    }
     const cost = def.mpCost ?? 0;
     if (gameState.mp < cost) {
       bus.emit('skill:failed', { slot, reason: 'mp', skillId: id });

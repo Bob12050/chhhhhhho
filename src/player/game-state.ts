@@ -261,8 +261,15 @@ export class GameState {
       this.equipment[slot] = null;
       unequipped.push(slot);
     }
+    const previousSkills = [...this.skillSlots];
+    this.skillSlots = this.skillSlots.map((skillId) =>
+      skillId && this.canUseSkill(skillId) ? skillId : null,
+    );
     this.recompute();
     for (const slot of unequipped) bus.emit('equipment:changed', { slot });
+    if (previousSkills.some((skillId, index) => skillId !== this.skillSlots[index])) {
+      bus.emit('skill:slots-changed', { slots: [...this.skillSlots] });
+    }
     bus.emit('job:changed', { jobId: id });
     return true;
   }
@@ -469,6 +476,7 @@ export class GameState {
     const def = getSkill(id);
     if (!def) return 'unknown';
     const job = getJob(this.jobId);
+    if (def.jobId && def.jobId !== this.jobId) return 'job';
     // Job skills require the active job to be of the matching class family.
     if (def.family && job?.family !== def.family) return 'job';
     // …and to have been promoted to at least the skill's job tier.
@@ -477,6 +485,17 @@ export class GameState {
     if (this.level < (def.requiredLevel ?? 1)) return 'level';
     for (const req of def.requires ?? []) if (!this.skills[req]) return 'requires';
     return null;
+  }
+
+  /** Whether a learned active skill belongs to the currently selected job. */
+  canUseSkill(id: string): boolean {
+    const def = getSkill(id);
+    if (!def || def.type !== 'active' || !this.skills[id]) return false;
+    const job = getJob(this.jobId);
+    if (def.jobId && def.jobId !== this.jobId) return false;
+    if (def.family && def.family !== job?.family) return false;
+    if (def.minTier != null && (job?.tier ?? 0) < def.minTier) return false;
+    return true;
   }
 
   /** Learn a skill (spends one skill point). Returns false if not allowed. */
@@ -502,7 +521,7 @@ export class GameState {
   assignSkill(slot: number, id: string): boolean {
     if (slot < 0 || slot >= this.skillSlots.length) return false;
     const def = getSkill(id);
-    if (!def || def.type !== 'active' || !this.skills[id]) return false;
+    if (!def || def.type !== 'active' || !this.canUseSkill(id)) return false;
 
     const current = this.skillSlots[slot];
     const otherSlot = this.skillSlots.indexOf(id);

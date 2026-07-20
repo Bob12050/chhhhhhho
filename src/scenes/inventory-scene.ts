@@ -1552,6 +1552,7 @@ export class InventoryScene extends Phaser.Scene {
 
   private skillMeta(def: SkillDef): string {
     const parts: string[] = [];
+    if (def.jobId) parts.push('専用');
     if (isElement(def.element) && def.element !== 'none') parts.push(`${ELEMENT_LABEL[def.element]}属性`);
     if (def.mpCost != null) parts.push(`MP ${def.mpCost}`);
     if (def.cooldown) {
@@ -1618,7 +1619,6 @@ export class InventoryScene extends Phaser.Scene {
   private renderSkillLoadout(): void {
     const w = this.scale.width;
     const gs = gameState;
-    const myFamily = getJob(gs.jobId)?.family;
     const fixed = this.add
       .rectangle(0, 150, w, 124, 0x10182b, 0.99)
       .setOrigin(0)
@@ -1695,8 +1695,7 @@ export class InventoryScene extends Phaser.Scene {
     const available = allSkills().filter(
       (def) =>
         def.type === 'active'
-        && !!gs.skills[def.id]
-        && (!def.family || def.family === myFamily || gs.skillSlots.includes(def.id)),
+        && gs.canUseSkill(def.id),
     );
     let y = 284;
     this.content.add(
@@ -1796,10 +1795,20 @@ export class InventoryScene extends Phaser.Scene {
   private renderSkillLearning(): void {
     const w = this.scale.width;
     const gs = gameState;
-    const myFamily = getJob(gs.jobId)?.family;
-    const visible = allSkills().filter((def) => !def.family || def.family === myFamily);
+    const job = getJob(gs.jobId);
+    const myFamily = job?.family;
+    const visible = allSkills().filter(
+      (def) =>
+        (!def.family || def.family === myFamily)
+        && (!def.jobId || def.jobId === gs.jobId),
+    );
+    const signature = visible.filter((def) => def.jobId === gs.jobId);
     const groups: { title: string; defs: SkillDef[] }[] = [
-      { title: 'アクティブ技', defs: visible.filter((def) => def.type === 'active') },
+      { title: `${job?.name ?? '職業'}専用技`, defs: signature },
+      {
+        title: '系統アクティブ技',
+        defs: visible.filter((def) => def.type === 'active' && !def.jobId),
+      },
       { title: 'パッシブ', defs: visible.filter((def) => def.type === 'passive') },
     ];
     let y = 160;

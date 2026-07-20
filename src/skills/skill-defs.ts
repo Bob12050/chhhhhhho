@@ -2,6 +2,7 @@ import skillsJson from '@/data/defs/skills.json';
 import { scaleFlatCombatStats } from '@/balance/progression-scale';
 import type { DerivedStats } from '@/stats/stats';
 import type { ClassFamily } from '@/jobs/job-defs';
+import { JOB_SIGNATURE_SKILLS } from '@/skills/job-signature-skills';
 
 /**
  * Skill definitions (data-driven). Active skills are forward strikes with a
@@ -38,6 +39,8 @@ export interface SkillDef {
   scaling?: SkillScaling;
   /** Visual style for the cast effect ('slash' | 'impact' | 'magic'). */
   fx?: string;
+  /** Existing generated icon silhouette to reuse for this skill. */
+  icon?: string;
   /** Behaviour kind (default 'damage'). */
   effect?: SkillEffect;
   /** projectile: bolt speed px/s (default 220) and count (default 1). */
@@ -62,6 +65,8 @@ export interface SkillDef {
    * family matches. Omitted = common skill, learnable by any job.
    */
   family?: ClassFamily;
+  /** Exact active job required for a signature skill. */
+  jobId?: string;
   /**
    * Minimum job tier (1=1次職 … 4=4次職) required to learn. The active job must
    * have reached this tier, so promotion — not just character level — unlocks
@@ -75,7 +80,10 @@ interface SkillsFile {
 }
 
 const skills = new Map<string, SkillDef>();
-for (const raw of (skillsJson as unknown as SkillsFile).skills) {
+for (const raw of [
+  ...(skillsJson as unknown as SkillsFile).skills,
+  ...JOB_SIGNATURE_SKILLS,
+]) {
   const skill: SkillDef = {
     ...raw,
     derived: raw.derived ? scaleFlatCombatStats(raw.derived) : undefined,

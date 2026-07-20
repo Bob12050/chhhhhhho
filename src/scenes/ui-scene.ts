@@ -462,12 +462,20 @@ export class UIScene extends Phaser.Scene {
       bus.on('skill:failed', ({ slot, reason, skillId, remaining }) => {
         const def = skillId ? getSkill(skillId) : undefined;
         const visual = def ? getSkillVisual(def) : undefined;
-        const title = reason === 'mp' ? 'MPが足りません' : reason === 'cooldown' ? '再使用待ち' : '技をセット';
+        const title = reason === 'mp'
+          ? 'MPが足りません'
+          : reason === 'cooldown'
+            ? '再使用待ち'
+            : reason === 'job'
+              ? '現職では使えません'
+              : '技をセット';
         const meta = reason === 'mp'
           ? `必要 ${def?.mpCost ?? 0} MP`
           : reason === 'cooldown'
             ? `${Math.max(0.1, (remaining ?? 0) / 1000).toFixed(1)} 秒`
-            : 'もちもの > 技';
+            : reason === 'job'
+              ? '専用技を再設定'
+              : 'もちもの > 技';
         const accent = reason === 'mp' ? 0xe16b6b : visual?.accent ?? 0xd7bd6a;
         skillButtons[slot]?.flashWarning(accent);
         showSkillToast(slot, title, meta, accent, visual?.icon);

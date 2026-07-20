@@ -61,7 +61,7 @@ export interface GameEvents {
   /** A skill press was rejected; the HUD explains why. */
   'skill:failed': {
     slot: number;
-    reason: 'empty' | 'cooldown' | 'mp';
+    reason: 'empty' | 'cooldown' | 'mp' | 'job';
     skillId?: string;
     remaining?: number;
   };

@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { GameState } from '@/player/game-state';
 import { getSkill, allSkills } from '@/skills/skill-defs';
-import { CLASS_FAMILIES } from '@/jobs/job-defs';
+import { allJobs, CLASS_FAMILIES } from '@/jobs/job-defs';
+import { SIGNATURE_SKILLS_PER_JOB } from '@/skills/job-signature-skills';
 import { bus } from '@/core/event-bus';
 
 describe('skills', () => {
@@ -129,6 +130,58 @@ describe('skills', () => {
     gs.learnSkill('w_cleave');
     gs.jobId = 'mage'; // switch family
     expect(gs.skills['w_cleave']).toBe(1); // still known
+  });
+
+  it('gives every promoted job exactly two active signature skills', () => {
+    for (const job of allJobs().filter((entry) => entry.id !== 'adventurer')) {
+      const signature = allSkills().filter((skill) => skill.jobId === job.id);
+      expect(signature, job.id).toHaveLength(SIGNATURE_SKILLS_PER_JOB);
+      expect(signature.every((skill) => skill.type === 'active'), job.id).toBe(true);
+      expect(signature.every((skill) => skill.family === job.family), job.id).toBe(true);
+      expect(signature.every((skill) => skill.minTier === job.tier), job.id).toBe(true);
+    }
+  });
+
+  it('locks signature skills to their exact job for learning and loadout use', () => {
+    const gs = new GameState();
+    gs.level = 20;
+    gs.skillPoints = 5;
+    gs.jobId = 'mage';
+    expect(gs.skillLearnBlock('sig_fighter_break_bash')).toBe('job');
+
+    gs.jobId = 'fighter';
+    expect(gs.skillLearnBlock('sig_fighter_break_bash')).toBeNull();
+    expect(gs.learnSkill('sig_fighter_break_bash')).toBe(true);
+    expect(gs.canUseSkill('sig_fighter_break_bash')).toBe(true);
+
+    gs.jobId = 'mage';
+    expect(gs.canUseSkill('sig_fighter_break_bash')).toBe(false);
+    expect(gs.assignSkill(0, 'sig_fighter_break_bash')).toBe(false);
+  });
+
+  it('unlocks each job second signature after learning its first', () => {
+    const gs = new GameState();
+    gs.level = 12;
+    gs.skillPoints = 5;
+    gs.jobId = 'samurai';
+    expect(gs.skillLearnBlock('sig_samurai_clear_mind')).toBe('requires');
+    expect(gs.learnSkill('sig_samurai_iai_ichimonji')).toBe(true);
+    expect(gs.skillLearnBlock('sig_samurai_clear_mind')).toBeNull();
+  });
+
+  it('clears an exact-job skill from S1/S2 when changing jobs', () => {
+    const gs = new GameState();
+    gs.level = 20;
+    gs.skillPoints = 5;
+    gs.jobId = 'fighter';
+    gs.jobLevels.adventurer = 20;
+    gs.learnSkill('sig_fighter_break_bash');
+    gs.learnSkill('slash');
+    gs.skillSlots = ['sig_fighter_break_bash', 'slash'];
+
+    expect(gs.changeJob('mage')).toBe(true);
+    expect(gs.skillSlots).toEqual([null, 'slash']);
+    expect(gs.skills.sig_fighter_break_bash).toBe(1);
   });
 
   it('every class family has at least one active and one passive skill', () => {
