@@ -14,7 +14,7 @@ import {
 } from '@/jobs/job-appearance';
 import { gameState } from '@/player/game-state';
 import { directionFromVector, directionVector } from '@/config/directions';
-import { FONT, FONT_PIXEL } from '@/ui/theme';
+import { FONT } from '@/ui/theme';
 import { jobTierColors } from '@/ui/job-tier-colors';
 import { clearIronEquipmentAppearance } from '@/paperdoll/iron-equipment-visual';
 
@@ -88,24 +88,29 @@ export class Player {
     this.nameText = scene.add
       .text(Math.round(x), Math.round(y) - 73, gameState.playerName, {
         fontFamily: FONT,
-        fontSize: '10px',
+        fontSize: '11px',
         color: '#ffffff',
-        fontStyle: 'bold',
+        fontStyle: '700',
         stroke: '#172032',
-        strokeThickness: 3,
+        strokeThickness: 2,
+        resolution: 3,
       })
       .setOrigin(0.5)
       .setDepth(Math.round(y) + 8);
-    this.nameText.setShadow(0, 1, '#000000', 2);
+    this.nameText.setShadow(0, 1, '#000000', 1);
     this.jobPlateBack = scene.add.graphics();
     this.jobPlateText = scene.add
-      .text(2, -8, '', {
-        fontFamily: FONT_PIXEL,
-        fontSize: '7px',
+      .text(0, -9, '', {
+        fontFamily: FONT,
+        fontSize: '9px',
         color: '#ffffff',
+        fontStyle: '700',
+        stroke: '#080b20',
+        strokeThickness: 1,
+        resolution: 3,
       })
       .setOrigin(0.5);
-    this.jobPlateText.setShadow(0, 1, '#000000', 2);
+    this.jobPlateText.setShadow(0, 1, '#000000', 1);
     this.jobPlate = scene.add
       .container(Math.round(x), Math.round(y) + 18, [this.jobPlateBack, this.jobPlateText])
       .setDepth(Math.round(y) + 8);
@@ -154,18 +159,18 @@ export class Player {
     this.statusMaxHp = maxHp;
     this.statusMaxMp = maxMp;
 
-    const plateW = Math.max(60, Math.ceil(this.jobPlateText.width) + 18);
+    const plateW = Math.max(66, Math.ceil(this.jobPlateText.width) + 20);
     const left = -plateW / 2;
     const barX = left + 5;
     const barW = plateW - 10;
     const tierColors = jobTierColors(this.jobTier);
     this.jobPlateBack.clear();
     this.jobPlateBack.fillStyle(0x10153b, 0.96);
-    this.jobPlateBack.fillRoundedRect(left, -13, plateW, 27, 2);
+    this.jobPlateBack.fillRoundedRect(left, -15, plateW, 30, 2);
     this.jobPlateBack.lineStyle(1, tierColors.border, 0.95);
-    this.jobPlateBack.strokeRoundedRect(left, -13, plateW, 27, 2);
+    this.jobPlateBack.strokeRoundedRect(left, -15, plateW, 30, 2);
     this.jobPlateBack.fillStyle(tierColors.accent, 1);
-    this.jobPlateBack.fillRect(left + 5, -10, 5, 4);
+    this.jobPlateBack.fillRect(left + 5, -12, 5, 4);
 
     this.jobPlateBack.fillStyle(0x06101d, 1);
     this.jobPlateBack.fillRect(barX, 0, barW, 4);
