@@ -15,6 +15,7 @@ import {
 import { gameState } from '@/player/game-state';
 import { directionFromVector, directionVector } from '@/config/directions';
 import { FONT, FONT_PIXEL } from '@/ui/theme';
+import { jobTierColors } from '@/ui/job-tier-colors';
 import { clearIronEquipmentAppearance } from '@/paperdoll/iron-equipment-visual';
 
 /**
@@ -42,6 +43,7 @@ export class Player {
   private jobPlate!: Phaser.GameObjects.Container;
   private jobPlateBack!: Phaser.GameObjects.Graphics;
   private jobPlateText!: Phaser.GameObjects.Text;
+  private jobTier = 0;
   private nameText!: Phaser.GameObjects.Text;
   private statusHp = -1;
   private statusMp = -1;
@@ -100,7 +102,7 @@ export class Player {
       .text(2, -8, '', {
         fontFamily: FONT_PIXEL,
         fontSize: '7px',
-        color: '#d9b5ff',
+        color: '#ffffff',
       })
       .setOrigin(0.5);
     this.jobPlateText.setShadow(0, 1, '#000000', 2);
@@ -129,7 +131,9 @@ export class Player {
         : null,
       displayScale: appearanceTextureScale(texture),
     });
+    this.jobTier = job?.tier ?? 0;
     this.jobPlateText.setText(jobEnglishName(job?.id ?? jobId));
+    this.jobPlateText.setColor(jobTierColors(this.jobTier).text);
     this.refreshStatusPlate(true);
   }
 
@@ -154,12 +158,13 @@ export class Player {
     const left = -plateW / 2;
     const barX = left + 5;
     const barW = plateW - 10;
+    const tierColors = jobTierColors(this.jobTier);
     this.jobPlateBack.clear();
     this.jobPlateBack.fillStyle(0x10153b, 0.96);
     this.jobPlateBack.fillRoundedRect(left, -13, plateW, 27, 2);
-    this.jobPlateBack.lineStyle(1, 0x6150a4, 0.9);
+    this.jobPlateBack.lineStyle(1, tierColors.border, 0.95);
     this.jobPlateBack.strokeRoundedRect(left, -13, plateW, 27, 2);
-    this.jobPlateBack.fillStyle(0xa74ce8, 1);
+    this.jobPlateBack.fillStyle(tierColors.accent, 1);
     this.jobPlateBack.fillRect(left + 5, -10, 5, 4);
 
     this.jobPlateBack.fillStyle(0x06101d, 1);
