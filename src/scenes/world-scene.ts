@@ -237,22 +237,15 @@ export class WorldScene extends Phaser.Scene {
     this.portals = built.portals;
     if (this.map.ground === 'grass') this.addForestAtmosphere();
 
-    // Ambient colour grade + corner vignette: cheap screen-space mood so zones
-    // stop looking like the same flat-lit lawn (the title screen trick).
+    // Colour-grade the whole map in world space. A camera-locked rectangle used
+    // to be sized in logical pixels after the HD render-density upgrade, so it
+    // only covered the upper-left quarter of the physical canvas.
     if (this.map.ambient) {
       const c = Phaser.Display.Color.HexStringToColor(this.map.ambient.color).color;
       this.add
-        .rectangle(0, 0, this.scale.width, this.scale.height, c, this.map.ambient.alpha)
+        .rectangle(0, 0, this.map.size.w, this.map.size.h, c, this.map.ambient.alpha)
         .setOrigin(0)
-        .setScrollFactor(0)
         .setDepth(7000);
-    }
-    const vg = this.add.graphics().setScrollFactor(0).setDepth(7001);
-    const vw = this.scale.width;
-    const vh = this.scale.height;
-    for (let i = 0; i < 10; i++) {
-      vg.lineStyle(3, 0x17385f, 0.032 * (1 - i / 10));
-      vg.strokeRect(i * 3, i * 3, vw - i * 6, vh - i * 6);
     }
 
     // Map title flash.
