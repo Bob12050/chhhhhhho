@@ -46,6 +46,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-diagonal", required=True, type=Path)
     parser.add_argument("--target-height", type=int, default=68)
     parser.add_argument(
+        "--frame-size",
+        type=int,
+        default=96,
+        help="Square output cell size. Use 192 with --target-height 136 for true HD atlases.",
+    )
+    parser.add_argument(
         "--allow-detached-movement",
         action="store_true",
         help="Keep intentional detached movement parts such as familiars.",
@@ -316,7 +322,13 @@ def build_diagonal(cells: list[list[Cell]], target_height: int) -> tuple[Image.I
 
 
 def main() -> None:
+    global FRAME_SIZE, ANCHOR_X, ANCHOR_Y
     args = parse_args()
+    if args.frame_size < 32 or args.frame_size % 2:
+        raise ValueError("--frame-size must be an even integer of at least 32")
+    FRAME_SIZE = args.frame_size
+    ANCHOR_X = FRAME_SIZE // 2
+    ANCHOR_Y = round(FRAME_SIZE * 0.875)
     cardinal_cells = split_source(
         args.cardinal_source,
         (0, 2, 4),

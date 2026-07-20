@@ -35,7 +35,12 @@ export interface TestHooks {
   textureSize(key: string): { width: number; height: number } | null;
   /** Activate an interactive text control without relying on font-dependent coordinates. */
   activateText(sceneKey: string, label: string): boolean;
+  /** Read rendered labels for focused scene-state assertions. */
+  sceneTexts(sceneKey: string): string[];
+  /** Open the real quest board while keeping the world paused behind it. */
+  openQuestBoard(): boolean;
   snapshot(): {
+    playerName: string;
     level: number;
     hp: number;
     maxHp: number;
@@ -199,7 +204,30 @@ export function installTestHooks(game: Phaser.Game): void {
       }
       return false;
     },
+    sceneTexts: (sceneKey: string) => {
+      const scene = game.scene.getScene(sceneKey);
+      if (!scene?.scene.isActive()) return [];
+      const texts: string[] = [];
+      const pending = [...scene.children.list];
+      while (pending.length) {
+        const child = pending.shift();
+        if (!child) continue;
+        if (child.type === 'Text' && 'text' in child && typeof child.text === 'string') {
+          texts.push(child.text.trim());
+        }
+        if ('list' in child && Array.isArray(child.list)) pending.push(...child.list);
+      }
+      return texts.filter(Boolean);
+    },
+    openQuestBoard: () => {
+      const world = game.scene.getScene('World');
+      if (!world?.scene.isActive() || world.scene.isPaused()) return false;
+      world.scene.pause();
+      world.scene.launch('QuestBoard');
+      return true;
+    },
     snapshot: () => ({
+      playerName: gameState.playerName,
       level: gameState.level,
       hp: gameState.hp,
       maxHp: gameState.derived.maxHp,

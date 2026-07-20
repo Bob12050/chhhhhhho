@@ -67,10 +67,38 @@ for (const raw of (jobsJson as unknown as JobsFile).jobs) {
   jobs.set(job.id, job);
 }
 
+const JOB_ENGLISH_NAMES: Record<string, string> = {
+  adventurer: 'ADVENTURER',
+  fighter: 'FIGHTER',
+  mage: 'MAGE',
+  priest: 'PRIEST',
+  thief: 'THIEF',
+  pet_raiser: 'PETRISER',
+  samurai: 'SAMURAI',
+  sorcerer: 'SORCERER',
+  holy_knight: 'HOLYKNIGHT',
+  ninja: 'NINJA',
+  ranger: 'RANGER',
+  sword_kaiser: 'SWORDKAISER',
+  grand_magia: 'GRANDMAGIA',
+  shield_saber: 'SILDSAVIOR',
+  avengista: 'AVENGISTA',
+  dual_star: 'DUALSTAR',
+  aramikagura: 'ARAMIKAGURA',
+  alvride: 'ULVLAID',
+  nirvadio: 'NIRVADIO',
+  noxtia: 'NOXTIA',
+  oltarie: 'ALTELIER',
+};
+
 export function getJob(id: string): JobDef | undefined {
   return jobs.get(id);
 }
 
 export function allJobs(): JobDef[] {
   return [...jobs.values()];
+}
+
+export function jobEnglishName(id: string): string {
+  return JOB_ENGLISH_NAMES[id] ?? id.replace(/_/g, '').toUpperCase();
 }

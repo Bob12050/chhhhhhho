@@ -93,14 +93,18 @@ export class SaveSelectScene extends Phaser.Scene {
         .setDepth(3);
       const mapName = summary.mapId ? getMap(summary.mapId)?.name ?? summary.mapId : '';
       this.add
-        .text(90, y + 32, `Lv ${summary.level ?? '?'}  ${job?.name ?? '冒険者'}`, {
+        .text(90, y + 30, summary.playerName ?? '冒険者', {
           fontFamily: FONT,
-          fontSize: '16px',
-          color: '#9fd0ff',
+          fontSize: '15px',
+          color: '#fff0b0',
           fontStyle: 'bold',
         })
         .setDepth(2);
-      this.add.text(90, y + 55, mapName, { fontFamily: FONT, fontSize: '11px', color: '#d8e6ff' }).setDepth(2);
+      this.add.text(90, y + 51, `Lv ${summary.level ?? '?'}  ${job?.name ?? '冒険者'}  ${mapName}`, {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#9fd0ff',
+      }).setDepth(2);
       const when = summary.savedAt ? new Date(summary.savedAt).toLocaleString('ja-JP') : '';
       this.add
         .text(90, y + 72, when, { fontFamily: FONT, fontSize: '10px', color: '#aebed1' })

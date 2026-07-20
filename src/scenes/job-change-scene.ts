@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { gameState } from '@/player/game-state';
-import { getJob, type JobDef } from '@/jobs/job-defs';
+import { getJob, jobEnglishName, type JobDef } from '@/jobs/job-defs';
 import { bus } from '@/core/event-bus';
 import { expToNext } from '@/stats/leveling';
 import { FONT, pillButton } from '@/ui/theme';
@@ -22,29 +22,6 @@ const TIER_STYLE = [
   { label: '3次職業', color: 0x647fee, roman: '#6d83f3' },
   { label: '4次職業', color: 0xf27072, roman: '#f47778' },
 ] as const;
-
-const JOB_ROMAN: Record<string, string> = {
-  fighter: 'FIGHTER',
-  mage: 'MAGE',
-  priest: 'PRIEST',
-  thief: 'THIEF',
-  pet_raiser: 'PETRISER',
-  samurai: 'SAMURAI',
-  sorcerer: 'SORCERER',
-  holy_knight: 'HOLYKNIGHT',
-  ninja: 'NINJA',
-  ranger: 'RANGER',
-  sword_kaiser: 'SWORDKAISER',
-  grand_magia: 'GRANDMAGIA',
-  shield_saber: 'SILDSAVIOR',
-  avengista: 'AVENGISTA',
-  dual_star: 'DUALSTAR',
-  aramikagura: 'ARAMIKAGURA',
-  alvride: 'ULVLAID',
-  nirvadio: 'NIRVADIO',
-  noxtia: 'NOXTIA',
-  oltarie: 'ALTELIER',
-};
 
 const NAVY = 0x19275f;
 const CREAM = 0xffedca;
@@ -325,7 +302,7 @@ export class JobChangeScene extends Phaser.Scene {
       ]);
     } else {
       card.add(
-        this.add.text(0, -height / 2 + half / 2, JOB_ROMAN[job.id] ?? `TIER ${tier}`, {
+        this.add.text(0, -height / 2 + half / 2, jobEnglishName(job.id), {
           fontFamily: FONT,
           fontSize: tier === 4 ? '10px' : '9px',
           color: tier === 0 ? '#ffd86b' : TIER_STYLE[Math.max(0, tier - 1)].roman,

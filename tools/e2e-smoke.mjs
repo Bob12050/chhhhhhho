@@ -98,6 +98,7 @@ try {
   await waitForScene(page, 'SaveSelect');
   await activateTextWhenReady(page, 'SaveSelect', 'はじめる');
   await waitForScene(page, 'CharacterSelect');
+  await page.locator('input[aria-label="キャラクター名"]').fill('レオン');
   await activateTextWhenReady(page, 'CharacterSelect', '男性');
   await activateTextWhenReady(page, 'CharacterSelect', 'この姿で始める');
   await waitForScene(page, 'Dialogue', 20000);
@@ -118,6 +119,7 @@ try {
   await page.waitForTimeout(500);
   let s = await snap(page);
   check('新規ゲームで町に降り立つ', s.mapId === 'town', `mapId=${s.mapId}`);
+  check('入力したキャラクター名がゲームへ引き継がれる', s.playerName === 'レオン', `name=${s.playerName}`);
   const townTexture = await page.evaluate(() =>
     window.__test.textureSize('art.map.town.storybook'));
   check(
@@ -246,6 +248,22 @@ try {
       && s.questGuide.distance > 0,
     JSON.stringify(s.questGuide),
   );
+
+  check('クエストボードを開ける', await page.evaluate(() => window.__test.openQuestBoard()));
+  await waitForScene(page, 'QuestBoard');
+  await activateTextWhenReady(page, 'QuestBoard', '旅立ちクエスト');
+  await page.waitForTimeout(100);
+  const selectedRankTexts = await page.evaluate(() => window.__test.sceneTexts('QuestBoard'));
+  check(
+    '難易度選択後は選んだランクだけを表示する',
+    selectedRankTexts.includes('旅立ちクエスト')
+      && selectedRankTexts.includes('← ランク一覧へ戻る')
+      && !selectedRankTexts.includes('駆け出しクエスト')
+      && !selectedRankTexts.includes('熟練クエスト'),
+    JSON.stringify(selectedRankTexts),
+  );
+  await activateTextWhenReady(page, 'QuestBoard', 'とじる');
+  await waitForScene(page, 'World');
 
   // Debug mode must be reachable from the same settings screen that enables it.
   await activateTextWhenReady(page, 'UI', 'もちもの');

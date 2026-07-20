@@ -3,7 +3,7 @@ import { PaperDollAnimator } from '@/paperdoll/paper-doll-animator';
 import type { Direction } from '@/config/layers';
 import type { AnimName } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
-import { getJob } from '@/jobs/job-defs';
+import { getJob, jobEnglishName } from '@/jobs/job-defs';
 import {
   appearanceDiagonalTexKey,
   appearanceSafeDiagonalWalkMode,
@@ -14,7 +14,7 @@ import {
 } from '@/jobs/job-appearance';
 import { gameState } from '@/player/game-state';
 import { directionFromVector, directionVector } from '@/config/directions';
-import { FONT } from '@/ui/theme';
+import { FONT, FONT_PIXEL } from '@/ui/theme';
 import { clearIronEquipmentAppearance } from '@/paperdoll/iron-equipment-visual';
 
 /**
@@ -42,6 +42,11 @@ export class Player {
   private jobPlate!: Phaser.GameObjects.Container;
   private jobPlateBack!: Phaser.GameObjects.Graphics;
   private jobPlateText!: Phaser.GameObjects.Text;
+  private nameText!: Phaser.GameObjects.Text;
+  private statusHp = -1;
+  private statusMp = -1;
+  private statusMaxHp = -1;
+  private statusMaxMp = -1;
   private attacking = false;
   private moveMagnitude = 0;
   private stridePhase = 0;
@@ -78,19 +83,30 @@ export class Player {
       .setDisplaySize(28, 10)
       .setAlpha(0.72)
       .setDepth(Math.round(y) - 1);
+    this.nameText = scene.add
+      .text(Math.round(x), Math.round(y) - 73, gameState.playerName, {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+        stroke: '#172032',
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5)
+      .setDepth(Math.round(y) + 8);
+    this.nameText.setShadow(0, 1, '#000000', 2);
     this.jobPlateBack = scene.add.graphics();
     this.jobPlateText = scene.add
-      .text(0, 0, '', {
-        fontFamily: FONT,
-        fontSize: '9px',
-        color: '#fff0aa',
-        fontStyle: 'bold',
+      .text(2, -8, '', {
+        fontFamily: FONT_PIXEL,
+        fontSize: '7px',
+        color: '#d9b5ff',
       })
       .setOrigin(0.5);
     this.jobPlateText.setShadow(0, 1, '#000000', 2);
     this.jobPlate = scene.add
-      .container(Math.round(x), Math.round(y) - 57, [this.jobPlateBack, this.jobPlateText])
-      .setDepth(Math.round(y) + 2);
+      .container(Math.round(x), Math.round(y) + 18, [this.jobPlateBack, this.jobPlateText])
+      .setDepth(Math.round(y) + 8);
     this.setJobAppearance(gameState.jobId);
     this.doll.play('idle');
   }
@@ -113,13 +129,46 @@ export class Player {
         : null,
       displayScale: appearanceTextureScale(texture),
     });
-    this.jobPlateText.setText(job?.name ?? jobId);
-    const plateW = Math.ceil(this.jobPlateText.width) + 12;
+    this.jobPlateText.setText(jobEnglishName(job?.id ?? jobId));
+    this.refreshStatusPlate(true);
+  }
+
+  private refreshStatusPlate(force = false): void {
+    const hp = Math.max(0, gameState.hp);
+    const mp = Math.max(0, gameState.mp);
+    const maxHp = Math.max(1, gameState.derived.maxHp);
+    const maxMp = Math.max(1, gameState.derived.maxMp);
+    if (
+      !force
+      && hp === this.statusHp
+      && mp === this.statusMp
+      && maxHp === this.statusMaxHp
+      && maxMp === this.statusMaxMp
+    ) return;
+    this.statusHp = hp;
+    this.statusMp = mp;
+    this.statusMaxHp = maxHp;
+    this.statusMaxMp = maxMp;
+
+    const plateW = Math.max(60, Math.ceil(this.jobPlateText.width) + 18);
+    const left = -plateW / 2;
+    const barX = left + 5;
+    const barW = plateW - 10;
     this.jobPlateBack.clear();
-    this.jobPlateBack.fillStyle(0x091221, 0.82);
-    this.jobPlateBack.fillRoundedRect(-plateW / 2, -7, plateW, 14, 3);
-    this.jobPlateBack.lineStyle(1, 0xe4ca72, 0.66);
-    this.jobPlateBack.strokeRoundedRect(-plateW / 2, -7, plateW, 14, 3);
+    this.jobPlateBack.fillStyle(0x10153b, 0.96);
+    this.jobPlateBack.fillRoundedRect(left, -13, plateW, 27, 2);
+    this.jobPlateBack.lineStyle(1, 0x6150a4, 0.9);
+    this.jobPlateBack.strokeRoundedRect(left, -13, plateW, 27, 2);
+    this.jobPlateBack.fillStyle(0xa74ce8, 1);
+    this.jobPlateBack.fillRect(left + 5, -10, 5, 4);
+
+    this.jobPlateBack.fillStyle(0x06101d, 1);
+    this.jobPlateBack.fillRect(barX, 0, barW, 4);
+    this.jobPlateBack.fillRect(barX, 7, barW, 4);
+    this.jobPlateBack.fillStyle(0xf06f72, 1);
+    this.jobPlateBack.fillRect(barX + 1, 1, Math.round((barW - 2) * Math.min(1, hp / maxHp)), 2);
+    this.jobPlateBack.fillStyle(0x58dbe7, 1);
+    this.jobPlateBack.fillRect(barX + 1, 8, Math.round((barW - 2) * Math.min(1, mp / maxMp)), 2);
   }
 
   getDirection(): Direction {
@@ -254,7 +303,7 @@ export class Player {
     this.doll.play('death', { force: true });
     this.doll.flashWhite(120);
     this.scene.tweens.add({
-      targets: [this.doll.container, this.shadow, this.jobPlate],
+      targets: [this.doll.container, this.shadow, this.nameText, this.jobPlate],
       alpha: 0,
       duration: 450,
       delay: 150,
@@ -295,9 +344,13 @@ export class Player {
       .setDisplaySize(Math.round(28 + contact * 2), Math.round(10 - contact))
       .setAlpha(0.68 + contact * 0.06)
       .setDepth(Math.round(this.body.y) - 1);
+    this.nameText
+      .setPosition(Math.round(this.body.x), Math.round(this.body.y) - 73)
+      .setDepth(Math.round(this.body.y) + 8);
     this.jobPlate
-      .setPosition(Math.round(this.body.x), Math.round(this.body.y) - 57)
-      .setDepth(Math.round(this.body.y) + 2);
+      .setPosition(Math.round(this.body.x), Math.round(this.body.y) + 18)
+      .setDepth(Math.round(this.body.y) + 8);
+    this.refreshStatusPlate();
     this.doll.setPosition(this.body.x, this.body.y);
     this.doll.setDepth(Math.round(this.body.y));
     this.doll.update(dtMs);
@@ -327,6 +380,7 @@ export class Player {
   destroy(): void {
     this.doll.destroy();
     this.shadow.destroy();
+    this.nameText.destroy();
     this.jobPlate.destroy(true);
     this.body.destroy();
   }

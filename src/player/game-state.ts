@@ -31,6 +31,10 @@ import {
   normalizeCharacterGender,
   type CharacterGender,
 } from '@/player/character-gender';
+import {
+  DEFAULT_CHARACTER_NAME,
+  normalizeCharacterName,
+} from '@/player/character-name';
 import { syncInvestigationQuests } from '@/endgame/investigations';
 import { rebaseInvestigationEquipment } from '@/endgame/investigation-forge';
 import { POWER_SCALE_SAVE_FLAG } from '@/balance/progression-scale';
@@ -96,6 +100,7 @@ export class GameState {
   skills: Record<string, number> = {};
   skillSlots: (string | null)[] = [null, null];
   skillPoints = 0;
+  playerName = DEFAULT_CHARACTER_NAME;
   gender: CharacterGender = 'female';
   jobId = 'adventurer';
   unlockedJobs: string[] = ['adventurer'];
@@ -585,6 +590,7 @@ export class GameState {
       savedAt: Date.now(),
       mapId: this.mapId,
       player: {
+        name: this.playerName,
         x: this.x,
         y: this.y,
         level: this.level,
@@ -642,6 +648,7 @@ export class GameState {
     this.skills = { ...(data.player.skills ?? {}) };
     this.skillSlots = [...(data.player.skillSlots ?? [null, null])];
     this.skillPoints = data.player.skillPoints ?? 0;
+    this.playerName = normalizeCharacterName(data.player.name);
     this.gender = normalizeCharacterGender(data.player.gender);
     this.jobId = data.player.jobId ?? 'adventurer';
     this.unlockedJobs = [...(data.player.unlockedJobs ?? ['adventurer'])];

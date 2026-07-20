@@ -2,6 +2,7 @@ import { idbGet, idbSet, idbDelete } from './idb';
 import { createDefaultSave, migrate, type SaveData, SAVE_VERSION } from './schema';
 import { bus } from '@/core/event-bus';
 import type { CharacterGender } from '@/player/character-gender';
+import { DEFAULT_CHARACTER_NAME } from '@/player/character-name';
 
 /**
  * Save manager over IndexedDB. Features:
@@ -19,6 +20,7 @@ export interface SlotSummary {
   slot: number;
   exists: boolean;
   level?: number;
+  playerName?: string;
   jobId?: string;
   gender?: CharacterGender;
   headId?: string | null;
@@ -62,8 +64,12 @@ export class SaveManager {
     }
   }
 
-  async startNew(slot: number, gender: CharacterGender = 'female'): Promise<SaveData> {
-    const data = createDefaultSave(slot, gender);
+  async startNew(
+    slot: number,
+    gender: CharacterGender = 'female',
+    playerName = DEFAULT_CHARACTER_NAME,
+  ): Promise<SaveData> {
+    const data = createDefaultSave(slot, gender, playerName);
     await this.write(data);
     return data;
   }
@@ -92,6 +98,7 @@ export class SaveManager {
               slot: i,
               exists: true,
               level: raw.player?.level,
+              playerName: raw.player?.name,
               jobId: raw.player?.jobId,
               gender: raw.player?.gender === 'male' ? 'male' : 'female',
               headId: raw.equipment?.head ?? null,

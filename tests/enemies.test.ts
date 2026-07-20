@@ -56,4 +56,17 @@ describe('enemy roster + boss', () => {
       expect(getEnemyDef(id)?.textureKey, id).toBe('gen.enemy.slime_royal');
     }
   });
+
+  it('offers large-monster hunts from quest rank 1', () => {
+    const rankOneBossHunts = allQuests().filter((quest) => (
+      (quest.rank ?? 1) === 1
+      && !!quest.huntMap
+      && quest.objectives.some((objective) => (
+        objective.type === 'kill'
+        && !!objective.enemyId
+        && getEnemyDef(objective.enemyId)?.isBoss === true
+      ))
+    ));
+    expect(rankOneBossHunts.length).toBeGreaterThanOrEqual(2);
+  });
 });

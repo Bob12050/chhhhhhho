@@ -8,6 +8,11 @@ import {
 } from '@/jobs/job-appearance';
 import type { CharacterGender } from '@/player/character-gender';
 import {
+  DEFAULT_CHARACTER_NAME,
+  MAX_CHARACTER_NAME_LENGTH,
+  normalizeCharacterName,
+} from '@/player/character-name';
+import {
   FONT,
   addSceneBackdrop,
   pillButton,
@@ -28,6 +33,9 @@ export class CharacterSelectScene extends Phaser.Scene {
   private slot = 0;
   private selected: CharacterGender = 'female';
   private cards = new Map<CharacterGender, ChoiceCard>();
+  private nameInput: HTMLInputElement | null = null;
+  private nameError: Phaser.GameObjects.Text | null = null;
+  private readonly repositionNameInput = (): void => this.positionNameInput();
 
   constructor() {
     super('CharacterSelect');
@@ -39,13 +47,14 @@ export class CharacterSelectScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.removeNameInput();
     const w = this.scale.width;
     const h = this.scale.height;
     addSceneBackdrop(this, 0.72);
 
     titlePlate(this, w / 2, 48, w - 38, 58, 1, 0.98);
     this.add
-      .text(w / 2, 48, '冒険者を選ぶ', {
+      .text(w / 2, 48, '冒険者をつくる', {
         fontFamily: FONT,
         fontSize: '22px',
         color: '#ffffff',
@@ -65,7 +74,25 @@ export class CharacterSelectScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(2);
 
-    const cardY = 270;
+    this.add
+      .text(24, 112, 'キャラクター名', {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#fff0b0',
+        fontStyle: 'bold',
+      })
+      .setDepth(3);
+    this.nameError = this.add
+      .text(w - 24, 112, '', {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#ff9e9e',
+      })
+      .setOrigin(1, 0)
+      .setDepth(3);
+    this.createNameInput();
+
+    const cardY = 336;
     this.cards.set('female', this.makeChoice(94, cardY, 'female', '女性'));
     this.cards.set('male', this.makeChoice(w - 94, cardY, 'male', '男性'));
     this.refreshChoices();
@@ -76,12 +103,101 @@ export class CharacterSelectScene extends Phaser.Scene {
       size: 13,
     }).setDepth(4);
     pillButton(this, w - 106, h - 54, 'この姿で始める', () => {
-      void beginGame(this, this.slot, 'new', this.selected);
+      this.startAdventure();
     }, {
       color: '#fff0b0',
       bg: '#31513b',
       size: 14,
     }).setDepth(4);
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.removeNameInput, this);
+  }
+
+  private createNameInput(): void {
+    const root = document.getElementById('game-root');
+    if (!root) return;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = DEFAULT_CHARACTER_NAME;
+    input.maxLength = MAX_CHARACTER_NAME_LENGTH;
+    input.autocomplete = 'off';
+    input.spellcheck = false;
+    input.enterKeyHint = 'done';
+    input.setAttribute('aria-label', 'キャラクター名');
+    Object.assign(input.style, {
+      position: 'absolute',
+      zIndex: '20',
+      boxSizing: 'border-box',
+      margin: '0',
+      border: '2px solid #d2b45c',
+      borderRadius: '6px',
+      background: 'rgba(8, 24, 43, 0.98)',
+      color: '#ffffff',
+      fontFamily: "'M PLUS 2 Game', sans-serif",
+      fontWeight: '700',
+      letterSpacing: '0',
+      textAlign: 'center',
+      caretColor: '#fff0a8',
+      outline: 'none',
+      boxShadow: 'inset 0 0 0 2px rgba(111, 154, 205, 0.2), 0 3px 9px rgba(0, 0, 0, 0.38)',
+      touchAction: 'manipulation',
+      userSelect: 'text',
+      WebkitUserSelect: 'text',
+    });
+    input.addEventListener('pointerdown', (event) => event.stopPropagation());
+    input.addEventListener('touchstart', (event) => event.stopPropagation(), { passive: true });
+    input.addEventListener('input', () => this.nameError?.setText(''));
+    input.addEventListener('focus', () => {
+      if (input.value === DEFAULT_CHARACTER_NAME) input.select();
+    });
+    input.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      input.blur();
+      this.startAdventure();
+    });
+    root.appendChild(input);
+    this.nameInput = input;
+    window.addEventListener('resize', this.repositionNameInput);
+    this.positionNameInput();
+    requestAnimationFrame(this.repositionNameInput);
+  }
+
+  private positionNameInput(): void {
+    if (!this.nameInput) return;
+    const root = document.getElementById('game-root');
+    const canvas = this.game.canvas;
+    if (!root || !canvas) return;
+    const rootRect = root.getBoundingClientRect();
+    const canvasRect = canvas.getBoundingClientRect();
+    const scaleX = canvasRect.width / this.scale.width;
+    const scaleY = canvasRect.height / this.scale.height;
+    Object.assign(this.nameInput.style, {
+      left: `${canvasRect.left - rootRect.left + 24 * scaleX}px`,
+      top: `${canvasRect.top - rootRect.top + 130 * scaleY}px`,
+      width: `${(this.scale.width - 48) * scaleX}px`,
+      height: `${40 * scaleY}px`,
+      padding: `0 ${12 * scaleX}px`,
+      fontSize: `${Math.max(16, 16 * scaleY)}px`,
+    });
+  }
+
+  private startAdventure(): void {
+    const rawName = this.nameInput?.value ?? '';
+    if (!rawName.trim()) {
+      this.nameError?.setText('名前を入力してください');
+      this.nameInput?.focus();
+      return;
+    }
+    const name = normalizeCharacterName(rawName);
+    if (this.nameInput) this.nameInput.value = name;
+    void beginGame(this, this.slot, 'new', this.selected, name);
+  }
+
+  private removeNameInput(): void {
+    window.removeEventListener('resize', this.repositionNameInput);
+    this.nameInput?.remove();
+    this.nameInput = null;
   }
 
   private makeChoice(

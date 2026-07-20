@@ -20,6 +20,7 @@ describe('save round trip', () => {
     gs.learnSkill('toughness');
     gs.flags['boss_first_kill'] = true;
     gs.gender = 'male';
+    gs.playerName = 'レオン';
     gs.x = 123;
     gs.y = 456;
 
@@ -39,6 +40,7 @@ describe('save round trip', () => {
     expect(loaded.skills.toughness).toBe(1);
     expect(loaded.flags.boss_first_kill).toBe(true);
     expect(loaded.gender).toBe('male');
+    expect(loaded.playerName).toBe('レオン');
     expect(loaded.x).toBe(123);
     expect(loaded.derived.physAtk).toBe(gs.derived.physAtk);
   });
@@ -51,10 +53,13 @@ describe('save migration / defensive load', () => {
     expect(m.player.level).toBe(9);
     expect(m.player.base.STR).toBe(createDefaultSave(0).player.base.STR);
     expect(m.player.gender).toBe('female');
+    expect(m.player.name).toBe('冒険者');
   });
 
-  it('uses the selected gender for a new save', () => {
-    expect(createDefaultSave(0, 'male').player.gender).toBe('male');
+  it('uses the selected gender and name for a new save', () => {
+    const created = createDefaultSave(0, 'male', '  レオン  ');
+    expect(created.player.gender).toBe('male');
+    expect(created.player.name).toBe('レオン');
   });
 
   it('drops unknown equipment ids on load', () => {

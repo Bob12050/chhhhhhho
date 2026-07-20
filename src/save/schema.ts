@@ -4,13 +4,17 @@ import {
   normalizeCharacterGender,
   type CharacterGender,
 } from '@/player/character-gender';
+import {
+  DEFAULT_CHARACTER_NAME,
+  normalizeCharacterName,
+} from '@/player/character-name';
 
 /**
  * Save data schema. Versioned with a migration path. Phase 0 stores a subset;
  * Phase 1 fields (jobs, skills, pets, quest flags...) extend this same shape.
  * IDs are stable strings; deleted/unknown ids are dropped on load (defensive).
  */
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 export interface SaveDataV1 {
   version: number;
@@ -18,6 +22,7 @@ export interface SaveDataV1 {
   savedAt: number; // epoch ms
   mapId: string;
   player: {
+    name: string;
     x: number;
     y: number;
     level: number;
@@ -68,6 +73,7 @@ export type SaveData = SaveDataV1;
 export function createDefaultSave(
   slot: number,
   gender: CharacterGender = 'female',
+  playerName = DEFAULT_CHARACTER_NAME,
 ): SaveData {
   return {
     version: SAVE_VERSION,
@@ -75,6 +81,7 @@ export function createDefaultSave(
     savedAt: Date.now(),
     mapId: 'town',
     player: {
+      name: normalizeCharacterName(playerName),
       x: 180,
       y: 360,
       level: 1,
@@ -163,6 +170,7 @@ export function migrate(raw: unknown, slot: number): SaveData {
 
   // Saves created before gender selection keep their current artwork.
   merged.player.gender = normalizeCharacterGender(data.player?.gender);
+  merged.player.name = normalizeCharacterName(data.player?.name);
 
   // Remap legacy placeholder job ids (pre-canonical tree) to canonical ones.
   const LEGACY_JOBS: Record<string, string> = { novice: 'adventurer', warrior: 'fighter' };

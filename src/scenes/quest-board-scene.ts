@@ -485,34 +485,6 @@ export class QuestBoardScene extends Phaser.Scene {
         }),
       );
       y += 66;
-
-      const switchX = 12;
-      const switchW = w - 24;
-      const segmentW = switchW / 7;
-      for (let r = 1; r <= 7; r++) {
-        const selectedSegment = r === selected;
-        const x = switchX + segmentW * r - segmentW / 2;
-        const segment = this.add
-          .rectangle(x, y + 15, segmentW - 3, 30, selectedSegment ? 0x293554 : 0x151c2d, 1)
-          .setStrokeStyle(1, selectedSegment ? this.rankColorNumber(r) : 0x3a455e, selectedSegment ? 0.9 : 0.55)
-          .setInteractive({ useHandCursor: true });
-        segment.on('pointerup', () => {
-          if (this.dragged) return;
-          this.selectedRank = r;
-          this.scrollY = 0;
-          this.render();
-        });
-        this.content.add(segment);
-        this.content.add(
-          this.add.text(x, y + 15, String(r), {
-            fontFamily: FONT,
-            fontSize: selectedSegment ? '13px' : '11px',
-            color: selectedSegment ? this.rankColor(r) : '#9ca8bc',
-            fontStyle: selectedSegment ? 'bold' : 'normal',
-          }).setOrigin(0.5),
-        );
-      }
-      y += 42;
     }
 
     const inScope = (q: QuestDef): boolean => {
