@@ -17,6 +17,7 @@ const SCROLL_ONLY = process.argv.includes('--scroll-only');
 const VIEWPORT_HEIGHT = Number.parseInt(process.env.E2E_VIEWPORT_HEIGHT ?? '720', 10);
 const JOB_TREE_SCREENSHOT = process.env.E2E_JOB_TREE_SCREENSHOT;
 const SCREEN_FLASH_SCREENSHOT = process.env.E2E_SCREEN_FLASH_SCREENSHOT;
+const BOSS_HUD_SCREENSHOT = process.env.E2E_BOSS_HUD_SCREENSHOT;
 
 let browser;
 const failures = [];
@@ -934,6 +935,18 @@ try {
   check('狩猟クエストを受注できる', accepted === true);
   await page.evaluate(() => window.__test.warp('arena_plain'));
   await page.waitForTimeout(1600);
+  const bossHudTexts = await page.evaluate(() => window.__test.sceneTexts('UI'));
+  check(
+    'ボス戦で名前と体力が上部HUDに表示される',
+    bossHudTexts.includes('風翔の王 ゼフィス')
+      && bossHudTexts.includes('100%')
+      && bossHudTexts.some((text) => /^\d+\/\d+$/.test(text)),
+    JSON.stringify(bossHudTexts),
+  );
+  if (BOSS_HUD_SCREENSHOT) {
+    await page.waitForTimeout(200);
+    await page.locator('canvas').screenshot({ path: BOSS_HUD_SCREENSHOT });
+  }
   await page.keyboard.down('w'); await page.waitForTimeout(1800); await page.keyboard.up('w');
   for (let i = 0; i < 40; i++) {
     for (const k of ['w', 'd', 'a']) {

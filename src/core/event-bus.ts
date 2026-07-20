@@ -95,8 +95,18 @@ export interface GameEvents {
         hint: string;
       };
 
-  /** Boss HP bar shown/hidden — the HUD quest tracker yields its slot. */
-  'boss:bar': { active: boolean };
+  /** Live boss status shown in the HUD slot normally occupied by quest guidance. */
+  'boss:bar':
+    | { active: false }
+    | {
+        active: true;
+        name: string;
+        current: number;
+        max: number;
+        phase: string;
+        phaseColor: string;
+        stagger?: { ratio: number; down: boolean };
+      };
   /** Cinematic hunt intro shown above HUD controls when a boss appears. */
   'boss:intro': {
     questName: string;

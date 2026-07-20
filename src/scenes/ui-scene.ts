@@ -737,6 +737,73 @@ export class UIScene extends Phaser.Scene {
       .setShadow(0, 1, '#000000', 2)
       .setVisible(false);
     trRoot.add([trTitle, trObj, trGuideDivider, trGuideArrow, trGuideDistance]);
+    // Boss status occupies the same band as quest guidance. It belongs to the
+    // UI camera, not WorldScene, so render-density scaling can never move it.
+    const bossW = PW;
+    const bossH = 49;
+    const bossRoot = this.add.container(hudX, trY).setDepth(depth + 4).setVisible(false);
+    const bossBack = this.add.graphics();
+    bossBack.fillStyle(0x000000, 0.3);
+    bossBack.fillRoundedRect(1, 3, bossW - 2, bossH - 1, 5);
+    bossBack.fillStyle(0x071421, 0.97);
+    bossBack.fillRoundedRect(1, 0, bossW - 2, bossH - 3, 5);
+    bossBack.fillStyle(0xb93342, 0.95);
+    bossBack.fillRoundedRect(6, 6, 3, bossH - 15, 1);
+    bossBack.lineStyle(1.5, 0xd9bd6a, 0.86);
+    bossBack.strokeRoundedRect(1, 0, bossW - 2, bossH - 3, 5);
+    const bossIcon = this.add.image(20, 24, TEX.iconShield).setDisplaySize(17, 17).setTint(0xff8d86);
+    const bossName = this.add
+      .text(34, 4, '', { fontFamily: FONT, fontSize: '11px', color: '#fff1d0', fontStyle: 'bold' })
+      .setShadow(0, 1, '#000000', 2);
+    const bossPhase = this.add
+      .text(bossW - 9, 5, '', { fontFamily: FONT, fontSize: '8px', color: '#b7c9d2', fontStyle: 'bold' })
+      .setOrigin(1, 0);
+    const bossHpLabel = this.add
+      .text(34, 22, 'HP', { fontFamily: FONT, fontSize: '8px', color: '#ffb9b9', fontStyle: 'bold' })
+      .setOrigin(0, 0.5);
+    const bossHpX = 52;
+    const bossHpW = bossW - 102;
+    const bossHpBack = this.add
+      .rectangle(bossHpX, 28, bossHpW, 11, 0x02060b, 0.98)
+      .setOrigin(0, 0.5)
+      .setStrokeStyle(1, 0x9caec0, 0.45);
+    const bossHpFill = this.add
+      .rectangle(bossHpX + 1, 28, bossHpW - 2, 9, 0xdb4f59, 1)
+      .setOrigin(0, 0.5);
+    const bossHpValue = this.add
+      .text(bossHpX + bossHpW / 2, 28, '', {
+        fontFamily: FONT,
+        fontSize: '8px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setShadow(0, 1, '#000000', 2);
+    const bossHpPercent = this.add
+      .text(bossW - 9, 22, '', { fontFamily: FONT, fontSize: '8px', color: '#ffd1d1', fontStyle: 'bold' })
+      .setOrigin(1, 0.5);
+    const bossStaggerBack = this.add
+      .rectangle(34, 41, bossW - 43, 4, 0x02060b, 0.9)
+      .setOrigin(0, 0.5)
+      .setVisible(false);
+    const bossStaggerFill = this.add
+      .rectangle(34, 41, bossW - 43, 3, 0xe2b849, 1)
+      .setOrigin(0, 0.5)
+      .setScale(0, 1)
+      .setVisible(false);
+    bossRoot.add([
+      bossBack,
+      bossIcon,
+      bossName,
+      bossPhase,
+      bossHpLabel,
+      bossHpBack,
+      bossHpFill,
+      bossHpValue,
+      bossHpPercent,
+      bossStaggerBack,
+      bossStaggerFill,
+    ]);
     // While a boss HP card is up it borrows this exact HUD slot, so the
     // tracker yields (the objective IS the boss on screen anyway).
     let bossBarActive = false;
@@ -850,10 +917,25 @@ export class UIScene extends Phaser.Scene {
     const mapButton = makeShortcut(mapX, 'マップ', TEX.iconMap, () => bus.emit('ui:open-map', {}));
     const bag = makeShortcut(bagX, 'もちもの', TEX.iconBag, () => bus.emit('ui:open-inventory', {}));
     this.busOff.push(
-      bus.on('boss:bar', ({ active }) => {
-        bossBarActive = active;
-        mapButton.setVisible(!active);
-        bag.setVisible(!active);
+      bus.on('boss:bar', (status) => {
+        bossBarActive = status.active;
+        bossRoot.setVisible(status.active);
+        mapButton.setVisible(!status.active);
+        bag.setVisible(!status.active);
+        if (status.active) {
+          fitText(bossName, status.name, bossW - 126);
+          bossPhase.setText(status.phase).setColor(status.phaseColor);
+          const ratio = status.max > 0 ? Phaser.Math.Clamp(status.current / status.max, 0, 1) : 0;
+          bossHpFill.scaleX = ratio;
+          bossHpValue.setText(`${status.current}/${status.max}`);
+          bossHpPercent.setText(`${Math.ceil(ratio * 100)}%`);
+          const hasStagger = status.stagger !== undefined;
+          bossStaggerBack.setVisible(hasStagger);
+          bossStaggerFill
+            .setVisible(hasStagger)
+            .setScale(status.stagger?.ratio ?? 0, 1)
+            .setFillStyle(status.stagger?.down ? 0x77d7aa : 0xe2b849);
+        }
         refreshTracker();
       }),
     );

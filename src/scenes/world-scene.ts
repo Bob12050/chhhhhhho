@@ -142,12 +142,10 @@ export class WorldScene extends Phaser.Scene {
   private baseCameraZoom = 1;
   private petAtkCd = 0;
   private bossBar: {
-    root: Phaser.GameObjects.Container;
-    hpFill: Phaser.GameObjects.Rectangle;
-    hpText: Phaser.GameObjects.Text;
-    phaseLabel: Phaser.GameObjects.Text;
-    staggerFill: Phaser.GameObjects.Rectangle | null;
-    staggerLabel: Phaser.GameObjects.Text | null;
+    name: string;
+    phase: string;
+    phaseColor: string;
+    lastKey: string;
   } | null = null;
   private combatTarget: Enemy | null = null;
   private combatTargetScanMs = 0;
@@ -1214,7 +1212,10 @@ export class WorldScene extends Phaser.Scene {
       onComplete: () => pulse.destroy(),
     });
     if (this.bossBar && phase) {
-      this.bossBar.phaseLabel.setText(phase.name).setColor(phase.color ?? '#f1c64f');
+      this.bossBar.phase = phase.name;
+      this.bossBar.phaseColor = phase.color ?? '#f1c64f';
+      this.bossBar.lastKey = '';
+      this.emitBossBar();
     }
     this.cameras.main.shake(240, 0.008);
     this.flashScreen(phaseColor, 0.18, 260);
@@ -1279,103 +1280,15 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
-  /**
-   * Boss HP card. Uses the open band under the compact player panel; the quest
-   * tracker yields this slot while a boss is alive.
-   */
+  /** Boss status lives in UIScene so HD render density cannot displace it. */
   private buildBossBar(name: string, def: EnemyDef): void {
-    // Rebuilding (sequential hunts in one visit) must not orphan the old bar.
-    if (this.bossBar) {
-      this.bossBar.root.destroy(true);
-      this.bossBar = null;
-    }
-    const w = this.scale.width;
-    const x = 14;
-    const y = 96;
-    const cardW = w - 28;
-    const hasStagger = this.bossStagger !== null;
-    const cardH = hasStagger ? 70 : 58;
-    const root = this.add.container(0, 0).setScrollFactor(0).setDepth(8000);
-    root.add(
-      this.add
-        .image(x + cardW / 2, y + cardH / 2 + 3, TEX.hudQuestFrame)
-        .setDisplaySize(cardW, cardH)
-        .setTint(0x000000)
-        .setAlpha(0.52),
-    );
-    root.add(this.add.rectangle(x + cardW / 2, y + cardH / 2, cardW - 10, cardH - 10, 0x071522, 0.94));
-    root.add(this.add.image(x + cardW / 2, y + cardH / 2, TEX.hudQuestFrame).setDisplaySize(cardW, cardH));
-
-    root.add(
-      this.add.image(x + 32, y + cardH / 2, TEX.hudActionButton).setDisplaySize(50, 50),
-    );
-    const portrait = this.add
-      .image(x + 32, y + cardH / 2 + 2, def.textureKey, 0)
-      .setDisplaySize(38, 38);
-    if (def.tint) portrait.setTint(Phaser.Display.Color.HexStringToColor(def.tint).color);
-    root.add(portrait);
-
-    root.add(this.add.text(x + 70, y + 7, name, {
-      fontFamily: FONT,
-      fontSize: '12px',
-      color: '#fff2c6',
-      fontStyle: 'bold',
-    }));
-    const phaseLabel = this.add
-      .text(x + cardW - 14, y + 8, def.phase ? '静穏' : 'BOSS', {
-        fontFamily: FONT,
-        fontSize: '9px',
-        color: '#b7c9d2',
-        fontStyle: 'bold',
-      })
-      .setOrigin(1, 0);
-    root.add(phaseLabel);
-
-    root.add(this.add.text(x + 70, y + 27, 'HP', {
-      fontFamily: FONT,
-      fontSize: '8px',
-      color: '#f3b8b8',
-      fontStyle: 'bold',
-    }));
-    const hpX = x + 92;
-    const hpW = cardW - 106;
-    root.add(this.add.rectangle(hpX + hpW / 2, y + 34, hpW, 9, 0x02060a, 0.9));
-    const hpFill = this.add
-      .rectangle(hpX, y + 34, hpW, 7, 0xd94f58)
-      .setOrigin(0, 0.5)
-      .setScale(1, 1);
-    root.add(hpFill);
-    const hpText = this.add
-      .text(x + cardW - 14, y + 25, '100%', {
-        fontFamily: FONT,
-        fontSize: '8px',
-        color: '#f7f9fc',
-        fontStyle: 'bold',
-      })
-      .setOrigin(1, 0);
-    root.add(hpText);
-
-    let staggerFill: Phaser.GameObjects.Rectangle | null = null;
-    let staggerLabel: Phaser.GameObjects.Text | null = null;
-    if (hasStagger) {
-      staggerLabel = this.add.text(x + 70, y + 48, 'ひるみ', {
-        fontFamily: FONT,
-        fontSize: '8px',
-        color: '#ffe39a',
-        fontStyle: 'bold',
-      });
-      const staggerX = x + 104;
-      const staggerW = cardW - 118;
-      root.add(staggerLabel);
-      root.add(this.add.rectangle(staggerX + staggerW / 2, y + 55, staggerW, 7, 0x02060a, 0.9));
-      staggerFill = this.add
-        .rectangle(staggerX, y + 55, staggerW, 5, 0xe5b83f)
-        .setOrigin(0, 0.5)
-        .setScale(0, 1);
-      root.add(staggerFill);
-    }
-    this.bossBar = { root, hpFill, hpText, phaseLabel, staggerFill, staggerLabel };
-    bus.emit('boss:bar', { active: true });
+    this.bossBar = {
+      name,
+      phase: def.phase ? '静穏' : 'BOSS',
+      phaseColor: def.phase?.color ?? '#b7c9d2',
+      lastKey: '',
+    };
+    this.emitBossBar();
   }
 
   private spawnPetIfAny(): void {
@@ -2810,23 +2723,35 @@ export class WorldScene extends Phaser.Scene {
   private updateBossBar(): void {
     if (!this.bossBar) return;
     if (this.boss && !this.boss.isDead() && this.bossMaxHp > 0) {
-      const hpRatio = Phaser.Math.Clamp(this.boss.hp / this.bossMaxHp, 0, 1);
-      this.bossBar.hpFill.scaleX = hpRatio;
-      this.bossBar.hpText.setText(`${Math.ceil(hpRatio * 100)}%`);
-      if (this.bossBar.staggerFill && this.bossBar.staggerLabel && this.bossStagger) {
-        const down = this.bossStagger.isDown;
-        this.bossBar.staggerFill.scaleX = down ? 1 : this.bossStagger.ratio;
-        this.bossBar.staggerFill.setFillStyle(down ? 0x77d7aa : 0xe5b83f);
-        this.bossBar.staggerLabel
-          .setText(down ? 'DOWN' : 'ひるみ')
-          .setColor(down ? '#a8f0c8' : '#ffe39a');
-      }
+      this.emitBossBar();
     } else {
-      this.bossBar.root.destroy(true);
       this.bossBar = null;
       this.bossStagger = null;
       bus.emit('boss:bar', { active: false });
     }
+  }
+
+  private emitBossBar(): void {
+    const bar = this.bossBar;
+    const boss = this.boss;
+    if (!bar || !boss || boss.isDead() || this.bossMaxHp <= 0) return;
+    const current = Math.max(0, Math.ceil(boss.hp));
+    const down = this.bossStagger?.isDown ?? false;
+    const staggerRatio = this.bossStagger
+      ? Phaser.Math.Clamp(down ? 1 : this.bossStagger.ratio, 0, 1)
+      : undefined;
+    const key = `${current}|${bar.phase}|${down ? 1 : 0}|${staggerRatio === undefined ? '-' : Math.round(staggerRatio * 100)}`;
+    if (key === bar.lastKey) return;
+    bar.lastKey = key;
+    bus.emit('boss:bar', {
+      active: true,
+      name: bar.name,
+      current,
+      max: this.bossMaxHp,
+      phase: bar.phase,
+      phaseColor: bar.phaseColor,
+      stagger: staggerRatio === undefined ? undefined : { ratio: staggerRatio, down },
+    });
   }
 
   private updateNpcProximity(): void {
