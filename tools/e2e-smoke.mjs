@@ -873,6 +873,10 @@ try {
     swamp: window.__test.textureSize('art.map.arena.swamp.pixel.v1'),
     ruins: window.__test.textureSize('art.map.arena.ruins.pixel.v1'),
     abyss: window.__test.textureSize('art.map.arena.abyss.pixel.v1'),
+    marsh: window.__test.textureSize('art.map.arena.marsh.pixel.v1'),
+    peak: window.__test.textureSize('art.map.arena.peak.pixel.v1'),
+    night: window.__test.textureSize('art.map.arena.night.pixel.v1'),
+    canyon: window.__test.textureSize('art.map.arena.canyon.pixel.v1'),
   }));
   for (const [label, texture] of Object.entries(arenaTextures)) {
     check(

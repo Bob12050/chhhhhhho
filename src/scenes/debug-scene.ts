@@ -108,60 +108,24 @@ export class DebugScene extends Phaser.Scene {
     y += 40;
     this.btn(16, y, '★最強モード（Lv99・全解放）', () => this.grant(() => this.godMode()), 0x6a2a2a);
     y += 44;
-    this.btn(16, y, '草原実演', () => this.previewZephys(), 0x365070);
-    this.btn(
-      142,
-      y,
-      '木立実演',
-      () => this.previewHunt('subj_treant', 'arena_grove', 180, 500),
-      0x365070,
-    );
-    y += 40;
-    this.btn(
-      16,
-      y,
-      '火口実演',
-      () => this.previewHunt('hunt_flame_lord', 'arena_volcano', 180, 500),
-      0x365070,
-    );
-    this.btn(
-      142,
-      y,
-      '氷霜実演',
-      () => this.previewHunt('hunt_wisp_queen', 'arena_frost', 180, 500),
-      0x365070,
-    );
-    y += 40;
-    this.btn(
-      16,
-      y,
-      '洞窟実演',
-      () => this.previewHunt('hunt_stone_again', 'arena_cavern', 180, 500),
-      0x365070,
-    );
-    this.btn(
-      142,
-      y,
-      '沼地実演',
-      () => this.previewHunt('hunt_mushroom', 'arena_swamp', 180, 500),
-      0x365070,
-    );
-    y += 40;
-    this.btn(
-      16,
-      y,
-      '遺跡実演',
-      () => this.previewHunt('hunt_knight_dread', 'arena_ruins', 180, 500),
-      0x365070,
-    );
-    this.btn(
-      142,
-      y,
-      '深淵実演',
-      () => this.previewHunt('hunt_r7_04_almagia', 'arena_abyss', 180, 500),
-      0x365070,
-    );
-    y += 40;
+    const arenaPreviews: [string, () => void][] = [
+      ['草原', () => this.previewZephys()],
+      ['木立', () => this.previewHunt('subj_treant', 'arena_grove', 180, 500)],
+      ['火口', () => this.previewHunt('hunt_flame_lord', 'arena_volcano', 180, 500)],
+      ['氷霜', () => this.previewHunt('hunt_wisp_queen', 'arena_frost', 180, 500)],
+      ['洞窟', () => this.previewHunt('hunt_stone_again', 'arena_cavern', 180, 500)],
+      ['沼地', () => this.previewHunt('hunt_mushroom', 'arena_swamp', 180, 500)],
+      ['遺跡', () => this.previewHunt('hunt_knight_dread', 'arena_ruins', 180, 500)],
+      ['深淵', () => this.previewHunt('hunt_r7_04_almagia', 'arena_abyss', 180, 500)],
+      ['湿地', () => this.previewHunt('hunt_kingslime', 'arena_marsh', 180, 500)],
+      ['山頂', () => this.previewHunt('hunt_dragon', 'arena_peak', 180, 500)],
+      ['夜', () => this.previewHunt('hunt_bat_lord', 'arena_night', 180, 500)],
+      ['峡谷', () => this.previewHunt('hunt_lizard_king', 'arena_canyon', 180, 500)],
+    ];
+    arenaPreviews.forEach(([label, preview], index) => {
+      this.btn(16 + (index % 3) * 104, y + Math.floor(index / 3) * 40, label, preview, 0x365070);
+    });
+    y += Math.ceil(arenaPreviews.length / 3) * 40;
     this.btn(16, y, '第二形態を即確認', () => this.triggerBossPhase(), 0x6a2a52);
     y += 40;
     this.btn(16, y, '通し確認チェックリスト', () => {
