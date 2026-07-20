@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { EquipmentDef } from '@/data/items';
 import {
   filterAndSortEquipment,
+  equipmentPowerScore,
   matchesEquipmentRarity,
   type EquipmentListItem,
 } from '@/equipment/equipment-list';
@@ -81,14 +82,23 @@ describe('equipment list filters', () => {
       item('alpha', { name: 'アルファ', rarity: 8, levelRequirement: 4, derived: { magAtk: 11, def: 1 } }),
       item('beta', { name: 'ベータ', rarity: 5, levelRequirement: 20, derived: { physAtk: 4, def: 8, magDef: 4 } }),
     ];
-    const run = (sort: 'rarity_desc' | 'rarity_asc' | 'level_desc' | 'attack_desc' | 'defense_desc' | 'name') =>
+    const run = (sort: 'power_desc' | 'rarity_desc' | 'rarity_asc' | 'level_desc' | 'attack_desc' | 'defense_desc' | 'name') =>
       filterAndSortEquipment(entries, { weapon: 'all', rarity: 'all', sort }).map((entry) => entry.id);
 
+    expect(run('power_desc')).toEqual(['beta', 'alpha', 'zeta']);
     expect(run('rarity_desc')).toEqual(['alpha', 'beta', 'zeta']);
     expect(run('rarity_asc')).toEqual(['zeta', 'beta', 'alpha']);
     expect(run('level_desc')).toEqual(['beta', 'zeta', 'alpha']);
     expect(run('attack_desc')).toEqual(['alpha', 'zeta', 'beta']);
     expect(run('defense_desc')).toEqual(['beta', 'zeta', 'alpha']);
     expect(run('name')).toEqual(['alpha', 'zeta', 'beta']);
+  });
+
+  it('expresses mixed equipment stats as one readable power value', () => {
+    const weapon = item('weapon', { derived: { physAtk: 200, critRate: 0.1 } });
+    const charm = item('charm', { slot: 'accessory_1', derived: { maxHp: 500, def: 80 } });
+    expect(equipmentPowerScore(weapon.def)).toBeGreaterThan(0);
+    expect(equipmentPowerScore(charm.def)).toBeGreaterThan(0);
+    expect(equipmentPowerScore(weapon.def)).toBeGreaterThan(equipmentPowerScore(charm.def));
   });
 });

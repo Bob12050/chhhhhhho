@@ -29,6 +29,7 @@ export const RARITY_FILTER_OPTIONS = [
 
 export const EQUIPMENT_SORT_OPTIONS = [
   { id: 'recommended', label: 'おすすめ順', shortLabel: 'おすすめ' },
+  { id: 'power_desc', label: '装備力：高い順', shortLabel: '装備力' },
   { id: 'rarity_desc', label: 'レア度：高い順', shortLabel: 'レア高' },
   { id: 'rarity_asc', label: 'レア度：低い順', shortLabel: 'レア低' },
   { id: 'level_desc', label: '装備Lv：高い順', shortLabel: 'Lv高' },
@@ -82,6 +83,29 @@ function defenseScore(def: EquipmentDef): number {
   return (def.derived.def ?? 0) + (def.derived.magDef ?? 0);
 }
 
+/** One readable comparison number for mixed-stat weapons, armour and charms. */
+export function equipmentPowerScore(def: EquipmentDef): number {
+  const d = def.derived;
+  const primaryAttack = Math.max(d.physAtk ?? 0, d.magAtk ?? 0);
+  const secondaryAttack = Math.min(d.physAtk ?? 0, d.magAtk ?? 0);
+  return Math.max(0, Math.round(
+    primaryAttack * 1.5
+    + secondaryAttack * 0.35
+    + (d.def ?? 0) * 1.5
+    + (d.magDef ?? 0) * 1.2
+    + (d.maxHp ?? 0) * 0.24
+    + (d.maxMp ?? 0) * 0.7
+    + (d.accuracy ?? 0) * 2.5
+    + (d.evasion ?? 0) * 3
+    + (d.critRate ?? 0) * 1000
+    + (d.atkSpeed ?? 0) * 220
+    + (d.moveSpeed ?? 0) * 2
+    + (d.dropRate ?? 0) * 900
+    + (d.lifesteal ?? 0) * 1200
+    + (d.goldRate ?? 0) * 650,
+  ));
+}
+
 function stableFallback(a: EquipmentListItem, b: EquipmentListItem): number {
   return (
     (b.def.rarity ?? 1) - (a.def.rarity ?? 1) ||
@@ -106,8 +130,12 @@ export function filterAndSortEquipment(
       return (
         Number(b.equipped) - Number(a.equipped) ||
         Number(b.canEquip) - Number(a.canEquip) ||
+        equipmentPowerScore(b.def) - equipmentPowerScore(a.def) ||
         stableFallback(a, b)
       );
+    }
+    if (filters.sort === 'power_desc') {
+      return equipmentPowerScore(b.def) - equipmentPowerScore(a.def) || stableFallback(a, b);
     }
     if (filters.sort === 'rarity_desc') return stableFallback(a, b);
     if (filters.sort === 'rarity_asc') {

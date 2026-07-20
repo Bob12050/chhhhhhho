@@ -23,7 +23,21 @@ export interface HuntStatModifiers {
   veteran: boolean;
 }
 
-const RANK_HP_MULTIPLIER = [0, 1, 1.08, 1.42, 1.42, 1.42, 1.42, 1.42] as const;
+const RANK_HP_MULTIPLIER = [0, 1, 1.35, 2.1, 3.2, 4.5, 6.5, 8] as const;
+const RANK_DAMAGE_MULTIPLIER = [0, 0.7, 0.9, 1, 1.1, 1.8, 2.2, 2.5] as const;
+
+/** Older main quests predate explicit stars; infer the same progression band. */
+export function effectiveHuntRank(rank?: number, minLevel?: number): number {
+  if (rank != null) return Math.max(1, Math.min(7, Math.round(rank)));
+  const level = Math.max(1, Math.round(minLevel ?? 1));
+  if (level >= 80) return 7;
+  if (level >= 62) return 6;
+  if (level >= 45) return 5;
+  if (level >= 30) return 4;
+  if (level >= 20) return 3;
+  if (level >= 12) return 2;
+  return 1;
+}
 
 /** Extra hunt vitality that accompanies the stronger R3-R10 weapon curve. */
 export function huntRankHpMultiplier(rank = 1): number {
@@ -31,17 +45,27 @@ export function huntRankHpMultiplier(rank = 1): number {
   return RANK_HP_MULTIPLIER[normalized];
 }
 
+/** Incoming damage growth that keeps higher-rank armour meaningful. */
+export function huntRankDamageMultiplier(rank = 1): number {
+  const normalized = Math.max(1, Math.min(7, Math.round(rank)));
+  return RANK_DAMAGE_MULTIPLIER[normalized];
+}
+
 /** Resolve the exact combat multipliers used by both gameplay and diagnostics. */
 export function huntStatModifiers(
-  q: Pick<QuestDef, 'rank' | 'veteran' | 'huntModifiers'>,
+  q: Pick<QuestDef, 'rank' | 'veteran' | 'huntModifiers' | 'require'>,
 ): HuntStatModifiers {
   const veteran = !!q.veteran;
+  const rank = effectiveHuntRank(q.rank, q.require?.minLevel);
   return {
     hpMult:
       (q.huntModifiers?.hpMult ?? 1)
-      * huntRankHpMultiplier(q.rank)
+      * huntRankHpMultiplier(rank)
       * (veteran ? VETERAN_MODS.hpMult : 1),
-    dmgMult: (q.huntModifiers?.dmgMult ?? 1) * (veteran ? VETERAN_MODS.dmgMult : 1),
+    dmgMult:
+      (q.huntModifiers?.dmgMult ?? 1)
+      * huntRankDamageMultiplier(rank)
+      * (veteran ? VETERAN_MODS.dmgMult : 1),
     veteran,
   };
 }

@@ -26,20 +26,20 @@ const rateRoll = (base: number, step: number, spread: number) =>
     Number(((base + step * power + rng.intRange(0, spread)) / 100).toFixed(2));
 
 const AFFIXES: readonly AffixTemplate[] = [
-  { id: 'force', label: '物攻', stat: 'physAtk', applies: (d) => (d.derived.physAtk ?? 0) > 0, roll: intRoll(6, 6, 9) },
-  { id: 'arcana', label: '魔攻', stat: 'magAtk', applies: (d) => (d.derived.magAtk ?? 0) > 0, roll: intRoll(6, 6, 9) },
-  { id: 'vitality', label: 'HP', stat: 'maxHp', applies: () => true, roll: intRoll(28, 24, 32) },
-  { id: 'spirit', label: 'MP', stat: 'maxMp', applies: (d) => d.slot !== 'main_hand' || (d.derived.magAtk ?? 0) > 0, roll: intRoll(8, 8, 10) },
-  { id: 'guard', label: '防御', stat: 'def', applies: (d) => d.slot !== 'main_hand' || (d.derived.def ?? 0) > 0, roll: intRoll(3, 5, 7) },
-  { id: 'ward', label: '魔防', stat: 'magDef', applies: (d) => d.slot !== 'main_hand' || (d.derived.magDef ?? 0) > 0, roll: intRoll(3, 5, 7) },
-  { id: 'focus', label: '命中', stat: 'accuracy', applies: (d) => d.slot === 'main_hand' || d.slot === 'hands', roll: intRoll(2, 3, 4) },
-  { id: 'agility', label: '回避', stat: 'evasion', applies: (d) => d.slot !== 'waist', roll: intRoll(2, 3, 4) },
-  { id: 'critical', label: '会心', stat: 'critRate', applies: (d) => d.slot === 'main_hand' || d.slot.startsWith('accessory'), roll: rateRoll(0, 1, 1) },
-  { id: 'haste', label: '攻速', stat: 'atkSpeed', applies: (d) => d.slot === 'main_hand' || d.slot === 'hands', roll: rateRoll(3, 2, 2) },
-  { id: 'stride', label: '移動', stat: 'moveSpeed', applies: (d) => d.slot === 'feet' || d.slot === 'back', roll: intRoll(0, 1, 2) },
-  { id: 'fortune', label: 'ドロ率', stat: 'dropRate', applies: (d) => d.slot.startsWith('accessory') || d.slot === 'back', roll: rateRoll(0, 1, 1) },
-  { id: 'prosperity', label: '金運', stat: 'goldRate', applies: (d) => d.slot.startsWith('accessory') || d.slot === 'waist', roll: rateRoll(0, 1, 1) },
-  { id: 'drain', label: '吸血', stat: 'lifesteal', applies: (d) => d.slot === 'main_hand', roll: rateRoll(0, 1, 0) },
+  { id: 'force', label: '物攻', stat: 'physAtk', applies: (d) => (d.derived.physAtk ?? 0) > 0, roll: intRoll(60, 70, 50) },
+  { id: 'arcana', label: '魔攻', stat: 'magAtk', applies: (d) => (d.derived.magAtk ?? 0) > 0, roll: intRoll(60, 70, 50) },
+  { id: 'vitality', label: 'HP', stat: 'maxHp', applies: () => true, roll: intRoll(140, 170, 100) },
+  { id: 'spirit', label: 'MP', stat: 'maxMp', applies: (d) => d.slot !== 'main_hand' || (d.derived.magAtk ?? 0) > 0, roll: intRoll(18, 22, 14) },
+  { id: 'guard', label: '防御', stat: 'def', applies: (d) => d.slot !== 'main_hand' || (d.derived.def ?? 0) > 0, roll: intRoll(25, 35, 25) },
+  { id: 'ward', label: '魔防', stat: 'magDef', applies: (d) => d.slot !== 'main_hand' || (d.derived.magDef ?? 0) > 0, roll: intRoll(25, 35, 25) },
+  { id: 'focus', label: '命中', stat: 'accuracy', applies: (d) => d.slot === 'main_hand' || d.slot === 'hands', roll: intRoll(3, 4, 3) },
+  { id: 'agility', label: '回避', stat: 'evasion', applies: (d) => d.slot !== 'waist', roll: intRoll(3, 4, 3) },
+  { id: 'critical', label: '会心', stat: 'critRate', applies: (d) => d.slot === 'main_hand' || d.slot.startsWith('accessory'), roll: rateRoll(1, 2, 1) },
+  { id: 'haste', label: '攻速', stat: 'atkSpeed', applies: (d) => d.slot === 'main_hand' || d.slot === 'hands', roll: rateRoll(4, 3, 2) },
+  { id: 'stride', label: '移動', stat: 'moveSpeed', applies: (d) => d.slot === 'feet' || d.slot === 'back', roll: intRoll(1, 2, 2) },
+  { id: 'fortune', label: 'ドロ率', stat: 'dropRate', applies: (d) => d.slot.startsWith('accessory') || d.slot === 'back', roll: rateRoll(1, 2, 1) },
+  { id: 'prosperity', label: '金運', stat: 'goldRate', applies: (d) => d.slot.startsWith('accessory') || d.slot === 'waist', roll: rateRoll(1, 2, 1) },
+  { id: 'drain', label: '吸血', stat: 'lifesteal', applies: (d) => d.slot === 'main_hand', roll: rateRoll(0, 2, 0) },
 ];
 
 function jobCompatible(gs: GameState, def: EquipmentDef): boolean {
@@ -148,7 +148,7 @@ export function generateInvestigationEquipment(gs: GameState, quest: QuestDef): 
       threat: quest.investigation.threat,
       affixes,
       upgradeLevel: 0,
-      powerVersion: 2,
+      powerVersion: 3,
     } })}`,
     series: '深層調査',
     generated: {
@@ -157,7 +157,7 @@ export function generateInvestigationEquipment(gs: GameState, quest: QuestDef): 
       threat: quest.investigation.threat,
       affixes,
       upgradeLevel: 0,
-      powerVersion: 2,
+      powerVersion: 3,
     },
   };
   return def;

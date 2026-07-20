@@ -14,8 +14,8 @@ describe('GameState equipment & stats', () => {
 
   it('equipping increases derived stats immediately', () => {
     const before = gs.derived.physAtk;
-    gs.equip('main_hand', 'iron_sword'); // R3, +42 physAtk after rank scaling
-    expect(gs.derived.physAtk).toBe(before + 42);
+    gs.equip('main_hand', 'iron_sword');
+    expect(gs.derived.physAtk).toBe(before + 65);
   });
 
   it('makes an R10 weapon a substantial share of endgame attack', () => {
@@ -28,8 +28,8 @@ describe('GameState equipment & stats', () => {
     gs.equip('main_hand', 'skyvault_sword');
     const weaponGain = gs.derived.physAtk - withoutWeapon;
 
-    expect(weaponGain).toBe(480);
-    expect(weaponGain / withoutWeapon).toBeGreaterThan(0.65);
+    expect(weaponGain).toBe(2400);
+    expect(weaponGain / withoutWeapon).toBeGreaterThan(3);
   });
 
   it('unequipping reverts derived stats', () => {
@@ -41,9 +41,9 @@ describe('GameState equipment & stats', () => {
 
   it('stacking armor adds defense and max hp', () => {
     const hp0 = gs.derived.maxHp;
-    gs.equip('head', 'iron_helm'); // R3, def+15, maxHp+26
-    gs.equip('torso', 'iron_plate'); // R3, def+24, maxHp+40
-    expect(gs.derived.maxHp).toBe(hp0 + 66);
+    gs.equip('head', 'iron_helm');
+    gs.equip('torso', 'iron_plate');
+    expect(gs.derived.maxHp).toBe(hp0 + 108);
     expect(gs.derived.def).toBeGreaterThan(0);
   });
 

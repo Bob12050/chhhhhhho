@@ -617,6 +617,9 @@
         "minLevel": 25
       },
       "huntMap": "arena_marsh",
+      "huntModifiers": {
+        "hpMult": 1.7
+      },
       "repeatable": true,
       "rank": 3
     },
@@ -717,6 +720,9 @@
         "minLevel": 24
       },
       "huntMap": "arena_plain",
+      "huntModifiers": {
+        "hpMult": 1.7
+      },
       "rewards": {
         "gold": 160,
         "exp": 1500,
@@ -1102,6 +1108,9 @@
         "minLevel": 6
       },
       "huntMap": "arena_night",
+      "huntModifiers": {
+        "hpMult": 1.25
+      },
       "rewards": {
         "gold": 50,
         "exp": 360,
@@ -1130,6 +1139,9 @@
         "questDone": "hunt_treant_again"
       },
       "huntMap": "arena_grove",
+      "huntModifiers": {
+        "hpMult": 1.8
+      },
       "rewards": {
         "gold": 180,
         "exp": 900,
@@ -1159,6 +1171,9 @@
         "questDone": "hunt_stone_again"
       },
       "huntMap": "arena_cavern",
+      "huntModifiers": {
+        "hpMult": 1.6
+      },
       "rewards": {
         "gold": 260,
         "exp": 1500,
@@ -1401,6 +1416,9 @@
         "questDone": "hunt_r3_01_obsidion"
       },
       "huntMap": "arena_ruins",
+      "huntModifiers": {
+        "hpMult": 1.6
+      },
       "rewards": {
         "gold": 360,
         "exp": 2100,
@@ -1667,6 +1685,9 @@
         "minLevel": 40
       },
       "huntMap": "arena_swamp",
+      "huntModifiers": {
+        "hpMult": 1.6
+      },
       "rewards": {
         "gold": 700,
         "exp": 3200,
@@ -1701,7 +1722,7 @@
       },
       "huntMap": "arena_peak",
       "huntModifiers": {
-        "hpMult": 1.3,
+        "hpMult": 1.95,
         "dmgMult": 1.15
       },
       "rewards": {
@@ -1737,6 +1758,9 @@
         "questDone": "hunt_r4_01_cruor"
       },
       "huntMap": "arena_swamp",
+      "huntModifiers": {
+        "hpMult": 1.6
+      },
       "rewards": {
         "gold": 1000,
         "exp": 4500,

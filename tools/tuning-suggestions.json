@@ -1,169 +1,169 @@
 {
   "boss_treant": {
-    "maxHp": 810,
-    "contactDamage": 20,
+    "maxHp": 2050,
+    "contactDamage": 46,
     "rank": 1,
     "lv": 5
   },
   "boss_stone": {
-    "maxHp": 980,
-    "contactDamage": 26,
+    "maxHp": 3050,
+    "contactDamage": 78,
     "rank": 1,
     "lv": 6
   },
   "boss_bat_lord": {
-    "maxHp": 2440,
-    "contactDamage": 44,
+    "maxHp": 9450,
+    "contactDamage": 296,
     "rank": 2,
     "lv": 12
   },
   "boss_flame": {
-    "maxHp": 2640,
-    "contactDamage": 66,
+    "maxHp": 11880,
+    "contactDamage": 596,
     "rank": 1,
     "lv": 20
   },
   "boss_dragon": {
-    "maxHp": 3790,
-    "contactDamage": 105,
+    "maxHp": 27030,
+    "contactDamage": 1902,
     "rank": 1,
     "lv": 30
   },
   "boss_hydra": {
-    "maxHp": 6140,
-    "contactDamage": 159,
+    "maxHp": 65020,
+    "contactDamage": 4307,
     "rank": 1,
     "lv": 40
   },
   "boss_lizard_king": {
-    "maxHp": 14340,
-    "contactDamage": 242,
+    "maxHp": 132870,
+    "contactDamage": 5599,
     "rank": 4,
-    "lv": 44
+    "lv": 40
   },
   "boss_wisp_queen": {
-    "maxHp": 20340,
-    "contactDamage": 339,
+    "maxHp": 212280,
+    "contactDamage": 17291,
     "rank": 5,
     "lv": 52
   },
   "boss_sandgoa": {
-    "maxHp": 19760,
-    "contactDamage": 393,
+    "maxHp": 243700,
+    "contactDamage": 20300,
     "rank": 5,
     "lv": 58
   },
   "boss_knight_dread": {
-    "maxHp": 27070,
-    "contactDamage": 531,
+    "maxHp": 327620,
+    "contactDamage": 27069,
     "rank": 6,
     "lv": 66
   },
   "boss_ignigaro": {
-    "maxHp": 25870,
-    "contactDamage": 628,
+    "maxHp": 386110,
+    "contactDamage": 54642,
     "rank": 6,
     "lv": 72
   },
   "boss_slime_abyss": {
-    "maxHp": 10350,
-    "contactDamage": 433,
+    "maxHp": 144210,
+    "contactDamage": 34610,
     "rank": 1,
     "lv": 80
   },
   "boss_luxmordo": {
-    "maxHp": 33950,
-    "contactDamage": 849,
+    "maxHp": 449120,
+    "contactDamage": 65196,
     "rank": 7,
     "lv": 84
   },
   "boss_almagia": {
-    "maxHp": 13110,
-    "contactDamage": 585,
+    "maxHp": 196050,
+    "contactDamage": 51625,
     "rank": 1,
     "lv": 94
   },
   "boss_zephys": {
-    "maxHp": 2510,
-    "contactDamage": 47,
+    "maxHp": 9620,
+    "contactDamage": 311,
     "rank": 2,
     "lv": 13
   },
   "boss_dross": {
-    "maxHp": 2870,
-    "contactDamage": 54,
+    "maxHp": 13660,
+    "contactDamage": 509,
     "rank": 2,
     "lv": 15
   },
   "boss_obsidion": {
-    "maxHp": 4910,
-    "contactDamage": 85,
+    "maxHp": 28180,
+    "contactDamage": 1099,
     "rank": 3,
     "lv": 22
   },
   "boss_wolf_alpha": {
-    "maxHp": 5410,
-    "contactDamage": 99,
+    "maxHp": 32730,
+    "contactDamage": 1369,
     "rank": 3,
     "lv": 24
   },
   "boss_slime": {
-    "maxHp": 5510,
-    "contactDamage": 106,
+    "maxHp": 32950,
+    "contactDamage": 1490,
     "rank": 3,
     "lv": 25
   },
   "boss_aurum": {
-    "maxHp": 8290,
-    "contactDamage": 147,
+    "maxHp": 61160,
+    "contactDamage": 2995,
     "rank": 4,
     "lv": 32
   },
   "boss_mushroom": {
-    "maxHp": 8660,
-    "contactDamage": 155,
+    "maxHp": 62030,
+    "contactDamage": 3075,
     "rank": 4,
     "lv": 34
   },
   "boss_cruor": {
-    "maxHp": 8780,
-    "contactDamage": 161,
+    "maxHp": 62330,
+    "contactDamage": 3127,
     "rank": 4,
     "lv": 35
   },
   "boss_azvurm": {
-    "maxHp": 18610,
-    "contactDamage": 305,
+    "maxHp": 184010,
+    "contactDamage": 9309,
     "rank": 5,
     "lv": 50
   },
   "boss_skoll": {
-    "maxHp": 20950,
-    "contactDamage": 352,
+    "maxHp": 214250,
+    "contactDamage": 17499,
     "rank": 5,
     "lv": 54
   },
   "boss_miasma": {
-    "maxHp": 26290,
-    "contactDamage": 506,
+    "maxHp": 325550,
+    "contactDamage": 26800,
     "rank": 6,
     "lv": 64
   },
   "boss_varganos": {
-    "maxHp": 27720,
-    "contactDamage": 548,
+    "maxHp": 329680,
+    "contactDamage": 27339,
     "rank": 6,
     "lv": 68
   },
   "boss_flarelis": {
-    "maxHp": 31960,
-    "contactDamage": 804,
+    "maxHp": 445160,
+    "contactDamage": 64276,
     "rank": 7,
     "lv": 80
   },
   "boss_crimson_abyss": {
-    "maxHp": 39080,
-    "contactDamage": 1036,
+    "maxHp": 600680,
+    "contactDamage": 94765,
     "rank": 7,
     "lv": 90
   }

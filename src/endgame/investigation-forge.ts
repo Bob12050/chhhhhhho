@@ -9,7 +9,7 @@ import type { DerivedStats } from '@/stats/stats';
 export const INVESTIGATION_CRYSTAL_ID = 'investigation_crystal';
 export const MAX_INVESTIGATION_UPGRADE = 5;
 export const UPGRADE_BONUS_PER_LEVEL = 6;
-export const INVESTIGATION_POWER_VERSION = 2;
+export const INVESTIGATION_POWER_VERSION = 3;
 
 const LEGACY_AFFIX_MULTIPLIER: Partial<Record<keyof DerivedStats, number>> = {
   physAtk: 3,
@@ -20,6 +20,23 @@ const LEGACY_AFFIX_MULTIPLIER: Partial<Record<keyof DerivedStats, number>> = {
   magDef: 2.5,
   accuracy: 1.5,
   evasion: 1.5,
+};
+
+const V2_AFFIX_MULTIPLIER: Partial<Record<keyof DerivedStats, number>> = {
+  physAtk: 10,
+  magAtk: 10,
+  maxHp: 8,
+  maxMp: 5,
+  def: 6,
+  magDef: 6,
+  accuracy: 2,
+  evasion: 2,
+  moveSpeed: 2,
+  critRate: 2,
+  atkSpeed: 1.5,
+  dropRate: 2,
+  lifesteal: 2,
+  goldRate: 2,
 };
 
 export interface InvestigationUpgradeCost {
@@ -89,15 +106,26 @@ export function rebaseInvestigationEquipment(def: EquipmentDef): EquipmentDef {
   const base = getEquipment(def.generated.baseId);
   if (!base || base.generated) return def;
   const next = structuredClone(def);
-  if ((next.generated!.powerVersion ?? 1) < INVESTIGATION_POWER_VERSION) {
+  let version = next.generated!.powerVersion ?? 1;
+  if (version < 2) {
     next.generated!.affixes = next.generated!.affixes.map((affix) => ({
       ...affix,
       value: Math.round(
         affix.value * (LEGACY_AFFIX_MULTIPLIER[affix.stat] ?? 1) * 100,
       ) / 100,
     }));
-    next.generated!.powerVersion = INVESTIGATION_POWER_VERSION;
+    version = 2;
   }
+  if (version < 3) {
+    next.generated!.affixes = next.generated!.affixes.map((affix) => ({
+      ...affix,
+      value: Math.round(
+        affix.value * (V2_AFFIX_MULTIPLIER[affix.stat] ?? 1) * 1000,
+      ) / 1000,
+    }));
+    version = 3;
+  }
+  next.generated!.powerVersion = version;
   next.derived = deriveInvestigationEquipmentStats(
     base,
     next.generated!.affixes,

@@ -114,9 +114,28 @@ describe('investigation equipment forge', () => {
     loaded.loadFrom(save);
     const migrated = loaded.generatedEquipment[id];
 
-    expect(migrated.generated?.powerVersion).toBe(2);
-    expect(migrated.generated?.affixes[0].value).toBe(30);
-    expect(migrated.derived.physAtk).toBe(baseAttack + 30);
+    expect(migrated.generated?.powerVersion).toBe(3);
+    expect(migrated.generated?.affixes[0].value).toBe(300);
+    expect(migrated.derived.physAtk).toBe(baseAttack + 300);
+  });
+
+  it('upgrades published v2 affixes without scaling them twice', () => {
+    const { gs, id } = stateWithLoot();
+    const save = gs.toSave(1);
+    const snapshot = save.inventory.generatedEquipment?.find((def) => def.id === id)!;
+    const baseAttack = getEquipment(snapshot.generated!.baseId)?.derived.physAtk ?? 0;
+    snapshot.generated!.powerVersion = 2;
+    snapshot.generated!.affixes = [
+      { id: 'force', label: '物攻', stat: 'physAtk', value: 30 },
+    ];
+
+    const loaded = new GameState();
+    loaded.loadFrom(save);
+    const migrated = loaded.generatedEquipment[id];
+
+    expect(migrated.generated?.powerVersion).toBe(3);
+    expect(migrated.generated?.affixes[0].value).toBe(300);
+    expect(migrated.derived.physAtk).toBe(baseAttack + 300);
   });
 
   it('enforces material requirements and the +5 cap', () => {

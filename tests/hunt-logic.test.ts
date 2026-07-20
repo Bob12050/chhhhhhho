@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   currentWave,
   concurrentSpawnCount,
+  effectiveHuntRank,
+  huntRankDamageMultiplier,
   huntRankHpMultiplier,
   huntStatModifiers,
   VETERAN_MODS,
@@ -77,7 +79,7 @@ describe('VETERAN_MODS (歴戦倍率)', () => {
   it('combines rematch and veteran combat multipliers', () => {
     expect(huntStatModifiers({ huntModifiers: { hpMult: 2.5, dmgMult: 1.2 } })).toEqual({
       hpMult: 2.5,
-      dmgMult: 1.2,
+      dmgMult: 1.2 * huntRankDamageMultiplier(1),
       veteran: false,
     });
     expect(huntStatModifiers({
@@ -85,17 +87,29 @@ describe('VETERAN_MODS (歴戦倍率)', () => {
       huntModifiers: { hpMult: 2, dmgMult: 1.1 },
     })).toEqual({
       hpMult: 2 * VETERAN_MODS.hpMult,
-      dmgMult: 1.1 * VETERAN_MODS.dmgMult,
+      dmgMult: 1.1 * huntRankDamageMultiplier(1) * VETERAN_MODS.dmgMult,
       veteran: true,
     });
   });
 
   it('adds hunt vitality as stronger weapon ranks enter progression', () => {
     expect(huntRankHpMultiplier(1)).toBe(1);
-    expect(huntRankHpMultiplier(2)).toBe(1.08);
-    expect(huntRankHpMultiplier(3)).toBe(1.42);
-    expect(huntRankHpMultiplier(7)).toBe(1.42);
-    expect(huntStatModifiers({ rank: 5 }).hpMult).toBe(1.42);
+    expect(huntRankHpMultiplier(2)).toBe(1.35);
+    expect(huntRankHpMultiplier(3)).toBe(2.1);
+    expect(huntRankHpMultiplier(7)).toBe(8);
+    expect(huntStatModifiers({ rank: 5 }).hpMult).toBe(4.5);
+    expect(huntRankDamageMultiplier(3)).toBe(1);
+    expect(huntRankDamageMultiplier(5)).toBe(1.8);
+    expect(huntStatModifiers({ rank: 7 }).dmgMult).toBe(2.5);
+  });
+
+  it('infers stars for older main quests from their required level', () => {
+    expect(effectiveHuntRank(undefined, 5)).toBe(1);
+    expect(effectiveHuntRank(undefined, 13)).toBe(2);
+    expect(effectiveHuntRank(undefined, 30)).toBe(4);
+    expect(effectiveHuntRank(undefined, 74)).toBe(6);
+    expect(effectiveHuntRank(undefined, 94)).toBe(7);
+    expect(huntStatModifiers({ require: { minLevel: 80 } }).hpMult).toBe(8);
   });
 });
 

@@ -6,15 +6,15 @@ describe('expanded combat number progression', () => {
   it('gives every weapon rank a clearly larger attack step', () => {
     const progression = [
       ['wood_sword', 12],
-      ['hunters_sword', 25],
-      ['iron_sword', 42],
-      ['steel_sword', 62],
-      ['gale_sword', 99],
-      ['storm_sword', 136],
-      ['moonlit_sword', 189],
-      ['whitesilver_sword', 250],
-      ['thunderpeal_sword', 334],
-      ['skyvault_sword', 480],
+      ['hunters_sword', 32],
+      ['iron_sword', 65],
+      ['steel_sword', 117],
+      ['gale_sword', 225],
+      ['storm_sword', 374],
+      ['moonlit_sword', 621],
+      ['whitesilver_sword', 960],
+      ['thunderpeal_sword', 1482],
+      ['skyvault_sword', 2400],
     ] as const;
 
     const values = progression.map(([id, expected]) => {
@@ -23,15 +23,32 @@ describe('expanded combat number progression', () => {
       return attack!;
     });
     for (let index = 1; index < values.length; index++) {
-      expect(values[index]).toBeGreaterThan(values[index - 1]);
+      expect(values[index] / values[index - 1]).toBeGreaterThan(1.45);
     }
   });
 
-  it('raises armor and healing alongside offensive stats', () => {
-    expect(getEquipment('iron_helm')?.derived).toMatchObject({ def: 15, maxHp: 26 });
-    expect(getEquipment('skyvault_armor')?.derived).toMatchObject({ def: 229, maxHp: 276 });
+  it('raises armour and healing alongside offensive stats', () => {
+    expect(getEquipment('iron_helm')?.derived).toMatchObject({ def: 22, maxHp: 43 });
+    expect(getEquipment('skyvault_armor')?.derived).toMatchObject({ def: 1232, maxHp: 2346 });
     expect(getConsumable('potion_hp')?.effect.hp).toBe(60);
     expect(getConsumable('potion_mp')?.effect.mp).toBe(20);
+  });
+
+  it('scales attack, survival, and rate stats on accessories too', () => {
+    expect(getEquipment('ring_astral')?.derived).toMatchObject({
+      physAtk: 240,
+      magAtk: 240,
+      accuracy: 16,
+      critRate: 0.148,
+    });
+    expect(getEquipment('hero_emblem')?.derived).toMatchObject({
+      physAtk: 400,
+      magAtk: 400,
+      maxHp: 1020,
+      maxMp: 240,
+      dropRate: 0.131,
+      goldRate: 0.131,
+    });
   });
 
   it('moves enemies into the same larger combat-number scale', () => {

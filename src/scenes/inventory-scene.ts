@@ -38,6 +38,7 @@ import {
   RARITY_FILTER_OPTIONS,
   WEAPON_FILTER_OPTIONS,
   filterAndSortEquipment,
+  equipmentPowerScore,
   matchesEquipmentRarity,
   type EquipmentRarityFilter,
   type EquipmentSort,
@@ -62,24 +63,6 @@ const SLOT_LABEL: Record<string, string> = {
   main_hand: '武器',
   accessory_1: '装飾1',
   accessory_2: '装飾2',
-};
-
-/** Short stat labels for the equip-diff display. */
-const DIFF_LABEL: Record<string, string> = {
-  maxHp: 'HP',
-  maxMp: 'MP',
-  physAtk: '物攻',
-  magAtk: '魔攻',
-  def: '防御',
-  magDef: '魔防',
-  accuracy: '命中',
-  evasion: '回避',
-  critRate: '会心',
-  atkSpeed: '攻速',
-  moveSpeed: '移動',
-  dropRate: 'ドロ率',
-  lifesteal: '吸血',
-  goldRate: '金運',
 };
 
 /**
@@ -363,36 +346,6 @@ export class InventoryScene extends Phaser.Scene {
 
   private refreshGold(): void {
     this.goldText.setText(`${gameState.gold} Gold`);
-  }
-
-  /**
-   * Stat difference between an item and whatever occupies its slot right now
-   * (raw item stats — contributions are additive so this equals the real
-   * derived-stat change). The two largest changes stay legible on mobile.
-   */
-  private equipDiff(def: NonNullable<ReturnType<typeof getEquipment>>): { text: string; up: boolean }[] {
-    const curId = gameState.equipment[def.slot as EquipSlot];
-    const curD = (curId ? getEquipment(curId)?.derived : undefined) ?? {};
-    const newD = def.derived ?? {};
-    const keys = new Set([...Object.keys(newD), ...Object.keys(curD)]);
-    const diffs: { key: string; d: number }[] = [];
-    for (const k of keys) {
-      const d =
-        ((newD as Record<string, number>)[k] ?? 0) - ((curD as Record<string, number>)[k] ?? 0);
-      if (d !== 0) diffs.push({ key: k, d });
-    }
-    diffs.sort((a, b) => Math.abs(b.d) - Math.abs(a.d));
-    const out = diffs.slice(0, 2).map(({ key, d }) => {
-      const val =
-        key === 'critRate' || key === 'dropRate' || key === 'lifesteal' || key === 'goldRate'
-          ? `${Math.round(d * 100)}%`
-          : key === 'atkSpeed'
-            ? d.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
-            : `${Math.round(d)}`;
-      return { text: `${DIFF_LABEL[key] ?? key}${d > 0 ? '+' : ''}${val}`, up: d > 0 };
-    });
-    if (diffs.length > 2) out.push({ text: '…', up: true });
-    return out;
   }
 
   private renderTab(): void {
@@ -1121,30 +1074,31 @@ export class InventoryScene extends Phaser.Scene {
         this.content.add(badge);
         lineX = badge.x + badge.width + 8;
       }
-      // Stat diff vs the currently equipped piece (green up / red down), so
-      // "should I switch?" is answerable without doing mental math.
+      // A single power number makes every rank upgrade immediately readable.
       lineX = 52;
-      if (!equipped) {
-        for (const seg of this.equipDiff(def)) {
-          const t = this.add.text(lineX, y + 52, seg.text, {
-            fontFamily: FONT,
-            fontSize: '12px',
-            color: seg.up ? '#8ef0aa' : '#ff9b9b',
-            fontStyle: 'bold',
-          });
-          this.content.add(t);
-          lineX = t.x + t.width + 6;
-        }
-      } else {
-        this.content.add(
-          this.add.text(52, y + 52, '現在装備中', {
-            fontFamily: FONT,
-            fontSize: '12px',
-            color: '#9ff0b4',
-            fontStyle: 'bold',
-          }),
-        );
-      }
+      const power = equipmentPowerScore(def);
+      const currentId = gameState.equipment[slot];
+      const current = currentId ? getEquipment(currentId) : undefined;
+      const delta = power - (current ? equipmentPowerScore(current) : 0);
+      const powerText = this.add.text(lineX, y + 52, `装備力 ${power.toLocaleString('ja-JP')}`, {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: '#dcecff',
+        fontStyle: 'bold',
+      });
+      this.content.add(powerText);
+      lineX = powerText.x + powerText.width + 8;
+      const comparison = equipped
+        ? '装備中'
+        : delta === 0
+          ? '±0'
+          : `${delta > 0 ? '▲' : '▼'} ${delta > 0 ? '+' : ''}${delta.toLocaleString('ja-JP')}`;
+      this.content.add(this.add.text(lineX, y + 52, comparison, {
+        fontFamily: FONT,
+        fontSize: '12px',
+        color: equipped || delta > 0 ? '#8ef0aa' : delta < 0 ? '#ff9b9b' : '#aeb7c9',
+        fontStyle: 'bold',
+      }));
       if (generated) {
         const affixes = this.add.text(52, y + 70, `追加  ${affixSummary(def, 2)}`, {
           fontFamily: FONT,
