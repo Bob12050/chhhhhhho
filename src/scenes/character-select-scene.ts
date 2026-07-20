@@ -97,11 +97,18 @@ export class CharacterSelectScene extends Phaser.Scene {
     this.cards.set('male', this.makeChoice(w - 94, cardY, 'male', '男性'));
     this.refreshChoices();
 
-    pillButton(this, 68, h - 54, 'もどる', () => this.scene.start('SaveSelect'), {
-      color: '#d9e2f1',
-      bg: '#253048',
-      size: 13,
-    }).setDepth(4);
+    pillButton(
+      this,
+      68,
+      h - 54,
+      'もどる',
+      () => this.scene.start('SaveSelect', { mode: 'new' }),
+      {
+        color: '#d9e2f1',
+        bg: '#253048',
+        size: 13,
+      },
+    ).setDepth(4);
     pillButton(this, w - 106, h - 54, 'この姿で始める', () => {
       this.startAdventure();
     }, {

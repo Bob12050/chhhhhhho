@@ -94,7 +94,7 @@ try {
     await page.mouse.click(180, 400);
   }
   await waitForScene(page, 'Title');
-  await activateTextWhenReady(page, 'Title', 'ゲームをはじめる');
+  await activateTextWhenReady(page, 'Title', 'はじめから');
   await waitForScene(page, 'SaveSelect');
   await activateTextWhenReady(page, 'SaveSelect', 'はじめる');
   await waitForScene(page, 'CharacterSelect');
@@ -1033,6 +1033,8 @@ try {
   await page.reload({ waitUntil: 'load' });
   await waitForScene(page, 'Title');
   await activateTextWhenReady(page, 'Title', 'つづきから', 20000);
+  await waitForScene(page, 'SaveSelect');
+  await activateTextWhenReady(page, 'SaveSelect', 'つづき', 20000);
   await waitForScene(page, 'World', 20000);
   s = await snap(page);
   check(

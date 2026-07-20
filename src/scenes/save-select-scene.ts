@@ -12,14 +12,26 @@ import { frameIndex } from '@/paperdoll/pose-atlas';
 import { TEX } from '@/assets/gen/textures';
 import { FONT, addSceneBackdrop, pillButton, ninePanel, titlePlate } from '@/ui/theme';
 
+type SaveSelectMode = 'new' | 'continue';
+
+interface SaveSelectData {
+  mode?: SaveSelectMode;
+}
+
 /**
- * Save-slot selection. Shows each slot's summary; an empty slot starts a new
- * game, a filled slot continues. Themed to match the title screen (grass world
- * + navy wash) so the front-end feels like one piece.
+ * Save-slot selection. New-game mode offers empty slots and guarded overwrite;
+ * continue mode only loads existing data. Themed to match the title screen so
+ * the front-end feels like one piece.
  */
 export class SaveSelectScene extends Phaser.Scene {
+  private mode: SaveSelectMode = 'continue';
+
   constructor() {
     super('SaveSelect');
+  }
+
+  init(data: SaveSelectData): void {
+    this.mode = data.mode === 'new' ? 'new' : 'continue';
   }
 
   create(): void {
@@ -29,7 +41,7 @@ export class SaveSelectScene extends Phaser.Scene {
 
     titlePlate(this, w / 2, 48, w - 38, 58, 1, 0.98);
     this.add
-      .text(w / 2, 48, 'セーブを選択', {
+      .text(w / 2, 48, this.mode === 'new' ? 'はじめから' : 'つづきから', {
         fontFamily: FONT,
         fontSize: '22px',
         color: '#ffffff',
@@ -46,14 +58,19 @@ export class SaveSelectScene extends Phaser.Scene {
       .setName('loading');
 
     pillButton(this, w / 2 - 72, h - 40, '◀ もどる', () => this.scene.start('Title')).setDepth(2);
-    this.makeResetAllButton(w / 2 + 74, h - 40);
+    if (this.mode === 'continue') this.makeResetAllButton(w / 2 + 74, h - 40);
 
     void this.populate();
   }
 
   private async populate(): Promise<void> {
     const summaries = await saveManager.summaries();
-    this.children.getByName('loading')?.destroy();
+    const guide = this.children.getByName('loading') as Phaser.GameObjects.Text | null;
+    guide?.setText(
+      this.mode === 'new'
+        ? '保存するスロットを選んでください'
+        : 'つづけるデータを選んでください',
+    );
     const w = this.scale.width;
     let y = 106;
     for (let slot = 0; slot < SLOT_COUNT; slot++) {
@@ -109,27 +126,67 @@ export class SaveSelectScene extends Phaser.Scene {
       this.add
         .text(90, y + 72, when, { fontFamily: FONT, fontSize: '10px', color: '#aebed1' })
         .setDepth(2);
-      pillButton(this, w - 62, y + 27, 'つづき', () => void beginGame(this, slot, 'load'), {
-        color: '#bfffce',
-        bg: '#274a30',
-        size: 13,
-      }).setDepth(3);
-      this.makeDeleteButton(slot, w - 62, y + 67);
+      if (this.mode === 'continue') {
+        pillButton(this, w - 62, y + 27, 'つづき', () => void beginGame(this, slot, 'load'), {
+          color: '#bfffce',
+          bg: '#274a30',
+          size: 13,
+        }).setDepth(3);
+        this.makeDeleteButton(slot, w - 62, y + 67);
+      } else {
+        this.makeOverwriteButton(slot, w - 62, cy);
+      }
     } else {
       this.add.circle(54, cy, 23, 0x10264a, 0.95).setStrokeStyle(2, 0xd8b45b, 0.75).setDepth(2);
       this.add.image(54, cy, TEX.iconSword).setScale(2).setTint(0xffdf85).setDepth(3);
       this.add
-        .text(90, y + 31, '新しい冒険', { fontFamily: FONT, fontSize: '15px', color: '#e8eefc' })
+        .text(90, y + 31, this.mode === 'new' ? '新しい冒険' : 'セーブデータなし', {
+          fontFamily: FONT,
+          fontSize: '15px',
+          color: '#e8eefc',
+        })
         .setDepth(2);
-      this.add.text(90, y + 55, '最初から始める', { fontFamily: FONT, fontSize: '10px', color: '#8fa0b8' }).setDepth(2);
-      pillButton(this, w - 66, cy, '＋ はじめる', () => {
-        this.scene.start('CharacterSelect', { slot });
-      }, {
-        color: '#ffe9a8',
-        bg: '#3a3050',
-        size: 14,
-      }).setDepth(3);
+      this.add.text(90, y + 55, this.mode === 'new' ? '最初から始める' : 'このスロットは空です', {
+        fontFamily: FONT,
+        fontSize: '10px',
+        color: '#8fa0b8',
+      }).setDepth(2);
+      if (this.mode === 'new') {
+        pillButton(this, w - 66, cy, '＋ はじめる', () => {
+          this.scene.start('CharacterSelect', { slot });
+        }, {
+          color: '#ffe9a8',
+          bg: '#3a3050',
+          size: 14,
+        }).setDepth(3);
+      }
     }
+  }
+
+  /** Existing slots need an explicit second tap before starting an overwrite flow. */
+  private makeOverwriteButton(slot: number, x: number, y: number): void {
+    let armed = false;
+    let label: Phaser.GameObjects.Text | undefined;
+    const button = pillButton(this, x, y, '上書き', () => {
+      if (!armed) {
+        armed = true;
+        label?.setText('もう一度').setColor('#ffb4a8');
+        this.time.delayedCall(2500, () => {
+          armed = false;
+          if (button.active) label?.setText('上書き').setColor('#ffe0a0');
+        });
+        return;
+      }
+      this.scene.start('CharacterSelect', { slot });
+    }, {
+      color: '#ffe0a0',
+      bg: '#4a3527',
+      size: 12,
+    });
+    label = button.list.find(
+      (child): child is Phaser.GameObjects.Text => child instanceof Phaser.GameObjects.Text,
+    );
+    button.setDepth(3);
   }
 
   /** Delete button with a two-tap confirm to avoid accidental wipes. */
@@ -156,7 +213,7 @@ export class SaveSelectScene extends Phaser.Scene {
         });
         return;
       }
-      void saveManager.delete(slot).then(() => this.scene.restart());
+      void saveManager.delete(slot).then(() => this.scene.restart({ mode: this.mode }));
     });
   }
 
@@ -184,7 +241,7 @@ export class SaveSelectScene extends Phaser.Scene {
         });
         return;
       }
-      void saveManager.deleteAll().then(() => this.scene.restart());
+      void saveManager.deleteAll().then(() => this.scene.restart({ mode: this.mode }));
     });
   }
 }

@@ -5,8 +5,6 @@ import { FONT } from '@/ui/theme';
 import { bgm } from '@/audio/bgm-engine';
 import { TEX } from '@/assets/gen/textures';
 import { frameIndex } from '@/paperdoll/pose-atlas';
-import { saveManager } from '@/save/save-manager';
-import { beginGame } from '@/core/game-flow';
 import { appearanceTextureScale } from '@/jobs/job-appearance';
 
 /** Displayed game title (single source; swap here when the real name lands). */
@@ -76,7 +74,9 @@ export class TitleScene extends Phaser.Scene {
     const off = bus.on('pwa:update-available', showUpdate);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, off);
 
-    this.input.keyboard?.once('keydown-ENTER', () => this.scene.start('SaveSelect'));
+    this.input.keyboard?.once('keydown-ENTER', () =>
+      this.scene.start('SaveSelect', { mode: 'new' }),
+    );
   }
 
   /** HD world vignette with a road aligned to the walking parade. */
@@ -206,20 +206,16 @@ export class TitleScene extends Phaser.Scene {
     }
   }
 
-  /** Fast continue + save management + settings, fading in after the logo. */
+  /** New game, continue, and settings, fading in after the logo. */
   private buildMenu(w: number, h: number): void {
     const menuY = h * 0.5;
-    const startBtn = this.makeButton(w / 2, menuY, 'ゲームをはじめる', true, () =>
-      this.scene.start('SaveSelect'),
+    const startBtn = this.makeButton(w / 2, menuY, 'はじめから', true, () =>
+      this.scene.start('SaveSelect', { mode: 'new' }),
     );
-    const continueDetail = this.add
-      .text(w / 2, menuY + 27, '', { fontFamily: FONT, fontSize: '10px', color: '#d8e6ff' })
-      .setOrigin(0.5)
-      .setDepth(30);
-    const savesBtn = this.makeButton(w / 2, menuY + 60, 'セーブを選ぶ', false, () =>
-      this.scene.start('SaveSelect'),
+    const continueBtn = this.makeButton(w / 2, menuY + 58, 'つづきから', false, () =>
+      this.scene.start('SaveSelect', { mode: 'continue' }),
     );
-    const soundBtn = this.makeButton(w / 2, menuY + 104, '設定', false, () => {
+    const soundBtn = this.makeButton(w / 2, menuY + 102, '設定', false, () => {
       this.scene.pause();
       this.scene.launch('Options', { from: 'Title' });
     });
@@ -233,9 +229,8 @@ export class TitleScene extends Phaser.Scene {
     for (const o of [
       startBtn.frame,
       startBtn.label,
-      continueDetail,
-      savesBtn.frame,
-      savesBtn.label,
+      continueBtn.frame,
+      continueBtn.label,
       soundBtn.frame,
       soundBtn.label,
       ver,
@@ -253,18 +248,6 @@ export class TitleScene extends Phaser.Scene {
       yoyo: true,
       repeat: -1,
       ease: 'Sine.InOut',
-    });
-
-    // Returning players skip the save picker: resume the most recently saved
-    // slot in one tap. Save management remains a separate explicit command.
-    void saveManager.summaries().then((summaries) => {
-      const latest = summaries
-        .filter((s) => s.exists)
-        .sort((a, b) => (b.savedAt ?? 0) - (a.savedAt ?? 0))[0];
-      if (!latest || !startBtn.frame.active || !this.scene.isActive()) return;
-      startBtn.label.setText('つづきから');
-      startBtn.setAction(() => void beginGame(this, latest.slot, 'load'));
-      continueDetail.setText(`スロット${latest.slot + 1}  Lv ${latest.level ?? '?'}`);
     });
   }
 
